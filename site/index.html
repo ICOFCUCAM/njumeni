@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Njumeni CMP — Consent management for growing businesses</title>
+  <meta name="description" content="Placeholder description: consent management platform landing page skeleton.">
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Njumeni CMP">
+  <meta property="og:description" content="Consent management for growing businesses.">
+  <meta property="og:image" content="assets/og-image.png">
+  <link rel="canonical" href="https://example.com/">
+  <!-- hreflang alternates (one per locale, see docs/ARCHITECTURE.md §6) -->
+  <link rel="alternate" hreflang="en" href="https://example.com/">
+  <link rel="alternate" hreflang="de" href="https://example.com/de/">
+  <link rel="alternate" hreflang="x-default" href="https://example.com/">
+
+  <!-- 1. Consent script MUST load first, before any tracking tag (see docs §5) -->
+  <!-- <script id="consent-script" src="https://consent.example.com/cmp.js" data-site-id="XXXX" data-blockingmode="auto"></script> -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- =====================================================================
+     HEADER  (utility bar + main nav, sticky; utility bar collapses on scroll)
+     ===================================================================== -->
+<header class="site-header" data-header>
+  <div class="utility-bar">
+    <div class="container utility-bar__inner">
+      <button class="utility-link" type="button" data-search-open>
+        Search <svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg>
+      </button>
+      <a class="utility-link" href="#login">Log in</a>
+      <a class="utility-link" href="#support">Support</a>
+      <div class="lang-switch" data-dropdown>
+        <button class="utility-link" type="button" aria-expanded="false" data-dropdown-toggle>
+          English <svg class="icon chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <ul class="dropdown" role="list" hidden>
+          <li><a href="/" lang="en">English</a></li>
+          <li><a href="/de/" lang="de">Deutsch</a></li>
+          <li><a href="/fr/" lang="fr">Français</a></li>
+          <li><a href="/es/" lang="es">Español</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-nav">
+    <div class="container main-nav__inner">
+      <a class="logo" href="/" aria-label="Njumeni home">
+        <span class="logo__word">Njumeni</span>
+        <span class="logo__sub">consent platform</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-nav-toggle>
+        <span class="sr-only">Menu</span><span class="nav-toggle__bars" aria-hidden="true"></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav" aria-label="Primary">
+        <ul class="primary-nav__list" role="list">
+          <!-- Mega-menu items: sub-items are placeholders (not visible in screenshots) -->
+          <li class="has-mega" data-dropdown>
+            <button type="button" aria-expanded="false" data-dropdown-toggle>Products <svg class="icon chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="mega" hidden>
+              <div class="container mega__grid">
+                <div><p class="mega__heading">Platform</p><ul role="list"><li><a href="#">Core CMP</a></li><li><a href="#">Advanced CMP</a></li><li><a href="#">Consent analytics</a></li></ul></div>
+                <div><p class="mega__heading">Add-ons</p><ul role="list"><li><a href="#">Consent mode</a></li><li><a href="#">Privacy policy generator</a></li><li><a href="#">App / mobile SDK</a></li></ul></div>
+                <aside class="mega__promo"><p class="mega__heading">New</p><p>Promo slot for a feature launch.</p><a class="link-arrow" href="#">Learn more</a></aside>
+              </div>
+            </div>
+          </li>
+          <li class="has-mega" data-dropdown>
+            <button type="button" aria-expanded="false" data-dropdown-toggle>Regulations <svg class="icon chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="mega" hidden>
+              <div class="container mega__grid">
+                <div><p class="mega__heading">Europe</p><ul role="list"><li><a href="#">GDPR</a></li><li><a href="#">ePrivacy</a></li><li><a href="#">DMA</a></li></ul></div>
+                <div><p class="mega__heading">Americas</p><ul role="list"><li><a href="#">CCPA / CPRA</a></li><li><a href="#">US state laws</a></li><li><a href="#">LGPD</a></li></ul></div>
+                <div><p class="mega__heading">Rest of world</p><ul role="list"><li><a href="#">POPIA</a></li><li><a href="#">APPI</a></li><li><a href="#">PIPEDA</a></li></ul></div>
+              </div>
+            </div>
+          </li>
+          <li class="has-mega" data-dropdown>
+            <button type="button" aria-expanded="false" data-dropdown-toggle>Partners <svg class="icon chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="mega" hidden>
+              <div class="container mega__grid">
+                <div><p class="mega__heading">Programs</p><ul role="list"><li><a href="#">Agency partners</a></li><li><a href="#">Affiliate program</a></li><li><a href="#">Find a partner</a></li></ul></div>
+                <div><p class="mega__heading">Integrations</p><ul role="list"><li><a href="#">CMS plugins</a></li><li><a href="#">Tag managers</a></li><li><a href="#">Ad platforms</a></li></ul></div>
+              </div>
+            </div>
+          </li>
+          <li class="has-mega" data-dropdown>
+            <button type="button" aria-expanded="false" data-dropdown-toggle>Resources <svg class="icon chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="mega" hidden>
+              <div class="container mega__grid">
+                <div><p class="mega__heading">Learn</p><ul role="list"><li><a href="#">Blog</a></li><li><a href="#">Guides &amp; e-books</a></li><li><a href="#">Webinars</a></li></ul></div>
+                <div><p class="mega__heading">Help</p><ul role="list"><li><a href="#">Help center</a></li><li><a href="#">Developer docs</a></li><li><a href="#">Status</a></li></ul></div>
+              </div>
+            </div>
+          </li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+        <a class="btn btn--brand nav-cta" href="#signup">Start free</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ===================================================================
+       1. HERO  — full-bleed brand colour, uppercase condensed H1, 2 CTAs,
+          trust micro-row, product screenshot collage + floating badges
+       =================================================================== -->
+  <section class="hero">
+    <div class="hero__rings" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <h1 class="hero__title">Stay compliant. Keep your data.</h1>
+      <p class="hero__lead">Placeholder lead: automate consent collection and pass accurate consent signals to the tools you rely on, so marketing keeps working while you meet the law.</p>
+
+      <div class="hero__ctas">
+        <a class="btn btn--ink btn--lg" href="#signup">Start free</a>
+        <a class="btn btn--outline-ink btn--lg" href="#scan">Scan website</a>
+      </div>
+
+      <ul class="trust-row" role="list">
+        <li><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>14-day free trial</li>
+        <li><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12"/><path d="M3 4l18 16"/></svg>Cancel anytime</li>
+        <li><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12"/><path d="M8 20h8M12 16v4"/></svg>Free compliance check</li>
+      </ul>
+
+      <!-- Screenshot collage: 3 overlapping product panels -->
+      <div class="hero__visual" aria-hidden="true">
+        <div class="mock mock--side mock--left"><div class="mock__bar"></div><div class="mock__chart"></div></div>
+        <div class="mock mock--main">
+          <div class="mock__bar"></div>
+          <div class="mock__row mock__row--title"></div>
+          <div class="mock__grid"><div></div><div></div><div></div><div></div></div>
+        </div>
+        <div class="mock mock--side mock--right"><div class="mock__bar"></div><div class="mock__panel"></div></div>
+
+        <div class="badge-cluster badge-cluster--left">
+          <span class="badge-pill">Partner A</span><span class="badge-shield">Certified<br>partner</span><span class="badge-pill">Partner B</span>
+        </div>
+        <div class="badge-cluster badge-cluster--right">
+          <span class="badge-shield">Signal<br>A</span><span class="badge-shield">Signal<br>B</span><span class="badge-pill">Partner C</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       2. LOGO MARQUEE  — infinite horizontal scroll of customer logos
+       =================================================================== -->
+  <section class="logos" aria-label="Customers">
+    <div class="marquee" data-marquee>
+      <ul class="marquee__track" role="list">
+        <li>Client One</li><li>Client Two</li><li>Client Three</li><li>Client Four</li>
+        <li>Client Five</li><li>Client Six</li><li>Client Seven</li><li>Client Eight</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       3. STATS BAND  — 4 columns, vertical dividers
+       =================================================================== -->
+  <section class="stats" aria-label="Key figures">
+    <div class="container">
+      <dl class="stats__grid">
+        <div class="stat"><dt>websites and apps</dt><dd>1.2M+</dd></div>
+        <div class="stat"><dt>monthly consents</dt><dd>5B</dd></div>
+        <div class="stat"><dt>languages</dt><dd>40+</dd></div>
+        <div class="stat"><dt>customers</dt><dd>300,000+</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       4. SOLUTION PICKER  — two tier cards (light gradient / dark gradient)
+       =================================================================== -->
+  <section class="section solutions">
+    <div class="container">
+      <h2 class="section__title">Which plan fits you?</h2>
+      <div class="solutions__grid">
+        <article class="solution-card solution-card--light">
+          <div class="solution-card__inner">
+            <header class="solution-card__head">
+              <h3>Core</h3>
+              <ul class="tags" role="list"><li>Solo</li><li>Small business</li></ul>
+            </header>
+            <p>Placeholder copy: collect consent, send consent signals to ad platforms and use add-ons — all from one script and one dashboard.</p>
+            <a class="link-arrow link-arrow--lg" href="#core">Explore Core</a>
+          </div>
+        </article>
+        <article class="solution-card solution-card--dark">
+          <div class="solution-card__inner">
+            <header class="solution-card__head">
+              <h3>Advanced</h3>
+              <ul class="tags tags--dark" role="list"><li>Mid-market</li><li>Enterprise</li></ul>
+            </header>
+            <p>Placeholder copy: manage consent across many brands, domains and regions, with automation and detailed analytics.</p>
+            <a class="link-arrow link-arrow--lg" href="#advanced">Explore Advanced</a>
+          </div>
+        </article>
+      </div>
+      <div class="center">
+        <a class="btn btn--outline-ink" href="#pricing">See pricing <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       5. WHY US  — 3 icon features
+       =================================================================== -->
+  <section class="section section--sunk features">
+    <div class="container">
+      <h2 class="section__title">Why teams pick Njumeni</h2>
+      <div class="features__grid">
+        <article class="feature">
+          <svg class="feature__icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M10 26 24 12l10 10-14 14z"/><path d="M38 30c0 3-2 5-3 5s-3-2-3-5 3-6 3-6 3 3 3 6z"/><path d="M6 42h36"/></svg>
+          <h3>Quick setup, full control</h3>
+          <p>Placeholder: start from templates or customise every detail to match your brand while staying compliant.</p>
+        </article>
+        <article class="feature">
+          <svg class="feature__icon" aria-hidden="true" viewBox="0 0 48 48"><path d="M28 4 10 28h12l-4 16 20-26H26z"/></svg>
+          <h3>Automation that just works</h3>
+          <p>Placeholder: scheduled scans detect and classify cookies and trackers, and rules update as laws change.</p>
+        </article>
+        <article class="feature">
+          <svg class="feature__icon" aria-hidden="true" viewBox="0 0 48 48"><rect x="12" y="20" width="24" height="22"/><path d="M17 20v-6a7 7 0 0 1 14 0v6"/><circle cx="24" cy="30" r="3"/><path d="M24 33v4"/></svg>
+          <h3>Support and security you can trust</h3>
+          <p>Placeholder: responsive support, clear SLAs and recognised security certifications.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       6. PERSONA CAROUSEL  — slides + prev/next + progress-bar tabs
+          (autoplay; active tab bar fills over --persona-dur)
+       =================================================================== -->
+  <section class="section personas" data-carousel>
+    <div class="container">
+      <div class="carousel__controls">
+        <button class="carousel__btn" type="button" data-prev aria-label="Previous slide"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button>
+        <button class="carousel__btn" type="button" data-next aria-label="Next slide"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div>
+
+      <div class="carousel__viewport">
+        <article class="persona-card" id="slide-1" role="tabpanel" aria-labelledby="tab-1">
+          <div class="persona-card__art" aria-hidden="true"><div class="art art--growth"></div></div>
+          <div class="persona-card__body">
+            <h3>Keep campaigns measurable</h3>
+            <p>Placeholder for marketers: consented data flows to analytics and ad tools so reporting stays accurate.</p>
+            <a class="link-arrow link-arrow--lg" href="#">See how</a>
+          </div>
+        </article>
+        <article class="persona-card" id="slide-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+          <div class="persona-card__art" aria-hidden="true"><div class="art art--code"></div></div>
+          <div class="persona-card__body">
+            <h3>One script, zero headaches</h3>
+            <p>Placeholder for developers: one tag, automatic blocking and a JavaScript API for custom setups.</p>
+            <a class="link-arrow link-arrow--lg" href="#">Read the docs</a>
+          </div>
+        </article>
+        <article class="persona-card" id="slide-3" role="tabpanel" aria-labelledby="tab-3" hidden>
+          <div class="persona-card__art" aria-hidden="true"><div class="art art--scales"></div></div>
+          <div class="persona-card__body">
+            <h3>Compliance today and tomorrow</h3>
+            <p>Placeholder for legal teams: geo-targeted rules per regulation and an audit trail of every consent.</p>
+            <a class="link-arrow link-arrow--lg link-arrow--external" href="#">Watch demo</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="carousel__tabs" role="tablist" aria-label="Audience">
+        <button role="tab" id="tab-1" aria-controls="slide-1" aria-selected="true"><span class="carousel__bar"></span>Marketers</button>
+        <button role="tab" id="tab-2" aria-controls="slide-2" aria-selected="false" tabindex="-1"><span class="carousel__bar"></span>Developers</button>
+        <button role="tab" id="tab-3" aria-controls="slide-3" aria-selected="false" tabindex="-1"><span class="carousel__bar"></span>Legal</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       7. FEATURE ROWS — 4 identical rows: text left (H2, paragraph,
+          3 shield-check bullets, arrow link), illustration right
+          (laptop outline + floating tiles + illustrated person)
+       =================================================================== -->
+  <section class="section feature-rows">
+    <div class="container">
+      <article class="feature-row">
+        <div class="feature-row__text">
+          <h2>Meet the law and lower your risk</h2>
+          <p>Placeholder: privacy rules keep changing. Automation keeps your sites compliant in every market you operate in.</p>
+          <ul class="checklist" role="list">
+            <li>Automatic detection of cookies and trackers</li>
+            <li>Localised languages and regional rule sets</li>
+            <li>Clear, valid consent messaging</li>
+          </ul>
+          <a class="link-arrow" href="#">All features</a>
+        </div>
+        <div class="feature-row__art" aria-hidden="true">
+          <div class="laptop">
+            <div class="laptop__screen laptop__screen--map">
+              <span class="chip-tile" style="--x:18%;--y:12%">Framework A</span>
+              <span class="chip-tile" style="--x:55%;--y:6%">Regulation B</span>
+              <span class="chip-tile" style="--x:-4%;--y:42%">Law C</span>
+              <span class="chip-tile" style="--x:34%;--y:48%">Law D</span>
+              <span class="chip-tile" style="--x:62%;--y:40%">Law E</span>
+              <span class="chip-tile" style="--x:84%;--y:22%">Signal F</span>
+              <span class="chip-tile" style="--x:12%;--y:80%">Law G</span>
+              <span class="chip-tile" style="--x:44%;--y:84%">Law H</span>
+              <span class="chip-tile" style="--x:72%;--y:74%">Signal I</span>
+            </div>
+            <div class="laptop__base"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature-row">
+        <div class="feature-row__text">
+          <h2>Better experience, more transparency</h2>
+          <p>Placeholder: give visitors real choice and a clear view of how data is used. Integrate in minutes.</p>
+          <ul class="checklist" role="list">
+            <li>Granular consent categories</li>
+            <li>Banner styled to your brand</li>
+            <li>Ready-made templates</li>
+          </ul>
+          <a class="link-arrow" href="#">Learn more</a>
+        </div>
+        <div class="feature-row__art" aria-hidden="true">
+          <div class="laptop">
+            <div class="laptop__screen">
+              <div class="mini-banner">
+                <div class="toggle-row"><span>Necessary</span><i class="toggle is-on"></i><span>Preferences</span><i class="toggle"></i></div>
+                <div class="toggle-row"><span>Statistics</span><i class="toggle"></i><span>Marketing</span><i class="toggle"></i></div>
+              </div>
+            </div>
+            <div class="laptop__base"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature-row">
+        <div class="feature-row__text">
+          <h2>Peace of mind, full control</h2>
+          <p>Placeholder: scheduled scanning and categorisation save time. Docs and support are there when you need them.</p>
+          <ul class="checklist" role="list">
+            <li>Automated scans and updates</li>
+            <li>Responsive support team</li>
+            <li>Simple admin with consent insights</li>
+          </ul>
+          <a class="link-arrow" href="#">Get started</a>
+        </div>
+        <div class="feature-row__art" aria-hidden="true">
+          <div class="laptop">
+            <div class="laptop__screen"><div class="scan-sheet"><b>Scan results</b><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+            <div class="laptop__base"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature-row">
+        <div class="feature-row__text">
+          <h2>Protect campaigns, know your audience</h2>
+          <p>Placeholder: send consent signals to the major ad platforms and capture first-party attribution with add-ons.</p>
+          <ul class="checklist" role="list">
+            <li>Consent signals to ad platforms</li>
+            <li>First-party audience survey add-on</li>
+            <li>One script, one dashboard</li>
+          </ul>
+          <a class="link-arrow" href="#">See add-ons</a>
+        </div>
+        <div class="feature-row__art" aria-hidden="true">
+          <div class="laptop"><div class="laptop__screen laptop__screen--chart"></div><div class="laptop__base"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       8. SCAN BAND — blue, heading + URL input + black submit
+       =================================================================== -->
+  <section class="band band--brand" id="scan">
+    <div class="container">
+      <h2>Is your website privacy compliant?</h2>
+      <p>Placeholder: run a free scan to see which cookies and trackers your site sets.</p>
+      <form class="inline-form" action="#" method="get">
+        <label class="sr-only" for="scan-url">Your website address</label>
+        <input id="scan-url" name="url" type="url" placeholder="Your website address" required>
+        <button class="btn btn--ink" type="submit">Scan now</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       9. HOW IT WORKS — 3 step cards joined by arrows + CTA
+       =================================================================== -->
+  <section class="section steps">
+    <div class="container">
+      <h2 class="section__title">Get to know Njumeni</h2>
+      <ol class="steps__grid" role="list">
+        <li class="step-card">
+          <h3>Step 1</h3><p>Create your free account</p>
+          <div class="step-card__art step-card__art--form" aria-hidden="true"><i></i><i></i></div>
+        </li>
+        <li class="step-card">
+          <h3>Step 2</h3><p>Pick a banner and copy the snippet</p>
+          <pre class="step-card__code" aria-hidden="true">&lt;script id="consent"
+  src="https://…/cmp.js"
+  data-site-id="…"&gt;&lt;/script&gt;</pre>
+        </li>
+        <li class="step-card">
+          <h3>Step 3</h3><p>Paste it into your site header. Done.</p>
+          <div class="step-card__art step-card__art--banner" aria-hidden="true"><i></i><i></i></div>
+        </li>
+      </ol>
+      <div class="center"><a class="btn btn--brand" href="#signup">Start 14-day free trial</a></div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       10. PROMO BAND — blue, course / lead magnet
+       =================================================================== -->
+  <section class="band band--brand">
+    <div class="container">
+      <h2>Free course: consent signals, explained</h2>
+      <p>Placeholder: get certified on setting up consent signals for your ad stack.</p>
+      <a class="btn btn--ink" href="#">Enroll for free</a>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       11. LATEST ARTICLES — 3 blog cards (image, title, excerpt, tag)
+       =================================================================== -->
+  <section class="section articles">
+    <div class="container">
+      <h2 class="section__title section__title--narrow">Our latest articles on privacy</h2>
+      <div class="articles__grid">
+        <article class="post-card">
+          <a href="#" class="post-card__img" aria-hidden="true" tabindex="-1"></a>
+          <h3><a href="#">Placeholder article title one</a></h3>
+          <p>Placeholder excerpt for the first article, truncated after three lines of text…</p>
+        </article>
+        <article class="post-card">
+          <a href="#" class="post-card__img" aria-hidden="true" tabindex="-1"></a>
+          <h3><a href="#">Placeholder article title two</a></h3>
+          <p>Placeholder excerpt for the second article, truncated after three lines of text…</p>
+        </article>
+        <article class="post-card">
+          <a href="#" class="post-card__img post-card__img--dark" aria-hidden="true" tabindex="-1"></a>
+          <h3><a href="#">Placeholder article title three</a></h3>
+          <p>Placeholder excerpt for the third article, truncated after three lines of text…</p>
+          <a class="tag-chip" href="#">Category</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       12. CMS INTEGRATIONS — 2 download cards
+       =================================================================== -->
+  <section class="section section--tight integrations">
+    <div class="container">
+      <h2 class="section__title section__title--narrow">Install the plugin for your CMS</h2>
+      <div class="integrations__grid">
+        <article class="cms-card">
+          <span class="cms-card__logo" aria-hidden="true">W</span>
+          <div>
+            <h3>Plugin for CMS A</h3>
+            <p>Placeholder: stay compliant with the official plugin, integrated with your CMS.</p>
+            <a class="btn btn--brand" href="#">Download plugin</a>
+          </div>
+        </article>
+        <article class="cms-card">
+          <span class="cms-card__logo" aria-hidden="true">X</span>
+          <div>
+            <h3>App for CMS B</h3>
+            <p>Placeholder: install from the app market to manage consent in a few clicks.</p>
+            <a class="btn btn--brand" href="#">Download app</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- =====================================================================
+     FOOTER — black. Newsletter row → 5 link columns → brand/legal row →
+     language + region selectors, social icons → certification badges
+     ===================================================================== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="newsletter">
+      <div>
+        <p class="footer__title">Subscribe to our newsletter</p>
+        <p>Placeholder: monthly privacy news, product updates and event invites.</p>
+      </div>
+      <form class="newsletter__form" action="#">
+        <div class="inline-form">
+          <label class="sr-only" for="nl-email">Email</label>
+          <input id="nl-email" type="email" placeholder="Enter your email" required>
+          <button class="btn btn--brand" type="submit">Subscribe</button>
+        </div>
+        <p class="newsletter__legal">Placeholder consent text: by subscribing you agree to receive emails; unsubscribe anytime. See our <a href="#">privacy policy</a>.</p>
+      </form>
+    </div>
+
+    <div class="footer__grid">
+      <nav aria-label="Products"><p class="footer__heading">Products</p><ul role="list"><li><a href="#">Consent solution</a></li><li><a href="#">Audience survey</a></li><li><a href="#">CMS plugins</a></li><li><a href="#">Cookie checker</a></li><li><a href="#">Pricing</a></li></ul></nav>
+      <nav aria-label="Regulations"><p class="footer__heading">Regulations</p><ul role="list"><li><a href="#">GDPR (EU)</a></li><li><a href="#">DMA (EU)</a></li><li><a href="#">CCPA (California)</a></li><li><a href="#">LGPD (Brazil)</a></li><li><a href="#">TCF v2.2</a></li><li><a class="link-arrow" href="#">View all regulations</a></li></ul></nav>
+      <nav aria-label="Partners"><p class="footer__heading">Partners</p><ul role="list"><li><a href="#">Become an affiliate</a></li><li><a href="#">Affiliate login</a></li><li><a href="#">Become a partner</a></li><li><a href="#">Find a partner</a></li></ul></nav>
+      <nav aria-label="Resources"><p class="footer__heading">Resources</p><ul role="list"><li><a href="#">Blog</a></li><li><a href="#">Customer stories</a></li><li><a href="#">Knowledge hub</a></li><li><a href="#">Certification course</a></li><li><a href="#">Calculator tool</a></li></ul></nav>
+      <nav aria-label="Company"><p class="footer__heading">Company</p><ul role="list"><li><a href="#">About us</a></li><li><a href="#">Careers</a></li><li><a href="#">Support</a></li><li><a href="#">Developer docs</a></li></ul></nav>
+    </div>
+
+    <div class="footer__bottom">
+      <div class="footer__brandline">
+        <a class="logo logo--invert logo--sm" href="/"><span class="logo__word">Njumeni</span><span class="logo__sub">consent platform</span></a>
+        <p>© <span data-year></span> Njumeni. All rights reserved. Placeholder trademark / company registration line.</p>
+      </div>
+      <ul class="footer__links" role="list">
+        <li><a href="#">Do not sell or share my personal information</a></li>
+        <li><a href="#">Data subject requests</a></li>
+        <li><button type="button" class="link-btn" data-consent-open>Manage your preferences</button></li>
+      </ul>
+      <div class="footer__meta">
+        <ul class="footer__links" role="list">
+          <li><a href="#">Privacy policy</a></li><li><a href="#">Terms of service</a></li><li><a href="#">Cookie declaration</a></li>
+          <li><a href="#">Data processing agreement</a></li><li><a href="#">Legal notice</a></li><li><a href="#">Accessibility</a></li>
+        </ul>
+        <div class="footer__selectors">
+          <label class="sr-only" for="ft-lang">Language</label>
+          <select id="ft-lang"><option>English</option><option>Deutsch</option><option>Français</option></select>
+          <label class="sr-only" for="ft-region">Region</label>
+          <select id="ft-region"><option>Region</option></select>
+          <a class="social" href="#" aria-label="LinkedIn">in</a>
+          <a class="social" href="#" aria-label="Facebook">f</a>
+        </div>
+      </div>
+      <ul class="cert-badges" role="list" aria-label="Certifications and reviews">
+        <li>ISO</li><li>SOC</li><li>Partner</li><li>Award</li><li>Review ★ 4.x</li><li>Award</li><li>Award</li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Floating consent re-open widget (bottom-left circle in screenshots) -->
+<button class="consent-fab" type="button" aria-label="Cookie settings" data-consent-open>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4"/><circle cx="16" cy="12" r="4"/></svg>
+</button>
+
+<!-- Search overlay -->
+<div class="search-overlay" role="dialog" aria-modal="true" aria-label="Search" hidden data-search>
+  <form class="container search-overlay__form" role="search" action="/search">
+    <label class="sr-only" for="q">Search</label>
+    <input id="q" name="q" type="search" placeholder="Search the site…">
+    <button class="btn btn--brand" type="submit">Search</button>
+    <button class="search-overlay__close" type="button" aria-label="Close search" data-search-close>×</button>
+  </form>
+</div>
+
+<!-- Demo consent banner (stand-in for the real CMP script) -->
+<div class="consent-banner" role="dialog" aria-label="Cookie consent" hidden data-consent>
+  <div class="consent-banner__body">
+    <p class="consent-banner__title">This site uses cookies</p>
+    <p>Placeholder text explaining the purposes of cookies, with a link to the cookie policy.</p>
+  </div>
+  <div class="consent-banner__actions">
+    <button class="btn btn--outline-ink" type="button" data-consent-choice="necessary">Necessary only</button>
+    <button class="btn btn--outline-ink" type="button" data-consent-choice="custom">Customise</button>
+    <button class="btn btn--brand" type="button" data-consent-choice="all">Allow all</button>
+  </div>
+</div>
+</body>
+</html>
