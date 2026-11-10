@@ -11,6 +11,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: njumeni-migration-generator
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -72,4 +76,5 @@ jobs:
           git add -A supabase/migrations
           if [ -d .migration-requests ]; then git add -A .migration-requests; fi
           git commit -m "db-template: generate CLI migrations from reviewed templates"
-          git push
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
