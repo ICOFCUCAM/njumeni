@@ -37,7 +37,7 @@ The original CMP site consisted of `site/index.html`, `site/css/main.css`, `site
 
 1. `ICOFCUCAM/njumeni` remains the Njumeni legal-platform application repository.
 2. `ICOFCUCAM/marketing-website` is the independent public marketing website repository and has been deployed separately.
-3. CMP is unrelated software and must be preserved in a separate archive repository.
+3. CMP is unrelated software and is preserved in the separate private archive repository; its original six-file snapshot was verified before removal from Njumeni.
 4. The legal application is intended to securely store and manage confidential documents, case files and evidence in protected runtime storage.
 5. Customer documents, production records, secrets and live evidence must not be committed to Git.
 6. Upstream projects are research references or candidate isolated adapters; no wholesale application import is authorised by the current architecture proposal.
@@ -79,7 +79,7 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 | 0.4 Repository boundaries | COMPLETE | Canonical repository map committed in `docs/PRODUCT_BOUNDARIES.md`: Njumeni legal app, independent public marketing website, verified private CMP archive and isolated upstream legal research. README and audit references aligned. Marketing repository is separate; its application implementation is not part of this task. |
 | 0.5 Product specification | COMPLETE | [Product Specification](PRODUCT_SPECIFICATION.md) defines target segments, seven priority journeys, first-release P0/P1 scope, jurisdiction priorities, functional and trust requirements, A–M positioning, non-goals, acceptance criteria and unresolved release decision gates. Commit `67f3a9a`. |
 | 0.6 Modular-monolith and eight-layer architecture | PARTIAL | Proposed domain/topology document exists. Formal architecture decision, layer contracts and dependency rules still required. |
-| 0.7 Original A–M module map | IN PROGRESS | Canonical A–M names restored in the Master Implementation Plan; map each module to layers, ownership, dependencies, APIs/events, permissions, tests and phase delivery. |
+| 0.7 Original A–M module map | PARTIAL | Canonical A–M names are restored in the Master Implementation Plan; detailed mapping to layers, ownership, dependencies, APIs/events, permissions, tests and phase delivery remains to be completed in task 0.7. |
 | 0.8 Engineering standards | NOT STARTED | Decide and document after stack and repo strategy are confirmed. |
 | 0.9 Local/test/staging/production environments | NOT STARTED | No application runtime or environment specification found. |
 | 0.10 CI pipeline | PARTIAL | Security workflow exists; full quality/build/test/migration pipeline remains to be implemented. |
