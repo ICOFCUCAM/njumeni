@@ -149,3 +149,33 @@ This section is the current status snapshot and supersedes older branch-head/run
 8. Remove the dedicated test identity only after all tests are complete, then verify no residual test data remains.
 
 **Gate:** Task 1.3 stays IN PROGRESS until the current branch is deployed and the live provider/browser tests above are recorded. Tasks 1.4–1.12 remain locked. No customer legal matter, document or confidential case data may be entered before the identity, tenancy, RLS, storage, audit and security gates are accepted.
+
+
+## 9. Deployment update — 10 November 2026
+
+The previous Vercel deployment quota blocker is no longer active. A new production deployment was created automatically from the current implementation branch and has been independently verified:
+
+- Deployment: `dpl_88BG3yBjtdhsPgadJZpE8TZ23c2R`
+- State: `READY`
+- Commit: `72eb93c030888e437ccc53309a6d4a9f35f67bfc` (`docs(plan): refresh auth acceptance evidence and blockers`), which includes the already CI-verified application code from `77076d6df3992a678ea36c3dd258cde0ea5c07dd`.
+- Production alias: `njumeni-web.vercel.app` — alias attachment independently confirmed by Vercel.
+- Project Node.js runtime setting: `22.x`.
+- Build evidence: Vercel logs show Next.js 16.4.5, successful compilation, successful TypeScript validation, 18/18 static generation steps, `/dashboard` emitted as a dynamic server-rendered route, Proxy emitted, and `Deployment completed`.
+- Vercel production build completed without the earlier TypeScript error.
+
+The public web inspection tool could not independently open the production sign-in/dashboard URLs, so HTTP/browser behaviour is not claimed from that check. The owner must now run the remaining live browser acceptance sequence against the newly deployed alias. The previous owner-observed sign-in, dashboard refresh persistence and sign-out navigation predate this latest deployment and should be repeated once on the new deployment.
+
+### Updated acceptance sequence
+
+1. [x] Fresh production deployment from current branch is READY.
+2. [x] Confirm `njumeni-web.vercel.app` is attached to that READY deployment.
+3. [ ] Confirm the deployed application uses the configured Node 22.x runtime (project setting is verified; build logs do not explicitly print the Node patch version).
+4. [ ] Owner re-test sign-in, dashboard access, refresh persistence and sign-out on the newly deployed production alias.
+5. [ ] Directly open `/dashboard` after sign-out and verify redirect to sign-in.
+6. [ ] Run the opt-in provider lifecycle test against the dedicated Njumeni test identity; verify sign-in, provider user lookup, refresh, successful local sign-out and rejection of reuse of the revoked refresh token.
+7. [ ] Inspect browser cookies after sign-out and verify session cookies are no longer sent; review HttpOnly, Secure, SameSite, path and domain scope.
+8. [ ] Verify invalid/expired refresh token, provider-side deleted/revoked user, missing environment configuration and safe same-origin redirect handling. Keep all test data synthetic.
+9. [ ] Review Supabase Auth controls. Enable leaked-password protection if the subscription tier supports it; otherwise record the plan limitation and do not claim the control is enabled.
+10. [ ] Remove the dedicated test identity only after all tests are complete, then verify no residual test data remains.
+
+**Current gate:** Task 1.3 remains IN PROGRESS. Deployment is no longer the blocker; live provider and browser acceptance, and the remaining Auth security configuration review, are the active acceptance work. Tasks 1.4–1.12 remain locked until Task 1.3 is accepted.
