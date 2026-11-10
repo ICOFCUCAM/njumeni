@@ -35,8 +35,9 @@ test('profile updates accept only bounded presentation fields', () => {
   ]) {
     assert.ok(action.includes("'" + name + "'"), 'missing field validation: ' + name);
   }
-  assert.ok(action.includes('LOCALE_PATTERN'));
-  assert.ok(action.includes('https:'));
+  assert.ok(action.includes('normalizeProfileLocale'));
+  assert.ok(action.includes('isValidHttpsUrl'));
+  assert.ok(action.includes('isValidTimeZone'));
   assert.ok(!action.includes('user_metadata'));
 });
 
