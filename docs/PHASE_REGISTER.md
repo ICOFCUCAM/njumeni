@@ -5,7 +5,7 @@
 - Repository: `ICOFCUCAM/njumeni`
 - Active phase: **Phase 1 — Identity, tenancy and security foundation**
 - Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **1.4 — Implement user profile and principal model**
+- Next task: **1.5 — Implement organisations, workspaces and tenant ownership**
 - Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
 - Rule: work may proceed only in the single active phase; later phases remain locked until their dedicated closeout commits and CI checks are verified.
 
