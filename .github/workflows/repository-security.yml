@@ -54,7 +54,7 @@ jobs:
             npm run typecheck
             npm run build
           else
-            echo "::notice::No application shell exists yet; application build is deferred to task 0.12."
+            echo "::notice::No application package exists in this change; application build remains a required check once apps/web is present."
           fi
 
   content-policy:
