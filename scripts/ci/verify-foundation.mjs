@@ -75,7 +75,7 @@ for (const [index, moduleName] of modules.entries()) {
 }
 
 assert.ok(register.includes('Phase 0 — Foundation and repository/infrastructure audit'));
-assert.ok(register.includes('Phase 1 — Identity, tenancy and security foundation'));
+assert.ok(register.includes('| 1 | Identity, tenancy and security foundation |'));
 assert.ok(masterPlan.includes('Phase 13 — Production hardening and launch'));
 assert.ok(architecture.includes('no compile-time dependency cycle'));
 assert.ok(traceability.includes('Every original A–M module capability'));
