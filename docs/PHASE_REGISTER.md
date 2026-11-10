@@ -7,7 +7,7 @@
 - Phase state: **🟡 OPEN — IN PROGRESS**
 - Next task: **1.1 — Complete and verify identity, authentication, tenant and workspace security contracts**
 - Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
-- Rule: no Phase 1 work may begin until Phase 0 is fully green and its phase-closeout commit is verified.
+- Rule: work may proceed only in the single active phase; later phases remain locked until their dedicated closeout commits and CI checks are verified.
 
 ## 1. Register legend
 
