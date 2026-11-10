@@ -25,7 +25,7 @@ Use explicit contracts between bounded contexts. Never write directly to another
 
 ## 3. Local quality checks
 
-The root formatter settings are in .editorconfig and .prettierrc.json. The repository does not yet have an application package manifest or a complete lint/type/test toolchain. Do not invent local scripts or claim checks passed when those tools are not installed. Task 0.10 establishes the automated CI toolchain and task 0.9 establishes reproducible environments.
+The root formatter settings are in .editorconfig and .prettierrc.json. The repository has a foundation CI baseline documented in [CI Pipeline](docs/CI_PIPELINE.md): Prettier, ESLint, strict TypeScript probe, Node foundation tests, architecture integrity checks, repository content policy and Gitleaks. There is still no application package manifest or runnable app; application lint/type/test/build gates expand when the workspace is introduced in task 0.12. Do not describe foundation checks as application tests.
 
 When the toolchain is available, run the exact repository scripts for formatting, lint, type-check, unit/integration tests, build and security checks. Record the results in the pull request.
 
