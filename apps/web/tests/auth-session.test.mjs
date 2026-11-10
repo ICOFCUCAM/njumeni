@@ -197,66 +197,57 @@ test('provider-side deleted or revoked user is rejected by getUser', async () =>
   );
 });
 
-test(
-  'a tampered access token is sent for authoritative provider verification and rejected',
-  async () => {
-    const harness = createHarness();
-    harness.setUserStatus(401);
-    const tamperedAccessToken = 'tampered-access-token-not-a-valid-jwt';
+test('a tampered access token is sent for authoritative provider verification and rejected', async () => {
+  const harness = createHarness();
+  harness.setUserStatus(401);
+  const tamperedAccessToken = 'tampered-access-token-not-a-valid-jwt';
 
-    const { data, error } = await harness.client.auth.getUser(tamperedAccessToken);
+  const { data, error } = await harness.client.auth.getUser(tamperedAccessToken);
 
-    assert.ok(error, 'the Auth provider must reject a tampered access token');
-    assert.equal(data.user, null, 'a rejected token must not produce an authenticated user');
-    assert.ok(
-      harness.requests.some(
-        ({ url, authorization }) =>
-          url.pathname.endsWith('/user') && authorization === `Bearer ${tamperedAccessToken}`,
-      ),
-      'the explicit token must be sent to the authoritative Auth user endpoint',
-    );
-  },
-);
+  assert.ok(error, 'the Auth provider must reject a tampered access token');
+  assert.equal(data.user, null, 'a rejected token must not produce an authenticated user');
+  assert.ok(
+    harness.requests.some(
+      ({ url, authorization }) =>
+        url.pathname.endsWith('/user') && authorization === `Bearer ${tamperedAccessToken}`,
+    ),
+    'the explicit token must be sent to the authoritative Auth user endpoint',
+  );
+});
 
-test(
-  'an expired access token is rejected by the authoritative Auth user endpoint',
-  async () => {
-    const harness = createHarness();
-    harness.setUserStatus(401);
-    const expiredAccessToken = makeJwt(Math.floor(Date.now() / 1000) - 3600);
+test('an expired access token is rejected by the authoritative Auth user endpoint', async () => {
+  const harness = createHarness();
+  harness.setUserStatus(401);
+  const expiredAccessToken = makeJwt(Math.floor(Date.now() / 1000) - 3600);
 
-    const { data, error } = await harness.client.auth.getUser(expiredAccessToken);
+  const { data, error } = await harness.client.auth.getUser(expiredAccessToken);
 
-    assert.ok(error, 'the Auth provider must reject an expired access token');
-    assert.equal(data.user, null, 'an expired token must not produce an authenticated user');
-    assert.ok(
-      harness.requests.some(
-        ({ url, authorization }) =>
-          url.pathname.endsWith('/user') && authorization === `Bearer ${expiredAccessToken}`,
-      ),
-      'the expired token must be checked by the authoritative Auth user endpoint',
-    );
-  },
-);
+  assert.ok(error, 'the Auth provider must reject an expired access token');
+  assert.equal(data.user, null, 'an expired token must not produce an authenticated user');
+  assert.ok(
+    harness.requests.some(
+      ({ url, authorization }) =>
+        url.pathname.endsWith('/user') && authorization === `Bearer ${expiredAccessToken}`,
+    ),
+    'the expired token must be checked by the authoritative Auth user endpoint',
+  );
+});
 
-test(
-  'a rejected refresh token is surfaced without issuing a replacement session',
-  async () => {
-    const harness = createHarness({ tokenStatus: 400 });
-    await establishSession(harness.client, harness.accessToken);
-    const cookiesBeforeRefresh = Array.from(harness.cookies.entries());
+test('a rejected refresh token is surfaced without issuing a replacement session', async () => {
+  const harness = createHarness({ tokenStatus: 400 });
+  await establishSession(harness.client, harness.accessToken);
+  const cookiesBeforeRefresh = Array.from(harness.cookies.entries());
 
-    const { error } = await harness.client.auth.refreshSession();
+  const { error } = await harness.client.auth.refreshSession();
 
-    assert.ok(error, 'the revoked refresh token should be rejected');
-    assert.deepEqual(
-      Array.from(harness.cookies.entries()),
-      cookiesBeforeRefresh,
-      'a rejected refresh must not persist a replacement session',
-    );
-    assert.ok(
-      harness.cookies.size > 0,
-      'an unexpired access-token cookie may remain valid until its expiry even after refresh is rejected',
-    );
-  },
-);
+  assert.ok(error, 'the revoked refresh token should be rejected');
+  assert.deepEqual(
+    Array.from(harness.cookies.entries()),
+    cookiesBeforeRefresh,
+    'a rejected refresh must not persist a replacement session',
+  );
+  assert.ok(
+    harness.cookies.size > 0,
+    'an unexpired access-token cookie may remain valid until its expiry even after refresh is rejected',
+  );
+});
