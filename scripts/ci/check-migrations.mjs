@@ -83,7 +83,7 @@ async function main() {
   }
 
   const correctionFile = 'scripts/ci/migration-predeployment-corrections.json';
-  let allowedCorrections = new Set();
+  const allowedCorrections = new Set();
 
   try {
     const correctionConfig = JSON.parse(await readFile(correctionFile, 'utf8'));
