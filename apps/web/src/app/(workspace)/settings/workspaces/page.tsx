@@ -21,10 +21,28 @@ export default async function WorkspacesSettingsPage({
   const supabase = await createClient();
   const { data: organisations, error } = await supabase
     .from('organizations')
-    .select(
-      'id, name, slug, kind, status, created_at, workspaces(id, name, slug, kind, status, created_at)',
-    )
+    .select('id, name, slug, kind, status, created_at')
     .order('created_at', { ascending: true });
+  const organisationList = organisations ?? [];
+  const { data: workspaces, error: workspacesError } = organisationList.length
+    ? await supabase
+        .from('workspaces')
+        .select('id, organization_id, name, slug, kind, status, created_at')
+        .in(
+          'organization_id',
+          organisationList.map((organisation) => organisation.id),
+        )
+        .order('created_at', { ascending: true })
+    : { data: [], error: null };
+  const workspaceByOrganisation = new Map<
+    string,
+    NonNullable<typeof workspaces>
+  >();
+  for (const workspace of workspaces ?? []) {
+    const current = workspaceByOrganisation.get(workspace.organization_id) ?? [];
+    current.push(workspace);
+    workspaceByOrganisation.set(workspace.organization_id, current);
+  }
 
   return (
     <>
@@ -53,7 +71,7 @@ export default async function WorkspacesSettingsPage({
         </p>
       ) : null}
 
-      {error ? (
+      {error || workspacesError ? (
         <section className="module-panel" aria-labelledby="tenant-unavailable-title">
           <h2 id="tenant-unavailable-title">Tenant services are not available yet</h2>
           <p>
@@ -107,7 +125,7 @@ export default async function WorkspacesSettingsPage({
             </div>
           </div>
 
-          {organisations.length === 0 ? (
+          {organisationList.length === 0 ? (
             <section className="module-panel">
               <h2>No organisation is available</h2>
               <p>
@@ -117,7 +135,7 @@ export default async function WorkspacesSettingsPage({
             </section>
           ) : (
             <div className="tenant-list">
-              {organisations.map((organisation) => (
+              {organisationList.map((organisation) => (
                 <section className="profile-panel tenant-panel" key={organisation.id}>
                   <div className="profile-panel-heading">
                     <div>
@@ -134,11 +152,11 @@ export default async function WorkspacesSettingsPage({
 
                   <div className="tenant-workspaces">
                     <h3>Workspaces</h3>
-                    {organisation.workspaces.length === 0 ? (
+                    {(workspaceByOrganisation.get(organisation.id) ?? []).length === 0 ? (
                       <p>No workspace is currently available.</p>
                     ) : (
                       <ul>
-                        {organisation.workspaces.map((workspace) => (
+                        {(workspaceByOrganisation.get(organisation.id) ?? []).map((workspace) => (
                           <li key={workspace.id}>
                             <span>
                               <strong>{workspace.name}</strong>
