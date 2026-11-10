@@ -37,7 +37,8 @@ const navigationGroups: { label: string; items: NavigationItem[] }[] = [
   },
   {
     label: 'Account',
-    items: [{ label: 'Profile settings', href: '/settings/profile', icon: 'user' }],
+    items: [{ label: 'Profile settings', href: '/settings/profile', icon: 'user' },
+      { label: 'Organisations and workspaces', href: '/settings/workspaces', icon: 'building' }],
   },
   {
     label: 'Governance',
@@ -49,6 +50,8 @@ const navigationGroups: { label: string; items: NavigationItem[] }[] = [
 ];
 function activeLabel(pathname: string) {
   if (pathname === '/dashboard') return 'Overview';
+  if (pathname.startsWith('/settings/profile')) return 'Profile settings';
+  if (pathname.startsWith('/settings/workspaces')) return 'Organisations and workspaces';
   return (
     moduleRegistry.find(
       (module) => pathname === module.href || pathname.startsWith(module.href + '/'),
@@ -58,9 +61,13 @@ function activeLabel(pathname: string) {
 export function WorkspaceShell({
   children,
   userEmail,
+  organizationName,
+  workspaceName,
 }: {
   children: ReactNode;
   userEmail: string;
+  organizationName: string;
+  workspaceName: string;
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -88,15 +95,20 @@ export function WorkspaceShell({
             <span className="brand-descriptor">Global Legal Intelligence</span>
           </span>
         </Link>
-        <div className="workspace-switcher">
+        <Link
+          className="workspace-switcher"
+          href="/settings/workspaces"
+          aria-label={`Manage organisation ${organizationName} and workspace ${workspaceName}`}
+          onClick={() => setMobileOpen(false)}
+        >
           <span>
-            <small>Current environment</small>
-            <strong>Authenticated account</strong>
+            <small>{organizationName}</small>
+            <strong>{workspaceName}</strong>
           </span>
           <span aria-hidden="true" style={{ color: 'var(--gold)' }}>
             ⌄
           </span>
-        </div>
+        </Link>
         <nav className="nav-scroll">
           {navigationGroups.map((group) => (
             <div className="nav-group" key={group.label}>
