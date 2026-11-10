@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: "22"
       - run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund prettier@3.5.3
-      - name: Print canonical Prettier output
+      - name: Show exact formatter diff
         run: |
-          npx --no-install prettier "apps/web/src/app/(auth)/sign-in/page.tsx" > /tmp/sign-in.formatted
-          cat /tmp/sign-in.formatted
+          npx --no-install prettier --write "apps/web/src/app/(auth)/sign-in/page.tsx"
+          git diff -- "apps/web/src/app/(auth)/sign-in/page.tsx"
