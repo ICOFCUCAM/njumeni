@@ -24,7 +24,7 @@ permissions:
 jobs:
   generate-migrations:
     name: Generate pending migrations from CLI templates
-    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/wonderful-franklin-lt09d7' && contains(github.event.head_commit.message, 'db-template:')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/wonderful-franklin-lt09d7'
     runs-on: ubuntu-latest
     permissions:
       contents: write
