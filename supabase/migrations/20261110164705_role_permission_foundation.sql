@@ -81,7 +81,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_actor uuid;
   v_target uuid;
@@ -124,7 +124,7 @@ begin
   )
   values (v_actor, v_target, v_organization, v_workspace, v_role, v_action);
 
-  return coalesce(new, old);
+  return null;
 end;
 $;
 
