@@ -15,9 +15,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     signout:
       'We could not complete sign-out. Please try again; your session status could not be confirmed.',
   };
-  const errorMessage = params.error
-    ? (errorMessages[params.error] ?? null)
-    : null;
+  const errorMessage = params.error ? errorMessages[params.error] ?? null : null;
   const showRevocationWarning =
     params.message === 'signed-out' && params.warning === 'revocation-unconfirmed';
 
