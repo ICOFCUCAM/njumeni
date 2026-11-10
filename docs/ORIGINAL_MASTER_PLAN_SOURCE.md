@@ -997,7 +997,8 @@ Issue Agent
 
 Identify legal questions
 
-Reasoning Agent	
+Reasoning Agent
+	
 
 Build legal arguments
 
@@ -1996,6 +1997,7 @@ Document processing
 Communications
 
     Email.
+
     Notifications.
 
     Calendar integrations.
@@ -2995,6 +2997,7 @@ Njumeni development programme
         Legal source registry.
 
         Legal authority models.
+
         Authority versioning.
 
         Source ingestion.

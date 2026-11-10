@@ -997,7 +997,8 @@ Issue Agent
 
 Identify legal questions
 
-Reasoning Agent	
+Reasoning Agent
+	
 
 Build legal arguments
 
@@ -1996,6 +1997,7 @@ Document processing
 Communications
 
     Email.
+
     Notifications.
 
     Calendar integrations.
@@ -2995,6 +2997,7 @@ Njumeni development programme
         Legal source registry.
 
         Legal authority models.
+
         Authority versioning.
 
         Source ingestion.
@@ -3441,7 +3444,7 @@ This overlay is execution metadata added after the original source. It does not 
 
 ## Source preservation and authority
 
-- The complete uploaded source is preserved verbatim in [ORIGINAL_MASTER_PLAN_SOURCE.md](ORIGINAL_MASTER_PLAN_SOURCE.md).
+- The complete uploaded source is preserved in [ORIGINAL_MASTER_PLAN_SOURCE.md](ORIGINAL_MASTER_PLAN_SOURCE.md).
 - The twenty-section content above remains the product's original requirements baseline. Historical status statements and original estimates remain as authored.
 - [PHASE_REGISTER.md](PHASE_REGISTER.md) is the live operational status record. Its current 16-task Phase 0 register supplements the source's original checklist; it does not delete or redefine the source requirements.
 - Any change to original requirements must be recorded as an explicit, reviewed architectural or product decision. A deferred requirement must retain its original detail and record the reason, dependency and planned phase.
