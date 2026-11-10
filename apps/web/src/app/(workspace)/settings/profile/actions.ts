@@ -3,9 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { isValidHttpsUrl, isValidTimeZone, normalizeProfileLocale } from '@/lib/profile-validation';
 
 const MAX_NAME_LENGTH = 120;
-const LOCALE_PATTERN = /^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/;
 
 function field(formData: FormData, name: string, maxLength: number): string | null {
   const value = formData.get(name);
@@ -29,9 +29,9 @@ export async function updateProfile(formData: FormData): Promise<void> {
     avatarUrl === null ||
     locale === null ||
     timezone === null ||
-    (locale !== '' && !LOCALE_PATTERN.test(locale)) ||
-    (avatarUrl !== '' && !/^https:\/\//i.test(avatarUrl)) ||
-    timezone.length === 0
+    normalizeProfileLocale(locale) === null ||
+    (avatarUrl !== '' && !isValidHttpsUrl(avatarUrl)) ||
+    !isValidTimeZone(timezone)
   ) {
     redirect('/settings/profile?error=invalid');
   }
@@ -60,7 +60,7 @@ export async function updateProfile(formData: FormData): Promise<void> {
         given_name: givenName || null,
         family_name: familyName || null,
         avatar_url: avatarUrl || null,
-        locale: locale || 'en',
+        locale: normalizeProfileLocale(locale) ?? 'en',
         timezone,
       })
       .eq('principal_id', profile.principal_id);
