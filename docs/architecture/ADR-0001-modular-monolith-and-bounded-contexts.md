@@ -146,6 +146,33 @@ The dependency model is acyclic at the compile-time contract level: Experience d
 
 The layer definitions are consistent with the original product architecture: Experience/API/Workflow provide controlled interaction and execution; Evidence and Legal knowledge provide distinct factual and authoritative source foundations; Reasoning structures legal analysis; Verification tests provenance and correctness; Infrastructure supports all layers. Detailed mapping of every A–M module and all twenty outline sections remains task 0.7 and is not claimed complete here.
 
+### 6.5 Relationship to the original twenty-section plan
+
+This is a high-level responsibility map, not a replacement for the original section titles or the detailed A–M module mapping owned by task 0.7.
+
+| Original section | Primary platform-layer responsibility |
+|---|---|
+| 1. Brand/corporate identity | Experience |
+| 2. Product architecture | All eight layers as one integrated platform |
+| 3. Complete product modules | Experience, API, Workflow orchestration, Evidence, Legal knowledge, Reasoning, Verification |
+| 4. Complete AI architecture | Workflow orchestration, Reasoning, Verification, Infrastructure; API governs authorised access |
+| 5. Technical architecture/stack | All eight layers and their implementation contracts |
+| 6. Legal knowledge infrastructure | Legal knowledge, Verification, Infrastructure |
+| 7. Security/privacy/governance | API, Workflow orchestration, Evidence, Legal knowledge, Verification, Infrastructure |
+| 8. Open-source research/software reuse | Infrastructure, API and Legal knowledge integration boundaries |
+| 9. API/integration framework | API, Workflow orchestration, Infrastructure |
+| 10. Infrastructure/hosting/deployment | Infrastructure, with API and Workflow orchestration runtime contracts |
+| 11. User journeys/operational workflows | Experience, API, Workflow orchestration and the domain layers used by each journey |
+| 12. Administration/platform operations | Experience, API, Workflow orchestration, Infrastructure |
+| 13. Commercial architecture/monetisation | API, Workflow orchestration, Infrastructure |
+| 14. Testing/evaluation/QA | All eight layers |
+| 15. Repository/development structure | All eight layers and their package boundaries |
+| 16. Complete implementation roadmap | All eight layers, delivered according to dependency order |
+| 17. Definition of completion | All eight layers and their release/verification controls |
+| 18. Initial strategic priorities | Evidence, Legal knowledge, Reasoning and Verification, supported by the other layers |
+| 19. Permanent architectural decisions | All eight layers |
+| 20. Immediate execution/foundation | All eight layers, beginning with architecture and infrastructure foundations |
+
 ## 7. Consequences
 
 ### Positive
@@ -168,9 +195,9 @@ The layer definitions are consistent with the original product architecture: Exp
 - [x] Dependency direction and prohibited coupling recorded.
 - [x] Tenant, matter, document, legal-source and AI provenance boundaries recorded.
 - [x] No premature microservice fleet approved.
-- [ ] Original eight platform-layer names/order/definitions recovered and recorded without substitution.
-- [ ] Eight-layer dependency map reviewed for cycles and consistency.
-- [ ] Task 0.7 maps all canonical A–M modules to the approved layers and contexts.
+- [x] Original eight platform-layer names/order/definitions recovered from the original source and recorded without substitution in the master plan and this ADR.
+- [x] Eight-layer contracts, dependency map and relationship to all twenty original sections reviewed; no compile-time dependency cycle is introduced.
+- [ ] Detailed task 0.7 mapping of all canonical A–M modules to the approved layers and contexts is tracked separately in the Phase Register.
 
 ## 9. Related binding documents
 
