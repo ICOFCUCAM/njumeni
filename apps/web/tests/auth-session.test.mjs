@@ -115,6 +115,8 @@ test('local sign-out clears SSR cookies and uses local scope', async () => {
 
   assert.equal(error, null);
   assert.equal(harness.cookies.size, 0, 'local sign-out should clear the SSR cookie session');
+  const { data: localSession } = await harness.client.auth.getSession();
+  assert.equal(localSession.session, null, 'the signed-out SSR client must have no local session');
   assert.ok(
     harness.requests.some(
       ({ url, method }) =>
