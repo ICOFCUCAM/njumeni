@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -40,13 +42,19 @@ jobs:
       - name: Lint CI scripts and tests
         run: |
           npx --no-install eslint \
-            eslint.config.mjs scripts/ci/verify-foundation.mjs tests/foundation.test.mjs
+            eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs \\
+            tests/foundation.test.mjs tests/migrations.test.mjs
 
       - name: Type-check strict TypeScript baseline
         run: npx --no-install tsc --project tsconfig.ci.json
 
-      - name: Run foundation tests
-        run: node --test tests/foundation.test.mjs
+      - name: Run foundation and migration tests
+        run: node --test tests/*.test.mjs
+
+      - name: Enforce migration naming, order and immutability
+        env:
+          MIGRATION_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/ci/check-migrations.mjs
 
       - name: Run foundation build/architecture integrity check
         run: node scripts/ci/verify-foundation.mjs
