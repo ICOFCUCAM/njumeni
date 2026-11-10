@@ -15,7 +15,8 @@ test('appends passage payload and accepts only explicit persistence outcomes',as
   const persistence=createSupabaseLegalIngestionPersistence(db);
   const input={sourceKey:'source',jurisdictionCode:'NO',authority:{externalId:'NO:1',title:'Act',sourceContentHash:'a'.repeat(64),normalisedText:'text'},sourceUri:'https://official.example/act',retrievedAt:'2026-11-10T10:00:00.000Z',normalisationProfile:'unicode-v1',lease:{jobId:'job-1',leaseToken:'lease-1'},passages:[{ordinal:0,startOffset:0,endOffset:4,content:'text',contentHash:'b'.repeat(64)}]};
   assert.equal(await persistence.appendAuthority(input),'created');
-  assert.equal(db.calls[0].args.p_passages.length,1);\n  assert.equal(db.calls[0].args.p_job_id,'job-1');
+  assert.equal(db.calls[0].args.p_passages.length,1);
+  assert.equal(db.calls[0].args.p_job_id,'job-1');
   await assert.rejects(()=>persistence.appendAuthority(input),/LEGAL_INGESTION_APPEND_AUTHORITY_RESPONSE_INVALID/);
 });
 test('propagates database errors with stable error codes',async()=>{
