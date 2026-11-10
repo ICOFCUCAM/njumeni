@@ -1,7 +1,7 @@
 # Njumeni A–M module-to-layer and bounded-context map
 
-- **Status:** Phase 0 task 0.7 working deliverable
-- **Canonical source:** Original Njumeni — Complete Global Legal Intelligence Platform master architecture supplied 2026-11-10
+- **Status:** Accepted — Phase 0 task 0.7 complete
+- **Canonical source:** [Original Njumeni — Complete Global Legal Intelligence Platform master architecture](../ORIGINAL_MASTER_PLAN_SOURCE.md), supplied 2026-11-10
 - **Architecture authority:** [ADR-0001](ADR-0001-modular-monolith-and-bounded-contexts.md)
 - **Execution authority:** [Master Implementation Plan](../MASTER_IMPLEMENTATION_PLAN.md) and [Phase Register](../PHASE_REGISTER.md)
 
@@ -11,14 +11,14 @@ The thirteen module IDs and names below are preserved exactly. This map assigns 
 
 The eight canonical platform layers remain exactly:
 
-1. Experience
-2. API
-3. Workflow orchestration
-4. Evidence
-5. Legal knowledge
-6. Reasoning
-7. Verification
-8. Infrastructure
+1. Experience Layer
+2. API Layer
+3. Workflow Orchestration Layer
+4. Evidence Layer
+5. Legal Knowledge Layer
+6. Reasoning Layer
+7. Verification Layer
+8. Infrastructure Layer
 
 The bounded contexts are those established in ADR-0001: Identity and organisation; Workspace and matter; Document and evidence; Document intelligence; Legal knowledge and jurisdiction; Research and retrieval; Legal reasoning and verification; Contract review and drafting; Workflow and orchestration; AI orchestration; Governance and audit.
 
@@ -148,4 +148,4 @@ The map does not decide final REST/GraphQL route naming, event broker choice, ph
 - [x] Cross-module dependency direction and prohibited ownership coupling recorded.
 - [x] Phase 0–13 delivery mapping recorded without declaring future-phase features implemented.
 - [x] Every original A–M module capability and its primary layer/context assignment is preserved in [MODULE_REQUIREMENTS_TRACEABILITY.md](MODULE_REQUIREMENTS_TRACEABILITY.md).
-- [ ] Independent consistency review and repository checks passed; task commit verified.
+- [x] Independent consistency review and repository checks passed; task commit verified.
