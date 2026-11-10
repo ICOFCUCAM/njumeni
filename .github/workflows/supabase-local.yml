@@ -92,6 +92,15 @@ jobs:
         run: supabase start
       - name: Replay every migration from an empty local database
         run: supabase db reset
+      - name: Generate TypeScript database contract from the local schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          supabase gen types typescript --local --schema public > "$RUNNER_TEMP/njumeni-database.types.ts"
+          echo "BEGIN_NJUMENI_DATABASE_TYPES"
+          cat "$RUNNER_TEMP/njumeni-database.types.ts"
+          echo "END_NJUMENI_DATABASE_TYPES"
+
       - name: Lint the local database schema
         run: supabase db lint --level error
       - name: Run PostgreSQL RLS and profile lifecycle tests
