@@ -131,15 +131,23 @@ select throws_ok(
   'Non-owner cannot create invitations'
 );
 
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub = '20000000-0000-4000-8000-000000000005';
+
 select throws_ok(
-  $$select * from public.accept_organization_invitation(repeat('a', 64))$$,
+  $select * from public.accept_organization_invitation(repeat('a', 64))$,
   '42501',
   'Invitation cannot be accepted',
   'A different confirmed email cannot accept the invitation'
 );
 
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub = '20000000-0000-4000-8000-000000000004';
+
 select lives_ok(
-  $$select * from public.accept_organization_invitation(repeat('a', 64))$$,
+  $select * from public.accept_organization_invitation(repeat('a', 64))$,
   'The invited confirmed email can accept an organisation invitation'
 );
 
@@ -399,7 +407,7 @@ select lives_ok(
 
 select lives_ok(
   $sql$select public.revoke_organization_invitation(
-    (select id from public.organization_invitations where token_hash = repeat('d', 64))
+    (select id from public.organization_invitations where email_normalized = 'workspace-member@njumeni.test' and workspace_id is null and status = 'pending')
   )$sql$,
   'Owner can revoke a pending invitation'
 );
@@ -446,7 +454,7 @@ select lives_ok(
 );
 
 select is(
-  (select status from public.organization_invitations where token_hash = repeat('e', 64)),
+  (select status from public.organization_invitations where email_normalized = 'expired@njumeni.test' and status = 'expired'),
   'expired',
   'Expired pending invitation is transitioned before replacement'
 );
