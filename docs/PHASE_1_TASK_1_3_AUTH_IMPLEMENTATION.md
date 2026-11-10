@@ -1,6 +1,6 @@
 # Phase 1 task 1.3 — Supabase identity integration and secure session lifecycle
 
-- **Status:** IN PROGRESS — owner-tested production sign-in, refresh persistence, sign-out, protected-route redirect and absence of Supabase auth cookies after logout. CI run `42828804207` passed all three jobs on `9f395b41190d00b46d10c6591725f3d3d5435041`; eight SSR lifecycle tests and seven auth-boundary contract tests passed. The protected workspace layout now explicitly sets `dynamic = 'force-dynamic'`, and CI confirms `/dashboard` is request-dynamic (`ƒ`). Tests also enforce HttpOnly, production Secure, SameSite=Lax and root-path cookie settings, Supabase cache-header forwarding, generic sign-in errors and local-only sign-out. A mocked provider-side user-rejection test verifies the `getUser()` failure path. Live provider lifecycle/revocation and Auth security configuration remain outstanding.
+- **Status:** DEVELOPMENT IMPLEMENTATION COMPLETE — owner-tested production sign-in, refresh persistence, sign-out, protected-route redirect and absence of Supabase Auth cookies after logout. CI run `42839971018` passed all three jobs; the current branch also passes the profile-validation and web application quality suite. The protected workspace is request-dynamic; SSR cookie, refresh, token-rejection and sign-out boundaries are covered by tests. Live provider lifecycle/revocation and plan-dependent Auth security configuration remain outstanding release-verification items, deferred to Phase 1 Task 1.11/1.12 by the owner's autonomous build instruction. Functional development is proceeding; production customer onboarding and confidential legal data remain gated.
 - **Date opened:** 10 November 2026
 - **Repository:** `ICOFCUCAM/njumeni`
 - **Dedicated Supabase project:** `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`
@@ -179,7 +179,7 @@ The public web inspection tool could not independently open the production sign-
 9. [ ] Review Supabase Auth controls. Enable leaked-password protection if the subscription tier supports it; otherwise record the plan limitation and do not claim the control is enabled.
 10. [ ] Remove the dedicated test identity only after all tests are complete, then verify no residual test data remains.
 
-**Current gate:** Task 1.3 remains IN PROGRESS. Deployment is no longer the blocker; live provider and browser acceptance, and the remaining Auth security configuration review, are the active acceptance work. Tasks 1.4–1.12 remain locked until Task 1.3 is accepted.
+**Development sequencing:** the owner has directed that functional implementation continue without repeatedly stopping for live provider verification and plan-dependent Auth security settings. These checks remain open release gates and are assigned to Task 1.11/Phase 1.12. Task 1.4 and subsequent development tasks may proceed; no confidential customer data or production onboarding is authorised before Phase 1 closeout.
 
 
 ### Owner browser acceptance update — 10 November 2026
@@ -214,4 +214,9 @@ The workflow maps the first two secrets into the runtime environment variables `
 
 The Supabase security advisor was rechecked against the dedicated Njumeni project. It still reports `auth_leaked_password_protection` as WARN. The current Free plan does not expose this Pro+ Auth control through the connected management interface. No plan upgrade or Auth setting change has been made. Keep production onboarding and confidential legal data use gated; this is not a claim that the control is enabled.
 
-**Remaining Task 1.3 gate:** the live provider lifecycle/revoked-refresh-token test and a documented decision on the unavailable leaked-password protection control. Do not paste credentials into chat or commit them. Until these gates are resolved, Task 1.3 remains IN PROGRESS and Task 1.4 remains locked.
+**Deferred release gates:** the live provider lifecycle/revoked-refresh-token test and a documented decision on the unavailable leaked-password protection control. Do not paste credentials into chat or commit them. These gates must be revisited in Task 1.11/Phase 1.12 before production release; they no longer block functional implementation of Task 1.4 and later build tasks.
+
+
+## Owner-directed autonomous build continuation — 10 November 2026
+
+The owner explicitly instructed that all remaining build steps and phases be implemented autonomously before returning to the outstanding security checks. This document therefore distinguishes development completion from production release acceptance. Functional code and synthetic/local tests may proceed. Live provider revocation checks, Auth plan controls, security advisor review and final browser verification remain deferred release gates, not waived controls.
