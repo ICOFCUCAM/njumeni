@@ -14,10 +14,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     unavailable: 'Sign-in is temporarily unavailable. Please try again later.',
     signout: 'Sign-out could not be confirmed. Please try again.',
   };
-  let errorMessage: string | null = null;
-  if (params.error && params.error in errorMessages) {
-    errorMessage = errorMessages[params.error];
-  }
+  const errorMessage = params.error ? errorMessages[params.error] ?? null : null;
   const showRevocationWarning =
     params.message === 'signed-out' && params.warning === 'revocation-unconfirmed';
 
