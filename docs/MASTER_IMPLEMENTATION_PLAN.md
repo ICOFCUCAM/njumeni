@@ -3456,9 +3456,8 @@ This overlay is execution metadata added after the original source. It does not 
 - Task 0.6 is green: the exact original eight layer names and definitions are recovered and recorded in ADR-0001.
 - Task 0.7 is green: the A–M modules are mapped to the approved layers, bounded contexts, ownership, contracts, permissions and phase delivery in MODULE_LAYER_MAP.md and MODULE_REQUIREMENTS_TRACEABILITY.md.
 - Task 0.12 is green: the application shell, A–M routes, route-contract tests, package lock, TypeScript check and production build passed final CI run `42744161490`.
-- Task 0.13 is green; task 0.15 remains not started; 0.16 remains locked until all prerequisite tasks pass.
-- Current register count: 14 of 16 tasks green, 0 in progress, 1 not started and 1 locked.
-- No Phase 1 or later work is authorised by this overlay.
+- Tasks 0.1–0.15 are recorded GREEN in the live register. Task 0.16 Phase 0 acceptance/closeout is IN PROGRESS; Phase 1 remains locked until the dedicated closeout commit and its CI verification pass.
+- The phase register is the live status authority. Do not rely on historical task counts or status notes in this plan overlay.
 
 ## Recovered original eight platform layers
 
@@ -3490,6 +3489,6 @@ The original source explicitly identifies five public repositories for architect
 The uploaded source was 60,927 bytes, 60,008 decoded characters, 3,437 lines and approximately 6,381 words. SHA-256 of the uploaded source bytes: `4dce95748a34c529caa74fce5f2dfd3486fc9d2fa5c88ac54cc3f14f71992fe0`.
 
 
-## Owner decision — upstream reference set (10 November 2026)
+## Owner decision — initial upstream architectural references (10 November 2026)
 
-The product owner has explicitly selected the five repositories named in the original source as the complete upstream reference set for Njumeni: OpenContracts, CaseCite, Lawgent, Lovspor and Mike. The previous uncertainty about a sixth repository is closed; no sixth project is required. The assessment and implementation work must cover all five individually, with a traceable capability inventory, exact-version licence decision, security review, architecture fit, implementation mapping and tests. This decision does not authorise wholesale source-code copying or bypass licence restrictions.
+The product owner selected the five repositories named in the original source—OpenContracts, CaseCite, Lawgent, Lovspor and Mike—as the initial upstream reference projects for architectural assessment. They are not the exclusive technologies, components or sources Njumeni may use. The platform may also incorporate other suitable open-source and commercial technologies, independently developed components and additional capabilities as requirements demand. Each of the five named projects requires an individual capability, exact-version licence, security, data/dependency and architecture assessment. A capability may be adopted, adapted, reimplemented, isolated, replaced or discarded. Njumeni's product requirements and approved architecture govern selection; wholesale copying and licence circumvention are not authorised. The decision closes only the question of whether a sixth project is required to complete this initial five-project assessment set; it does not prohibit future technology or project evaluation.
