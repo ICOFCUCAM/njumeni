@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test:auth": "node --test tests/*.test.mjs",
+    "test:auth": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:auth-integration": "node --test scripts/auth-provider.integration.test.mjs"
   },
   "dependencies": {
