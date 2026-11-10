@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateMigrationChanges, validateMigrationFiles } from '../scripts/ci/check-migrations.mjs';
+import {
+  validateMigrationChanges,
+  validateMigrationFiles,
+} from '../scripts/ci/check-migrations.mjs';
 
 test('accepts CLI-shaped migration names in timestamp order', () => {
   assert.deepEqual(
@@ -32,7 +35,10 @@ test('rejects non-CLI names and duplicate timestamps; filenames define migration
 });
 
 test('allows new migration additions but rejects edits, deletions and renames', () => {
-  assert.deepEqual(validateMigrationChanges(['A supabase/migrations/20261110010000_initial.sql']), []);
+  assert.deepEqual(
+    validateMigrationChanges(['A supabase/migrations/20261110010000_initial.sql']),
+    [],
+  );
   assert.ok(
     validateMigrationChanges(['M supabase/migrations/20261110010000_initial.sql']).some((error) =>
       error.includes('immutable'),
