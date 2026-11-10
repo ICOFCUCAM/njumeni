@@ -126,7 +126,7 @@ begin
 
   return null;
 end;
-$;
+$$;
 
 revoke all on function private.record_role_binding_event() from public, anon, authenticated;
 
