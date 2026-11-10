@@ -12,7 +12,7 @@
 | Formatting | Prettier 3.5.3 | CI configuration, foundation scripts, TypeScript probe and tests |
 | Lint | ESLint 10.0.0 | CI JavaScript modules, lint configuration and foundation tests |
 | Type-check | TypeScript 5.8.3 at root; TypeScript 5.9.3 in the web package | Strict foundation compiler probe plus apps/web TypeScript check |
-| Tests | Node.js built-in test runner | Foundation, migration and app-shell contract tests for environment safety, phase locks, A–M registry, route boundaries, dependency lock consistency and migration immutability |
+| Tests | Node.js built-in test runner | Foundation, migration, original-source preservation and app-shell contract tests for environment safety, phase locks, source SHA-256, all twenty original sections, eight original layers, five named upstream repositories, A–M registry, route boundaries, dependency lock consistency and migration immutability |
 | Migration guard | scripts/ci/check-migrations.mjs | Validates CLI-shaped timestamp filenames, uniqueness, non-empty SQL, and rejects edits/deletions of existing migrations; reports a zero-migration baseline until schema work begins |
 | Foundation build | scripts/ci/verify-foundation.mjs | Required architecture, phase, environment and migration-policy documents; canonical layers/modules and safe environment template |
 | Application build | npm ci, npm run typecheck and next build in apps/web | Active for the Next.js shell; future module code remains gated by its delivery phase |
