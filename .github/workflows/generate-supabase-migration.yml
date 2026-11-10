@@ -4,7 +4,7 @@ on:
   push:
     branches: ["claude/wonderful-franklin-lt09d7"]
     paths:
-      - ".migration-requests/principal-and-user-profiles.sql"
+      - ".migration-requests/principal-profile-backfill.sql"
       - ".github/workflows/generate-supabase-migration.yml"
 
 permissions:
@@ -29,10 +29,10 @@ jobs:
         run: |
           supabase --version
           supabase migration new --help
-          supabase migration new principal_and_user_profiles
+          supabase migration new principal_profile_backfill
           migration_file="$(find supabase/migrations -maxdepth 1 -type f -name '*_principal_and_user_profiles.sql' -print -quit)"
           test -n "$migration_file"
-          test -f .migration-requests/principal-and-user-profiles.sql
+          test -f .migration-requests/principal-profile-backfill.sql
           cp .migration-requests/principal-and-user-profiles.sql "$migration_file"
           test -s "$migration_file"
           rm .migration-requests/principal-and-user-profiles.sql
