@@ -71,7 +71,7 @@ The dedicated project is provisioned. The owner confirmed the Site URL `https://
 | Expired access token with valid refresh state | Proxy refreshes and propagates replacement cookies |
 | Expired/revoked refresh token | Session cleared; sign-in required |
 | Provider-side revoked/deleted user | Protected server boundary rejects user |
-| Sign-out | Provider sign-out invoked and cookies cleared; owner confirmed production flow returned to sign-in (cookie clearing/provider response still needs automated verification) |
+| Sign-out | Provider sign-out invoked and cookies cleared; owner confirmed production flow returned to sign-in. Direct navigation to a protected route after sign-out, browser cookie clearing and provider revocation still need verification |
 | External/protocol-relative return URL | Rejected; redirect remains same-origin |
 | Cookie security | HttpOnly, Secure in production, SameSite policy and path/domain scope reviewed |
 | Cache handling | Auth responses and user-specific content are not publicly cached |
@@ -106,6 +106,7 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [x] Owner-reported production sign-in completed successfully and reached the protected dashboard.
 - [x] Owner verified that refreshing the production dashboard preserves the authenticated session without requesting sign-in again.
 - [x] Owner verified production Sign out returns to the sign-in page.
+- [ ] Owner to verify that directly opening `/dashboard` after sign-out redirects back to sign-in.
 - [ ] Verify token refresh/rotation under expiry, cookie clearing at the browser/provider boundary, and revoked-session rejection; the owner-observed sign-out navigation alone does not prove all of these.
 - [x] Full repository CI/security workflow succeeds on latest auth hardening commit `c91fceb3e3cbc5fdd07a4a2e56715b55ef45ebc6`; run `42786235941` SUCCESS, including format, lint, strict TypeScript, all 18 repository tests, migration policy, architecture checks, `npm ci`, app typecheck/build, secret scan and repository content policy.
 - [x] Dedicated Supabase project and Vercel environment variables re-verified. Health advisor has no reported notices; security advisor still reports Leaked Password Protection disabled.
