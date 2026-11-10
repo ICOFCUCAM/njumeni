@@ -372,12 +372,15 @@ set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
 
 select lives_ok(
-  $$select public.revoke_workspace_role(
-    (select id from private.workspace_role_bindings
-     where workspace_id = current_setting('njumeni.rbac.workspace_id')::uuid
-       and principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid
+  $select public.revoke_workspace_role(
+    (select binding_id
+     from public.list_role_bindings(
+       current_setting('njumeni.rbac.organization_id')::uuid,
+       current_setting('njumeni.rbac.workspace_id')::uuid
+     )
+     where principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid
        and role_key = 'workspace_viewer')
-  )$$,
+  )$,
   'Owner can revoke a workspace role binding'
 );
 
