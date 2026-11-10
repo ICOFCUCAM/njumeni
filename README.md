@@ -7,9 +7,9 @@ Njumeni is an independent legal technology platform under active architecture an
 ## Canonical repositories and product boundaries
 
 - **Njumeni application:** this repository, `ICOFCUCAM/njumeni`.
-- **Public marketing website:** `ICOFCUCAM/marketing-website`. It is independently hosted and contains no legal application data or authenticated matter workflows.
-- **Legacy CMP:** unrelated software. It must be preserved in a separate archive repository and must not be merged into Njumeni. Existing CMP files in this repository are a Phase 0 cleanup item and must not be removed before verified archival.
-- **Upstream legal projects:** reviewed as references or possible isolated adapters. They are not copied wholesale into Njumeni.
+- **Public marketing website:** [ICOFCUCAM/marketing-website](https://github.com/ICOFCUCAM/marketing-website). It is an independent public-facing repository and contains no legal application data or authenticated matter workflows. Its separate implementation and deployment lifecycle must remain decoupled from the legal application.
+- **Legacy CMP archive:** [ICOFCUCAM/njumeni-cmp-archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive). The six original CMP files were transferred and verified against their source Git blob IDs before the CMP-only files were removed from this repository.
+- **Upstream legal projects:** remain independent research sources or candidates for isolated adapters. Do not vendor entire projects or import code without technical, security and licence approval.
 
 Njumeni is intended to securely handle confidential legal documents, case files and evidence through protected application storage. Live customer data must never be committed to Git or stored in build artefacts, issue trackers or CI logs. Officially classified material requires hosting and service providers authorised for the applicable classification.
 
