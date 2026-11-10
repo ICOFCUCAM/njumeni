@@ -1,0 +1,90 @@
+name: Njumeni CI
+
+on:
+  pull_request:
+  push:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: njumeni-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Format, lint, type and foundation tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: ""
+
+      - name: Install pinned CI tools
+        run: |
+          npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund \
+            prettier@3.5.3 eslint@9.25.1 typescript@5.8.3
+
+      - name: Check formatting
+        run: |
+          npx --no-install prettier --check \
+            .prettierrc.json tsconfig.ci.json eslint.config.mjs \
+            scripts/ci/verify-foundation.mjs scripts/ci/typecheck-probe.ts \
+            tests/foundation.test.mjs
+
+      - name: Lint CI scripts and tests
+        run: |
+          npx --no-install eslint \
+            eslint.config.mjs scripts/ci/verify-foundation.mjs tests/foundation.test.mjs
+
+      - name: Type-check strict TypeScript baseline
+        run: npx --no-install tsc --project tsconfig.ci.json
+
+      - name: Run foundation tests
+        run: node --test tests/foundation.test.mjs
+
+      - name: Run foundation build/architecture integrity check
+        run: node scripts/ci/verify-foundation.mjs
+
+      - name: Run application build when the application shell exists
+        shell: bash
+        run: |
+          if [[ -f apps/web/package.json ]]; then
+            echo "Application package detected; application build must be wired to the workspace package scripts."
+            cd apps/web
+            npm run build
+          else
+            echo "::notice::No application shell exists yet. The foundation build passed; the application build gate activates in Phase 0 task 0.12."
+          fi
+
+  repository-policy:
+    name: Repository content policy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block customer documents and private-data paths
+        run: bash scripts/security/check-repository-content.sh
+
+  secret-scan:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan Git history with Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
