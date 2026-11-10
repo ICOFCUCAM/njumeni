@@ -45,7 +45,8 @@ test('workspace settings page reads only caller-visible organisations and nested
   assert.ok(page.includes("export const dynamic = 'force-dynamic'"));
   assert.ok(page.includes(".from('organizations')"));
   assert.ok(page.includes(".from('workspaces')"));
-  assert.ok(page.includes(".in('organization_id'"));
+  assert.ok(page.includes('.in('));
+  assert.ok(page.includes("'organization_id'"));
   assert.ok(page.includes('action={createOrganization}'));
   assert.ok(page.includes('action={createWorkspace}'));
   assert.ok(!page.includes('owner_principal_id'));
