@@ -10,6 +10,12 @@ const requiredFiles = [
   'docs/ENGINEERING_STANDARDS.md',
   'docs/ENVIRONMENT_STRATEGY.md',
   'docs/DATABASE_MIGRATION_POLICY.md',
+  'docs/APP_SHELL.md',
+  'apps/web/package.json',
+  'apps/web/package-lock.json',
+  'apps/web/src/modules/registry.ts',
+  'apps/web/src/components/workspace-shell.tsx',
+  'apps/web/src/app/api/health/route.ts',
   'scripts/ci/check-migrations.mjs',
   'docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md',
   'docs/architecture/MODULE_LAYER_MAP.md',
@@ -81,6 +87,11 @@ assert.ok(register.includes('| 1 | Identity, tenancy and security foundation |')
 assert.ok(masterPlan.includes('Phase 13 — Production hardening and launch'));
 assert.ok(architecture.includes('no compile-time dependency cycle'));
 assert.ok(traceability.includes('original module-level capability requirements'));
+
+const moduleRegistry = await readFile('apps/web/src/modules/registry.ts', 'utf8');
+for (const moduleName of modules) {
+  assert.ok(moduleRegistry.includes(moduleName), `Application registry is missing canonical module: ${moduleName}`);
+}
 
 const envExample = await readFile('.env.example', 'utf8');
 assert.ok(envExample.includes('replace-with-local-service-role-key'));
