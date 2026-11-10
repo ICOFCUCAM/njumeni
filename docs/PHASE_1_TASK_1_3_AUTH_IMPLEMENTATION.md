@@ -1,0 +1,109 @@
+# Phase 1 task 1.3 — Supabase identity integration and secure session lifecycle
+
+- **Status:** IN PROGRESS — implementation contract and dependency decision recorded; application integration not yet implemented.
+- **Date opened:** 10 November 2026
+- **Repository:** `ICOFCUCAM/njumeni`
+- **Dedicated Supabase project:** `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`
+- **Architecture authority:** ADR-0001, ADR-0002, Phase 1 security invariants
+- **Scope:** Supabase Auth integration, request-scoped server client, cookie session lifecycle, sign-in/sign-out, refresh, protected route boundary and automated session tests.
+- **Explicit exclusions:** user profile schema (1.4), organisation/workspace schema (1.5), membership/invitations (1.6), role/permission engine (1.7), RLS and storage policies (1.8), audit persistence (1.9), billing identity (1.10).
+
+## 1. Implementation decision
+
+Use the official Supabase JavaScript SSR integration for the Next.js 16 App Router. The intended packages are:
+
+- `@supabase/ssr` — cookie-aware browser/server client and refresh-token cookie handling.
+- `@supabase/supabase-js` — supported Supabase client and Auth API.
+
+The current Supabase documentation distinguishes cookie-based SSR sessions from header-based server authentication and recommends `@supabase/ssr` for Next.js. Do not substitute deprecated `@supabase/auth-helpers-nextjs`.
+
+The current upstream `@supabase/ssr` release verified from its changelog is 0.12.7 (8 September 2026). The exact compatible `@supabase/supabase-js` release and all transitive dependencies must be resolved by npm and committed in `apps/web/package-lock.json`; do not guess package versions or hand-author lockfile integrity values.
+
+## 2. Required implementation layout
+
+| Path | Responsibility |
+|---|---|
+| `apps/web/src/lib/supabase/client.ts` | Browser client factory, only for explicitly browser-required Auth interactions |
+| `apps/web/src/lib/supabase/server.ts` | Request-scoped server client using Next.js `cookies()`; no global user client |
+| `apps/web/src/lib/supabase/proxy.ts` | Session refresh helper; propagate request and response cookies and cache headers correctly |
+| `apps/web/src/proxy.ts` | Next.js 16 Proxy entry point; refresh session before protected rendering |
+| `apps/web/src/app/(auth)/sign-in/actions.ts` | Server Action for email/password sign-in and sign-out |
+| `apps/web/src/app/(auth)/sign-in/page.tsx` | Real sign-in form with safe error handling; no sign-up or simulated identity |
+| `apps/web/src/app/(workspace)/layout.tsx` | Server-side authenticated-user guard before rendering workspace routes |
+| `apps/web/src/app/api/health/route.ts` | Report configuration state only; never expose secrets or infer user authentication from process health |
+
+The actual route paths must be reconciled with the current tree before implementation. The existing application uses `apps/web/src/app` and route groups `(auth)` and `(workspace)`.
+
+## 3. Session and security rules
+
+1. Use the official SSR cookie adapter and PKCE-compatible Auth flow where applicable.
+2. Use a fresh Supabase server client for each request; never cache a request-bound client globally.
+3. Keep the publishable key public and all secret/service-role/database-owner credentials server-only. The service-role key is not needed for ordinary user authentication.
+4. Store session state in the SSR package's secure cookie mechanism; do not put access or refresh tokens in localStorage, URLs, client logs or analytics.
+5. In Next.js 16, use the `proxy.ts` convention (not the pre-16 `middleware.ts` convention) to refresh the session. Preserve refreshed cookies on both the forwarded request and response, and preserve Supabase cache-control headers.
+6. Use `auth.getClaims()` in the Proxy to validate/refresh JWT claims according to current Supabase guidance. Use `auth.getUser()` in the protected server boundary where current provider-side user/session state and revocation checks are required. Never use `getSession()` alone as proof of identity in server code.
+7. Redirect unauthenticated users to sign-in. Preserve only a validated same-origin relative return path; reject protocol-relative URLs and external origins.
+8. Sign-out must call the provider and clear session cookies. Do not treat client-side navigation or cookie deletion alone as provider-side revocation.
+9. No open registration, tenant selection, role assignment or privileged user creation is introduced in this task. Those require their own approved onboarding and tenancy tasks.
+10. All Auth/network responses are non-cacheable. Do not log credentials, tokens, raw provider payloads or confidential legal content.
+11. No real customer legal data is used in tests. No service-role credential is introduced into the browser bundle.
+12. Missing environment configuration must fail closed for authentication routes and protected workspace access; it must never silently fall back to a mock identity.
+
+## 4. Environment contract
+
+The web application requires:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+
+These must be supplied through the deployment/local environment secret/configuration system. A publishable key is not an access-control boundary; RLS and server-side authorisation remain mandatory. No live key value is to be committed to Git or written into CI logs.
+
+The dedicated project is provisioned, but Auth redirect allow-lists, email provider/SMTP, MFA policy, password policy, rate limits and email-confirmation behaviour have not yet been verified through the connected management interface. These settings must be reviewed before enabling real user sign-in. Do not create a test user in the project as a substitute for configuration review.
+
+## 5. Test and acceptance matrix
+
+| Test | Required result |
+|---|---|
+| Missing environment variables | Auth setup fails closed; protected routes do not render |
+| No session | Workspace routes redirect to sign-in |
+| Valid session | Server validates provider identity and permits the authenticated boundary only |
+| Tampered/invalid JWT | Rejected; no protected content rendered |
+| Expired access token with valid refresh state | Proxy refreshes and propagates replacement cookies |
+| Expired/revoked refresh token | Session cleared; sign-in required |
+| Provider-side revoked/deleted user | Protected server boundary rejects user |
+| Sign-out | Provider sign-out invoked and cookies cleared |
+| External/protocol-relative return URL | Rejected; redirect remains same-origin |
+| Cookie security | HttpOnly, Secure in production, SameSite policy and path/domain scope reviewed |
+| Cache handling | Auth responses and user-specific content are not publicly cached |
+| Browser bundle | No secret/service-role key or server-only module included |
+| Concurrent refresh | Document and test refresh-token rotation behaviour; handle stale-session races without granting access |
+| CI | Locked install, typecheck, tests, Next.js production build and secret scan pass |
+
+A passing unit test with mocked Auth is not sufficient by itself. Before task completion, execute an integration check against the dedicated Njumeni project using a dedicated non-production test identity, verify login/refresh/logout/revocation, then remove the test identity and confirm the project has no residual test data. No confidential matter data may be used.
+
+## 6. Current blocker — reproducible dependency installation
+
+The existing web package has no Supabase SDK dependencies, and the committed lockfile contains neither `@supabase/ssr` nor `@supabase/supabase-js`.
+
+The current execution environment cannot resolve `registry.npmjs.org` or `github.com` from its local container. Consequently, it cannot run npm to resolve and verify the exact dependency graph or produce a trustworthy lockfile. The existing CI uses `npm ci`, so editing only `package.json` would break reproducible CI. Hand-authoring transitive package metadata or integrity hashes is not acceptable.
+
+**Safe next action:** complete the package installation and lockfile generation in a network-enabled development runner or controlled GitHub Actions dependency-update workflow. Commit the exact package versions and generated lockfile together. Then implement the files above and run the complete CI and dedicated-project Auth integration tests. Do not bypass `npm ci`, remove the lockfile, or replace it with floating dependency ranges.
+
+This is an execution-environment limitation, not a Supabase project provisioning blocker.
+
+## 7. Acceptance status
+
+- [x] Existing app routes, framework version and placeholder Auth boundary inspected.
+- [x] Dedicated Njumeni project and publishable-key availability verified in Task 1.2.
+- [x] Current Supabase SSR documentation and package-selection guidance reviewed.
+- [x] Next.js 16 Proxy convention and current Supabase cookie/session requirements identified.
+- [x] Security, session, redirect, cache and test acceptance contract documented.
+- [ ] Exact SDK dependency graph installed and pinned.
+- [ ] Committed npm lockfile updated and reproducible `npm ci` verified.
+- [ ] SSR clients, Proxy refresh and server-side protected route guard implemented.
+- [ ] Sign-in/sign-out UI and server actions implemented.
+- [ ] Automated session and security tests pass.
+- [ ] Dedicated-project integration checks pass and test identity is removed.
+- [ ] CI succeeds on implementation commit.
+
+**Task state:** 🟡 IN PROGRESS. No authentication functionality has been enabled or represented as operational. The foundation preview remains non-operational for real users until all acceptance checks pass.
