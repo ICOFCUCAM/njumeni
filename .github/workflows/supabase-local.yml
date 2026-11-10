@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   local-database:
@@ -38,11 +38,33 @@ jobs:
           basename "$probe" | tee "$RUNNER_TEMP/cli-generated-migration-name.txt"
           rm "$probe"
 
+      - name: Generate and commit the profile hardening migration with the CLI
+        if: github.event_name == 'push' && github.ref == 'refs/heads/claude/wonderful-franklin-lt09d7'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find supabase/migrations -maxdepth 1 -type f -name '*_principal_profile_hardening.sql' -print -quit | grep -q .; then
+            echo "Profile hardening migration already exists."
+            exit 0
+          fi
+          supabase migration new principal_profile_hardening
+          migration="$(find supabase/migrations -maxdepth 1 -type f -name '*_principal_profile_hardening.sql' -print -quit)"
+          test -n "$migration"
+          cp scripts/db/principal-profile-hardening.sql "$migration"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$migration"
+          git commit -m "db(profile): generate CLI-named principal hardening migration"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
       - name: Start isolated local Supabase stack
         run: supabase start
 
       - name: Replay every migration from an empty local database
         run: supabase db reset
+
+      - name: Run PostgreSQL RLS and profile lifecycle tests
+        run: supabase test db
 
       - name: Stop local Supabase stack
         if: always()
