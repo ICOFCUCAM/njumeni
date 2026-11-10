@@ -16,7 +16,28 @@ export default async function WorkspaceLayout({ children }: { children: ReactNod
   } = await supabase.auth.getUser();
   if (error || !user) redirect('/sign-in');
 
+  const { data: personalOrganisation } = await supabase
+    .from('organizations')
+    .select('id, name')
+    .eq('kind', 'personal')
+    .maybeSingle();
+
+  const { data: personalWorkspace } = personalOrganisation
+    ? await supabase
+        .from('workspaces')
+        .select('name')
+        .eq('organization_id', personalOrganisation.id)
+        .eq('kind', 'personal')
+        .maybeSingle()
+    : { data: null };
+
   return (
-    <WorkspaceShell userEmail={user.email ?? 'Authenticated account'}>{children}</WorkspaceShell>
+    <WorkspaceShell
+      userEmail={user.email ?? 'Authenticated account'}
+      organizationName={personalOrganisation?.name ?? 'Organisation pending'}
+      workspaceName={personalWorkspace?.name ?? 'Workspace pending'}
+    >
+      {children}
+    </WorkspaceShell>
   );
 }
