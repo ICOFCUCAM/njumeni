@@ -322,12 +322,12 @@ select throws_ok(
 );
 
 select lives_ok(
-  $select public.set_workspace_membership_status(
+  $$select public.set_workspace_membership_status(
     (select id from public.workspace_memberships
      where workspace_id = current_setting('njumeni.rbac.workspace_id')::uuid
        and principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid),
     'suspended'
-  )$,
+  )$$,
   'Workspace manager can suspend a member in the managed workspace'
 );
 
@@ -397,12 +397,12 @@ select lives_ok(
 );
 
 select lives_ok(
-  $select public.set_organization_membership_status(
+  $$select public.set_organization_membership_status(
     (select id from public.organization_memberships
      where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
        and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
     'revoked'
-  )$,
+  )$$,
   'Owner can revoke a previously suspended organisation membership'
 );
 
@@ -428,7 +428,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
 
 select lives_ok(
-  $select public.revoke_workspace_role(
+  $$select public.revoke_workspace_role(
     (select binding_id
      from public.list_role_bindings(
        current_setting('njumeni.rbac.organization_id')::uuid,
@@ -436,7 +436,7 @@ select lives_ok(
      )
      where principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid
        and role_key = 'workspace_viewer')
-  )$,
+  )$$,
   'Owner can revoke a workspace role binding'
 );
 
