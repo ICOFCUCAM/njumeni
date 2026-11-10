@@ -764,3 +764,93 @@ a:focus-visible {
     flex-direction: column;
   }
 }
+
+
+.workspace-switcher {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+.workspace-switcher:hover {
+  border-color: #d8c9a9;
+  background: #f7f5ed;
+}
+.profile-field select {
+  width: 100%;
+  min-height: 43px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  padding: 10px 12px;
+  color: var(--ink);
+  font: inherit;
+}
+.profile-field select:focus {
+  border-color: var(--gold);
+  outline: 3px solid rgba(181, 140, 75, 0.16);
+}
+.tenant-list {
+  display: grid;
+  gap: 17px;
+}
+.tenant-panel {
+  max-width: none;
+  margin-top: 0;
+}
+.tenant-panel .profile-panel-heading .page-eyebrow {
+  margin-bottom: 6px;
+}
+.tenant-panel .profile-panel-heading h2 {
+  font-size: 23px;
+}
+.tenant-workspaces {
+  padding: 20px 0 4px;
+}
+.tenant-workspaces h3 {
+  margin: 0 0 10px;
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 750;
+}
+.tenant-workspaces ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tenant-workspaces li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fbfaf6;
+  padding: 11px 13px;
+}
+.tenant-workspaces li strong,
+.tenant-workspaces li small {
+  display: block;
+}
+.tenant-workspaces li strong {
+  color: var(--ink);
+  font-size: 11px;
+}
+.tenant-workspaces li small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.workspace-status {
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.tenant-create-form {
+  margin-top: 15px;
+  border-top: 1px solid var(--line);
+}
