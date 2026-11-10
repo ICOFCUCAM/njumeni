@@ -3455,9 +3455,9 @@ This overlay is execution metadata added after the original source. It does not 
 - Tasks 0.1–0.11 and 0.14 are recorded green in the live register.
 - Task 0.6 is green: the exact original eight layer names and definitions are recovered and recorded in ADR-0001.
 - Task 0.7 is green: the A–M modules are mapped to the approved layers, bounded contexts, ownership, contracts, permissions and phase delivery in MODULE_LAYER_MAP.md and MODULE_REQUIREMENTS_TRACEABILITY.md.
-- Task 0.12 remains in progress: the application shell is implemented and awaiting final committed CI verification.
+- Task 0.12 is green: the application shell, A–M routes, route-contract tests, package lock, TypeScript check and production build passed final CI run `42744161490`.
 - Tasks 0.13 and 0.15 remain not started; 0.16 remains locked until all prerequisite tasks pass.
-- Current register count: 12 of 16 tasks green, 1 in progress, 2 not started and 1 locked.
+- Current register count: 13 of 16 tasks green, 0 in progress, 2 not started and 1 locked.
 - No Phase 1 or later work is authorised by this overlay.
 
 ## Recovered original eight platform layers
