@@ -55,6 +55,9 @@ export function assessJurisdictionCoverage(
       throw new Error('JURISDICTION_SOURCE_COVERAGE_DATES_INVALID');
     }
   }
+  const eligibleSources=profile.sources.filter(source=>
+    source.rightsStatus==='approved'&&source.sourceStatus==='active'&&source.ingestionEnabled
+  );
   const usable=profile.sources.filter(source=>
     source.rightsStatus==='approved'&&source.sourceStatus==='active'&&source.ingestionEnabled&&
     isRecent(source.lastVerifiedAt,now,profile.reviewIntervalDays)&&
@@ -90,7 +93,7 @@ export function assessJurisdictionCoverage(
   const complete=profile.requestedAuthorityTypes.length>0&&profile.requestedLanguages.length>0&&unsupportedAuthorityTypes.length===0&&
     unsupportedLanguages.length===0&&staleSources.length===0;
   return {
-    status:complete?'supported':usable.length>0?'pilot':'planned',
+    status:complete?'supported':eligibleSources.length>0?'pilot':'planned',
     supportedAuthorityTypes,unsupportedAuthorityTypes,supportedLanguages,unsupportedLanguages,
     staleSources,disabledSources,knownGaps,reasons,
   };
