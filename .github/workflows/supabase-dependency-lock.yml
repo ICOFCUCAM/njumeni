@@ -44,7 +44,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Format changed application and test sources
-        run: npx --yes prettier@3.5.3 --write tests/app-shell.test.mjs apps/web/src/app/globals.css "apps/web/src/**/*.tsx"
+        run: npx --yes prettier@3.5.3 --write tests/app-shell.test.mjs apps/web/src/app/globals.css "apps/web/src/**/*.tsx" "apps/web/src/app/(workspace)/dashboard/page.tsx"
 
       - name: Type-check application
         working-directory: apps/web
