@@ -378,7 +378,7 @@ select lives_ok(
      where workspace_id = current_setting('njumeni.rbac.workspace_id')::uuid
        and principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid),
     'suspended'
-  )$$,,
+  )$$,
   'Workspace manager can suspend a member in the managed workspace'
 );
 
@@ -419,7 +419,7 @@ select lives_ok(
      where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
        and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
     'suspended'
-  )$$,,
+  )$$,
   'Owner can suspend an organisation member with assigned roles'
 );
 
@@ -443,7 +443,7 @@ select lives_ok(
      where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
        and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
     'revoked'
-  )$$,,
+  )$$,
   'Owner can revoke a previously suspended organisation membership'
 );
 
