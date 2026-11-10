@@ -43,7 +43,13 @@ function createHarness({ logoutStatus = 204, tokenStatus = 200 } = {}) {
   const fetch = async (input, init = {}) => {
     const requestUrl = new URL(input instanceof Request ? input.url : String(input));
     const method = init.method ?? (input instanceof Request ? input.method : 'GET');
-    requests.push({ url: requestUrl, method, body: init.body });
+    const headers = new Headers(init.headers ?? (input instanceof Request ? input.headers : undefined));
+    requests.push({
+      url: requestUrl,
+      method,
+      body: init.body,
+      authorization: headers.get('Authorization'),
+    });
 
     if (requestUrl.pathname.endsWith('/user')) {
       return userStatus === 200
@@ -186,6 +192,25 @@ test('provider-side deleted or revoked user is rejected by getUser', async () =>
   assert.ok(
     harness.requests.some(({ url }) => url.pathname.endsWith('/user')),
     'the server must consult the provider user endpoint rather than trust local claims alone',
+  );
+});
+
+test('a tampered access token is sent for authoritative provider verification and rejected', async () => {
+  const harness = createHarness();
+  harness.setUserStatus(401);
+  const tamperedAccessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJub3QtYS11c2VyIn0.invalid-signature';
+
+  const { data, error } = await harness.client.auth.getUser(tamperedAccessToken);
+
+  assert.ok(error, 'the Auth provider must reject a tampered access token');
+  assert.equal(data.user, null, 'a rejected token must not produce an authenticated user');
+  assert.ok(
+    harness.requests.some(
+      ({ url, authorization }) =>
+        url.pathname.endsWith('/user') &&
+        authorization === `Bearer ${tamperedAccessToken}`,
+    ),
+    'the explicit token must be sent to the authoritative Auth user endpoint',
   );
 });
 
