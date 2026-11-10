@@ -47,23 +47,28 @@ jobs:
         run: node scripts/ci/verify-foundation.mjs
 
       - name: Build application shell when present
+        if: hashFiles('apps/web/package.json') != ''
+        working-directory: apps/web
+        env:
+          # Non-routable placeholders ensure the protected route is classified as
+          # request-dynamic during CI build without using live provider credentials.
+          NEXT_PUBLIC_SUPABASE_URL: https://njumeni-ci.invalid
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+        run: |
+          npm ci --no-audit --no-fund
+          npm run test:auth
+          npm run typecheck
+          npm run build
+
+      - name: Run optional live Supabase Auth integration test
+        if: hashFiles('apps/web/package.json') != ''
+        working-directory: apps/web
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NJUMENI_TEST_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NJUMENI_TEST_SUPABASE_PUBLISHABLE_KEY }}
           NJUMENI_TEST_EMAIL: ${{ secrets.NJUMENI_TEST_EMAIL }}
           NJUMENI_TEST_PASSWORD: ${{ secrets.NJUMENI_TEST_PASSWORD }}
-        shell: bash
-        run: |
-          if [[ -f apps/web/package.json ]]; then
-            cd apps/web
-            npm ci --no-audit --no-fund
-            npm run test:auth
-            npm run typecheck
-            npm run build
-            npm run test:auth-integration
-          else
-            echo "::notice::No application package exists in this change; application build remains a required check once apps/web is present."
-          fi
+        run: npm run test:auth-integration
 
   content-policy:
     name: Block customer documents and private-data paths
