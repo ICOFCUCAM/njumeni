@@ -1,6 +1,6 @@
 # Phase 1 task 1.3 — Supabase identity integration and secure session lifecycle
 
-- **Status:** IN PROGRESS — SDKs and lockfile are pinned; server-side Auth integration is implemented; live provider verification remains.
+- **Status:** IN PROGRESS — production email/password sign-in has been owner-tested successfully and reached the protected dashboard; refresh, sign-out, revocation and automated lifecycle tests remain.
 - **Date opened:** 10 November 2026
 - **Repository:** `ICOFCUCAM/njumeni`
 - **Dedicated Supabase project:** `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`
@@ -58,7 +58,7 @@ The web application requires:
 
 These must be supplied through the deployment/local environment secret/configuration system. A publishable key is not an access-control boundary; RLS and server-side authorisation remain mandatory. No live key value is to be committed to Git or written into CI logs.
 
-The dedicated project is provisioned, but Auth redirect allow-lists, email provider/SMTP, MFA policy, password policy, rate limits and email-confirmation behaviour have not yet been verified through the connected management interface. These settings must be reviewed before enabling real user sign-in. The current application repository has no linked Njumeni Vercel application deployment and no deployment environment variables have been configured. Do not create a test user in the project as a substitute for configuration review.
+The dedicated project is provisioned. The owner confirmed the Site URL `https://njumeni-web.vercel.app` and redirect allow-list `https://njumeni-web.vercel.app/**`; the connected management interface cannot independently read these dashboard settings back. The Njumeni Vercel project is linked, the Supabase URL and publishable key are configured for Production, Preview and Development, and the production deployment is READY. A dedicated confirmed test identity now exists in `auth.users` (count 1). The owner reports successfully signing in through the production application and reaching the protected dashboard. Email provider/SMTP, MFA policy, password policy, rate limits and other provider security settings still require review. Supabase security advisors currently report Leaked Password Protection disabled; enable it before production onboarding.
 
 ## 5. Test and acceptance matrix
 
@@ -101,10 +101,12 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [x] Request-scoped SSR server client, Next.js 16 Proxy refresh helper and server-side protected workspace user check implemented.
 - [x] Email/password sign-in and local sign-out server actions implemented; public self-registration remains disabled.
 - [ ] Automated session and security tests pass in full repository CI; current source-contract tests and production build pass, but provider-backed lifecycle tests are not yet implemented/executed.
-- [ ] Dedicated-project integration checks pass and test identity is removed; current `auth.users` count is zero.
-- [x] CI succeeds on implementation commit `f3d9ede729ee65e321cc1c98a73f4e41bf4dc011`; run `42773609043` SUCCESS.
+- [x] Dedicated test identity provisioned through the Supabase Dashboard; `auth.users` count is 1 and the account is email-confirmed.
+- [x] Owner-reported production sign-in completed successfully and reached the protected dashboard.
+- [ ] Verify session persistence after browser refresh, token refresh behaviour, sign-out and revoked-session rejection; do not claim these lifecycle checks passed yet.
+- [x] Full repository CI/security workflow succeeds on commit `8b27fec6b1a1a74109b8f73f865d9b7ef50be2e0`; run `42777330545` SUCCESS, including format, lint, strict TypeScript baseline, foundation/migration tests, app build, secret scan and repository content policy.
 - [x] Dedicated Supabase project and Vercel environment variables re-verified; no Supabase security or health advisor notices.
 - [x] Production deployment rebuilt successfully from recovery commit `438f0f99a5910cb653d1b4b2740c2b9143ea2e38`; Vercel state READY and application build, TypeScript validation and route generation passed.
 - [x] Owner-confirmed Supabase Site URL and production redirect allow-list recorded; direct dashboard read-back is not available through the connected interface.
 
-**Task state:** 🟡 IN PROGRESS. The code path is implemented and production deployment is READY. The owner has confirmed the production Site URL and redirect allow-list. Real sign-in is not yet declared operational: provider security settings, a controlled test identity, automated session lifecycle tests and end-to-end login/refresh/logout/revocation checks remain outstanding. Keep public self-registration disabled and do not accept confidential legal content.
+**Task state:** 🟡 IN PROGRESS. The production application is READY and the owner has successfully reached the protected dashboard using a confirmed test identity. This establishes a successful real sign-in, but does not yet prove refresh-token rotation, persistence across reloads, sign-out, revocation handling or the full session security matrix. Automated provider-backed lifecycle tests remain outstanding. Supabase's security advisor also reports Leaked Password Protection disabled; enable it and review the remaining Auth provider controls. Keep public self-registration disabled and do not accept confidential legal content until tenant isolation, RLS, storage, audit and provider-egress controls are implemented and verified.
