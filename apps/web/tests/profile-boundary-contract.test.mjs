@@ -25,7 +25,14 @@ test('profile updates require a verified Supabase user and resolve the principal
 });
 
 test('profile updates accept only bounded presentation fields', () => {
-  for (const name of ['display_name', 'given_name', 'family_name', 'avatar_url', 'locale', 'timezone']) {
+  for (const name of [
+    'display_name',
+    'given_name',
+    'family_name',
+    'avatar_url',
+    'locale',
+    'timezone',
+  ]) {
     assert.ok(action.includes("'" + name + "'"), 'missing field validation: ' + name);
   }
   assert.ok(action.includes('LOCALE_PATTERN'));
