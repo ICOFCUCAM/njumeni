@@ -76,6 +76,68 @@ create index role_audit_events_org_time_idx
 create index role_audit_events_target_time_idx
   on private.role_audit_events (target_principal_id, occurred_at desc);
 
+create or replace function private.record_role_binding_event()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  v_actor uuid;
+  v_target uuid;
+  v_organization uuid;
+  v_workspace uuid;
+  v_role text;
+  v_action text;
+begin
+  v_actor := private.current_principal_id();
+
+  if tg_op = 'INSERT' then
+    v_target := new.principal_id;
+    v_role := new.role_key;
+    v_action := 'assigned';
+    if tg_table_name = 'organization_role_bindings' then
+      v_organization := new.organization_id;
+    else
+      v_workspace := new.workspace_id;
+      select workspace.organization_id into v_organization
+      from public.workspaces as workspace
+      where workspace.id = new.workspace_id;
+    end if;
+  else
+    v_target := old.principal_id;
+    v_role := old.role_key;
+    v_action := 'revoked';
+    if tg_table_name = 'organization_role_bindings' then
+      v_organization := old.organization_id;
+    else
+      v_workspace := old.workspace_id;
+      select workspace.organization_id into v_organization
+      from public.workspaces as workspace
+      where workspace.id = old.workspace_id;
+    end if;
+  end if;
+
+  insert into private.role_audit_events (
+    actor_principal_id, target_principal_id, organization_id,
+    workspace_id, role_key, action
+  )
+  values (v_actor, v_target, v_organization, v_workspace, v_role, v_action);
+
+  return coalesce(new, old);
+end;
+$;
+
+revoke all on function private.record_role_binding_event() from public, anon, authenticated;
+
+create trigger organization_role_bindings_record_event
+  after insert or delete on private.organization_role_bindings
+  for each row execute function private.record_role_binding_event();
+
+create trigger workspace_role_bindings_record_event
+  after insert or delete on private.workspace_role_bindings
+  for each row execute function private.record_role_binding_event();
+
 alter table private.permission_catalog enable row level security;
 alter table private.role_catalog enable row level security;
 alter table private.role_permissions enable row level security;
@@ -529,9 +591,6 @@ begin
       and binding.principal_id = p_principal_id
       and binding.role_key = p_role_key;
   else
-    insert into private.role_audit_events (
-      actor_principal_id, target_principal_id, organization_id, role_key, action
-    ) values (v_actor, p_principal_id, p_organization_id, p_role_key, 'assigned');
   end if;
 
   return v_binding_id;
@@ -569,9 +628,6 @@ begin
   end if;
 
   delete from private.organization_role_bindings where id = v_binding.id;
-  insert into private.role_audit_events (
-    actor_principal_id, target_principal_id, organization_id, role_key, action
-  ) values (v_actor, v_binding.principal_id, v_binding.organization_id, v_binding.role_key, 'revoked');
 
   return true;
 end;
@@ -645,9 +701,6 @@ begin
       and binding.principal_id = p_principal_id
       and binding.role_key = p_role_key;
   else
-    insert into private.role_audit_events (
-      actor_principal_id, target_principal_id, organization_id, workspace_id, role_key, action
-    ) values (v_actor, p_principal_id, p_organization_id, p_workspace_id, p_role_key, 'assigned');
   end if;
 
   return v_binding_id;
@@ -694,9 +747,6 @@ begin
   end if;
 
   delete from private.workspace_role_bindings where id = v_binding.id;
-  insert into private.role_audit_events (
-    actor_principal_id, target_principal_id, organization_id, workspace_id, role_key, action
-  ) values (v_actor, v_binding.principal_id, v_organization_id, v_binding.workspace_id, v_binding.role_key, 'revoked');
 
   return true;
 end;
@@ -752,6 +802,17 @@ begin
       where workspace.organization_id = v_membership.organization_id
     );
 
+  if p_status = 'revoked' then
+    delete from private.workspace_role_bindings as binding
+    using public.workspaces as workspace
+    where binding.workspace_id = workspace.id
+      and workspace.organization_id = v_membership.organization_id
+      and binding.principal_id = v_membership.principal_id;
+    delete from private.organization_role_bindings as binding
+    where binding.organization_id = v_membership.organization_id
+      and binding.principal_id = v_membership.principal_id;
+  end if;
+
   return true;
 end;
 $$;
@@ -799,6 +860,12 @@ begin
   update public.workspace_memberships
   set status = p_status
   where id = v_membership.id;
+
+  if p_status = 'revoked' then
+    delete from private.workspace_role_bindings as binding
+    where binding.workspace_id = v_membership.workspace_id
+      and binding.principal_id = v_membership.principal_id;
+  end if;
 
   return true;
 end;
