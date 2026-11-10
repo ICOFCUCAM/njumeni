@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
 import { ModuleIcon, type ModuleIconName } from '@/components/module-icon';
 import { moduleRegistry } from '@/modules/registry';
+import { signOut } from '@/app/(auth)/actions';
 
 type NavigationItem = { label: string; href: string; icon: ModuleIconName };
 const navigationGroups: { label: string; items: NavigationItem[] }[] = [
@@ -50,7 +51,7 @@ function activeLabel(pathname: string) {
     )?.shortLabel ?? 'Workspace'
   );
 }
-export function WorkspaceShell({ children }: { children: ReactNode }) {
+export function WorkspaceShell({ children, userEmail }: { children: ReactNode; userEmail: string }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const title = activeLabel(pathname);
@@ -80,7 +81,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
         <div className="workspace-switcher">
           <span>
             <small>Current environment</small>
-            <strong>Preview workspace</strong>
+            <strong>Authenticated account</strong>
           </span>
           <span aria-hidden="true" style={{ color: 'var(--gold)' }}>
             ⌄
@@ -134,10 +135,10 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
             <span className="breadcrumb-label">Njumeni / {title}</span>
           </div>
           <div className="topbar-right">
-            <span className="preview-pill">
-              <span className="preview-dot" /> Foundation preview
-            </span>
-            <span className="guest-label">Guest view</span>
+            <span className="account-email" title={userEmail}>{userEmail}</span>
+            <form action={signOut}>
+              <button className="sign-out-button" type="submit">Sign out</button>
+            </form>
           </div>
         </header>
         <main className="content-wrap">{children}</main>
