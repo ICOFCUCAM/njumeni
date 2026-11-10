@@ -24,6 +24,11 @@
       "path": "supabase/migrations/20261110220000_legal_ingestion_persistence.sql",
       "blob_sha": "881634a1f4d576dff9fb392bbcf6a6872ada808a",
       "reason": "Correct the unshipped Phase 2.5 persistence migration after clean local replay exposed a truncated PL/pgSQL dollar-quote delimiter in the immutable authority-version trigger replacement. Use a named, matched function delimiter. No hosted migration has been applied."
+    },
+    {
+      "path": "supabase/migrations/20261110280000_legal_source_activation_audit.sql",
+      "blob_sha": "704549fb8e339cf7eb83eb1b2660c23afe6e014d",
+      "reason": "Correct the unshipped Phase 2 source activation migration after clean local replay exposed a truncated adapter-key validation expression and duplicated trailing PL/pgSQL block. Rebuild the function with explicit evidence-row state and complete validation. No hosted migration has been applied."
     }
   ]
 }
