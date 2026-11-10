@@ -21,7 +21,7 @@ export const moduleRegistry: ModuleDefinition[] = [
       'The central legal intelligence experience for questions, research and source-linked analysis.',
     description:
       'The unified entry point for legal questions, jurisdiction-aware research, legal issue identification and source-grounded intelligence.',
-    deliveryPhase: 'Phases 5â7',
+    deliveryPhase: 'Phases 5–7',
     icon: 'sparkles',
   },
   {
@@ -45,7 +45,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Organise documents, exhibits, chronology, extraction and evidence provenance.',
     description:
       'A secure evidence foundation for originals, immutable versions, extracted passages, chronology, relationships and chain-of-custody records.',
-    deliveryPhase: 'Phases 3â4',
+    deliveryPhase: 'Phases 3–4',
     icon: 'file',
   },
   {
@@ -57,7 +57,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Manage matter lifecycles, parties, tasks, deadlines and procedural history.',
     description:
       'The matter context coordinates case intake, lifecycle, assignments, deadlines, events and authorised links to evidence and legal work product.',
-    deliveryPhase: 'Phases 9â10',
+    deliveryPhase: 'Phases 9–10',
     icon: 'folder',
   },
   {
@@ -81,7 +81,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Structure legal issues, facts, rules, claims, arguments and counterarguments.',
     description:
       'A provenance-preserving argument graph and reasoning workspace that distinguishes facts, allegations, inferences, rules and legal conclusions.',
-    deliveryPhase: 'Phases 6â7',
+    deliveryPhase: 'Phases 6–7',
     icon: 'scale',
   },
   {
@@ -118,7 +118,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Bring client matters, research, evidence, drafting and review into one workspace.',
     description:
       'A professional workspace for client and matter assignments, research, evidence, argument development, drafting, collaboration and reviewed work product.',
-    deliveryPhase: 'Phases 9â10',
+    deliveryPhase: 'Phases 9–10',
     icon: 'briefcase',
   },
   {
@@ -166,7 +166,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Curate research, precedents, opinions, templates, arguments and approved knowledge.',
     description:
       'A governed knowledge context for saved research, precedents, opinions, templates, approved arguments, collections, taxonomies and access policies.',
-    deliveryPhase: 'Phases 9â10',
+    deliveryPhase: 'Phases 9–10',
     icon: 'book',
   },
 ];
