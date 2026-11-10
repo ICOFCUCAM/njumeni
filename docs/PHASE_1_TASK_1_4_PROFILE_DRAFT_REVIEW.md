@@ -1,6 +1,6 @@
 # Phase 1.4 — Principal and profile draft review
 
-- **Status:** PREPARATORY REVIEW ONLY — Task 1.4 remains LOCKED until Task 1.3 is formally closed.
+- **Status:** IMPLEMENTATION IN PROGRESS under the owner-directed autonomous build continuation dated 10 November 2026. Task 1.3's live provider verification and plan-dependent Auth control are deferred to Task 1.11/Phase 1.12; this sequencing decision does not authorise production customer data.
 - **Date:** 10 November 2026
 - **Repository:** `ICOFCUCAM/njumeni`
 - **Database:** dedicated Njumeni Supabase project `vvjpsejeeffykaozfbik` (Stockholm / `eu-north-1`)
@@ -35,7 +35,7 @@ These are useful foundations, but static source-contract tests do not prove the 
 
 ## 3. Required corrections before migration approval
 
-### 3.1 Principal status must participate in identity resolution
+### 3.1 Principal status must participate in identity resolution — implementation added
 
 The current `private.current_principal_id()` helper returns the mapped principal without checking `private.principals.status`. That means a principal marked `suspended` or `deactivated` would still resolve for the profile RLS policies.
 
@@ -49,13 +49,13 @@ Before approval, change the lookup so it returns a principal only when its statu
 
 This profile-level check is not a substitute for the future central server-side account-status guard on every protected application operation. Record that as a cross-task security dependency.
 
-### 3.2 HTTPS avatar URL validation must be consistent
+### 3.2 HTTPS avatar URL validation must be consistent — application validation added
 
 The application action accepts an HTTPS scheme case-insensitively, while the SQL check currently uses a case-sensitive `^https://` expression. Uppercase `HTTPS://` can pass application validation and then fail in PostgreSQL.
 
 Choose one canonical validation rule and apply it consistently in the action and SQL constraint. Add tests for lowercase HTTPS, uppercase/mixed-case HTTPS, HTTP, malformed URLs, and maximum length. Consider parsing with the platform URL parser and requiring `protocol === 'https:'`, rather than relying only on a prefix regex.
 
-### 3.3 Time-zone validation
+### 3.3 Time-zone validation — application validation added
 
 The current action and SQL only check that the timezone string is non-empty and within 100 characters. Validate that it is a supported IANA time-zone identifier before accepting it. Preserve a stable default (for example `UTC`) and test invalid names.
 
@@ -96,7 +96,7 @@ The current Node source-contract test checks selected source strings. It does no
 
 Do not enable the profile route in production before the corresponding schema exists and the migration has been applied through the approved deployment process.
 
-## 5. Acceptance rule
+## 5. Current implementation status and acceptance rule
 
-Task 1.4 remains locked. This review is preparatory and does not authorise a migration deployment. After Task 1.3 closes, resolve the findings above, perform local replay and database security tests, obtain review, and only then promote the profile feature to staging.
+Task 1.4 is active for development. Shared application validation now parses avatar URLs with the platform URL parser, requires HTTPS, rejects embedded credentials and enforces length; time zones are checked against supported IANA identifiers; locale defaults consistently to `en`. A pgTAP suite covers profile provisioning, per-user RLS, suspended/deactivated principals, immutable identity bindings and profile ownership, invalid URL/time-zone rejection, table privileges and Auth-user deletion cascades. The SQL template hardens principal resolution and database-level profile checks. The CI workflow is responsible for CLI-generated migration naming and clean local replay. Task 1.4 will not be marked GREEN until the migration replay, pgTAP suite, application CI, review and documentation all pass. No hosted DDL has been applied.
 
