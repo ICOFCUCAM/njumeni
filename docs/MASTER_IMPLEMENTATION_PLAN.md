@@ -38,6 +38,23 @@ These are the original twenty agreed sections, restored from the earlier project
 19. **Permanent architectural decisions** — decisions that must remain stable unless formally reviewed and changed.
 20. **Immediate execution/foundation** — the initial audit, environment, engineering foundation and first executable tasks.
 
+### Original eight architectural layers — canonical names and responsibilities
+
+The original Njumeni architecture defines these eight integrated platform layers. Preserve the exact names, sequence and responsibilities; do not rename or substitute another taxonomy.
+
+| Order | Canonical layer | Architectural responsibility |
+|---:|---|---|
+| 1 | **Experience** | Web applications, dashboards, mobile-ready interfaces |
+| 2 | **API** | Authentication, API gateway, tenant and permission enforcement |
+| 3 | **Workflow orchestration** | Case workflows, queues, tasks, AI agent execution |
+| 4 | **Evidence** | Documents, exhibits, chronology, provenance and extraction |
+| 5 | **Legal knowledge** | Legislation, cases, regulations, treaties and legal authorities |
+| 6 | **Reasoning** | Legal issue identification, argument graphs, analysis and research |
+| 7 | **Verification** | Citations, source validation, legal currency and human review |
+| 8 | **Infrastructure** | Database, storage, AI providers, security, monitoring and deployment |
+
+The layers are logical responsibility boundaries within the modular monolith, not a requirement for eight microservices. Detailed purpose, exclusions, contracts, dependencies and security responsibilities are recorded in [ADR-0001](architecture/ADR-0001-modular-monolith-and-bounded-contexts.md). The A–M module-to-layer mapping is a separate Phase 0 task 0.7 deliverable.
+
 ### Original complete product modules A–M
 
 These module names are canonical. Keep their names and identity intact in architecture, code, navigation, documentation and implementation mapping. A module may be delivered across several phases, but must not be silently merged into another module or renamed.
