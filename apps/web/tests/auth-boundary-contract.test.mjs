@@ -39,13 +39,13 @@ test('server Supabase client is server-only and uses no privileged key', () => {
 });
 
 test('sign-in errors do not disclose provider details or reveal account existence', () => {
-  assert.match(authActions, /redirect\\('\\/sign-in\\?error=credentials'\\)/);
-  assert.doesNotMatch(authActions, /console\\.(?:log|error|warn)/);
-  assert.doesNotMatch(authActions, /error\\.message|error\\.code/);
+  assert.match(authActions, /redirect\('\/sign-in\?error=credentials'\)/);
+  assert.doesNotMatch(authActions, /console\.(?:log|error|warn)/);
+  assert.doesNotMatch(authActions, /error\.message|error\.code/);
 });
 
 test('sign-out ends only the current session and distinguishes unconfirmed revocation', () => {
-  assert.match(authActions, /signOut\\(\\{ scope: 'local' \\}\\)/);
+  assert.match(authActions, /signOut\(\{ scope: 'local' \}\)/);
   assert.match(authActions, /warning=revocation-unconfirmed/);
   assert.match(authActions, /error=signout/);
 });
@@ -53,16 +53,16 @@ test('sign-out ends only the current session and distinguishes unconfirmed revoc
 test('SSR cookie adapters enforce HttpOnly, production Secure, SameSite=Lax and root path', () => {
   for (const source of [serverClient, proxyClient]) {
     assert.match(source, /httpOnly: true/);
-    assert.match(source, /secure: process\\.env\\.NODE_ENV === 'production'/);
+    assert.match(source, /secure: process\.env\.NODE_ENV === 'production'/);
     assert.match(source, /sameSite: 'lax'/);
-    assert.match(source, /path: '\\/'/);
+    assert.match(source, /path: '\/'/);
   }
 });
 
 test('Proxy forwards refreshed request cookies, response cookies and Supabase cache headers', () => {
-  assert.match(proxyClient, /request\\.cookies\\.set\\(name, value\\)/);
-  assert.match(proxyClient, /NextResponse\\.next\\(\\{ request \\}\\)/);
-  assert.match(proxyClient, /supabaseResponse\\.cookies\\.set/);
-  assert.match(proxyClient, /supabaseResponse\\.headers\\.set\\(key, value\\)/);
-  assert.match(proxyClient, /await supabase\\.auth\\.getClaims\\(\\)/);
+  assert.match(proxyClient, /request\.cookies\.set\(name, value\)/);
+  assert.match(proxyClient, /NextResponse\.next\(\{ request \}\)/);
+  assert.match(proxyClient, /supabaseResponse\.cookies\.set/);
+  assert.match(proxyClient, /supabaseResponse\.headers\.set\(key, value\)/);
+  assert.match(proxyClient, /await supabase\.auth\.getClaims\(\)/);
 });
