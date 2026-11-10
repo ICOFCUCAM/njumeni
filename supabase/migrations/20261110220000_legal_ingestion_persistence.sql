@@ -4,7 +4,7 @@
 -- Preserve immutable authority content while permitting only the current-version pointer to close.
 create or replace function private.reject_legal_knowledge_mutation()
 returns trigger language plpgsql set search_path=''
-as $
+as $function$
 begin
   if TG_TABLE_NAME='legal_authority_versions' and TG_OP='UPDATE'
     and OLD.is_current_source_version
@@ -15,7 +15,7 @@ begin
   raise exception 'Legal knowledge history is append-only; only the current-version pointer may be closed'
     using errcode='55000';
 end;
-$;
+$function$;
 
 create or replace function public.legal_ingestion_begin_run(
   p_source_key text,p_adapter_key text,p_adapter_version text,p_cursor text,p_batch_key text

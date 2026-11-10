@@ -19,6 +19,11 @@
       "path": "supabase/migrations/20261110200000_legal_knowledge_foundation.sql",
       "blob_sha": "3de8afdbd7b754fb845035f8d52b7815941bbe6e",
       "reason": "Correct the unshipped Phase 2 legal knowledge foundation migration after clean local replay exposed a malformed retrieval RPC block. Rebuild both lexical and semantic functions with complete scope validation, source provenance fields and explicit service-role grants. No hosted migration has been applied."
+    },
+    {
+      "path": "supabase/migrations/20261110220000_legal_ingestion_persistence.sql",
+      "blob_sha": "881634a1f4d576dff9fb392bbcf6a6872ada808a",
+      "reason": "Correct the unshipped Phase 2.5 persistence migration after clean local replay exposed a truncated PL/pgSQL dollar-quote delimiter in the immutable authority-version trigger replacement. Use a named, matched function delimiter. No hosted migration has been applied."
     }
   ]
 }
