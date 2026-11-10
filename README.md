@@ -13,11 +13,11 @@ Njumeni is an independent legal technology platform under active architecture an
 
 Njumeni is intended to securely handle confidential legal documents, case files and evidence through protected application storage. Live customer data must never be committed to Git or stored in build artefacts, issue trackers or CI logs. Officially classified material requires hosting and service providers authorised for the applicable classification.
 
-## Binding implementation plan
+## Binding implementation plan and live phase register
 
-The execution sequence is controlled by [the Master Implementation Plan](docs/MASTER_IMPLEMENTATION_PLAN.md). It contains the twenty-workstream register, Phases 0–13, Phase 0 execution checklist, definition of done and execution ledger.
+The [Master Implementation Plan](docs/MASTER_IMPLEMENTATION_PLAN.md) preserves the original twenty numbered sections and canonical A–M modules, and defines Phases 0–13. The [Live Phase Register](docs/PHASE_REGISTER.md) is the operational source of truth for the active phase, numbered tasks, green completion indicators, commit SHAs and phase locks. The [Phase 0 Audit](docs/PHASE_0_AUDIT.md) records the initial repository findings.
 
-**Execution rule:** every "go next" resumes the first incomplete item in the active phase. No phase may be skipped. A proposal, folder, scaffold or documentation file alone does not count as a completed feature.
+**Execution rule:** only one phase is open at a time. Every "go next" resumes the first incomplete task in that phase. A task turns green only after its acceptance checks pass and its commit is verified. The entire phase—including the final numbered task, phase-wide checks, acceptance report and dedicated closeout commit—must be complete before the next phase is unlocked. A proposal, folder, scaffold or unverified code does not count as completion.
 
 ## Architecture and security
 
