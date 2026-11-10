@@ -66,7 +66,7 @@ select throws_ok(
 );
 
 select throws_ok(
-  $update public.user_profiles set principal_id = current_setting('njumeni.test.principal_two')::uuid where principal_id = private.current_principal_id()$,
+  $sql$update public.user_profiles set principal_id = current_setting('njumeni.test.principal_two')::uuid where principal_id = private.current_principal_id()$sql$,
   '42501',
   'permission denied for table user_profiles',
   'Authenticated users cannot update the profile ownership column'
@@ -74,13 +74,13 @@ select throws_ok(
 
 reset role;
 select throws_ok(
-  $update public.user_profiles set principal_id = current_setting('njumeni.test.principal_two')::uuid where principal_id = current_setting('njumeni.test.principal_one')::uuid$,
+  $sql$update public.user_profiles set principal_id = current_setting('njumeni.test.principal_two')::uuid where principal_id = current_setting('njumeni.test.principal_one')::uuid$sql$,
   '42501',
   'Profile ownership is immutable',
   'Database trigger prevents profile ownership reassignment even for privileged direct writes'
 );
 select throws_ok(
-  $update private.principal_identities set provider_subject = 'tampered-subject' where auth_user_id = '10000000-0000-4000-8000-000000000001'$$,
+  $sql$update private.principal_identities set provider_subject = 'tampered-subject' where auth_user_id = '10000000-0000-4000-8000-000000000001'$sql$,
   '42501',
   'Provider identity mappings are immutable',
   'Provider subject mapping cannot be changed'
