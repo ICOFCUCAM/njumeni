@@ -23,7 +23,7 @@ The exact direct dependency versions are pinned: `@supabase/ssr` 0.12.7 and `@su
 
 | Path | Responsibility |
 |---|---|
-| `apps/web/src/lib/supabase/client.ts` | Browser client factory, only for explicitly browser-required Auth interactions |
+| `apps/web/src/lib/supabase/client.ts` | Intentionally omitted: all current Auth interactions are server actions; no browser-side session client is needed |
 | `apps/web/src/lib/supabase/server.ts` | Request-scoped server client using Next.js `cookies()`; no global user client |
 | `apps/web/src/lib/supabase/proxy.ts` | Session refresh helper; propagate request and response cookies and cache headers correctly |
 | `apps/web/src/proxy.ts` | Next.js 16 Proxy entry point; refresh session before protected rendering |
@@ -58,7 +58,7 @@ The web application requires:
 
 These must be supplied through the deployment/local environment secret/configuration system. A publishable key is not an access-control boundary; RLS and server-side authorisation remain mandatory. No live key value is to be committed to Git or written into CI logs.
 
-The dedicated project is provisioned, but Auth redirect allow-lists, email provider/SMTP, MFA policy, password policy, rate limits and email-confirmation behaviour have not yet been verified through the connected management interface. These settings must be reviewed before enabling real user sign-in. Do not create a test user in the project as a substitute for configuration review.
+The dedicated project is provisioned, but Auth redirect allow-lists, email provider/SMTP, MFA policy, password policy, rate limits and email-confirmation behaviour have not yet been verified through the connected management interface. These settings must be reviewed before enabling real user sign-in. The current application repository has no linked Njumeni Vercel application deployment and no deployment environment variables have been configured. Do not create a test user in the project as a substitute for configuration review.
 
 ## 5. Test and acceptance matrix
 
@@ -102,6 +102,6 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [x] Email/password sign-in and local sign-out server actions implemented; public self-registration remains disabled.
 - [ ] Automated session and security tests pass in full repository CI.
 - [ ] Dedicated-project integration checks pass and test identity is removed.
-- [ ] CI succeeds on implementation commit.
+- [x] CI succeeds on implementation commit `f3d9ede729ee65e321cc1c98a73f4e41bf4dc011`; run `42773609043` SUCCESS.
 
 **Task state:** 🟡 IN PROGRESS. The code path is implemented, but real sign-in is not yet declared operational. Supabase Auth provider configuration, a controlled test identity, end-to-end session/refresh/logout/revocation checks and final CI success remain required before Task 1.3 can turn green.

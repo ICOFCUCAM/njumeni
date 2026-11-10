@@ -1,6 +1,6 @@
 # Njumeni application shell and route boundaries
 
-- **Status:** Phase 0 task 0.12 implementation
+- **Status:** Phase 0 task 0.12 shell; Phase 1 task 1.3 Auth boundary implemented and CI-verified
 - **Application:** apps/web
 - **Framework:** Next.js App Router, React, TypeScript and Tailwind CSS
 - **Canonical module registry:** apps/web/src/modules/registry.ts
