@@ -43,7 +43,9 @@ function createHarness({ logoutStatus = 204, tokenStatus = 200 } = {}) {
   const fetch = async (input, init = {}) => {
     const requestUrl = new URL(input instanceof Request ? input.url : String(input));
     const method = init.method ?? (input instanceof Request ? input.method : 'GET');
-    const headers = new Headers(init.headers ?? (input instanceof Request ? input.headers : undefined));
+    const headers = new Headers(
+      init.headers ?? (input instanceof Request ? input.headers : undefined),
+    );
     requests.push({
       url: requestUrl,
       method,
@@ -207,8 +209,7 @@ test('a tampered access token is sent for authoritative provider verification an
   assert.ok(
     harness.requests.some(
       ({ url, authorization }) =>
-        url.pathname.endsWith('/user') &&
-        authorization === `Bearer ${tamperedAccessToken}`,
+        url.pathname.endsWith('/user') && authorization === `Bearer ${tamperedAccessToken}`,
     ),
     'the explicit token must be sent to the authoritative Auth user endpoint',
   );
