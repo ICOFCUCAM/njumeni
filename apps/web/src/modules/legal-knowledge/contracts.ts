@@ -52,7 +52,7 @@ export function validateSourceManifest(manifest:LegalSourceManifest):void {
     !manifest.name.trim()||!manifest.issuingAuthority.trim()||
     !Array.isArray(manifest.allowedHosts)||manifest.allowedHosts.length===0||
     manifest.allowedHosts.some(host=>typeof host!=='string'||
-      !/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(host))) {
+      !/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?[.])*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i.test(host))) {
     throw new Error('LEGAL_SOURCE_MANIFEST_INVALID');
   }
   if(manifest.baseUri) {
@@ -110,7 +110,7 @@ export function normaliseAuthority(input:LegalAuthorityInput,sourceText:string,a
       !EXTERNAL_ID_PATTERN.test(relationship.targetExternalId)||
       !relationshipTypes.includes(relationship.relationshipType))throw new Error('LEGAL_AUTHORITY_RELATIONSHIP_INVALID');
     const effectiveFrom=relationship.effectiveFrom??null;
-    if(effectiveFrom&&(!/^\\d{4}-\\d{2}-\\d{2}$/.test(effectiveFrom)||
+    if(effectiveFrom&&(!/^\d{4}-\d{2}-\d{2}$/.test(effectiveFrom)||
       Number.isNaN(Date.parse(effectiveFrom+'T00:00:00.000Z'))||
       new Date(effectiveFrom+'T00:00:00.000Z').toISOString().slice(0,10)!==effectiveFrom)) {
       throw new Error('LEGAL_AUTHORITY_RELATIONSHIP_DATE_INVALID');

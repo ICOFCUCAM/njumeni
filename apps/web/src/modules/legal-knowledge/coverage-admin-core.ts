@@ -55,7 +55,7 @@ export async function recordSourceCoverageReview(
   const timestamp = Date.parse(input.lastVerifiedAt);
   if (!Number.isFinite(timestamp) || new Date(timestamp).toISOString() !== input.lastVerifiedAt ||
       timestamp > Date.now()) throw new Error('LEGAL_SOURCE_COVERAGE_REVIEW_TIMESTAMP_INVALID');
-  const validDate = (value:string) => /^\\d{4}-\\d{2}-\\d{2}$/.test(value) &&
+  const validDate = (value:string) => /^\d{4}-\d{2}-\d{2}$/.test(value) &&
     !Number.isNaN(Date.parse(value+'T00:00:00.000Z')) &&
     new Date(value+'T00:00:00.000Z').toISOString().slice(0,10)===value;
   if ((input.coverageFrom && !validDate(input.coverageFrom)) ||
