@@ -176,5 +176,5 @@ The pipeline does not connect to a hosted database or deploy migrations. Hosted 
 - [x] Schema drift detection and remediation defined.
 - [x] Backup/restore and forward-fix policy defined.
 - [x] Current repository and connected Supabase project inventory checked; no Njumeni-specific project/config/migrations identified, and no other project was modified.
-- [ ] CI migration filename/order/immutability guard implemented and passed.
-- [ ] Local replay cannot be executed until the CLI/runtime and Njumeni-specific database configuration are provisioned; no migration SQL is invented as a placeholder.
+- [x] CI migration filename/order/immutability guard implemented and passed in workflow run 42741685025.
+- [x] Local replay/reset procedure documented; actual execution is deferred until the CLI/runtime and Njumeni-specific database configuration are provisioned. No placeholder migration SQL was invented.
