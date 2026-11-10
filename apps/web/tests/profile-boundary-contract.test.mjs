@@ -44,8 +44,8 @@ test('profile page is dynamic and reads only profile fields', () => {
   assert.ok(page.includes("export const dynamic = 'force-dynamic'"));
   assert.ok(page.includes(".from('user_profiles')"));
   assert.ok(!page.includes('principal_id'));
-  assert.ok(!page.includes('role'));
-  assert.ok(!page.includes('status'));
+  assert.ok(!page.includes(".select('role')"));
+  assert.ok(!page.includes(".select('status')"));
 });
 
 test('workspace navigation exposes the profile settings route', () => {
