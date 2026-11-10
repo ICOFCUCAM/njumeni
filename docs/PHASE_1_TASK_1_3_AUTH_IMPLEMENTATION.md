@@ -1,6 +1,6 @@
 # Phase 1 task 1.3 — Supabase identity integration and secure session lifecycle
 
-- **Status:** IN PROGRESS — implementation contract and dependency decision recorded; application integration not yet implemented.
+- **Status:** IN PROGRESS — SDKs and lockfile are pinned; server-side Auth integration is implemented; live provider verification remains.
 - **Date opened:** 10 November 2026
 - **Repository:** `ICOFCUCAM/njumeni`
 - **Dedicated Supabase project:** `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`
@@ -17,7 +17,7 @@ Use the official Supabase JavaScript SSR integration for the Next.js 16 App Rout
 
 The current Supabase documentation distinguishes cookie-based SSR sessions from header-based server authentication and recommends `@supabase/ssr` for Next.js. Do not substitute deprecated `@supabase/auth-helpers-nextjs`.
 
-The current upstream `@supabase/ssr` release verified from its changelog is 0.12.7 (8 September 2026). The exact compatible `@supabase/supabase-js` release and all transitive dependencies must be resolved by npm and committed in `apps/web/package-lock.json`; do not guess package versions or hand-author lockfile integrity values.
+The exact direct dependency versions are pinned: `@supabase/ssr` 0.12.7 and `@supabase/supabase-js` 2.119.0. Their complete transitive dependency graph was resolved by npm in GitHub Actions and committed in `apps/web/package-lock.json` (lockfile blob `1bf9df67e9e86f10112e44e16052d0a2fe93fd6c`, generated on commit `228e094c0135942b1b8e6aca898668038aadbac2`).
 
 ## 2. Required implementation layout
 
@@ -27,12 +27,12 @@ The current upstream `@supabase/ssr` release verified from its changelog is 0.12
 | `apps/web/src/lib/supabase/server.ts` | Request-scoped server client using Next.js `cookies()`; no global user client |
 | `apps/web/src/lib/supabase/proxy.ts` | Session refresh helper; propagate request and response cookies and cache headers correctly |
 | `apps/web/src/proxy.ts` | Next.js 16 Proxy entry point; refresh session before protected rendering |
-| `apps/web/src/app/(auth)/sign-in/actions.ts` | Server Action for email/password sign-in and sign-out |
+| `apps/web/src/app/(auth)/actions.ts` | Server Actions for email/password sign-in and sign-out |
 | `apps/web/src/app/(auth)/sign-in/page.tsx` | Real sign-in form with safe error handling; no sign-up or simulated identity |
 | `apps/web/src/app/(workspace)/layout.tsx` | Server-side authenticated-user guard before rendering workspace routes |
 | `apps/web/src/app/api/health/route.ts` | Report configuration state only; never expose secrets or infer user authentication from process health |
 
-The actual route paths must be reconciled with the current tree before implementation. The existing application uses `apps/web/src/app` and route groups `(auth)` and `(workspace)`.
+The route paths were reconciled with the existing tree. The implementation uses `apps/web/src/app`, route groups `(auth)` and `(workspace)`, and `apps/web/src/proxy.ts` for the Next.js 16 Proxy convention.
 
 ## 3. Session and security rules
 
@@ -81,15 +81,13 @@ The dedicated project is provisioned, but Auth redirect allow-lists, email provi
 
 A passing unit test with mocked Auth is not sufficient by itself. Before task completion, execute an integration check against the dedicated Njumeni project using a dedicated non-production test identity, verify login/refresh/logout/revocation, then remove the test identity and confirm the project has no residual test data. No confidential matter data may be used.
 
-## 6. Current blocker — reproducible dependency installation
+## 6. Dependency resolution and implementation evidence
 
-The existing web package has no Supabase SDK dependencies, and the committed lockfile contains neither `@supabase/ssr` nor `@supabase/supabase-js`.
+The local execution container could not reach the npm registry. Rather than bypassing the committed lockfile, a restricted GitHub Actions workflow was added to resolve exact dependency graphs on the implementation branch, run `npm ci`, type-check and build the web app, commit only the generated lockfile, and dispatch the full repository CI/security workflow. The workflow was smoke-tested successfully on the existing app before the SDK dependency update.
 
-The current execution environment cannot resolve `registry.npmjs.org` or `github.com` from its local container. Consequently, it cannot run npm to resolve and verify the exact dependency graph or produce a trustworthy lockfile. The existing CI uses `npm ci`, so editing only `package.json` would break reproducible CI. Hand-authoring transitive package metadata or integrity hashes is not acceptable.
+The package manifest pins `@supabase/ssr` 0.12.7 and `@supabase/supabase-js` 2.119.0. GitHub Actions generated the lockfile and verified a clean `npm ci`, application type-check and production build before committing the lockfile. The initial repository CI run on the manifest-only commit failed because its lockfile was awaiting generation; the generated-lockfile commit then triggered a fresh full CI run.
 
-**Safe next action:** complete the package installation and lockfile generation in a network-enabled development runner or controlled GitHub Actions dependency-update workflow. Commit the exact package versions and generated lockfile together. Then implement the files above and run the complete CI and dedicated-project Auth integration tests. Do not bypass `npm ci`, remove the lockfile, or replace it with floating dependency ranges.
-
-This is an execution-environment limitation, not a Supabase project provisioning blocker.
+No floating dependency ranges, hand-written integrity hashes or lockfile bypasses were used.
 
 ## 7. Acceptance status
 
@@ -98,12 +96,12 @@ This is an execution-environment limitation, not a Supabase project provisioning
 - [x] Current Supabase SSR documentation and package-selection guidance reviewed.
 - [x] Next.js 16 Proxy convention and current Supabase cookie/session requirements identified.
 - [x] Security, session, redirect, cache and test acceptance contract documented.
-- [ ] Exact SDK dependency graph installed and pinned.
-- [ ] Committed npm lockfile updated and reproducible `npm ci` verified.
-- [ ] SSR clients, Proxy refresh and server-side protected route guard implemented.
-- [ ] Sign-in/sign-out UI and server actions implemented.
-- [ ] Automated session and security tests pass.
+- [x] Exact SDK dependency versions pinned (`@supabase/ssr` 0.12.7; `@supabase/supabase-js` 2.119.0).
+- [x] Committed npm lockfile generated by npm and reproducible `npm ci` verified in GitHub Actions.
+- [x] Request-scoped SSR server client, Next.js 16 Proxy refresh helper and server-side protected workspace user check implemented.
+- [x] Email/password sign-in and local sign-out server actions implemented; public self-registration remains disabled.
+- [ ] Automated session and security tests pass in full repository CI.
 - [ ] Dedicated-project integration checks pass and test identity is removed.
 - [ ] CI succeeds on implementation commit.
 
-**Task state:** 🟡 IN PROGRESS. No authentication functionality has been enabled or represented as operational. The foundation preview remains non-operational for real users until all acceptance checks pass.
+**Task state:** 🟡 IN PROGRESS. The code path is implemented, but real sign-in is not yet declared operational. Supabase Auth provider configuration, a controlled test identity, end-to-end session/refresh/logout/revocation checks and final CI success remain required before Task 1.3 can turn green.

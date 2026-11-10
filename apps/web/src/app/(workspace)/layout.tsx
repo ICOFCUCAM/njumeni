@@ -7,7 +7,10 @@ export default async function WorkspaceLayout({ children }: { children: ReactNod
   if (!isSupabaseConfigured()) redirect('/sign-in?error=unavailable');
 
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
   if (error || !user) redirect('/sign-in');
 
   return (

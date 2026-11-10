@@ -26,12 +26,20 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         and organisation invitations will be introduced through the controlled onboarding flow.
       </p>
       {params.message === 'signed-out' ? (
-        <p className="auth-success" role="status">You have been signed out.</p>
+        <p className="auth-success" role="status">
+          You have been signed out.
+        </p>
       ) : null}
-      {errorMessage ? <p className="auth-error" role="alert">{errorMessage}</p> : null}
+      {errorMessage ? (
+        <p className="auth-error" role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
       {!configured ? (
         <div className="preview-notice" role="status">
-          <span className="notice-mark" aria-hidden="true">i</span>
+          <span className="notice-mark" aria-hidden="true">
+            i
+          </span>
           <div>
             <strong>Authentication is not configured in this deployment.</strong> The workspace
             remains protected. Configure the Supabase project URL and publishable key in the
@@ -41,10 +49,26 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       ) : (
         <form action={signIn} className="auth-form">
           <label htmlFor="email">Email address</label>
-          <input autoComplete="username" id="email" maxLength={254} name="email" required type="email" />
+          <input
+            autoComplete="username"
+            id="email"
+            maxLength={254}
+            name="email"
+            required
+            type="email"
+          />
           <label htmlFor="password">Password</label>
-          <input autoComplete="current-password" id="password" maxLength={1024} name="password" required type="password" />
-          <button className="auth-submit" type="submit">Sign in securely</button>
+          <input
+            autoComplete="current-password"
+            id="password"
+            maxLength={1024}
+            name="password"
+            required
+            type="password"
+          />
+          <button className="auth-submit" type="submit">
+            Sign in securely
+          </button>
         </form>
       )}
       <p className="auth-footnote">
