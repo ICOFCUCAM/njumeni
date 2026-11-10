@@ -3,14 +3,18 @@
 Status: proposed architecture, not yet implemented.
 Purpose: establish a safe integration plan for the five legal-technology research repositories.
 
-## 0. Repository scope decision — required before implementation
+## 0. Confirmed product and repository boundaries
 
-The current repository's `docs/ARCHITECTURE.md` describes a consent-management-platform (CMP) marketing-site skeleton based on a reference website. It is not yet a legal AI application. Do not merge legal backend services into that site or replace existing files until the product owner confirms whether:
-- the current CMP skeleton is to be repurposed as Njumeni's legal-platform website;
-- it is only a temporary brand/marketing prototype; or
-- the legal AI application should live in a separate application/repository under the Njumeni brand.
+The product owner has confirmed the following decisions:
 
-This document records the legal-platform direction separately so the current site remains intact.
+- `ICOFCUCAM/njumeni` is the dedicated Njumeni legal-platform application repository.
+- Njumeni is intended to securely ingest, store, organise, process, retrieve and govern confidential legal documents, case files and evidence through its protected application data architecture.
+- Live customer documents and production records belong in runtime storage, not Git history or source commits.
+- The legacy CMP project is unrelated software. Keep its source, build and deployment separate; preserve and archive it independently before removing any legacy CMP files from this repository.
+- The public Njumeni marketing website is maintained independently in `ICOFCUCAM/marketing-website`; it is not the legal application and must not host matter data or authenticated workflows.
+- Upstream legal-technology repositories remain references or isolated adapters unless a deliberate component-level reuse and licence review is approved.
+
+The current repository still contains legacy CMP files. Their presence is an unresolved Phase 0 repository-cleanup item, not a reason to combine CMP and Njumeni. Follow `docs/MASTER_IMPLEMENTATION_PLAN.md` for the binding execution order and acceptance gates.
 
 ## 1. Product architecture recommendation
 
