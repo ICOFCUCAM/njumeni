@@ -24,6 +24,17 @@ The bounded contexts are those established in ADR-0001: Identity and organisatio
 
 **Ownership rule:** each module has one primary product owner-context and may consume other contexts through explicit application/query contracts or versioned events. The owner-context is authoritative for the records named in its row. No cross-context direct table writes are permitted.
 
+### Layer shorthand used in mapping tables
+
+- Experience = Experience Layer
+- API = API Layer
+- Workflow orchestration = Workflow Orchestration Layer
+- Evidence = Evidence Layer
+- Legal knowledge = Legal Knowledge Layer
+- Reasoning = Reasoning Layer
+- Verification = Verification Layer
+- Infrastructure = Infrastructure Layer
+
 ## 2. Complete A–M responsibility map
 
 | Module | Canonical module name | Primary user / product purpose | Primary bounded context(s) and authoritative ownership | Platform layers |

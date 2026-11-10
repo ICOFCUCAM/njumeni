@@ -88,14 +88,14 @@ The original Njumeni master architecture supplied on 2026-11-10 establishes the 
 
 | Order | Canonical layer | Original architectural responsibility |
 |---:|---|---|
-| 1 | **Experience** | Web applications, dashboards, mobile-ready interfaces |
-| 2 | **API** | Authentication, API gateway, tenant and permission enforcement |
-| 3 | **Workflow orchestration** | Case workflows, queues, tasks, AI agent execution |
-| 4 | **Evidence** | Documents, exhibits, chronology, provenance and extraction |
-| 5 | **Legal knowledge** | Legislation, cases, regulations, treaties and legal authorities |
-| 6 | **Reasoning** | Legal issue identification, argument graphs, analysis and research |
-| 7 | **Verification** | Citations, source validation, legal currency and human review |
-| 8 | **Infrastructure** | Database, storage, AI providers, security, monitoring and deployment |
+| 1 | **Experience Layer** | Web applications, dashboards, mobile-ready interfaces |
+| 2 | **API Layer** | Authentication, API gateway, tenant and permission enforcement |
+| 3 | **Workflow Orchestration Layer** | Case workflows, queues, tasks, AI agent execution |
+| 4 | **Evidence Layer** | Documents, exhibits, chronology, provenance and extraction |
+| 5 | **Legal Knowledge Layer** | Legislation, cases, regulations, treaties and legal authorities |
+| 6 | **Reasoning Layer** | Legal issue identification, argument graphs, analysis and research |
+| 7 | **Verification Layer** | Citations, source validation, legal currency and human review |
+| 8 | **Infrastructure Layer** | Database, storage, AI providers, security, monitoring and deployment |
 
 These are logical responsibility layers, not a requirement for eight separate deployables or a strictly linear request path. They are implemented within the approved modular monolith and may use separately operated infrastructure or worker processes where justified.
 
