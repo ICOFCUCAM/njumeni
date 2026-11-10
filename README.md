@@ -38,6 +38,8 @@ The repository includes a GitHub Actions [CI pipeline](docs/CI_PIPELINE.md) for 
 ## Local development
 
 - [Environment Strategy](docs/ENVIRONMENT_STRATEGY.md) — separation of local, test/CI, staging and production, service topology, secret boundaries and deployment promotion.
+- [Database Migration Policy](docs/DATABASE_MIGRATION_POLICY.md) — immutable migrations, local replay, hosted history reconciliation, drift, backup and forward-fix controls.
+- [CI Pipeline](docs/CI_PIPELINE.md) — formatting, lint, type, tests, security, repository policy and migration checks.
 - [.env.example](.env.example) — placeholder-only configuration template; it contains no real credentials.
 
 The full application development setup is not yet established. Follow the Master Implementation Plan's Phase 0 checklist before treating this repository as a runnable legal application. Do not infer a stack or start services that have not been verified and recorded in the architecture decision.
