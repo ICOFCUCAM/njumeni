@@ -70,10 +70,7 @@ test('Supabase SSR session boundary is server-validated and uses the Next.js 16 
   const entry = await readFile('apps/web/src/proxy.ts', 'utf8');
   const actions = await readFile('apps/web/src/app/(auth)/actions.ts', 'utf8');
   const shell = await readFile('apps/web/src/components/workspace-shell.tsx', 'utf8');
-  const signInPage = await readFile(
-    'apps/web/src/app/(auth)/sign-in/page.tsx',
-    'utf8',
-  );
+  const signInPage = await readFile('apps/web/src/app/(auth)/sign-in/page.tsx', 'utf8');
   const manifest = JSON.parse(await readFile('apps/web/package.json', 'utf8'));
 
   assert.equal(manifest.dependencies['@supabase/ssr'], '0.12.7');
