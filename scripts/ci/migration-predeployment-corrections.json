@@ -14,6 +14,11 @@
       "path": "supabase/migrations/20261110171000_tenant_scoped_storage_policies.sql",
       "blob_sha": "fa030a5e66035db0930db55bf3b73807d4ae1fe6",
       "reason": "Correct the unshipped Task 1.8 migration after clean local replay showed the migration role is not the owner of Supabase-managed storage.objects. Supabase Storage provisions RLS; the application migration relies on that managed invariant and only adds tenant-scoped policies. No hosted migration has been applied."
+    },
+    {
+      "path": "supabase/migrations/20261110200000_legal_knowledge_foundation.sql",
+      "blob_sha": "3de8afdbd7b754fb845035f8d52b7815941bbe6e",
+      "reason": "Correct the unshipped Phase 2 legal knowledge foundation migration after clean local replay exposed a malformed retrieval RPC block. Rebuild both lexical and semantic functions with complete scope validation, source provenance fields and explicit service-role grants. No hosted migration has been applied."
     }
   ]
 }
