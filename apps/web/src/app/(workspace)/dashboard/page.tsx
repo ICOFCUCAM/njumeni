@@ -40,7 +40,7 @@ export default function DashboardPage() {
           i
         </span>
         <div>
-          <strong>Foundation preview â no live case data is connected.</strong> Authentication,
+          <strong>Foundation preview — no live case data is connected.</strong> Authentication,
           database access, document storage and AI providers are not connected in this shell. No
           customer or matter records are being displayed.
         </div>
@@ -83,7 +83,7 @@ export default function DashboardPage() {
           {quickActions.map((action) => (
             <Link className="action-card" href={action.href} key={action.title}>
               <span className="action-card-arrow" aria-hidden="true">
-                â
+                ↗
               </span>
               <span className="action-card-mark">
                 <ModuleIcon name={action.icon} />
@@ -108,7 +108,7 @@ export default function DashboardPage() {
           {moduleRegistry.map((module) => (
             <Link className="action-card" href={module.href} key={module.id}>
               <span className="action-card-arrow" aria-hidden="true">
-                â
+                ↗
               </span>
               <span className="module-code">MODULE {module.id}</span>
               <h3>{module.shortLabel}</h3>

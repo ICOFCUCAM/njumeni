@@ -83,7 +83,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
             <strong>Preview workspace</strong>
           </span>
           <span aria-hidden="true" style={{ color: 'var(--gold)' }}>
-            â
+            ⌄
           </span>
         </div>
         <nav className="nav-scroll">

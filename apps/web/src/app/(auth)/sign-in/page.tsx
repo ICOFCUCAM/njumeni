@@ -2,7 +2,7 @@ import Link from 'next/link';
 export default function SignInPage() {
   return (
     <main className="signin-panel">
-      <p className="page-eyebrow">Identity boundary Â· Phase 1</p>
+      <p className="page-eyebrow">Identity boundary · Phase 1</p>
       <h1>Secure access to Njumeni.</h1>
       <p>
         Authentication and organisation membership are not enabled in the foundation shell. This
