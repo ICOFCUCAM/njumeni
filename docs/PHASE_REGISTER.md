@@ -3,10 +3,10 @@
 **This is the operational register.** The [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md) defines the scope and architecture; this register controls the actual work and phase locks.
 
 - Repository: `ICOFCUCAM/njumeni`
-- Active phase: **Phase 0 — Foundation and repository/infrastructure audit**
+- Active phase: **Phase 1 — Identity, tenancy and security foundation**
 - Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **0.15 — Run full repository hygiene checks and document unresolved risks**
-- Phase completion commit: **NOT CREATED**
+- Next task: **1.1 — Define identity, authentication, tenant and workspace security contracts**
+- Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
 - Rule: no Phase 1 work may begin until Phase 0 is fully green and its phase-closeout commit is verified.
 
 ## 1. Register legend
@@ -59,7 +59,7 @@ A task does not turn green because code was written. It turns green only after i
 | 0.13 | Audit hosting, domains, deployment, secrets, DB, storage, queues and external providers | 🟢 GREEN | [Infrastructure Audit](INFRASTRUCTURE_AUDIT.md) records the read-only GitHub, Vercel, Supabase, web runtime, domain, storage, queue, worker, AI-provider, monitoring, backup and data-residency inventory; distinguishes verified facts, gaps and owner decisions; no external resources or production data changed. Acceptance checklist complete. Audit file blob `4791f4498e323790f056469dd73d1fd90f8627fb`. |
 | 0.14 | Create dependency-aware Phase 0–13 backlog and acceptance criteria | 🟢 GREEN | [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md); initial commit `b057558`, updated register commit `0c2b9d5` |
 | 0.15 | Run full repository hygiene checks and document unresolved risks | 🟢 GREEN | [Repository Hygiene Review](REPOSITORY_HYGIENE_REVIEW.md) records the tracked-tree review, ignore/data/secret controls, CI evidence, third-party notices, supply-chain gaps and owner/security risks. Review commit `54088c64f5f3c7068d2c46907331591e9ceb46ab`; CI run `42768502487` completed SUCCESS. |
-| 0.16 | Conduct Phase 0 acceptance review and prepare closeout commit | 🟡 IN PROGRESS | All 0.1–0.15 tasks are recorded GREEN. Conduct independent phase-wide acceptance, verify original scope/architecture/register and latest CI evidence, publish acceptance report and dedicated closeout commit. Do not unlock Phase 1 until closeout commit CI passes. |
+| 0.16 | Conduct Phase 0 acceptance review and prepare closeout commit | 🟢 GREEN | [Phase 0 Acceptance Report](PHASE_0_ACCEPTANCE_REPORT.md) and [Phase 0 Closeout](PHASE_0_CLOSEOUT.md). Dedicated closeout commit `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` completed SUCCESS. All Phase 0 tasks 0.1–0.16 are GREEN. |
 
 
 **Task 0.6 closeout note (2026-11-10):** The original Njumeni master architecture was supplied and the eight canonical platform layers were recovered without renaming: Experience; API; Workflow orchestration; Evidence; Legal knowledge; Reasoning; Verification; Infrastructure. Their original responsibilities are preserved in the [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md) and expanded into layer contracts, exclusions, interfaces, dependency rules, security responsibilities, an acyclic interaction model and a high-level mapping to all twenty original sections in [ADR-0001](architecture/ADR-0001-modular-monolith-and-bounded-contexts.md). Task 0.6 is GREEN. Detailed A–M mapping is task 0.7.
@@ -76,12 +76,12 @@ The security workflow passed for commits `a3b5d32`, `0c2b9d5`, `9427e26` and `c0
 
 ## 3. Phase lock register
 
-Only Phase 0 is open. All future phases remain locked until the active phase has a complete set of green tasks, successful phase-wide checks, an acceptance report and a verified closeout commit.
+Phase 0 is CLOSED. Phase 1 is now OPEN after successful verification of the dedicated Phase 0 closeout commit and its CI run. Phases 2–13 remain locked until their respective phase acceptance and closeout conditions pass.
 
 | Phase | Name | Register state | Unlock condition |
 |---|---|---|---|
-| 0 | Foundation and repository/infrastructure audit | 🟡 OPEN | All 0.1–0.16 green + Phase 0 closeout commit |
-| 1 | Identity, tenancy and security foundation | 🔒 LOCKED | Phase 0 closeout verified |
+| 0 | Foundation and repository/infrastructure audit | 🟢 CLOSED | All 0.1–0.16 green; closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
+| 1 | Identity, tenancy and security foundation | 🟡 OPEN | Active; Phase 0 closeout verified |
 | 2 | Legal knowledge foundation | 🔒 LOCKED | Phase 1 closeout verified |
 | 3 | Evidence and document foundation | 🔒 LOCKED | Phase 2 closeout verified |
 | 4 | Document intelligence | 🔒 LOCKED | Phase 3 closeout verified |
