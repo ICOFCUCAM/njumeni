@@ -7,9 +7,11 @@ type SearchParams = Promise<{ error?: string; message?: string }>;
 
 const messages: Record<string, string> = {
   'invalid-organization': 'Enter a valid organisation name and type.',
-  'organization-create-failed': 'The organisation could not be created. Check the name and try again.',
+  'organization-create-failed':
+    'The organisation could not be created. Check the name and try again.',
   'invalid-workspace': 'Enter a valid workspace name and type.',
-  'workspace-create-failed': 'The workspace could not be created. Confirm that you own the selected organisation.',
+  'workspace-create-failed':
+    'The workspace could not be created. Confirm that you own the selected organisation.',
 };
 
 export default async function WorkspacesSettingsPage({
@@ -34,10 +36,7 @@ export default async function WorkspacesSettingsPage({
         )
         .order('created_at', { ascending: true })
     : { data: [], error: null };
-  const workspaceByOrganisation = new Map<
-    string,
-    NonNullable<typeof workspaces>
-  >();
+  const workspaceByOrganisation = new Map<string, NonNullable<typeof workspaces>>();
   for (const workspace of workspaces ?? []) {
     const current = workspaceByOrganisation.get(workspace.organization_id) ?? [];
     current.push(workspace);
@@ -51,8 +50,8 @@ export default async function WorkspacesSettingsPage({
         <h1 className="page-title">Organisations and workspaces</h1>
         <p className="page-description">
           Your personal organisation is created automatically. You can create additional
-          organisation contexts and working areas. Access is currently owner-only; team
-          memberships and invitations are introduced in a later foundation task.
+          organisation contexts and working areas. Access is currently owner-only; team memberships
+          and invitations are introduced in a later foundation task.
         </p>
       </header>
 
@@ -75,9 +74,8 @@ export default async function WorkspacesSettingsPage({
         <section className="module-panel" aria-labelledby="tenant-unavailable-title">
           <h2 id="tenant-unavailable-title">Tenant services are not available yet</h2>
           <p>
-            The organisation database migration has not been deployed to this environment, or
-            the service is temporarily unavailable. No organisation or workspace data has been
-            changed.
+            The organisation database migration has not been deployed to this environment, or the
+            service is temporarily unavailable. No organisation or workspace data has been changed.
           </p>
         </section>
       ) : (
@@ -86,7 +84,9 @@ export default async function WorkspacesSettingsPage({
             <div className="profile-panel-heading">
               <div>
                 <h2 id="create-organisation-title">Create an organisation</h2>
-                <p>Organisation ownership is assigned by the database from your active principal.</p>
+                <p>
+                  Organisation ownership is assigned by the database from your active principal.
+                </p>
               </div>
             </div>
             <form action={createOrganization} className="profile-form">
@@ -129,8 +129,8 @@ export default async function WorkspacesSettingsPage({
             <section className="module-panel">
               <h2>No organisation is available</h2>
               <p>
-                Your personal organisation should be provisioned automatically when your identity
-                is created. If it is missing, contact the platform administrator.
+                Your personal organisation should be provisioned automatically when your identity is
+                created. If it is missing, contact the platform administrator.
               </p>
             </section>
           ) : (
@@ -175,7 +175,9 @@ export default async function WorkspacesSettingsPage({
                     <input type="hidden" name="organization_id" value={organisation.id} />
                     <div className="profile-field-grid">
                       <div className="profile-field">
-                        <label htmlFor={`workspace-name-${organisation.id}`}>New workspace name</label>
+                        <label htmlFor={`workspace-name-${organisation.id}`}>
+                          New workspace name
+                        </label>
                         <input
                           id={`workspace-name-${organisation.id}`}
                           name="name"

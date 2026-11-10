@@ -37,8 +37,10 @@ const navigationGroups: { label: string; items: NavigationItem[] }[] = [
   },
   {
     label: 'Account',
-    items: [{ label: 'Profile settings', href: '/settings/profile', icon: 'user' },
-      { label: 'Organisations and workspaces', href: '/settings/workspaces', icon: 'building' }],
+    items: [
+      { label: 'Profile settings', href: '/settings/profile', icon: 'user' },
+      { label: 'Organisations and workspaces', href: '/settings/workspaces', icon: 'building' },
+    ],
   },
   {
     label: 'Governance',

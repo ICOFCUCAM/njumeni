@@ -71,9 +71,7 @@ export async function createWorkspace(formData: FormData): Promise<void> {
 
   if (
     typeof organizationId !== 'string' ||
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-      organizationId,
-    ) ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(organizationId) ||
     !name ||
     typeof kindValue !== 'string' ||
     !WORKSPACE_KINDS.includes(kindValue as (typeof WORKSPACE_KINDS)[number])
