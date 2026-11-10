@@ -15,18 +15,12 @@ const serverClient = await readFile(
   'utf8',
 );
 
-test(
-  'sign-in does not accept an untrusted return URL and redirects to a fixed workspace route',
-  () => {
-    assert.match(authActions, /export async function signIn\(formData: FormData\)/);
-    assert.match(authActions, /redirect\('\/dashboard'\)/);
-    assert.doesNotMatch(
-      authActions,
-      /redirectTo|returnTo|callbackUrl|searchParams\.get\(['"]next/,
-    );
-    assert.doesNotMatch(authActions, /new URL\([^\n]*(?:formData|searchParams)/);
-  },
-);
+test('sign-in does not accept an untrusted return URL and redirects to a fixed workspace route', () => {
+  assert.match(authActions, /export async function signIn\(formData: FormData\)/);
+  assert.match(authActions, /redirect\('\/dashboard'\)/);
+  assert.doesNotMatch(authActions, /redirectTo|returnTo|callbackUrl|searchParams\.get\(['"]next/);
+  assert.doesNotMatch(authActions, /new URL\([^\n]*(?:formData|searchParams)/);
+});
 
 test('protected workspace boundary verifies the current provider user', () => {
   assert.match(workspaceLayout, /supabase\.auth\.getUser\(\)/);
