@@ -39,16 +39,17 @@ select lives_ok(
   'User one can update their own profile'
 );
 
+update public.user_profiles
+set display_name = 'Cross-account write'
+where principal_id = current_setting('njumeni.test.principal_two')::uuid;
+reset role;
 select is(
-  (with changed as (
-    update public.user_profiles
-    set display_name = 'Cross-account write'
-    where principal_id = current_setting('njumeni.test.principal_two')::uuid
-    returning 1
-  ) select count(*) from changed),
-  0::bigint,
+  (select display_name from public.user_profiles where principal_id = current_setting('njumeni.test.principal_two')::uuid),
+  null::text,
   'User one cannot update user two profile'
 );
+set local role authenticated;
+set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000001';
 
 select throws_ok(
   $$update public.user_profiles set timezone = 'Mars/Olympus_Mons' where principal_id = private.current_principal_id()$$,
@@ -96,16 +97,14 @@ select is(
   0::bigint,
   'Suspended principal cannot read a profile'
 );
+update public.user_profiles set display_name = 'Suspended write';
+reset role;
 select is(
-  (with changed as (
-    update public.user_profiles set display_name = 'Suspended write'
-    returning 1
-  ) select count(*) from changed),
-  0::bigint,
+  (select display_name from public.user_profiles where principal_id = current_setting('njumeni.test.principal_two')::uuid),
+  null::text,
   'Suspended principal cannot update a profile'
 );
 
-reset role;
 update private.principals
 set status = 'deactivated'
 where id = current_setting('njumeni.test.principal_two')::uuid;
@@ -118,16 +117,14 @@ select is(
   0::bigint,
   'Deactivated principal cannot read a profile'
 );
+update public.user_profiles set display_name = 'Deactivated write';
+reset role;
 select is(
-  (with changed as (
-    update public.user_profiles set display_name = 'Deactivated write'
-    returning 1
-  ) select count(*) from changed),
-  0::bigint,
+  (select display_name from public.user_profiles where principal_id = current_setting('njumeni.test.principal_two')::uuid),
+  null::text,
   'Deactivated principal cannot update a profile'
 );
 
-reset role;
 delete from auth.users where id = '10000000-0000-4000-8000-000000000001';
 
 select is(
