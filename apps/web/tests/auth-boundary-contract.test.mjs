@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-const authActions = await readFile(new URL('../src/app/(auth)/actions.ts', import.meta.url), 'utf8');
+const authActions = await readFile(
+  new URL('../src/app/(auth)/actions.ts', import.meta.url),
+  'utf8',
+);
 const workspaceLayout = await readFile(
   new URL('../src/app/(workspace)/layout.tsx', import.meta.url),
   'utf8',
@@ -12,17 +15,23 @@ const serverClient = await readFile(
   'utf8',
 );
 
-test('sign-in does not accept an untrusted return URL and redirects to a fixed workspace route', () => {
-  assert.match(authActions, /export async function signIn\(formData: FormData\)/);
-  assert.match(authActions, /redirect\('\/dashboard'\)/);
-  assert.doesNotMatch(authActions, /redirectTo|returnTo|callbackUrl|searchParams\.get\(['"]next/);
-  assert.doesNotMatch(authActions, /new URL\([^\n]*(?:formData|searchParams)/);
-});
+test(
+  'sign-in does not accept an untrusted return URL and redirects to a fixed workspace route',
+  () => {
+    assert.match(authActions, /export async function signIn\\(formData: FormData\\)/);
+    assert.match(authActions, /redirect\\('\\/dashboard'\\)/);
+    assert.doesNotMatch(
+      authActions,
+      /redirectTo|returnTo|callbackUrl|searchParams\\.get\\(['"]next/,
+    );
+    assert.doesNotMatch(authActions, /new URL\\([^\\n]*(?:formData|searchParams)/);
+  },
+);
 
 test('protected workspace boundary verifies the current provider user', () => {
-  assert.match(workspaceLayout, /supabase\.auth\.getUser\(\)/);
-  assert.match(workspaceLayout, /if \(error \|\| !user\) redirect\('\/sign-in'\)/);
-  assert.doesNotMatch(workspaceLayout, /supabase\.auth\.getClaims\(\)/);
+  assert.match(workspaceLayout, /supabase\\.auth\\.getUser\\(\\)/);
+  assert.match(workspaceLayout, /if \\(error \\|\\| !user\\) redirect\\('\\/sign-in'\\)/);
+  assert.doesNotMatch(workspaceLayout, /supabase\\.auth\\.getClaims\\(\\)/);
 });
 
 test('server Supabase client is server-only and uses no privileged key', () => {
