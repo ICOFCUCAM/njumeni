@@ -33,7 +33,7 @@ The [Master Implementation Plan](docs/MASTER_IMPLEMENTATION_PLAN.md) preserves t
 
 ## Current engineering controls
 
-The repository includes a GitHub Actions repository-security workflow and a tracked-content policy check. These are initial guardrails, not a substitute for the full Phase 0 CI, environment, migration, application-shell and operational foundation.
+The repository includes a GitHub Actions [CI pipeline](docs/CI_PIPELINE.md) for formatting, lint, strict TypeScript baseline, foundation tests, architecture integrity, repository content policy and Gitleaks secret scanning. The application build and application-level test gates activate as the app shell and workspace are introduced; database/RLS/legal-intelligence tests are added in their dependent phases. These controls do not yet constitute a production application pipeline.
 
 ## Local development
 
