@@ -251,7 +251,12 @@ export async function setWorkspaceMembershipStatus(formData: FormData): Promise<
     .eq('id', membership.workspace_id)
     .maybeSingle();
   if (!workspace) redirect('/settings/workspaces?error=membership-update-failed');
-  await requirePermission(supabase, 'workspace.manage_members', workspace.organization_id, membership.workspace_id);
+  await requirePermission(
+    supabase,
+    'workspace.manage_members',
+    workspace.organization_id,
+    membership.workspace_id,
+  );
   const { error } = await supabase.rpc('set_workspace_membership_status', {
     p_membership_id: membershipId,
     p_status: status,
@@ -294,7 +299,6 @@ export async function acceptInvitation(formData: FormData): Promise<InvitationAc
     return { error: 'unavailable' };
   }
 }
-
 
 const ROLE_KEY_PATTERN = /^[a-z][a-z0-9_]{2,63}$/;
 

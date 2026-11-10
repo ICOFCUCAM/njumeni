@@ -32,9 +32,13 @@ export async function signIn(formData: FormData): Promise<void> {
   } catch (error) {
     // Re-throw Next.js redirect control flow; do not expose provider/network errors.
     if (
-      error && typeof error === 'object' && 'digest' in error &&
-      typeof error.digest === 'string' && error.digest.startsWith('NEXT_REDIRECT')
-    ) throw error;
+      error &&
+      typeof error === 'object' &&
+      'digest' in error &&
+      typeof error.digest === 'string' &&
+      error.digest.startsWith('NEXT_REDIRECT')
+    )
+      throw error;
     redirect('/sign-in?error=unavailable');
   }
 
@@ -60,9 +64,13 @@ export async function signOut(): Promise<void> {
     // Re-throw Next.js redirect control flow. Unexpected failures must not be
     // presented as a successful sign-out.
     if (
-      error && typeof error === 'object' && 'digest' in error &&
-      typeof error.digest === 'string' && error.digest.startsWith('NEXT_REDIRECT')
-    ) throw error;
+      error &&
+      typeof error === 'object' &&
+      'digest' in error &&
+      typeof error.digest === 'string' &&
+      error.digest.startsWith('NEXT_REDIRECT')
+    )
+      throw error;
     redirect('/sign-in?error=signout');
   }
 
