@@ -132,9 +132,6 @@ export default async function WorkspacesSettingsPage({
     invitationsResult.error ||
     workspaceMembershipsResult.error ||
     ownerError;
-  const ownerByOrganisation = new Map(
-    ownerChecks.map((check) => [check.organizationId, check.isOwner]),
-  );
   const accessByOrganisation = new Map(
     ownerChecks.map((check) => [check.organizationId, check]),
   );
