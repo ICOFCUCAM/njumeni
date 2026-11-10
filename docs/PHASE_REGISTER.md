@@ -1,0 +1,111 @@
+# NJUMENI — LIVE PHASE EXECUTION REGISTER
+
+**This is the operational register.** The [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md) defines the scope and architecture; this register controls the actual work and phase locks.
+
+- Repository: `ICOFCUCAM/njumeni`
+- Active phase: **Phase 0 — Foundation and repository/infrastructure audit**
+- Phase state: **🟡 OPEN — IN PROGRESS**
+- Next task: **0.3 — Preserve existing components and resolve archive preservation**
+- Phase completion commit: **NOT CREATED**
+- Rule: no Phase 1 work may begin until Phase 0 is fully green and its phase-closeout commit is verified.
+
+## 1. Register legend
+
+| Indicator | Meaning |
+|---|---|
+| 🟢 GREEN / COMPLETE | Deliverable implemented or completed, reviewed, checks passed, documentation updated and commit SHA recorded |
+| 🟡 IN PROGRESS | Work has started; acceptance is not yet satisfied |
+| 🔴 BLOCKED | Cannot proceed until a named dependency or decision is resolved |
+| ⚪ NOT STARTED | Work has not begun |
+| 🔒 LOCKED | Belongs to a future phase; no implementation may start |
+
+A task does not turn green because code was written. It turns green only after its acceptance conditions are met and its commit is verified. If a later change breaks it, change its state to REGRESSION and resolve it.
+
+## 2. Active phase — Phase 0
+
+**Phase objective:** establish the complete, verified product, repository, architecture, engineering and infrastructure foundation required to begin application implementation safely.
+
+**Phase-wide closeout requirements:**
+- All numbered tasks 0.1–0.16 are green.
+- Exact original 20-point outline and A–M module map are preserved and mapped.
+- CMP material is safely archived and verified outside Njumeni before its removal from this repository.
+- Product scope and first-release specification are approved and documented.
+- Modular-monolith architecture, eight layers, bounded contexts and module contracts are recorded.
+- Development standards and local/test/staging/production environment strategy are documented and reproducible.
+- CI quality, build, test, security and repository-policy checks pass.
+- Database migration and hosted-database reconciliation policy is defined and verified against the actual environment before schema work begins.
+- Hosting, domains, database, storage, queue, provider, secrets and deployment facts are inventoried; unknowns are explicitly recorded.
+- Application shell and navigation architecture are specified without prematurely implementing downstream features.
+- Repository hygiene and all Phase 0 risks are reviewed.
+- Phase-wide acceptance report is committed.
+- Dedicated Phase 0 closeout commit exists and is verified.
+
+### Phase 0 task register
+
+| No. | Task / required outcome | Status | Acceptance evidence / commit |
+|---|---|---|---|
+| 0.1 | Restore and freeze the original 20 numbered outline sections and canonical A–M modules | 🟢 GREEN | Restored in [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md); commit `0c2b9d5` |
+| 0.2 | Audit complete repository tree, branch, commits, scripts, workflows and upstream material | 🟢 GREEN | [Phase 0 audit](PHASE_0_AUDIT.md); audit commit `a3b5d32`; repository security workflow passed |
+| 0.3 | Inventory and preserve existing Njumeni/JurisAI components; archive legacy CMP separately and verify preservation before removal | 🟡 IN PROGRESS | Inventory recorded; CMP archive repository and verified transfer still outstanding |
+| 0.4 | Finalise repository boundaries: Njumeni app, marketing website, CMP archive and isolated upstream research | 🟡 IN PROGRESS | Marketing website is separate; CMP archive still outstanding |
+| 0.5 | Produce complete product specification: users, priority journeys, launch scope, jurisdiction, requirements and non-goals | ⚪ NOT STARTED | Must be reviewed and committed |
+| 0.6 | Approve modular-monolith architecture, bounded contexts, eight platform layers and dependency rules | ⚪ NOT STARTED | Architecture decision record and contracts required |
+| 0.7 | Map A–M modules to layers, workstreams, ownership, dependencies, APIs/events, permissions and phase delivery | ⚪ NOT STARTED | Complete module-contract register required |
+| 0.8 | Establish coding, naming, formatting, lint, type, error, logging and review standards | ⚪ NOT STARTED | Standards and automated enforcement required |
+| 0.9 | Establish reproducible local, test/CI, staging and production environment strategy | ⚪ NOT STARTED | Environment matrix, setup and configuration contract required |
+| 0.10 | Complete CI for format, lint, type-check, tests, build, security, secrets and repository policy | 🟡 IN PROGRESS | Existing security workflow passed; quality/build/test jobs not yet implemented |
+| 0.11 | Define migration discipline: immutable ordered migrations, local replay/reset, hosted history reconciliation, drift, backup and forward-fix | ⚪ NOT STARTED | Migration policy and verified database inventory required |
+| 0.12 | Define legal application shell, navigation, route boundaries and module entry points | ⚪ NOT STARTED | Architecture specification and acceptance review required |
+| 0.13 | Audit hosting, domains, deployment, secrets, DB, storage, queues and external providers | 🟡 IN PROGRESS | GitHub/repository audited; application infrastructure inventory incomplete |
+| 0.14 | Create dependency-aware Phase 0–13 backlog and acceptance criteria | 🟢 GREEN | [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md); initial commit `b057558`, updated register commit `0c2b9d5` |
+| 0.15 | Run full repository hygiene checks and document unresolved risks | 🟡 IN PROGRESS | Repository security workflow passed; broader checks and risk review remain |
+| 0.16 | Conduct Phase 0 acceptance review and prepare closeout commit | 🔒 LOCKED | Opens only after 0.1–0.15 are all green |
+
+### Phase 0 verified commits
+
+| Deliverable | Commit |
+|---|---|
+| Phase 0 repository audit | `a3b5d32c602f96baf9ac3daaf51f49633e9e2e3e` |
+| Original 20-point outline and A–M register restored; phase-lock rules added | `0c2b9d5c970a8de8670cc5823374dd246aa7483b` |
+| Master phase backlog initial commit | `b05755824b97f7f937cb4679f73cdadf4e45e471` |
+
+The security workflow passed for the audit commit. The latest workflow after the master-plan update must be checked to completion before recording its result as passed.
+
+## 3. Phase lock register
+
+Only Phase 0 is open. All future phases remain locked until the active phase has a complete set of green tasks, successful phase-wide checks, an acceptance report and a verified closeout commit.
+
+| Phase | Name | Register state | Unlock condition |
+|---|---|---|---|
+| 0 | Foundation and repository/infrastructure audit | 🟡 OPEN | All 0.1–0.16 green + Phase 0 closeout commit |
+| 1 | Identity, tenancy and security foundation | 🔒 LOCKED | Phase 0 closeout verified |
+| 2 | Legal knowledge foundation | 🔒 LOCKED | Phase 1 closeout verified |
+| 3 | Evidence and document foundation | 🔒 LOCKED | Phase 2 closeout verified |
+| 4 | Document intelligence | 🔒 LOCKED | Phase 3 closeout verified |
+| 5 | Legal research | 🔒 LOCKED | Phase 4 closeout verified |
+| 6 | AI reasoning and argument graph | 🔒 LOCKED | Phase 5 closeout verified |
+| 7 | Verification and quality control | 🔒 LOCKED | Phase 6 closeout verified |
+| 8 | Documents, contracts and drafting | 🔒 LOCKED | Phase 7 closeout verified |
+| 9 | Personal and case workspace | 🔒 LOCKED | Phase 8 closeout verified |
+| 10 | Professional and institutional edition | 🔒 LOCKED | Phase 9 closeout verified |
+| 11 | Commercial platform | 🔒 LOCKED | Phase 10 closeout verified |
+| 12 | Global and multi-jurisdiction expansion | 🔒 LOCKED | Phase 11 closeout verified |
+| 13 | Production hardening and launch | 🔒 LOCKED | Phase 12 closeout verified |
+
+## 4. Required workflow for every task
+
+1. Read this register and the relevant master-plan section before editing code.
+2. Confirm the active task number, dependencies, acceptance criteria and current branch/head.
+3. Inspect existing implementation and tests before making changes.
+4. Implement only the active task and its necessary prerequisites.
+5. Run the task's tests, security checks and relevant integration checks.
+6. Update documentation and this register with the result.
+7. Commit the task. Record the full commit SHA.
+8. Mark it 🟢 GREEN only after verification and commit.
+9. Move to the next numbered task in the same phase.
+10. When the last task is complete, run the entire phase acceptance suite, create the phase acceptance report and a dedicated phase-closeout commit.
+11. Verify the closeout commit and then unlock the next phase.
+
+## 5. "Go next" instruction
+
+When the user says **"go next"**, continue the first incomplete task in the one active phase shown above. Do not ask the user to select a task already determined by this register. Do not start work in a locked phase. If blocked, explain the blocker and resolve the next prerequisite within the same phase.
