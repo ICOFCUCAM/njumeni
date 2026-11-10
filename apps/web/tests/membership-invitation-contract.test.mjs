@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { normalizeInvitationEmail, parseInvitationExpiryDays } from '../src/lib/invitation-validation.ts';
 
 const actions = await readFile(
   new URL('../src/app/(workspace)/settings/workspaces/actions.ts', import.meta.url),
@@ -107,4 +108,28 @@ test('tenant access policies require active organisation and workspace membershi
       'on conflict on constraint workspace_memberships_workspace_principal_unique',
     ),
   );
+});
+
+
+test('invitation email validation normalises addresses and rejects malformed input', () => {
+  assert.equal(normalizeInvitationEmail('  COLLEAGUE@Example.COM  '), 'colleague@example.com');
+  assert.equal(normalizeInvitationEmail('a@b.co'), 'a@b.co');
+  assert.equal(normalizeInvitationEmail('missing-at-symbol'), null);
+  assert.equal(normalizeInvitationEmail('person @example.com'), null);
+  assert.equal(normalizeInvitationEmail('person@example'), null);
+  assert.equal(normalizeInvitationEmail('x'.repeat(255) + '@example.com'), null);
+  assert.equal(normalizeInvitationEmail(null), null);
+});
+
+test('invitation expiry parser preserves the selected 1, 7, 14 and 30 day values', () => {
+  assert.equal(parseInvitationExpiryDays('1'), 1);
+  assert.equal(parseInvitationExpiryDays('7'), 7);
+  assert.equal(parseInvitationExpiryDays('14'), 14);
+  assert.equal(parseInvitationExpiryDays('30'), 30);
+  assert.equal(parseInvitationExpiryDays(undefined), 7);
+  assert.equal(parseInvitationExpiryDays(''), 7);
+  assert.equal(parseInvitationExpiryDays('0'), null);
+  assert.equal(parseInvitationExpiryDays('31'), null);
+  assert.equal(parseInvitationExpiryDays('14days'), null);
+  assert.equal(parseInvitationExpiryDays('1.5'), null);
 });
