@@ -1,4 +1,5 @@
 import { InvitationForm } from './InvitationForm';
+import { RoleManagementPanel } from './RoleManagementPanel';
 import {
   createOrganization,
   createWorkspace,
@@ -23,6 +24,10 @@ const messages: Record<string, string> = {
   'invitation-update-failed': 'The invitation could not be updated.',
   'invalid-membership': 'The membership request is invalid.',
   'membership-update-failed': 'The membership could not be updated.',
+  'not-authorized': 'You do not have permission to perform that action.',
+  'invalid-role': 'The role assignment request is invalid.',
+  'role-assignment-failed': 'The role could not be assigned. Check the member and scope.',
+  'role-revocation-failed': 'The role could not be revoked.',
 };
 
 export default async function WorkspacesSettingsPage({
@@ -84,10 +89,34 @@ export default async function WorkspacesSettingsPage({
         : Promise.resolve({ data: [], error: null }),
       Promise.all(
         organisationList.map(async (organisation) => {
-          const { data, error: ownerError } = await supabase.rpc('is_organization_owner', {
-            p_organization_id: organisation.id,
-          });
-          return { organizationId: organisation.id, isOwner: data === true, error: ownerError };
+          const [owner, manageMembers, manageRoles, createWorkspaces] = await Promise.all([
+            supabase.rpc('is_organization_owner', {
+              p_organization_id: organisation.id,
+            }),
+            supabase.rpc('has_permission', {
+              p_permission_key: 'organization.manage_members',
+              p_organization_id: organisation.id,
+              p_workspace_id: null,
+            }),
+            supabase.rpc('has_permission', {
+              p_permission_key: 'organization.manage_roles',
+              p_organization_id: organisation.id,
+              p_workspace_id: null,
+            }),
+            supabase.rpc('has_permission', {
+              p_permission_key: 'workspace.create',
+              p_organization_id: organisation.id,
+              p_workspace_id: null,
+            }),
+          ]);
+          return {
+            organizationId: organisation.id,
+            isOwner: owner.data === true,
+            canManageMembers: manageMembers.data === true,
+            canManageRoles: manageRoles.data === true,
+            canCreateWorkspaces: createWorkspaces.data === true,
+            error: owner.error ?? manageMembers.error ?? manageRoles.error ?? createWorkspaces.error,
+          };
         }),
       ),
     ]);
@@ -106,6 +135,80 @@ export default async function WorkspacesSettingsPage({
   const ownerByOrganisation = new Map(
     ownerChecks.map((check) => [check.organizationId, check.isOwner]),
   );
+  const accessByOrganisation = new Map(
+    ownerChecks.map((check) => [check.organizationId, check]),
+  );
+  const roleManagementByOrganisation = await Promise.all(
+    organisationList.map(async (organisation) => {
+      const access = accessByOrganisation.get(organisation.id);
+      if (!access?.canManageRoles) {
+        return { organizationId: organisation.id, roles: [], bindings: [] };
+      }
+      const [rolesResult, bindingsResult] = await Promise.all([
+        supabase.rpc('list_assignable_roles', {
+          p_organization_id: organisation.id,
+          p_workspace_id: null,
+        }),
+        supabase.rpc('list_role_bindings', {
+          p_organization_id: organisation.id,
+          p_workspace_id: null,
+        }),
+      ]);
+      return {
+        organizationId: organisation.id,
+        roles: rolesResult.data ?? [],
+        bindings: bindingsResult.data ?? [],
+      };
+    }),
+  );
+  const roleManagementByWorkspace = await Promise.all(
+    workspaceRows.map(async (workspace) => {
+      const [manageMembers, manageRoles] = await Promise.all([
+        supabase.rpc('has_permission', {
+          p_permission_key: 'workspace.manage_members',
+          p_organization_id: workspace.organization_id,
+          p_workspace_id: workspace.id,
+        }),
+        supabase.rpc('has_permission', {
+          p_permission_key: 'workspace.manage_roles',
+          p_organization_id: workspace.organization_id,
+          p_workspace_id: workspace.id,
+        }),
+      ]);
+      if (manageRoles.data !== true) {
+        return {
+          workspaceId: workspace.id,
+          canManageMembers: manageMembers.data === true,
+          canManageRoles: false,
+          roles: [],
+          bindings: [],
+        };
+      }
+      const [rolesResult, bindingsResult] = await Promise.all([
+        supabase.rpc('list_assignable_roles', {
+          p_organization_id: workspace.organization_id,
+          p_workspace_id: workspace.id,
+        }),
+        supabase.rpc('list_role_bindings', {
+          p_organization_id: workspace.organization_id,
+          p_workspace_id: workspace.id,
+        }),
+      ]);
+      return {
+        workspaceId: workspace.id,
+        canManageMembers: manageMembers.data === true,
+        canManageRoles: true,
+        roles: rolesResult.data ?? [],
+        bindings: bindingsResult.data ?? [],
+      };
+    }),
+  );
+  const roleManagementByOrganisationId = new Map(
+    roleManagementByOrganisation.map((item) => [item.organizationId, item]),
+  );
+  const roleManagementByWorkspaceId = new Map(
+    roleManagementByWorkspace.map((item) => [item.workspaceId, item]),
+  );
 
   return (
     <>
@@ -113,9 +216,9 @@ export default async function WorkspacesSettingsPage({
         <p className="page-eyebrow">Account</p>
         <h1 className="page-title">Organisations and workspaces</h1>
         <p className="page-description">
-          Your personal organisation is created automatically. Create additional organisation
-          contexts and workspaces, invite collaborators by verified email, and manage membership
-          lifecycle. Role and permission controls are introduced separately.
+          Your personal organisation is created automatically. Manage organisation contexts,
+          workspaces, verified-email invitations, scoped roles and membership lifecycle. Every role
+          applies only within its assigned organisation or workspace.
         </p>
       </header>
 
@@ -136,7 +239,11 @@ export default async function WorkspacesSettingsPage({
                   ? 'Invitation revoked.'
                   : params.message === 'membership-updated'
                     ? 'Membership updated.'
-                    : 'Changes saved.'}
+                    : params.message === 'role-assigned'
+                      ? 'Role assigned.'
+                      : params.message === 'role-revoked'
+                        ? 'Role revoked.'
+                        : 'Changes saved.'}
         </p>
       ) : null}
 
@@ -207,7 +314,12 @@ export default async function WorkspacesSettingsPage({
           ) : (
             <div className="tenant-list">
               {organisationList.map((organisation) => {
-                const isOwner = ownerByOrganisation.get(organisation.id) === true;
+                const organisationAccess = accessByOrganisation.get(organisation.id);
+                const isOwner = organisationAccess?.isOwner === true;
+                const canManageMembers = organisationAccess?.canManageMembers === true;
+                const canManageRoles = organisationAccess?.canManageRoles === true;
+                const canCreateWorkspaces = organisationAccess?.canCreateWorkspaces === true;
+                const organisationRoleManagement = roleManagementByOrganisationId.get(organisation.id);
                 const organisationWorkspaces = workspaceRows.filter(
                   (workspace) => workspace.organization_id === organisation.id,
                 );
@@ -233,7 +345,9 @@ export default async function WorkspacesSettingsPage({
                           ? 'Personal account'
                           : isOwner
                             ? 'Owner'
-                            : 'Member'}
+                            : canManageRoles
+                              ? 'Administrator'
+                              : 'Member'}
                       </span>
                     </div>
 
@@ -247,6 +361,7 @@ export default async function WorkspacesSettingsPage({
                             const workspaceMembers = workspaceMembershipRows.filter(
                               (membership) => membership.workspace_id === workspace.id,
                             );
+                            const workspaceAccess = roleManagementByWorkspaceId.get(workspace.id);
 
                             return (
                               <li className="workspace-entry" key={workspace.id}>
@@ -270,7 +385,7 @@ export default async function WorkspacesSettingsPage({
                                           </strong>
                                           <small>{membership.status}</small>
                                         </span>
-                                        {isOwner ? (
+                                        {workspaceAccess?.canManageMembers ? (
                                           <div className="membership-actions">
                                             <form action={setWorkspaceMembershipStatus}>
                                               <input
@@ -303,6 +418,16 @@ export default async function WorkspacesSettingsPage({
                                       </div>
                                     ))}
                                   </div>
+                                ) : null}
+                                {workspaceAccess?.canManageRoles ? (
+                                  <RoleManagementPanel
+                                    scope="workspace"
+                                    organizationId={organisation.id}
+                                    workspaceId={workspace.id}
+                                    members={workspaceMembers}
+                                    roles={workspaceAccess.roles}
+                                    bindings={workspaceAccess.bindings}
+                                  />
                                 ) : null}
                               </li>
                             );
@@ -343,7 +468,7 @@ export default async function WorkspacesSettingsPage({
                           </select>
                         </div>
                       </div>
-                      {isOwner ? (
+                      {canCreateWorkspaces ? (
                         <div className="profile-actions">
                           <button className="auth-submit" type="submit">
                             Create workspace
@@ -356,7 +481,7 @@ export default async function WorkspacesSettingsPage({
                       <div className="membership-section-heading">
                         <h3>Organisation members</h3>
                         <p>
-                          {isOwner
+                          {canManageMembers
                             ? 'You can suspend or revoke a member. Re-invitation restores a suspended or revoked membership.'
                             : 'Your access is limited to the memberships assigned to your account.'}
                         </p>
@@ -374,7 +499,7 @@ export default async function WorkspacesSettingsPage({
                                   {new Date(membership.joined_at).toLocaleDateString()}
                                 </small>
                               </span>
-                              {isOwner ? (
+                              {canManageMembers ? (
                                 <div className="membership-actions">
                                   <form action={setOrganizationMembershipStatus}>
                                     <input
@@ -406,12 +531,22 @@ export default async function WorkspacesSettingsPage({
                       )}
                     </div>
 
+                    {canManageRoles && organisationRoleManagement ? (
+                      <RoleManagementPanel
+                        scope="organization"
+                        organizationId={organisation.id}
+                        members={organisationMemberships}
+                        roles={organisationRoleManagement.roles}
+                        bindings={organisationRoleManagement.bindings}
+                      />
+                    ) : null}
+
                     <div className="membership-section">
                       <div className="membership-section-heading">
                         <h3>Invitations</h3>
                         <p>One-time links are bound to a confirmed email address and expire.</p>
                       </div>
-                      {isOwner ? (
+                      {canManageMembers ? (
                         <>
                           {organisationInvitations.length === 0 ? (
                             <p>No invitations have been issued for this organisation.</p>
@@ -462,7 +597,7 @@ export default async function WorkspacesSettingsPage({
                         </>
                       ) : (
                         <p>
-                          Invitation creation and revocation are managed by the organisation owner.
+                          Invitation creation and revocation require organisation membership-administration permission.
                         </p>
                       )}
                     </div>
