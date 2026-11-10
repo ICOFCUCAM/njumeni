@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation';
 import { WorkspaceShell } from '@/components/workspace-shell';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 
+// Never statically render or cache authenticated workspace responses.
+export const dynamic = 'force-dynamic';
+
 export default async function WorkspaceLayout({ children }: { children: ReactNode }) {
   if (!isSupabaseConfigured()) redirect('/sign-in?error=unavailable');
 
