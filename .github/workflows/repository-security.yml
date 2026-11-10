@@ -25,18 +25,6 @@ jobs:
       - name: Install pinned CI tools
         run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund prettier@3.5.3 eslint@10.0.0 typescript@5.8.3
 
-      - name: Generate canonical Prettier formatting for migration guard files
-        run: |
-          npx --no-install prettier --write scripts/ci/check-migrations.mjs tests/migrations.test.mjs
-          echo "MIGRATION_GUARD_FORMATTED_B64_BEGIN"
-          base64 -w0 scripts/ci/check-migrations.mjs
-          echo
-          echo "MIGRATION_GUARD_FORMATTED_B64_END"
-          echo "MIGRATION_TEST_FORMATTED_B64_BEGIN"
-          base64 -w0 tests/migrations.test.mjs
-          echo
-          echo "MIGRATION_TEST_FORMATTED_B64_END"
-
       - name: Check formatting
         run: npx --no-install prettier --check .prettierrc.json tsconfig.ci.json eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs scripts/ci/typecheck-probe.ts tests/foundation.test.mjs tests/migrations.test.mjs
 
