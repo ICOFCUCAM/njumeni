@@ -82,7 +82,7 @@ The security workflow passed for commits `a3b5d32`, `0c2b9d5`, `9427e26` and `c0
 
 | No. | Task / required outcome | Status | Acceptance evidence |
 |---|---|---|---|
-| 1.1 | Define identity, authentication, tenant and workspace security contracts | 🟡 IN PROGRESS | [ADR-0002 — Identity, Tenancy and Security Architecture](architecture/ADR-0002-identity-tenancy-security.md) defines principal/session/tenant/workspace/membership/permission concepts, trust boundaries, deny-by-default rules, RLS, audit, threat model and open decisions. Commit `f8a2ee06588cc985970ce8a0b8a6828d25afef96`; awaiting CI verification. |
+| 1.1 | Define identity, authentication, tenant and workspace security contracts | 🟢 GREEN | [ADR-0002 — Identity, Tenancy and Security Architecture](architecture/ADR-0002-identity-tenancy-security.md) defines principal/session/tenant/workspace/membership/permission concepts, trust boundaries, deny-by-default rules, RLS, audit, threat model and open decisions. ADR commit `f8a2ee06588cc985970ce8a0b8a6828d25afef96`; verified by CI run `42769220793` on follow-up integrity commit `2f22fddc14881c18a96a0cd6bcee12ad709943f8`. |
 | 1.2 | Verify dedicated Njumeni identity/database environment readiness | 🔒 LOCKED | Verify a dedicated Njumeni Supabase project and approved region; never reuse another product's environment. |
 | 1.3 | Implement identity provider integration and secure session lifecycle | 🔒 LOCKED | Server-side Auth, secure session lifecycle and invalid/expired/revoked session tests. |
 | 1.4 | Implement user profile and principal model | 🔒 LOCKED | Provider subject mapping, profile schema, server-side update rules and tests. |
