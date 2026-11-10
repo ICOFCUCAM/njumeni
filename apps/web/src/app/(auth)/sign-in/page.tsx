@@ -2,7 +2,7 @@ import { signIn } from '@/app/(auth)/actions';
 import { isSupabaseConfigured } from '@/lib/supabase/server';
 
 type SignInPageProps = {
-  searchParams: Promise<{ error?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; message?: string; warning?: string }>;
 };
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
@@ -15,7 +15,9 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         ? 'Enter a valid email address and password.'
         : params.error === 'unavailable'
           ? 'Sign-in is temporarily unavailable. Please try again later.'
-          : null;
+          : params.error === 'signout'
+            ? 'We could not complete sign-out. Please try again; your session status could not be confirmed.'
+            : null;
 
   return (
     <main className="signin-panel">
@@ -28,6 +30,11 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       {params.message === 'signed-out' ? (
         <p className="auth-success" role="status">
           You have been signed out.
+        </p>
+      ) : null}
+      {params.message === 'signed-out' && params.warning === 'revocation-unconfirmed' ? (
+        <p className="auth-error" role="alert">
+          You have been signed out on this device, but the server could not confirm revocation of the refresh token. It may remain valid until it expires.
         </p>
       ) : null}
       {errorMessage ? (
