@@ -13,7 +13,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     invalid: 'Enter a valid email address and password.',
     unavailable: 'Sign-in is temporarily unavailable. Please try again later.',
     signout:
-      'We could not complete sign-out. Please try again; your session status could not be confirmed.',
+      'Sign-out could not be confirmed. Please try again.',
   };
   const errorMessage = params.error ? errorMessages[params.error] ?? null : null;
   const showRevocationWarning =
