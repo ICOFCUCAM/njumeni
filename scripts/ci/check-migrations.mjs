@@ -34,7 +34,7 @@ export function validateMigrationFiles(entries) {
   return errors;
 }
 
-export function validateMigrationChanges(statusLines) {
+export function validateMigrationChanges(statusLines, allowedCorrections = new Set()) {
   const errors = [];
 
   for (const line of statusLines) {
@@ -42,6 +42,10 @@ export function validateMigrationChanges(statusLines) {
     const path = pathParts.join(' ');
 
     if (!status || !path) {
+      continue;
+    }
+
+    if (status === 'M' && allowedCorrections.has(path)) {
       continue;
     }
 
@@ -75,6 +79,38 @@ async function main() {
     const sql = await readFile(join(MIGRATIONS_DIR, file), 'utf8');
     if (!sql.trim()) {
       errors.push(`Migration file is empty: ${file}`);
+    }
+  }
+
+  const correctionFile = 'scripts/ci/migration-predeployment-corrections.json';
+  let allowedCorrections = new Set();
+
+  try {
+    const correctionConfig = JSON.parse(await readFile(correctionFile, 'utf8'));
+    for (const correction of correctionConfig.corrections ?? []) {
+      if (
+        typeof correction.path !== 'string' ||
+        !correction.path.startsWith(`${MIGRATIONS_DIR}/`) ||
+        typeof correction.blob_sha !== 'string' ||
+        typeof correction.reason !== 'string' ||
+        correction.reason.trim().length < 20
+      ) {
+        errors.push('Invalid pre-deployment migration correction record.');
+        continue;
+      }
+
+      const actualBlobSha = execFileSync('git', ['hash-object', correction.path], {
+        encoding: 'utf8',
+      }).trim();
+      if (actualBlobSha !== correction.blob_sha) {
+        errors.push(`Pre-deployment correction hash mismatch for ${correction.path}.`);
+        continue;
+      }
+      allowedCorrections.add(correction.path);
+    }
+  } catch (error) {
+    if (!(error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT')) {
+      throw error;
     }
   }
 
