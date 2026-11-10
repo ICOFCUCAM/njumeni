@@ -107,3 +107,36 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 5. Complete the hosting/database/storage/queue/domain/provider inventory.
 6. Define engineering standards, environments, complete CI and migration discipline.
 7. Specify the minimal legal application shell only after the preceding architecture and repository gates are accepted.
+
+
+---
+
+## Audit update — 10 November 2026
+
+This dated update supersedes the historical status snapshot above where it conflicts with current repository evidence. The original audit text is retained as a record of the initial repository state. The live task status is maintained in [PHASE_REGISTER.md](PHASE_REGISTER.md).
+
+### Original plan and architecture recovered
+
+- The complete original twenty-section source and detailed tables are preserved in [ORIGINAL_MASTER_PLAN_SOURCE.md](ORIGINAL_MASTER_PLAN_SOURCE.md).
+- [MASTER_IMPLEMENTATION_PLAN.md](MASTER_IMPLEMENTATION_PLAN.md) begins with the exact source text and appends a separate live execution overlay.
+- The source checksum, all twenty headings, eight original layer names and five named upstream repositories are enforced by `tests/original-plan.test.mjs`.
+- ADR-0001 and the A–M module map now record the original eight canonical layer names and the approved modular-monolith boundaries.
+
+### Current implementation and Phase 0 status
+
+- The Next.js web foundation shell is implemented in `apps/web`, with all A–M route entry points, responsive navigation, dashboard, sign-in placeholder, health route and error/not-found boundaries.
+- The app's production build and type-check passed in combined CI run `42744161490`.
+- Migration discipline and CI guards are implemented; no Njumeni hosted database or migration history has been claimed as provisioned or reconciled.
+- Current live register count after the application shell closeout: 13/16 tasks green; tasks 0.13 and 0.15 remain to be closed, and task 0.16 remains locked.
+
+### Verified infrastructure position
+
+- GitHub reports `ICOFCUCAM/njumeni` as PUBLIC, while the original source specifies a private application repository. This is an owner decision; no visibility change was made.
+- Vercel has a separate `njumeni-marketing-website` project linked to `ICOFCUCAM/marketing-website`, not the Njumeni application repository. No Njumeni application deployment or custom domain was found.
+- The connected Supabase inventory contains no project identifiable as Njumeni. No Njumeni database, Auth project, private object store, Redis/queue, worker/scheduler, AI provider connection, production monitoring or backup service was found.
+- The current app health endpoint explicitly reports authentication and database disconnected.
+- The current read-only inventory and unverified areas are documented in [INFRASTRUCTURE_AUDIT.md](INFRASTRUCTURE_AUDIT.md).
+
+### Corrections to historical observations
+
+The earlier audit stated that branch protection was disabled. The current connected GitHub read action did not expose branch-protection/ruleset metadata, so current branch protection is **unverified** and must not be described as disabled or enabled without a fresh owner-side check. The original outline recovery gate is now closed; the original source is preserved and tested.

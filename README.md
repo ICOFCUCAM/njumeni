@@ -44,7 +44,7 @@ The repository includes a GitHub Actions [CI pipeline](docs/CI_PIPELINE.md) for 
 - [Application Shell](docs/APP_SHELL.md) — route boundaries, A–M module entry points and current preview limitations.
 - [.env.example](.env.example) — placeholder-only configuration template; it contains no real credentials.
 
-The full application development setup is not yet established. Follow the Master Implementation Plan's Phase 0 checklist before treating this repository as a runnable legal application. Do not infer a stack or start services that have not been verified and recorded in the architecture decision.
+The web foundation shell is runnable with the pinned `apps/web` package. The full legal application stack is not yet established: authentication, tenancy, database/RLS, private storage, AI providers, API/worker services and production deployment remain unconnected. Follow the live Phase Register and the [Infrastructure Audit](docs/INFRASTRUCTURE_AUDIT.md) before provisioning or accepting real legal data.
 
 ## Legal-technology research sources
 
