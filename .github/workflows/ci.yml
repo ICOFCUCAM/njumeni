@@ -28,7 +28,7 @@ jobs:
       - name: Install pinned CI tools
         run: |
           npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund \
-            prettier@3.5.3 eslint@9.39.2 typescript@5.8.3
+            prettier@3.5.3 eslint@10.0.0 typescript@5.8.3
 
       - name: Check formatting
         run: |
@@ -55,7 +55,7 @@ jobs:
         shell: bash
         run: |
           if [[ -f apps/web/package.json ]]; then
-            echo "Application package detected; application build must be wired to the workspace package scripts."
+            node -e "const p=require('./apps/web/package.json'); if (!p.scripts?.build) process.exit(1)"
             cd apps/web
             npm run build
           else
