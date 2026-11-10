@@ -5,8 +5,16 @@ ICOFCUCAM/njumeni is the Njumeni legal technology platform. Its source repositor
 
 Njumeni is intended to handle confidential legal information as part of its application functionality. Secure storage and management of legal documents, case files and evidence are product capabilities to be designed and implemented in the application architecture, subject to applicable classification, legal, customer and hosting requirements.
 
-## Separate software projects
-Unrelated software products must not be combined with Njumeni's source code. The legacy CMP (consent-management platform) website is separate work and must be preserved in a separate repository, recommended name: ICOFCUCAM/njumeni-cmp-archive.
+## Canonical repository map
+
+| Repository | Purpose | Boundary |
+|---|---|---|
+| [ICOFCUCAM/njumeni](https://github.com/ICOFCUCAM/njumeni) | Njumeni legal application, tests, deployment configuration and engineering documentation | Canonical legal-platform source repository |
+| [ICOFCUCAM/marketing-website](https://github.com/ICOFCUCAM/marketing-website) | Public Njumeni marketing website | Independent public-facing site; no legal application data, authenticated matter workflows or application runtime coupling. Repository exists separately; its implementation/deployment status must be assessed in its own workstream. |
+| [ICOFCUCAM/njumeni-cmp-archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive) | Historical Consent Management Platform (CMP) website and architecture snapshot | Separate private archive; not part of the Njumeni legal product. Original six-file snapshot was transferred and verified on 2026-11-10. |
+| External upstream legal projects | Research references and candidate isolated adapters | Remain independent upstreams; never vendor wholesale into the Njumeni application. Any adapter or selected component requires a separate technical, security and licence decision. |
+
+Unrelated software products must not be combined with Njumeni's source code. The legacy CMP (consent-management platform) website is separate work and is preserved in the verified archive repository: [ICOFCUCAM/njumeni-cmp-archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive).
 
 The six original CMP files are:
 - README.md
@@ -18,7 +26,7 @@ The six original CMP files are:
 
 They were introduced in original commit 0d9c90ff8e45477d25ed681aa6e29135b0bfbe7f. The original commit is available at https://github.com/ICOFCUCAM/njumeni/commit/0d9c90ff8e45477d25ed681aa6e29135b0bfbe7f.
 
-The CMP files must be copied to the separate archive repository and verified there before any removal from this legal platform repository. Do not delete them until the archive has been created and checked. Prefer a Git-history-preserving extraction from the original commit if performed locally; otherwise record the original commit reference and clearly label the archive as a source snapshot.
+The six original CMP files were copied as an immutable source snapshot from commit `0d9c90ff8e45477d25ed681aa6e29135b0bfbe7f` into the private archive repository. All six archived Git blob SHAs were compared against the source and matched exactly; the recursive archive tree was inspected. The source-only CMP files were removed from this repository only after those checks. The archive manifest records provenance and verification.
 
 The same boundary applies to any other unrelated product: keep its code, build pipeline, deployment configuration and product documentation in its own repository unless there is a deliberate, documented architectural reason to share a library.
 
@@ -47,7 +55,7 @@ At the time of the previous security review, GitHub reported this repository as 
 The legal platform architecture proposal is documented in [LEGAL_AI_PLATFORM_ARCHITECTURE.md](LEGAL_AI_PLATFORM_ARCHITECTURE.md). It is a design document, not a claim that the application is already implemented.
 
 ## Upstream projects
-The five reviewed legal projects remain independent upstream sources:
+The reviewed legal projects remain independent upstream sources and isolated research checkouts:
 1. OpenContracts — MIT
 2. CaseCite — Apache-2.0
 3. Lawgent — no clear licence identified in the initial review; do not copy code without permission or a confirmed licence.
