@@ -81,11 +81,7 @@ export function InvitationForm({
           </div>
           <div className="profile-field">
             <label htmlFor={`invite-workspace-${organizationId}`}>Workspace scope</label>
-            <select
-              id={`invite-workspace-${organizationId}`}
-              name="workspace_id"
-              defaultValue=""
-            >
+            <select id={`invite-workspace-${organizationId}`} name="workspace_id" defaultValue="">
               <option value="">Organisation membership</option>
               {workspaces.map((workspace) => (
                 <option key={workspace.id} value={workspace.id}>
@@ -97,11 +93,7 @@ export function InvitationForm({
         </div>
         <div className="profile-field">
           <label htmlFor={`invite-expiry-${organizationId}`}>Invitation expires after</label>
-          <select
-            id={`invite-expiry-${organizationId}`}
-            name="expires_in_days"
-            defaultValue="7"
-          >
+          <select id={`invite-expiry-${organizationId}`} name="expires_in_days" defaultValue="7">
             <option value="1">1 day</option>
             <option value="7">7 days</option>
             <option value="14">14 days</option>

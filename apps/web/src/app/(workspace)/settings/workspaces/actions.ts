@@ -98,7 +98,6 @@ export async function createWorkspace(formData: FormData): Promise<void> {
   redirect('/settings/workspaces?message=workspace-created');
 }
 
-
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_PATTERN = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
 
@@ -107,24 +106,17 @@ export type InvitationCreationResult = {
   error?: 'invalid' | 'unavailable';
 };
 
-export async function createInvitation(
-  formData: FormData,
-): Promise<InvitationCreationResult> {
+export async function createInvitation(formData: FormData): Promise<InvitationCreationResult> {
   const organizationId = formData.get('organization_id');
   const workspaceValue = formData.get('workspace_id');
   const emailValue = formData.get('email');
   const expiryValue = formData.get('expires_in_days');
 
-  const email =
-    typeof emailValue === 'string' ? emailValue.trim().toLowerCase() : '';
+  const email = typeof emailValue === 'string' ? emailValue.trim().toLowerCase() : '';
   const workspaceId =
-    typeof workspaceValue === 'string' && workspaceValue.trim()
-      ? workspaceValue.trim()
-      : null;
+    typeof workspaceValue === 'string' && workspaceValue.trim() ? workspaceValue.trim() : null;
   const expiryDays =
-    typeof expiryValue === 'string' && /^\\d+$/.test(expiryValue)
-      ? Number(expiryValue)
-      : 7;
+    typeof expiryValue === 'string' && /^\\d+$/.test(expiryValue) ? Number(expiryValue) : 7;
 
   if (
     typeof organizationId !== 'string' ||
@@ -143,9 +135,7 @@ export async function createInvitation(
     const supabase = await requireAuthenticatedUser();
     const token = randomBytes(32).toString('base64url');
     const tokenHash = createHash('sha256').update(token).digest('hex');
-    const expiresAt = new Date(
-      Date.now() + expiryDays * 24 * 60 * 60 * 1000,
-    ).toISOString();
+    const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000).toISOString();
 
     const { error } = await supabase.from('organization_invitations').insert({
       organization_id: organizationId,
@@ -180,9 +170,7 @@ export async function revokeInvitation(formData: FormData): Promise<void> {
   redirect('/settings/workspaces?message=invitation-revoked');
 }
 
-export async function setOrganizationMembershipStatus(
-  formData: FormData,
-): Promise<void> {
+export async function setOrganizationMembershipStatus(formData: FormData): Promise<void> {
   const membershipId = formData.get('membership_id');
   const status = formData.get('status');
   if (
@@ -204,9 +192,7 @@ export async function setOrganizationMembershipStatus(
   redirect('/settings/workspaces?message=membership-updated');
 }
 
-export async function setWorkspaceMembershipStatus(
-  formData: FormData,
-): Promise<void> {
+export async function setWorkspaceMembershipStatus(formData: FormData): Promise<void> {
   const membershipId = formData.get('membership_id');
   const status = formData.get('status');
   if (
@@ -233,15 +219,9 @@ export type InvitationAcceptanceResult = {
   error?: 'invalid' | 'sign-in-required' | 'unavailable';
 };
 
-export async function acceptInvitation(
-  formData: FormData,
-): Promise<InvitationAcceptanceResult> {
+export async function acceptInvitation(formData: FormData): Promise<InvitationAcceptanceResult> {
   const tokenValue = formData.get('token');
-  if (
-    typeof tokenValue !== 'string' ||
-    tokenValue.length < 40 ||
-    tokenValue.length > 100
-  ) {
+  if (typeof tokenValue !== 'string' || tokenValue.length < 40 || tokenValue.length > 100) {
     return { error: 'invalid' };
   }
 

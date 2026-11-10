@@ -13,16 +13,14 @@ export function AcceptInvitationForm() {
   useEffect(() => {
     const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ''));
     const invitationToken = fragment.get('token') ?? '';
-    window.history.replaceState(
-      null,
-      '',
-      window.location.pathname + window.location.search,
-    );
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
 
     if (invitationToken) {
       setToken(invitationToken);
     } else {
-      setError('This invitation link is missing its token. Ask the organisation owner for a new link.');
+      setError(
+        'This invitation link is missing its token. Ask the organisation owner for a new link.',
+      );
     }
   }, []);
 
