@@ -3452,12 +3452,12 @@ This overlay is execution metadata added after the original source. It does not 
 ## Current Phase 0 execution status
 
 - Phase 0 remains the only open phase.
-- Tasks 0.1–0.11 and 0.14 are recorded green in the live register.
+- Tasks 0.1–0.14 are recorded green in the live register, except task 0.13 was closed after its infrastructure audit was completed.
 - Task 0.6 is green: the exact original eight layer names and definitions are recovered and recorded in ADR-0001.
 - Task 0.7 is green: the A–M modules are mapped to the approved layers, bounded contexts, ownership, contracts, permissions and phase delivery in MODULE_LAYER_MAP.md and MODULE_REQUIREMENTS_TRACEABILITY.md.
 - Task 0.12 is green: the application shell, A–M routes, route-contract tests, package lock, TypeScript check and production build passed final CI run `42744161490`.
-- Tasks 0.13 and 0.15 remain not started; 0.16 remains locked until all prerequisite tasks pass.
-- Current register count: 13 of 16 tasks green, 0 in progress, 2 not started and 1 locked.
+- Task 0.13 is green; task 0.15 remains not started; 0.16 remains locked until all prerequisite tasks pass.
+- Current register count: 14 of 16 tasks green, 0 in progress, 1 not started and 1 locked.
 - No Phase 1 or later work is authorised by this overlay.
 
 ## Recovered original eight platform layers
@@ -3477,7 +3477,7 @@ These names are the preserved baseline for ADR-0001 and the A–M module-layer m
 
 ## Upstream project inventory
 
-The original source explicitly names five public repositories: OpenContracts, CaseCite, Lawgent, Lovspor and Mike. A later execution discussion referred to six selected repositories, but the uploaded original source does not name a sixth. The sixth identity must be recovered from the relevant prior selection before any claim that all six have been assessed or implemented. No sixth repository may be guessed.
+The original source explicitly names five public repositories: OpenContracts, CaseCite, Lawgent, Lovspor and Mike. The product owner has confirmed on 10 November 2026: **use these five repositories as the complete selected upstream set; do not hold the programme open for a sixth.** The five are OpenContracts, CaseCite, Lawgent, Lovspor and Mike. Each must still receive an individual capability, architecture, licence, security and compatibility assessment. Only approved capabilities may be implemented through Njumeni-owned code or isolated adapters; wholesale copying is not implied. No sixth repository is in scope unless the owner later changes this decision.
 
 ## Decisions and differences requiring traceability
 
@@ -3488,3 +3488,8 @@ The original source explicitly names five public repositories: OpenContracts, Ca
 ## Preservation checksum
 
 The uploaded source was 60,927 bytes, 60,008 decoded characters, 3,437 lines and approximately 6,381 words. SHA-256 of the uploaded source bytes: `4dce95748a34c529caa74fce5f2dfd3486fc9d2fa5c88ac54cc3f14f71992fe0`.
+
+
+## Owner decision — upstream reference set (10 November 2026)
+
+The product owner has explicitly selected the five repositories named in the original source as the complete upstream reference set for Njumeni: OpenContracts, CaseCite, Lawgent, Lovspor and Mike. The previous uncertainty about a sixth repository is closed; no sixth project is required. The assessment and implementation work must cover all five individually, with a traceable capability inventory, exact-version licence decision, security review, architecture fit, implementation mapping and tests. This decision does not authorise wholesale source-code copying or bypass licence restrictions.
