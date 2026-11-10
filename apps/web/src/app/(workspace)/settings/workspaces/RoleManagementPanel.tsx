@@ -35,6 +35,7 @@ export function RoleManagementPanel({
   bindings: RoleBinding[];
 }) {
   const title = scope === 'organization' ? 'Organisation roles' : 'Workspace roles';
+  const assignableRoleKeys = new Set(roles.map((role) => role.role_key));
 
   return (
     <section className="membership-section role-management-panel">
@@ -59,17 +60,19 @@ export function RoleManagementPanel({
                   {new Date(binding.assigned_at).toLocaleDateString()}
                 </small>
               </span>
-              <form action={revokeRole}>
-                <input type="hidden" name="scope" value={scope} />
-                <input type="hidden" name="organization_id" value={organizationId} />
-                {workspaceId ? (
-                  <input type="hidden" name="workspace_id" value={workspaceId} />
-                ) : null}
-                <input type="hidden" name="binding_id" value={binding.binding_id} />
-                <button className="sign-out-button" type="submit">
-                  Revoke role
-                </button>
-              </form>
+              {assignableRoleKeys.has(binding.role_key) ? (
+                <form action={revokeRole}>
+                  <input type="hidden" name="scope" value={scope} />
+                  <input type="hidden" name="organization_id" value={organizationId} />
+                  {workspaceId ? (
+                    <input type="hidden" name="workspace_id" value={workspaceId} />
+                  ) : null}
+                  <input type="hidden" name="binding_id" value={binding.binding_id} />
+                  <button className="sign-out-button" type="submit">
+                    Revoke role
+                  </button>
+                </form>
+              ) : null}
             </div>
           ))}
         </div>
