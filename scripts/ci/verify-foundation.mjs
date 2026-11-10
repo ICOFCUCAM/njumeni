@@ -9,6 +9,8 @@ const requiredFiles = [
   'docs/PHASE_REGISTER.md',
   'docs/ENGINEERING_STANDARDS.md',
   'docs/ENVIRONMENT_STRATEGY.md',
+  'docs/DATABASE_MIGRATION_POLICY.md',
+  'scripts/ci/check-migrations.mjs',
   'docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md',
   'docs/architecture/MODULE_LAYER_MAP.md',
   'docs/architecture/MODULE_REQUIREMENTS_TRACEABILITY.md',
