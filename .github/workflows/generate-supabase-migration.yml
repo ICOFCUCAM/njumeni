@@ -5,6 +5,7 @@ on:
     branches: ["claude/wonderful-franklin-lt09d7"]
     paths:
       - ".migration-requests/principal-and-user-profiles.sql"
+      - ".github/workflows/generate-supabase-migration.yml"
 
 permissions:
   contents: write
@@ -19,9 +20,9 @@ jobs:
           fetch-depth: 0
 
       - name: Install pinned Supabase CLI
-        uses: supabase/setup-cli@v3
+        uses: supabase/setup-cli@v1
         with:
-          version: "3.1.0"
+          version: latest
 
       - name: Verify CLI commands and generate migration filename
         shell: bash
