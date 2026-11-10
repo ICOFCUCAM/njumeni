@@ -55,14 +55,14 @@ export function assessJurisdictionCoverage(
       throw new Error('JURISDICTION_SOURCE_COVERAGE_DATES_INVALID');
     }
   }
+  const today=now.toISOString().slice(0,10);
   const eligibleSources=profile.sources.filter(source=>
-    source.rightsStatus==='approved'&&source.sourceStatus==='active'&&source.ingestionEnabled
-  );
-  const usable=profile.sources.filter(source=>
     source.rightsStatus==='approved'&&source.sourceStatus==='active'&&source.ingestionEnabled&&
-    isRecent(source.lastVerifiedAt,now,profile.reviewIntervalDays)&&
-    (!source.coverageFrom||source.coverageFrom<=now.toISOString().slice(0,10))&&
-    (!source.coverageUntil||now.toISOString().slice(0,10)<source.coverageUntil)
+    (!source.coverageFrom||source.coverageFrom<=today)&&
+    (!source.coverageUntil||today<source.coverageUntil)
+  );
+  const usable=eligibleSources.filter(source=>
+    isRecent(source.lastVerifiedAt,now,profile.reviewIntervalDays)
   );
   const staleSources=profile.sources.filter(source=>
     source.rightsStatus==='approved'&&source.sourceStatus==='active'&&source.ingestionEnabled&&
