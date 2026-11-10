@@ -35,7 +35,9 @@ test('rejects non-CLI names and duplicate timestamps; filenames define migration
 });
 
 test('allows only explicitly hash-pinned pre-deployment migration corrections', () => {
-  const allowed = new Set(['supabase/migrations/20261110155456_membership_invitation_lifecycle.sql']);
+  const allowed = new Set([
+    'supabase/migrations/20261110155456_membership_invitation_lifecycle.sql',
+  ]);
   assert.deepEqual(
     validateMigrationChanges(
       ['M supabase/migrations/20261110155456_membership_invitation_lifecycle.sql'],
