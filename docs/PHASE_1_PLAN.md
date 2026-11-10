@@ -24,7 +24,7 @@
 | No. | Task | Required deliverable and acceptance criteria | Status |
 |---|---|---|---|
 | 1.1 | Define identity, authentication, tenant and workspace security contracts | Security architecture/ADR; threat model; principal, session, organisation, workspace, membership and permission concepts; trust boundaries; deny-by-default rules; explicit decisions and open dependencies. Reviewed against original plan and ADR-0001; verified by CI run `42769220793` on commit `2f22fddc14881c18a96a0cd6bcee12ad709943f8`. | 🟢 GREEN |
-| 1.2 | Verify dedicated Njumeni identity/database environment readiness | [BLOCKED] Dedicated Njumeni project absent in connected inventory. See PHASE_1_ENVIRONMENT_READINESS.md. Resume after owner confirms region and dedicated project is provisioned. | 🔴 BLOCKED |
+| 1.2 | Verify dedicated Njumeni identity/database environment readiness | Dedicated project `Njumeni` (`${id}`) provisioned in `eu-north-1`; project-level status `ACTIVE_HEALTHY`; PostgreSQL 17.11 connectivity, built-in Auth/Storage schemas, empty application schema and migration baseline verified; publishable key availability confirmed without committing key material; Supabase security/performance/health advisors returned no findings. See [PHASE_1_ENVIRONMENT_READINESS.md](PHASE_1_ENVIRONMENT_READINESS.md). Per-service Auth health/configuration remains a Task 1.3 verification item because the connected toolset does not expose those Management API read endpoints. | 🟡 IN PROGRESS — CI verification pending |
 | 1.3 | Implement identity provider integration and secure session lifecycle | Server-side Supabase Auth integration, session validation/refresh/sign-out, secure cookie/session handling, error boundaries and no service-role exposure. Tests cover invalid, expired and revoked sessions. | 🔒 LOCKED |
 | 1.4 | Implement user profile and principal model | User profile schema and server-side identity mapping; immutable provider subject mapping; safe profile update rules; migrations and tests. | 🔒 LOCKED |
 | 1.5 | Implement organisations, workspaces and tenant ownership | Tenant/workspace schema, ownership rules, lifecycle and isolation invariants; migrations and server-side domain/application contracts. | 🔒 LOCKED |
@@ -39,7 +39,7 @@
 ## Owner/environment gates
 
 - The repository is currently public although the original plan specifies private. This remains an owner-level risk; do not place confidential deployment configuration or data in Git.
-- The infrastructure audit found no dedicated Njumeni Supabase project. Task 1.2 must verify current state before any Auth or database implementation requiring a live project.
+- Dedicated Njumeni Supabase project `${id}` is provisioned in `eu-north-1`. Task 1.2 records project/database readiness. Auth service-specific health and security configuration must be checked during Task 1.3 before enabling authentication.
 - Region/data residency and classification approval remain unresolved. Do not select a region based on another product's configuration.
 - No real legal documents or customer matters may be used for tests; use synthetic fixtures.
 - Supabase Auth is the planned identity provider from the original architecture. Any change requires a documented ADR and owner decision.

@@ -2,48 +2,95 @@
 
 - **Review date:** 10 November 2026
 - **Task:** Verify dedicated Njumeni identity/database environment readiness
-- **Result:** **BLOCKED — dedicated Njumeni Supabase project not provisioned**
-- **Scope:** project inventory only; no database schemas, tables, migrations, secrets or customer records were inspected or changed.
+- **Result:** **ENVIRONMENT VERIFIED — dedicated Njumeni Supabase project provisioned**
+- **Project:** `Njumeni`
+- **Project reference:** `vvjpsejeeffykaozfbik`
+- **Region:** `eu-north-1` (Stockholm, Sweden)
+- **Organization:** `ICOFCUCAM's Org` (`dqldzokgvcgbkzkxbrdr`)
+- **Project status at verification:** `ACTIVE_HEALTHY`
+- **Database engine:** PostgreSQL 17.11 (`17.11.0.018`)
+- **API URL:** `https://vvjpsejeeffykaozfbik.supabase.co`
+- **Quoted project cost at creation:** USD $0/month, monthly recurrence, for the selected organization at the time of provisioning
+- **Provisioned:** 10 November 2026
+- **Scope:** project identity, hosted Postgres/Auth/Storage schema readiness, migration baseline, API key availability and Supabase advisors. No application schema, user account, storage bucket, secret configuration or customer record was created.
 
-## 1. Evidence
+## 1. Provisioning evidence
 
-The connected Supabase project inventory was queried through the authenticated Supabase project-list capability.
+The dedicated project was created through the authenticated Supabase integration after:
+1. confirming the organization `ICOFCUCAM's Org`;
+2. retrieving the project-specific cost quote of USD $0/month;
+3. receiving the owner's explicit approval of that quote;
+4. obtaining the required cost-confirmation ID; and
+5. creating the project in the owner-selected `eu-north-1` region.
 
-- A dedicated project named or identifiable as Njumeni was **not present** in the returned project inventory.
-- The connected account contains projects for other products. They are not Njumeni environments and must not be reused.
-- The infrastructure audit's earlier finding that no dedicated Njumeni Supabase project was identifiable is therefore reconfirmed.
-- The available Supabase organisation returned by the connected account is `dqldzokgvcgbkzkxbrdr`. This is account metadata, not approval to create a project.
-- The project-cost quote returned for that organisation was **$0 monthly** at the time of this check. This is a tool quote, not a guarantee of future pricing or a substitute for selecting a region and confirming project settings.
+The project details endpoint returned:
+- name: `Njumeni`;
+- project reference: `vvjpsejeeffykaozfbik`;
+- organization ID: `dqldzokgvcgbkzkxbrdr`;
+- region: `eu-north-1`;
+- status: `ACTIVE_HEALTHY`;
+- database host: `db.vvjpsejeeffykaozfbik.supabase.co`;
+- PostgreSQL version: `17.11.0.018`.
 
-No project was created. No other product's database was queried. No project was paused, restored, modified or deleted.
+The project URL endpoint returned `https://vvjpsejeeffykaozfbik.supabase.co`. A modern Supabase publishable key is available for future client configuration. Key material is intentionally not copied into this document or committed to Git. No secret/service-role key was requested or exposed in the repository.
 
-## 2. Outstanding owner decision
+The $0/month amount is the project-specific quotation returned at creation time, not a promise of unlimited usage or a guarantee that future usage, add-ons, plan changes or overages will remain free.
 
-The original Njumeni architecture requires a dedicated environment and the infrastructure audit explicitly leaves region/data residency unresolved. No region is selected for Njumeni in the approved project records.
+## 2. Database and built-in service inspection
 
-The owner must select the Njumeni project region before provisioning. The selected region must be assessed against:
-- Norwegian/EU data protection and contractual requirements;
-- the first-launch jurisdiction and expected user geography;
-- data residency and any customer/institutional requirements;
-- latency to the application and expected legal-data sources;
-- backup, disaster recovery and future deployment topology.
+Read-only inspection of the dedicated database confirmed:
 
-Do not infer Njumeni's region from SocialOS, FlyttGo or another product. Their regions are not approval for Njumeni.
+| Check | Observed result |
+|---|---|
+| Database connection | Successful SQL execution |
+| PostgreSQL | 17.11 |
+| Core Supabase schemas | `auth`, `storage`, `public`, `extensions`, `vault` present |
+| Auth user records | 0 |
+| Auth schema | Built-in Auth tables, including users and sessions, present |
+| Storage schema | Built-in Storage tables present |
+| Storage buckets | 0 |
+| Application tables in `public` | 0 |
+| Njumeni migration history | 0 migrations |
+| `pgcrypto` | Installed |
+| `vector` | Available, not yet installed |
+| Supabase security advisor | No findings returned |
+| Supabase performance advisor | No findings returned |
+| Supabase health advisor | No findings returned |
 
-## 3. Safe next action
+The `auth.users` and `storage.buckets` tables are provider-managed infrastructure tables, not Njumeni application tables. No application schema or policy has been created. The vector extension is deliberately not installed during this environment-verification task; its installation and use belong to a reviewed, version-controlled migration when the database foundation task requires it.
 
-Once the owner confirms the region, recheck the current project cost and configuration, then create a **new dedicated Njumeni Supabase project** in the approved organisation and region. Confirm the project identity and health with the project details endpoint. Only after that should the team inspect Auth/Postgres configuration and begin environment-specific integration.
+## 3. Verification limits and remaining configuration
 
-No authentication, database or migration changes should be made against another product's project.
+The project-level status is `ACTIVE_HEALTHY`, SQL connectivity is confirmed, built-in Auth and Storage schemas are present, a publishable key is available, and the security/performance/health advisors returned no findings.
 
-## 4. Acceptance status
+The connected Supabase toolset does not expose the Management API's per-service health endpoint or the complete Auth configuration read endpoint. Therefore this assessment does **not** claim independent service-by-service Auth API health verification, nor does it claim that sign-up policy, redirect allow-lists, SMTP, MFA enforcement, password policy or production Auth settings have been configured. Those settings must be deliberately reviewed as part of Task 1.3 before enabling user authentication.
 
-- [x] Connected Supabase project inventory checked.
-- [x] No dedicated Njumeni project found in the returned inventory.
-- [x] Other product environments explicitly excluded from reuse.
-- [x] Current quoted project cost recorded as $0/month for the connected organisation; recheck before creation.
-- [ ] Owner confirms Njumeni's project region.
-- [ ] Dedicated Njumeni project is provisioned and its project identity/status verified.
-- [ ] Auth and Postgres readiness are verified on the dedicated project.
+No test user was created and no sign-in was simulated. No storage bucket or access policy was created. No application migration was applied. No other product's Supabase project was queried or changed.
 
-**Task status: BLOCKED pending the owner's Njumeni region decision.** This is a genuine provisioning dependency, not a reason to bypass the environment boundary.
+## 4. Security and environment boundaries
+
+- This project is dedicated to Njumeni; SocialOS, OpsCommand, FlyttGo and all other product databases remain separate.
+- No customer legal documents, case files, evidence or confidential records may be uploaded at this stage.
+- No Supabase secret/service-role key may be exposed to browser code, Git, CI output or untrusted workers.
+- Only the publishable key may eventually be used in browser-side configuration; all privileged keys remain server-side and are not committed.
+- The GitHub repository remains public at the time of this assessment, despite the original plan's private-repository requirement. This is a separate owner-level source-code exposure risk; do not commit real deployment credentials or confidential configuration. The visibility change has not been made automatically.
+- The Free organization plan and $0/month project quote do not provide production-grade backup, availability or unlimited capacity guarantees. Production use requires a separate capacity, backup, recovery, data-processing and hosting-approval decision.
+
+## 5. Acceptance evidence
+
+- [x] Connected organization verified.
+- [x] Project-specific cost quoted and explicitly approved by the owner.
+- [x] Dedicated Njumeni project created in the owner-selected `eu-north-1` region.
+- [x] Project identity and project-level `ACTIVE_HEALTHY` status verified.
+- [x] PostgreSQL connection and server version verified with read-only SQL.
+- [x] Built-in Auth and Storage schemas verified.
+- [x] Empty Auth user table, Storage bucket inventory and public application schema verified.
+- [x] Hosted Njumeni migration history verified empty.
+- [x] Publishable key availability verified without copying key material into Git.
+- [x] Security, performance and health advisors returned no findings.
+- [x] No other product project or customer data was modified or inspected.
+- [ ] Task documentation commit and repository CI verification completed.
+
+**Environment result:** provisioned and verified for Phase 1 Task 1.2.  
+**Task status:** IN PROGRESS pending the documentation commit and successful repository CI verification.  
+**Next task after acceptance:** Task 1.3 — implement identity provider integration and secure session lifecycle.

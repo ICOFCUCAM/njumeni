@@ -5,7 +5,7 @@
 - Repository: `ICOFCUCAM/njumeni`
 - Active phase: **Phase 1 — Identity, tenancy and security foundation**
 - Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **1.2 — Verify dedicated Njumeni identity/database environment readiness**
+- Next task: **1.2 — Complete documentation and CI verification for dedicated Njumeni environment readiness**
 - Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
 - Rule: work may proceed only in the single active phase; later phases remain locked until their dedicated closeout commits and CI checks are verified.
 
@@ -83,7 +83,7 @@ The security workflow passed for commits `a3b5d32`, `0c2b9d5`, `9427e26` and `c0
 | No. | Task / required outcome | Status | Acceptance evidence |
 |---|---|---|---|
 | 1.1 | Define identity, authentication, tenant and workspace security contracts | 🟢 GREEN | [ADR-0002 — Identity, Tenancy and Security Architecture](architecture/ADR-0002-identity-tenancy-security.md) defines principal/session/tenant/workspace/membership/permission concepts, trust boundaries, deny-by-default rules, RLS, audit, threat model and open decisions. ADR commit `f8a2ee06588cc985970ce8a0b8a6828d25afef96`; verified by CI run `42769220793` on follow-up integrity commit `2f22fddc14881c18a96a0cd6bcee12ad709943f8`. |
-| 1.2 | Verify dedicated Njumeni identity/database environment readiness | 🔴 BLOCKED | [Environment Readiness Assessment](PHASE_1_ENVIRONMENT_READINESS.md): connected Supabase inventory contains no dedicated Njumeni project; other product projects are excluded. Project quote currently $0/month for the connected organisation, but region/data-residency decision is outstanding. No project created. |
+| 1.2 | Verify dedicated Njumeni identity/database environment readiness | 🟡 IN PROGRESS | Dedicated project `Njumeni` (`${id}`) created in `eu-north-1`; project status `ACTIVE_HEALTHY`; PostgreSQL 17.11 and built-in Auth/Storage schemas verified; empty app schema/migration baseline confirmed; publishable key availability verified; security/performance/health advisors clear. See [Environment Readiness Assessment](PHASE_1_ENVIRONMENT_READINESS.md). Documentation commit and CI verification pending. |
 | 1.3 | Implement identity provider integration and secure session lifecycle | 🔒 LOCKED | Server-side Auth, secure session lifecycle and invalid/expired/revoked session tests. |
 | 1.4 | Implement user profile and principal model | 🔒 LOCKED | Provider subject mapping, profile schema, server-side update rules and tests. |
 | 1.5 | Implement organisations, workspaces and tenant ownership | 🔒 LOCKED | Tenant/workspace schema, ownership rules and isolation tests. |

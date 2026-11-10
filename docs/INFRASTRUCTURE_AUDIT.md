@@ -115,3 +115,23 @@ No provider, project, domain, region, bucket or secret value is selected by this
 - [x] No external resources or production data changed.
 
 **Conclusion:** task 0.13 is complete as an infrastructure audit. Infrastructure provisioning and owner decisions remain future work; this completion must not be interpreted as a deployed or production-ready Njumeni platform.
+
+
+## 8. Phase 1 provisioning update — 10 November 2026
+
+The Phase 0 audit above remains a historical read-only inventory. The following dedicated Njumeni environment was provisioned afterward to resolve the Phase 1 Task 1.2 blocker.
+
+| Area | Updated verified state | Boundary / remaining work |
+|---|---|---|
+| Dedicated Supabase project | `Njumeni`, ref `vvjpsejeeffykaozfbik`, organization `ICOFCUCAM's Org`, region `eu-north-1` (Stockholm), project status `ACTIVE_HEALTHY`. | Dedicated Njumeni project only; no other product project reused. |
+| Project cost | Project-specific quote at creation: USD $0/month, monthly recurrence, approved by owner. Organization plan at verification: Free. | Quote is time-specific and does not mean unlimited usage, paid add-ons or production capacity. Recheck before any plan/compute changes. |
+| PostgreSQL | PostgreSQL 17.11 (`17.11.0.018`); read-only SQL connectivity succeeded. | No Njumeni application tables or migrations yet. |
+| Auth | Built-in `auth` schema and user/session tables present; user table empty; modern publishable key available. | Auth Management API service health/configuration endpoints were not exposed by the connected toolset. Do not claim sign-in is configured or tested. |
+| Storage | Built-in `storage` schema present; bucket inventory empty. | No private Njumeni bucket or object policies created. |
+| Extensions | `pgcrypto` installed; `vector` available but not installed. | Extension installation deferred to a reviewed migration. |
+| Advisors | Security, performance and health advisors returned no findings at this empty baseline. | Re-run after each schema/security change; empty-baseline results are not an application security audit. |
+| Application integration | Supabase project URL and publishable-key availability verified. | No application credentials written to Git, no app runtime integration and no confidential content enabled. |
+
+The repository remains public, contrary to the original plan's private-repository requirement. This risk remains owner-controlled and unresolved; no visibility setting was changed. The current web shell remains disconnected from Supabase until the numbered identity integration task is implemented and tested.
+
+See [Phase 1 environment readiness](PHASE_1_ENVIRONMENT_READINESS.md) for the task-level evidence and limitations.
