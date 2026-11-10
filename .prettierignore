@@ -7,3 +7,6 @@ coverage/
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# Generated directly from the Supabase schema; type-checked but not reformatted.
+apps/web/src/lib/supabase/database.types.ts
