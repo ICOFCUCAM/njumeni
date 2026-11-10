@@ -12,8 +12,13 @@ const requiredEnvironment = [
 const missingEnvironment = requiredEnvironment.filter((name) => !process.env[name]);
 
 test(
-  'Njumeni Supabase Auth provider lifecycle: sign in, refresh, sign out and reject revoked refresh token',
-  { skip: missingEnvironment.length > 0 ? `Missing required environment: ${missingEnvironment.join(', ')}` : false },
+  'Njumeni Auth provider lifecycle rejects a refresh token after sign-out',
+  {
+    skip:
+      missingEnvironment.length > 0
+        ? `Missing required environment: ${missingEnvironment.join(', ')}`
+        : false,
+  },
   async () => {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
