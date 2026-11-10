@@ -15,7 +15,11 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     signout:
       'We could not complete sign-out. Please try again; your session status could not be confirmed.',
   };
-  const errorMessage = params.error ? (errorMessages[params.error] ?? null) : null;
+  const errorMessage = params.error
+    ? (errorMessages[params.error] ?? null)
+    : null;
+  const showRevocationWarning =
+    params.message === 'signed-out' && params.warning === 'revocation-unconfirmed';
 
   return (
     <main className="signin-panel">
@@ -30,10 +34,10 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           You have been signed out.
         </p>
       ) : null}
-      {params.message === 'signed-out' && params.warning === 'revocation-unconfirmed' ? (
+      {showRevocationWarning ? (
         <p className="auth-error" role="alert">
-          You have been signed out on this device, but the server could not confirm revocation
-          of the refresh token. It may remain valid until it expires.
+          You have been signed out on this device, but the server could not confirm
+          revocation of the refresh token. It may remain valid until it expires.
         </p>
       ) : null}
       {errorMessage ? (
