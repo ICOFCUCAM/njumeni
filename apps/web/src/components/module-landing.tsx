@@ -10,7 +10,7 @@ export function ModuleLanding({ module }: { module: ModuleDefinition }) {
         <div className="module-meta">
           <span className="module-code">MODULE {module.id}</span>
           <span className="module-status">
-            Route boundary established Â· implementation pending
+            Route boundary established · implementation pending
           </span>
         </div>
       </header>
@@ -24,7 +24,7 @@ export function ModuleLanding({ module }: { module: ModuleDefinition }) {
           <div className="boundary-card">
             <span>Product module</span>
             <strong>
-              {module.id} â {module.name}
+              {module.id} — {module.name}
             </strong>
           </div>
           <div className="boundary-card">
