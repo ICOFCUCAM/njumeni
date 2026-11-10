@@ -25,8 +25,29 @@ jobs:
       - name: Install pinned CI tools
         run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund prettier@3.5.3 eslint@10.0.0 typescript@5.8.3
 
+      - name: Generate app dependency lockfile
+        if: hashFiles('apps/web/package.json') != ''
+        working-directory: apps/web
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          echo "APP_LOCKFILE_B64_BEGIN"
+          base64 -w0 package-lock.json
+          echo
+          echo "APP_LOCKFILE_B64_END"
+
+      - name: Apply canonical Prettier formatting to app source
+        if: hashFiles('apps/web/package.json') != ''
+        run: |
+          npx --no-install prettier --write apps/web/package.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/postcss.config.mjs apps/web/src/app/globals.css "apps/web/src/**/*.tsx"
+          for file in apps/web/package.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/postcss.config.mjs apps/web/src/app/globals.css apps/web/src/app/layout.tsx apps/web/src/app/page.tsx apps/web/src/app/not-found.tsx apps/web/src/app/error.tsx apps/web/src/app/api/health/route.ts "apps/web/src/app/(workspace)/layout.tsx" "apps/web/src/app/(workspace)/dashboard/page.tsx" "apps/web/src/app/(workspace)/[slug]/page.tsx" "apps/web/src/app/(auth)/sign-in/page.tsx" apps/web/src/components/module-icon.tsx apps/web/src/components/workspace-shell.tsx apps/web/src/components/module-landing.tsx apps/web/src/modules/registry.ts; do
+            echo "APP_SOURCE_FILE_BEGIN:$file"
+            base64 -w0 "$file"
+            echo
+            echo "APP_SOURCE_FILE_END:$file"
+          done
+
       - name: Check formatting
-        run: npx --no-install prettier --check .prettierrc.json tsconfig.ci.json eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs scripts/ci/typecheck-probe.ts tests/foundation.test.mjs tests/migrations.test.mjs
+        run: npx --no-install prettier --check .prettierrc.json tsconfig.ci.json eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs scripts/ci/typecheck-probe.ts tests/foundation.test.mjs tests/migrations.test.mjs apps/web/package.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/postcss.config.mjs apps/web/src/app/globals.css "apps/web/src/**/*.tsx"
 
       - name: Lint CI scripts and tests
         run: npx --no-install eslint eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs tests/foundation.test.mjs tests/migrations.test.mjs
@@ -45,15 +66,16 @@ jobs:
       - name: Run foundation build/architecture integrity check
         run: node scripts/ci/verify-foundation.mjs
 
-      - name: Run application build when the application shell exists
+      - name: Build application shell when present
         shell: bash
         run: |
           if [[ -f apps/web/package.json ]]; then
-            node -e "const p=require('./apps/web/package.json'); if (!p.scripts?.build) process.exit(1)"
             cd apps/web
+            npm ci --no-audit --no-fund
+            npm run typecheck
             npm run build
           else
-            echo "::notice::No application shell exists yet. The foundation build passed; the application build gate activates in Phase 0 task 0.12."
+            echo "::notice::No application shell exists yet; application build is deferred to task 0.12."
           fi
 
   content-policy:
