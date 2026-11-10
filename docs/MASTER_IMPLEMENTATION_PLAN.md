@@ -9,7 +9,7 @@ Execution rule: all work proceeds in the numbered order below and through Phases
 
 Njumeni is one independent legal platform. Its application must be designed to securely ingest, store, organise, process, retrieve and govern confidential legal documents, case files and evidence. Live customer data belongs in Njumeni's protected runtime data layer, not in Git history.
 
-Do not combine Njumeni source code, build pipelines, deployment configuration or product data with the unrelated CMP project or any other product. The public marketing website lives in `ICOFCUCAM/marketing-website`. The legacy CMP work must be preserved separately and verified in its own archive before removal from this repository. The existing legal-source research projects remain upstream references/adapters and are not to be copied wholesale into Njumeni.
+Do not combine Njumeni source code, build pipelines, deployment configuration or product data with the unrelated CMP project or any other product. The public marketing website lives in `ICOFCUCAM/marketing-website`. The legacy CMP work has been preserved in the separate verified archive [ICOFCUCAM/njumeni-cmp-archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive); the CMP-only files were removed from this repository only after all six original Git blob IDs matched. The existing legal-source research projects remain upstream references/adapters and are not to be copied wholesale into Njumeni.
 
 This document governs implementation. Supporting architecture documents explain design; they do not count as implementation.
 
@@ -68,9 +68,9 @@ Phases must be completed in order. A phase is not complete because folders or do
 
 - [x] 0.1 Restore and freeze the original twenty numbered outline sections and canonical A–M modules. Evidence: [Master outline and modules](MASTER_IMPLEMENTATION_PLAN.md#2-original-master-outline--20-numbered-sections); commit `0c2b9d5`.
 - [x] 0.2 Audit the complete current repository tree, branch, commits, existing source, scripts, workflows and third-party material. Evidence: [Phase 0 audit](PHASE_0_AUDIT.md).
-- [ ] 0.3 Identify and preserve useful existing Njumeni/JurisAI components; inventory before changing or replacing anything. Inventory completed; CMP archival and verification remain outstanding.
-- [ ] 0.4 Resolve repository boundaries: Njumeni application, independent marketing website, separate CMP archive and isolated upstream research sources. Application/marketing separation confirmed; CMP archive remains outstanding.
-- [ ] 0.5 Produce a product specification: users, priority use cases, first release, jurisdictions, requirements and non-goals.
+- [x] 0.3 Identify and preserve useful existing Njumeni/JurisAI components; inventory before changing or replacing anything. CMP archive verified against all six original Git blob IDs before CMP-only files were removed; see [Phase 0 audit](PHASE_0_AUDIT.md).
+- [x] 0.4 Resolve repository boundaries: Njumeni application, independent marketing website, separate CMP archive and isolated upstream research sources. Canonical map and separation rules are in [Product Boundaries](PRODUCT_BOUNDARIES.md).
+- [x] 0.5 Produce a product specification: users, priority use cases, first release, jurisdictions, requirements and non-goals. See [Njumeni Product Specification](PRODUCT_SPECIFICATION.md); unresolved strategic choices are recorded as explicit release gates.
 - [ ] 0.6 Confirm modular-monolith architecture and document bounded contexts, dependency rules and eight platform layers.
 - [ ] 0.7 Recover and record the original A–M module map; map every module to workstreams, layers, dependencies and phase.
 - [ ] 0.8 Establish coding standards, naming, formatting, linting, type-checking, error handling, logging and review conventions.
@@ -83,7 +83,7 @@ Phases must be completed in order. A phase is not complete because folders or do
 - [ ] 0.15 Run repository hygiene checks and document unresolved risks. GitHub Actions repository-security workflow passed on 2026-11-10; broader hygiene review remains outstanding.
 - [ ] 0.16 Phase 0 acceptance review: no unresolved product/repository boundary ambiguity, no destructive changes to unreviewed components, reproducible development setup, CI and migration policy defined, architecture mapped to all twenty workstreams and A–M modules.
 
-**Live status is maintained in the [Phase Register](PHASE_REGISTER.md). Phase 0 status: IN PROGRESS.** The repository audit and phase backlog are recorded. Existing security/content-policy CI passed on 2026-11-10. The original twenty-point headings and canonical A–M module names have been restored and committed; detailed module contracts and architecture mapping remain outstanding. CMP archival, product specification, architecture decisions/contracts, engineering standards, environments, complete CI, migration discipline, infrastructure inventory and application shell also remain outstanding. See [Phase 0 audit](PHASE_0_AUDIT.md). The separate marketing website is already in its own repository and deployed; that does not complete the Njumeni application foundation.
+**Live status is maintained in the [Phase Register](PHASE_REGISTER.md). Phase 0 status: IN PROGRESS.** The repository audit, verified CMP archive, canonical repository boundaries and product specification are recorded. The original twenty-point headings and canonical A–M module names are preserved. Detailed module contracts and architecture mapping, architecture decisions, engineering standards, environments, complete CI, migration discipline, infrastructure inventory and application shell remain outstanding. See [Phase 0 audit](PHASE_0_AUDIT.md) and [Product Specification](PRODUCT_SPECIFICATION.md). The separate marketing website is in its own repository; that does not complete the Njumeni application foundation.
 
 ### Phase 1 — Identity, tenancy and security foundation
 Organisations, users, memberships, invitations, roles/permissions, MFA/session controls, tenant/matter policies, audit primitives and adversarial isolation tests.
@@ -144,7 +144,7 @@ A feature is not marked complete until all relevant items are satisfied:
 
 | Phase | Status | Evidence / blocking items |
 |---|---|---|
-| 0 — Foundation and audit | IN PROGRESS | Existing docs and repository security workflow; full audit and decisions still outstanding |
+| 0 — Foundation and audit | IN PROGRESS | Repository audit, verified CMP archive, product boundaries and product specification recorded; architecture, module contracts, engineering and infrastructure foundation still outstanding |
 | 1 — Identity and tenancy | NOT STARTED | Depends on Phase 0 acceptance |
 | 2 — Legal knowledge | NOT STARTED | Depends on Phase 0 and source governance |
 | 3 — Evidence/documents | NOT STARTED | Depends on tenant security model |
