@@ -24,12 +24,15 @@ test('repository ignores populated environment files but allows the template', a
   assert.match(ignore, /^!\.env\.example$/m);
 });
 
-test('the phase register keeps later phases locked until closeout', async () => {
+test('the phase register records verified Phase 0 closeout and opens Phase 1 only', async () => {
   const register = await readFile('docs/PHASE_REGISTER.md', 'utf8');
   assert.match(register, /Phase 0 — Foundation and repository\/infrastructure audit/);
-  assert.match(register, /\| 1 \| Identity, tenancy and security foundation \|/);
-  assert.match(register, /\| 13 \| Production hardening and launch \|/);
-  assert.match(register, /no Phase 1 work may begin until Phase 0 is fully green/);
+  assert.match(register, /\| 0 \| Foundation and repository\/infrastructure audit \| 🟢 CLOSED \|/);
+  assert.match(register, /\| 1 \| Identity, tenancy and security foundation \| 🟡 OPEN \|/);
+  assert.match(register, /\| 2 \| Legal knowledge foundation \| 🔒 LOCKED \|/);
+  assert.match(register, /\| 13 \| Production hardening and launch \| 🔒 LOCKED \|/);
+  assert.match(register, /6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1/);
+  assert.match(register, /Phase 0 closeout verified/);
 });
 
 test('A–M module names and canonical eight layers remain present', async () => {
