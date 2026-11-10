@@ -1,7 +1,7 @@
 # Njumeni database migration and schema-change policy
 
 - **Status:** Phase 0 task 0.11 policy
-- **Database direction:** PostgreSQL; Supabase CLI is the proposed migration workflow, pending final provider/project verification in task 0.13
+- **Database direction:** PostgreSQL on the dedicated Njumeni Supabase project; project identity is verified, while CLI provenance and local replay remain to be completed
 - **Migration source of truth:** ordered, reviewed SQL migration files committed to this repository
 - **Production rule:** forward-only schema evolution; no unreviewed direct remote DDL
 
@@ -9,16 +9,16 @@
 
 | Item | Verified finding |
 |---|---|
-| Repository migration directory | No supabase/ or supabase/migrations/ directory existed at the start of task 0.11 |
-| Supabase project reference in repository | No Njumeni-specific project ref/configuration is recorded |
+| Repository migration directory | `supabase/migrations/` now exists and contains two preliminary Task 1.4 SQL drafts; they are not approved or applied |
+| Supabase project reference in repository | Dedicated hosted project is verified as `vvjpsejeeffykaozfbik`; a committed `supabase/config.toml` / linked CLI configuration has not yet been verified |
 | Supabase CLI config | No supabase/config.toml is present |
-| Migration files | No Njumeni SQL migration files are present |
-| Njumeni hosted project | The connected Supabase project listing contains no project explicitly named Njumeni; no project can be safely identified as the Njumeni database from the available evidence |
-| Hosted migration history | Not inspected because no Njumeni-specific project ID has been identified. Other projects were not queried or modified. |
-| Hosted schema drift | Not assessable until the Njumeni database project is identified |
+| Migration files | Two preliminary SQL drafts exist: `20261110141433_principal_and_user_profiles.sql` and `20261110141534_principal_profile_backfill.sql`. Their provenance as CLI-generated files has not been independently verified; treat them as unapproved drafts |
+| Njumeni hosted project | Verified dedicated project `Njumeni` (`vvjpsejeeffykaozfbik`), region `eu-north-1` (Stockholm) |
+| Hosted migration history | Supabase migration listing returns zero applied migrations for the verified Njumeni project |
+| Hosted schema state | Supabase table listing for `public` and `private` returns zero application tables. No schema DDL has been applied by this work. |
 | Production backup state | No Njumeni-specific database/backup configuration was verified |
 
-This is an explicit zero-baseline, not permission to reuse another product's database. No SocialOS, FlyttGo, CMP, CivicOS or other project database may be linked to Njumeni merely because it is available in the same Supabase organisation.
+This remains a zero-applied-migration / zero-application-table hosted baseline, not permission to reuse another product's database. No SocialOS, FlyttGo, CMP, CivicOS or other project database may be linked to Njumeni merely because it is available in the same Supabase organisation. The two Task 1.4 drafts are not approved for deployment. First complete Task 1.3, verify the CLI version and local clean replay, review the SQL/RLS/security-definer design, and establish a backup/recovery plan. Do not apply either draft to the hosted project.
 
 ## 2. Migration file creation and naming
 
@@ -175,6 +175,8 @@ The pipeline does not connect to a hosted database or deploy migrations. Hosted 
 - [x] Hosted history reconciliation and migration repair controls defined.
 - [x] Schema drift detection and remediation defined.
 - [x] Backup/restore and forward-fix policy defined.
-- [x] Current repository and connected Supabase project inventory checked; no Njumeni-specific project/config/migrations identified, and no other project was modified.
+- [x] Dedicated Njumeni hosted project identity verified; hosted migration history and public/private application-table inventory checked read-only (both empty).
+- [ ] Verify pinned Supabase CLI provenance for the two preliminary migration drafts; create or verify the linked project config and local clean replay before approving any schema change.
+- [ ] Review and approve the Task 1.4 SQL/RLS/security-definer design; drafts remain unapplied and Task 1.4 remains locked until Task 1.3 closes.
 - [x] CI migration filename/order/immutability guard implemented and passed in workflow run 42741685025.
 - [x] Local replay/reset procedure documented; actual execution is deferred until the CLI/runtime and Njumeni-specific database configuration are provisioned. No placeholder migration SQL was invented.
