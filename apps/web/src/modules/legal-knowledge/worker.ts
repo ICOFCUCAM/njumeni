@@ -66,7 +66,8 @@ export async function executeLegalIngestionBatch(options:ExecuteIngestionOptions
   const remainingIds=discovery.externalIds.filter(id=>!completed.has(id));
   const batch=planIngestionBatch({
     manifest:options.adapter.manifest,rights:initialRights.rights,cursor:options.cursor,
-    externalIds:remainingIds,maxBatchSize:options.maxBatchSize,
+    externalIds:remainingIds,
+    ...(options.maxBatchSize===undefined?{}:{maxBatchSize:options.maxBatchSize}),
   });
   const {runId}=await options.persistence.beginRun({
     sourceKey:batch.sourceKey,adapterKey:options.adapter.manifest.adapterKey,adapterVersion:batch.adapterVersion,batchKey:batch.batchKey,cursor:batch.cursor,

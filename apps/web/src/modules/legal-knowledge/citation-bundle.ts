@@ -78,8 +78,8 @@ export function buildLegalCitationBundle(input:LegalCitationBundleInput):LegalCi
       sourceAttribution:source.attributionText,licenceIdentifier:source.licenceIdentifier,
       quotePermitted:source.quotePermitted,displayPermitted:source.displayPermitted,
     });
-    if(!passage.citation)warnings.push('Official citation is unavailable; title is shown without inventing a citation: '+passage.title);
-    if(!source.quotePermitted)warnings.push('Quotation is not permitted; cite the authority without reproducing source text: '+passage.title);
+    if(!passage.citation)warnings.push('Official citation is unavailable; title is shown without inventing a citation: '+passage.authorityTitle);
+    if(!source.quotePermitted)warnings.push('Quotation is not permitted; cite the authority without reproducing source text: '+passage.authorityTitle);
   }
   if(entries.length===0)warnings.push('No verifiable citations could be assembled for this answer.');
   return {answerId:input.answerId,jurisdictionCode:input.jurisdictionCode,asOfDate:input.asOfDate,entries,warnings,complete:entries.length===uniqueIds.length&&uniqueIds.length>0&&warnings.length===0};
