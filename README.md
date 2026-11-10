@@ -1,41 +1,41 @@
-# njumeni
+# Njumeni — Global Legal Intelligence
 
-A marketing-site skeleton for a consent-management platform. Its structure,
-design system and interactions are reverse-engineered from a reference CMP
-homepage.
+Njumeni is an independent legal technology platform under active architecture and implementation. Its intended capabilities include jurisdiction-aware legal research, secure document and evidence management, document intelligence, contract workflows, legal reasoning and institutional governance.
 
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): site map, section-by-section page anatomy, design tokens, component inventory, how the consent layer works, recommended build architecture.
-- [`site/`](site): dependency-free HTML/CSS/JS skeleton.
-  - `css/tokens.css`: colours, type scale, spacing, layout and motion tokens (change the brand here).
-  - `css/main.css`: layout and components, in page order, plus responsive rules.
-  - `js/main.js`: sticky header, mega menus, mobile nav, search overlay, logo marquee, stat counters, persona carousel, demo consent banner.
+**Implementation status:** the repository currently contains architecture, product-boundary and security documentation, repository controls and legal-technology source assessments. These documents are not evidence that the legal application features are already implemented.
 
-## Run
+## Canonical repositories and product boundaries
 
-```sh
-cd site && python3 -m http.server 8000   # then open http://localhost:8000
-```
+- **Njumeni application:** this repository, `ICOFCUCAM/njumeni`.
+- **Public marketing website:** `ICOFCUCAM/marketing-website`. It is independently hosted and contains no legal application data or authenticated matter workflows.
+- **Legacy CMP:** unrelated software. It must be preserved in a separate archive repository and must not be merged into Njumeni. Existing CMP files in this repository are a Phase 0 cleanup item and must not be removed before verified archival.
+- **Upstream legal projects:** reviewed as references or possible isolated adapters. They are not copied wholesale into Njumeni.
 
-All text, logos and illustrations are placeholders. Replace them with your own.
+Njumeni is intended to securely handle confidential legal documents, case files and evidence through protected application storage. Live customer data must never be committed to Git or stored in build artefacts, issue trackers or CI logs. Officially classified material requires hosting and service providers authorised for the applicable classification.
 
+## Binding implementation plan
 
-## Legal technology research sources
+The execution sequence is controlled by [the Master Implementation Plan](docs/MASTER_IMPLEMENTATION_PLAN.md). It contains the twenty-workstream register, Phases 0–13, Phase 0 execution checklist, definition of done and execution ledger.
 
-Njumeni maintains selected upstream legal-technology projects as separate local checkouts for engineering research. See [the source register](third-party/legal-open-source/README.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+**Execution rule:** every "go next" resumes the first incomplete item in the active phase. No phase may be skipped. A proposal, folder, scaffold or documentation file alone does not count as a completed feature.
 
-To obtain the upstream repositories in your local Njumeni workspace, run:
+## Architecture and security
 
-```bash
-bash scripts/bootstrap-legal-sources.sh
-```
+- [Legal AI Platform Architecture](docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md) — bounded domains, topology, retrieval, evidence provenance, source assessments and licensing.
+- [Product Boundaries](docs/PRODUCT_BOUNDARIES.md) — canonical product and repository separation.
+- [Security Policy](SECURITY.md) — application-data protection and source-control hygiene.
+- [Third-Party Notices](THIRD_PARTY_NOTICES.md) — legal-source project notices and licensing notes.
 
-These projects are not merged into the Njumeni application. Review each project's licence and architecture before adopting code.
+## Current engineering controls
 
+The repository includes a GitHub Actions repository-security workflow and a tracked-content policy check. These are initial guardrails, not a substitute for the full Phase 0 CI, environment, migration, application-shell and operational foundation.
 
-## Product direction and security
+## Local development
 
-Njumeni is the legal technology platform. The unrelated legacy CMP website is to be preserved in a separate repository (`njumeni-cmp-archive`), not inside this repository. Njumeni is intended to securely handle confidential legal documents, case files and evidence through its application data/storage architecture. Those live records must not be committed to this source-code repository. Keep Njumeni's codebase separate from unrelated products such as the legacy CMP project. See [the product-boundary and security decision](docs/PRODUCT_BOUNDARIES.md) and [the security policy](SECURITY.md).
+The full application development setup is not yet established. Follow the Master Implementation Plan's Phase 0 checklist before treating this repository as a runnable legal application. Do not infer a stack or start services that have not been verified and recorded in the architecture decision.
 
-## Legal AI platform direction
+## Legal-technology research sources
 
-A separate proposed architecture assessment is available in [docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md](docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md). It records the product-scope mismatch with the current CMP marketing skeleton, the five upstream project assessments, licence constraints, recommended domain boundaries and implementation sequence. It is a proposal, not an implemented legal application.
+Selected upstream projects are tracked as engineering research. See [the source register](third-party/legal-open-source/README.md). Run `bash scripts/bootstrap-legal-sources.sh` only when the local environment is ready and the pinned source/licence review is understood.
+
+Public availability is not a licence. Re-check exact upstream commits, dependencies, bundled templates, datasets, model licences and API terms before any reuse.
