@@ -106,7 +106,7 @@ async function establishSession(client, accessToken) {
   assert.equal(data.user?.id, testUser.id);
 }
 
-test('local sign-out clears SSR cookies and calls only the current-session logout scope', async () => {
+test('local sign-out clears SSR cookies and uses local scope', async () => {
   const harness = createHarness();
   await establishSession(harness.client, harness.accessToken);
   assert.ok(harness.cookies.size > 0, 'session cookies should be written before sign-out');
@@ -117,13 +117,16 @@ test('local sign-out clears SSR cookies and calls only the current-session logou
   assert.equal(harness.cookies.size, 0, 'local sign-out should clear the SSR cookie session');
   assert.ok(
     harness.requests.some(
-      ({ url, method }) => url.pathname.endsWith('/logout') && url.searchParams.get('scope') === 'local' && method === 'POST',
+      ({ url, method }) =>
+        url.pathname.endsWith('/logout') &&
+        url.searchParams.get('scope') === 'local' &&
+        method === 'POST',
     ),
     'Auth should receive a local-scope logout request',
   );
 });
 
-test('local sign-out clears the local SSR session even when remote revocation returns an error', async () => {
+test('local logout failure still clears SSR cookies', async () => {
   const harness = createHarness({ logoutStatus: 503 });
   await establishSession(harness.client, harness.accessToken);
 
@@ -143,7 +146,10 @@ test('refreshSession persists a rotated access and refresh token', async () => {
   assert.equal(data.session?.access_token, harness.rotatedAccessToken);
   assert.equal(data.session?.refresh_token, 'rotated-refresh-token');
   assert.ok(
-    harness.requests.some(({ url }) => url.pathname.endsWith('/token') && url.searchParams.get('grant_type') === 'refresh_token'),
+    harness.requests.some(
+      ({ url }) =>
+        url.pathname.endsWith('/token') && url.searchParams.get('grant_type') === 'refresh_token',
+    ),
     'Auth should receive a refresh-token grant',
   );
   assert.ok(harness.cookies.size > 0, 'rotated session should remain persisted in SSR cookies');
@@ -156,5 +162,9 @@ test('a rejected refresh token does not leave a usable SSR cookie session', asyn
   const { error } = await harness.client.auth.refreshSession();
 
   assert.ok(error, 'the revoked refresh token should be rejected');
-  assert.equal(harness.cookies.size, 0, 'rejected refresh credentials must be cleared from SSR cookies');
+  assert.equal(
+    harness.cookies.size,
+    0,
+    'rejected refresh credentials must be cleared from SSR cookies',
+  );
 });
