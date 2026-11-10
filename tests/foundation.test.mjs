@@ -27,8 +27,8 @@ test('repository ignores populated environment files but allows the template', a
 test('the phase register keeps later phases locked until closeout', async () => {
   const register = await readFile('docs/PHASE_REGISTER.md', 'utf8');
   assert.match(register, /Phase 0 — Foundation and repository\/infrastructure audit/);
-  assert.match(register, /Phase 1 — Identity, tenancy and security foundation/);
-  assert.match(register, /Phase 13 — Production hardening and launch/);
+  assert.match(register, /\| 1 \| Identity, tenancy and security foundation \|/);
+  assert.match(register, /\| 13 \| Production hardening and launch \|/);
   assert.match(register, /no Phase 1 work may begin until Phase 0 is fully green/);
 });
 
