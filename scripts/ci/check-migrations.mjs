@@ -97,7 +97,9 @@ async function main() {
       );
     }
   } else {
-    console.log('No valid base commit was supplied; existing-file immutability comparison is skipped.');
+    console.log(
+      'No valid base commit was supplied; existing-file immutability comparison is skipped.',
+    );
   }
 
   if (errors.length > 0) {
