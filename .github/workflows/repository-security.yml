@@ -25,14 +25,6 @@ jobs:
       - name: Install pinned CI tools
         run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund prettier@3.5.3 eslint@10.0.0 typescript@5.8.3
 
-      - name: Export canonical original-plan test formatting
-        run: |
-          npx --no-install prettier --write tests/original-plan.test.mjs
-          echo "ORIGINAL_PLAN_TEST_UTF8_B64_BEGIN"
-          base64 -w0 tests/original-plan.test.mjs
-          echo
-          echo "ORIGINAL_PLAN_TEST_UTF8_B64_END"
-
       - name: Check formatting
         run: npx --no-install prettier --check .prettierrc.json tsconfig.ci.json eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs scripts/ci/typecheck-probe.ts tests/foundation.test.mjs tests/migrations.test.mjs tests/app-shell.test.mjs tests/original-plan.test.mjs apps/web/package.json apps/web/package-lock.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/postcss.config.mjs apps/web/src/app/globals.css apps/web/src/modules/registry.ts "apps/web/src/**/*.tsx"
 
