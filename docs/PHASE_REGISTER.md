@@ -5,7 +5,7 @@
 - Repository: `ICOFCUCAM/njumeni`
 - Active phase: **Phase 0 — Foundation and repository/infrastructure audit**
 - Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **0.5 — Produce the complete product specification and first-release scope**
+- Next task: **0.6 — Approve modular-monolith architecture, bounded contexts and eight platform layers**
 - Phase completion commit: **NOT CREATED**
 - Rule: no Phase 1 work may begin until Phase 0 is fully green and its phase-closeout commit is verified.
 
@@ -48,8 +48,8 @@ A task does not turn green because code was written. It turns green only after i
 | 0.2 | Audit complete repository tree, branch, commits, scripts, workflows and upstream material | 🟢 GREEN | [Phase 0 audit](PHASE_0_AUDIT.md); audit commit `a3b5d32`; repository security workflow passed |
 | 0.3 | Inventory and preserve existing Njumeni/JurisAI components; archive legacy CMP separately and verify preservation before removal | 🟢 GREEN | Six original files archived in [ICOFCUCAM/njumeni-cmp-archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive); all six archive blob SHAs match source commit `0d9c90f`. Recursive archive tree verified. Archive verification commit `a2820521ce3459af3feb6c8a28d83aa28c2291f6`. CMP-only files removed from Njumeni in commits `4643a0e`, `06fda6a`, `6f6e804`, `158a09d`, `f5d842b`. |
 | 0.4 | Finalise repository boundaries: Njumeni app, marketing website, CMP archive and isolated upstream research | 🟢 GREEN | Canonical repository map and project-separation rules in `docs/PRODUCT_BOUNDARIES.md`; README and Phase 0 audit aligned. Commits `42177a8`, `5988fb2`, `cbdb919`; repository-security workflow passed on task commit `c54a2b2` (run `42737825274`). |
-| 0.5 | Produce complete product specification: users, priority journeys, launch scope, jurisdiction, requirements and non-goals | 🟡 IN PROGRESS | Next active task. Inspect the original 20-point plan and current legal-platform architecture proposal before drafting; do not start downstream implementation. |
-| 0.6 | Approve modular-monolith architecture, bounded contexts, eight platform layers and dependency rules | ⚪ NOT STARTED | Architecture decision record and contracts required |
+| 0.5 | Produce complete product specification: users, priority journeys, launch scope, jurisdiction, requirements and non-goals | 🟢 GREEN | [Product Specification](PRODUCT_SPECIFICATION.md) committed at `67f3a9a`. Defines four target segments, seven priority journeys, Norway/EU/UK/US/international law/Cameroon priority coverage, P0/P1 first-release scope, functional and trust requirements, A–M positioning, non-goals, acceptance criteria and explicit open decision gates. Reviewed against the master plan and architecture proposal; 15-section structural/content validation passed. Supporting updates: master plan `f6f14ca`, audit `83af95c`, README `195f898`. |
+| 0.6 | Approve modular-monolith architecture, bounded contexts, eight platform layers and dependency rules | 🟡 IN PROGRESS | Next active task. Review the product specification and existing architecture assessment; produce a formal architecture decision and layer/dependency contracts without starting application implementation. |
 | 0.7 | Map A–M modules to layers, workstreams, ownership, dependencies, APIs/events, permissions and phase delivery | ⚪ NOT STARTED | Complete module-contract register required |
 | 0.8 | Establish coding, naming, formatting, lint, type, error, logging and review standards | ⚪ NOT STARTED | Standards and automated enforcement required |
 | 0.9 | Establish reproducible local, test/CI, staging and production environment strategy | ⚪ NOT STARTED | Environment matrix, setup and configuration contract required |
