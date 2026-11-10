@@ -4,6 +4,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { normalizeInvitationEmail, parseInvitationExpiryDays } from '@/lib/invitation-validation';
 
 const ORGANISATION_KINDS = ['law_firm', 'enterprise', 'institution'] as const;
 const WORKSPACE_KINDS = ['general', 'team', 'matter', 'research'] as const;
@@ -99,7 +100,6 @@ export async function createWorkspace(formData: FormData): Promise<void> {
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const EMAIL_PATTERN = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
 
 export type InvitationCreationResult = {
   token?: string;
@@ -112,21 +112,17 @@ export async function createInvitation(formData: FormData): Promise<InvitationCr
   const emailValue = formData.get('email');
   const expiryValue = formData.get('expires_in_days');
 
-  const email = typeof emailValue === 'string' ? emailValue.trim().toLowerCase() : '';
+  const email = normalizeInvitationEmail(emailValue);
   const workspaceId =
     typeof workspaceValue === 'string' && workspaceValue.trim() ? workspaceValue.trim() : null;
-  const expiryDays =
-    typeof expiryValue === 'string' && /^\\d+$/.test(expiryValue) ? Number(expiryValue) : 7;
+  const expiryDays = parseInvitationExpiryDays(expiryValue);
 
   if (
     typeof organizationId !== 'string' ||
     !UUID_PATTERN.test(organizationId) ||
     (workspaceId !== null && !UUID_PATTERN.test(workspaceId)) ||
-    email.length > 254 ||
-    !EMAIL_PATTERN.test(email) ||
-    !Number.isInteger(expiryDays) ||
-    expiryDays < 1 ||
-    expiryDays > 30
+    email === null ||
+    expiryDays === null
   ) {
     return { error: 'invalid' };
   }
@@ -149,7 +145,16 @@ export async function createInvitation(formData: FormData): Promise<InvitationCr
 
     revalidatePath('/settings/workspaces');
     return { token };
-  } catch {
+  } catch (error) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'digest' in error &&
+      typeof error.digest === 'string' &&
+      error.digest.startsWith('NEXT_REDIRECT')
+    ) {
+      throw error;
+    }
     return { error: 'unavailable' };
   }
 }
