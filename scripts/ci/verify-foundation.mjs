@@ -24,6 +24,7 @@ const requiredFiles = [
   'docs/architecture/MODULE_LAYER_MAP.md',
   'docs/architecture/MODULE_REQUIREMENTS_TRACEABILITY.md',
   'tests/original-plan.test.mjs',
+  'tests/infrastructure-audit.test.mjs',
   '.editorconfig',
   '.prettierrc.json',
   '.env.example',

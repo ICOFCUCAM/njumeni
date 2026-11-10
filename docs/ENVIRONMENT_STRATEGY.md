@@ -15,11 +15,11 @@
 | Application package manifest | No root package.json; `apps/web/package.json` and `apps/web/package-lock.json` are present with pinned Next.js/React/Tailwind/TypeScript versions |
 | Application runtime | A real Next.js web foundation shell exists in `apps/web`; no authenticated product workflows, API service, worker or scheduler are connected |
 | Local environment | The web package has pinned dependencies and `dev`, `build`, `start` and `typecheck` scripts; local database/auth/storage/queue services and a full local stack are not configured |
-| CI | Consolidated formatting, ESLint, strict TypeScript, source/foundation/migration/app-shell tests, migration guard, architecture checks, content policy, Gitleaks and web production build are active; final combined run `42744161490` passed |
-| Supabase project | No Njumeni-specific project ID, URL, region or hosted database was verified in this task |
+| CI | Consolidated formatting, ESLint, strict TypeScript, source/foundation/migration/app-shell/infrastructure-audit tests, migration guard, architecture checks, content policy, Gitleaks and web production build are active; final combined run is recorded in `PHASE_REGISTER.md` |
+| Supabase project | The connected Supabase inventory contains no project identifiable as Njumeni; no Njumeni project ID, URL, region, Auth tenant or hosted database exists in the inspected inventory |
 | Vercel project | No Njumeni application project/deployment is linked. The only matching project is `njumeni-marketing-website`, linked to the separate `ICOFCUCAM/marketing-website` repository; see `INFRASTRUCTURE_AUDIT.md` |
-| Redis, object storage, worker hosting, domains and AI provider credentials | Not verified as provisioned for Njumeni |
-| Environment secrets | No real secrets are recorded in this document or repository |
+| Redis, object storage, worker hosting, custom domains/DNS, monitoring, backups and AI provider credentials | Not provisioned for Njumeni; see `INFRASTRUCTURE_AUDIT.md` |
+| Web runtime health | `/api/health` explicitly reports authentication and database disconnected; the sign-in route is a non-operational placeholder |\n| Environment secrets | No real credentials were found in tracked files; `.env.example` contains placeholders only. GitHub Actions secret metadata was not accessible and no secret values were read |
 
 Earlier architecture discussions proposed Vercel for the web application, Supabase for PostgreSQL/Auth/RLS/pgvector, Redis/BullMQ, S3-compatible object storage, Cloudflare for DNS/WAF, a dedicated worker host and GitHub Actions/Vercel CI/CD. These remain **proposals**, not verified Njumeni infrastructure.
 
