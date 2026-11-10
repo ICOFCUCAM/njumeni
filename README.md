@@ -30,3 +30,8 @@ bash scripts/bootstrap-legal-sources.sh
 ```
 
 These projects are not merged into the Njumeni application. Review each project's licence and architecture before adopting code.
+
+
+## Legal AI platform direction
+
+A separate proposed architecture assessment is available in [docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md](docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md). It records the product-scope mismatch with the current CMP marketing skeleton, the five upstream project assessments, licence constraints, recommended domain boundaries and implementation sequence. It is a proposal, not an implemented legal application.
