@@ -73,13 +73,13 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 
 | Item | Status | Evidence / next action |
 |---|---|---|
-| 0.1 Master scope and 20-workstream register | PARTIAL | Execution plan committed. Reconcile its reconstructed labels with the exact original 20-point outline and preserve the original A–M module names before declaring complete. |
+| 0.1 Master scope and 20-workstream register | PARTIAL | Execution plan committed. The original 20-point headings and canonical A–M names have since been restored in the Master Implementation Plan; detailed contracts and phase mapping remain in task 0.7. |
 | 0.2 Full repository/branch/tree audit | COMPLETE | Current tree, branch head, workflow, existing files and repository metadata inspected. Re-audit before destructive changes. |
 | 0.3 Preserve existing components | PARTIAL | Legal-source register, architecture and security guardrails inventoried. CMP files identified and must be archived. No legal app runtime was found to preserve. |
 | 0.4 Repository boundaries | PARTIAL | Legal app and marketing-site separation confirmed. CMP archive still outstanding. |
 | 0.5 Product specification | NOT STARTED | Define users, launch use cases, jurisdictions, requirements, non-goals and release scope. |
 | 0.6 Modular-monolith and eight-layer architecture | PARTIAL | Proposed domain/topology document exists. Formal architecture decision, layer contracts and dependency rules still required. |
-| 0.7 Original A–M module map | BLOCKED | Exact original A–M labels/contracts are not present in the audited tree. Recover from original project outline; do not invent replacements. |
+| 0.7 Original A–M module map | IN PROGRESS | Canonical A–M names restored in the Master Implementation Plan; map each module to layers, ownership, dependencies, APIs/events, permissions, tests and phase delivery. |
 | 0.8 Engineering standards | NOT STARTED | Decide and document after stack and repo strategy are confirmed. |
 | 0.9 Local/test/staging/production environments | NOT STARTED | No application runtime or environment specification found. |
 | 0.10 CI pipeline | PARTIAL | Security workflow exists; full quality/build/test/migration pipeline remains to be implemented. |
@@ -100,10 +100,10 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 
 ## Immediate next execution items
 
-1. Recover and reconcile the exact original twenty-point outline and A–M module map.
+1. Complete CMP archival, verify the separate archive, then remove CMP material from Njumeni only after preservation is proven.
 2. Complete the product specification and first-release scope.
 3. Record the modular-monolith architecture decision and eight-layer contracts.
-4. Complete the hosting/database/storage/queue/domain/provider inventory.
-5. Define engineering standards, environments, CI and migration discipline.
-6. Archive CMP separately, verify it, then remove CMP material from Njumeni only after preservation is proven.
-7. Implement the minimal legal application shell only after the preceding architecture and repository gates are accepted.
+4. Map all A–M modules to the architecture, dependencies, contracts and delivery phases.
+5. Complete the hosting/database/storage/queue/domain/provider inventory.
+6. Define engineering standards, environments, complete CI and migration discipline.
+7. Specify the minimal legal application shell only after the preceding architecture and repository gates are accepted.
