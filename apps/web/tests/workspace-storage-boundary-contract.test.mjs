@@ -2,10 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-const storage = await readFile(
-  new URL('../src/lib/workspace-storage.ts', import.meta.url),
-  'utf8',
-);
+const storage = await readFile(new URL('../src/lib/workspace-storage.ts', import.meta.url), 'utf8');
 
 test('workspace storage is server-only and uses the authenticated Supabase client', () => {
   assert.ok(storage.startsWith("import 'server-only';"));
