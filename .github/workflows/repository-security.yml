@@ -47,6 +47,11 @@ jobs:
         run: node scripts/ci/verify-foundation.mjs
 
       - name: Build application shell when present
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NJUMENI_TEST_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NJUMENI_TEST_SUPABASE_PUBLISHABLE_KEY }}
+          NJUMENI_TEST_EMAIL: ${{ secrets.NJUMENI_TEST_EMAIL }}
+          NJUMENI_TEST_PASSWORD: ${{ secrets.NJUMENI_TEST_PASSWORD }}
         shell: bash
         run: |
           if [[ -f apps/web/package.json ]]; then
