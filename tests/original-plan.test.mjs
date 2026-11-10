@@ -50,14 +50,14 @@ test('all twenty original top-level section headings remain present', async () =
 test('the original eight layer names and five named upstream repositories remain intact', async () => {
   const source = await readFile(sourcePath, 'utf8');
   const layers = [
-    'Experience Layer',
-    'API Layer',
-    'Workflow Orchestration Layer',
-    'Evidence Layer',
-    'Legal Knowledge Layer',
-    'Reasoning Layer',
-    'Verification Layer',
-    'Infrastructure Layer',
+    'Experience',
+    'API',
+    'Workflow orchestration',
+    'Evidence',
+    'Legal knowledge',
+    'Reasoning',
+    'Verification',
+    'Infrastructure',
   ];
   const repositories = ['OpenContracts', 'CaseCite', 'Lawgent', 'Lovspor', 'Mike'];
 

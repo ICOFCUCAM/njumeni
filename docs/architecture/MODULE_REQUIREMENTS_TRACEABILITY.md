@@ -1,6 +1,6 @@
 # Njumeni original A–M capability traceability
 
-This register preserves the original module-level capability requirements from the Njumeni master architecture supplied on 2026-11-10 and assigns their implementation layer. It supplements, and does not replace, [MODULE_LAYER_MAP.md](MODULE_LAYER_MAP.md). The original module names and capability wording are retained; implementation details may be elaborated but not silently removed. The exact layer names are defined in the original source; table shorthand maps as follows: Experience = Experience Layer; API = API Layer; Workflow orchestration = Workflow Orchestration Layer; Evidence = Evidence Layer; Legal knowledge = Legal Knowledge Layer; Reasoning = Reasoning Layer; Verification = Verification Layer; Infrastructure = Infrastructure Layer.
+This register preserves the original module-level capability requirements from the Njumeni master architecture supplied on 2026-11-10 and assigns their implementation layer. It supplements, and does not replace, [MODULE_LAYER_MAP.md](MODULE_LAYER_MAP.md). The original module names and capability wording are retained; implementation details may be elaborated but not silently removed. The exact canonical layer names are used in the table cells, in the same order and spelling as the original source.
 
 ## Module A — Njumeni Legal Intelligence
 

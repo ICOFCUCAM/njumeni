@@ -3464,14 +3464,14 @@ This overlay is execution metadata added after the original source. It does not 
 
 The uploaded source identifies these exact layer names and order:
 
-1. Experience Layer
-2. API Layer
-3. Workflow Orchestration Layer
-4. Evidence Layer
-5. Legal Knowledge Layer
-6. Reasoning Layer
-7. Verification Layer
-8. Infrastructure Layer
+1. Experience
+2. API
+3. Workflow orchestration
+4. Evidence
+5. Legal knowledge
+6. Reasoning
+7. Verification
+8. Infrastructure
 
 These names are the preserved baseline for ADR-0001 and the A–M module-layer map. Do not substitute another taxonomy without an explicit change decision.
 

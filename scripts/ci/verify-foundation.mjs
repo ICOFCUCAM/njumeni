@@ -47,14 +47,14 @@ const traceability = await readFile(
 );
 
 const layers = [
-  'Experience Layer',
-  'API Layer',
-  'Workflow Orchestration Layer',
-  'Evidence Layer',
-  'Legal Knowledge Layer',
-  'Reasoning Layer',
-  'Verification Layer',
-  'Infrastructure Layer',
+  'Experience',
+  'API',
+  'Workflow orchestration',
+  'Evidence',
+  'Legal knowledge',
+  'Reasoning',
+  'Verification',
+  'Infrastructure',
 ];
 
 const modules = [

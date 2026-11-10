@@ -11,14 +11,14 @@ The thirteen module IDs and names below are preserved exactly. This map assigns 
 
 The eight canonical platform layers remain exactly:
 
-1. Experience Layer
-2. API Layer
-3. Workflow Orchestration Layer
-4. Evidence Layer
-5. Legal Knowledge Layer
-6. Reasoning Layer
-7. Verification Layer
-8. Infrastructure Layer
+1. Experience
+2. API
+3. Workflow orchestration
+4. Evidence
+5. Legal knowledge
+6. Reasoning
+7. Verification
+8. Infrastructure
 
 The bounded contexts are those established in ADR-0001: Identity and organisation; Workspace and matter; Document and evidence; Document intelligence; Legal knowledge and jurisdiction; Research and retrieval; Legal reasoning and verification; Contract review and drafting; Workflow and orchestration; AI orchestration; Governance and audit.
 
@@ -26,14 +26,14 @@ The bounded contexts are those established in ADR-0001: Identity and organisatio
 
 ### Layer shorthand used in mapping tables
 
-- Experience = Experience Layer
-- API = API Layer
-- Workflow orchestration = Workflow Orchestration Layer
-- Evidence = Evidence Layer
-- Legal knowledge = Legal Knowledge Layer
-- Reasoning = Reasoning Layer
-- Verification = Verification Layer
-- Infrastructure = Infrastructure Layer
+- Experience = Experience
+- API = API
+- Workflow orchestration = Workflow orchestration
+- Evidence = Evidence
+- Legal knowledge = Legal knowledge
+- Reasoning = Reasoning
+- Verification = Verification
+- Infrastructure = Infrastructure
 
 ## 2. Complete A–M responsibility map
 
