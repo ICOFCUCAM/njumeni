@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(15);
+select plan(16);
 
 insert into auth.users (id, email)
 values
@@ -66,15 +66,21 @@ select throws_ok(
 );
 
 select throws_ok(
-  $$update public.user_profiles set principal_id = current_setting('njumeni.test.principal_two')::uuid where principal_id = private.current_principal_id()$$,
+  $update public.user_profiles set principal_id = current_setting('njumeni.test.principal_two')::uuid where principal_id = private.current_principal_id()$,
   '42501',
-  'Profile ownership is immutable',
-  'Profile owner cannot be reassigned'
+  'permission denied for table user_profiles',
+  'Authenticated users cannot update the profile ownership column'
 );
 
 reset role;
 select throws_ok(
-  $$update private.principal_identities set provider_subject = 'tampered-subject' where auth_user_id = '10000000-0000-4000-8000-000000000001'$$,
+  $update public.user_profiles set principal_id = current_setting('njumeni.test.principal_two')::uuid where principal_id = current_setting('njumeni.test.principal_one')::uuid$,
+  '42501',
+  'Profile ownership is immutable',
+  'Database trigger prevents profile ownership reassignment even for privileged direct writes'
+);
+select throws_ok(
+  $update private.principal_identities set provider_subject = 'tampered-subject' where auth_user_id = '10000000-0000-4000-8000-000000000001'$$,
   '42501',
   'Provider identity mappings are immutable',
   'Provider subject mapping cannot be changed'
