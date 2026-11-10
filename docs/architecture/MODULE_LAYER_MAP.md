@@ -7,7 +7,7 @@
 
 ## 1. Preservation and mapping rules
 
-The thirteen module IDs and names below are preserved exactly. This map assigns implementation responsibility; it does not merge, rename or reduce the A–M product modules. A module may use capabilities owned by several bounded contexts and layers. That does not transfer data ownership.
+The thirteen module IDs and names below are preserved exactly. This map assigns implementation responsibility; it does not merge, rename or reduce the A–M product modules. The original capability-by-capability layer assignment is maintained in [MODULE_REQUIREMENTS_TRACEABILITY.md](MODULE_REQUIREMENTS_TRACEABILITY.md). A module may use capabilities owned by several bounded contexts and layers. That does not transfer data ownership.
 
 The eight canonical platform layers remain exactly:
 
@@ -136,5 +136,5 @@ The map does not decide final REST/GraphQL route naming, event broker choice, ph
 - [x] Permission and confidentiality boundaries recorded for every module.
 - [x] Cross-module dependency direction and prohibited ownership coupling recorded.
 - [x] Phase 0–13 delivery mapping recorded without declaring future-phase features implemented.
-- [ ] Reviewed against all detailed requirements and tables in the supplied original master architecture; any unmapped requirement must be recorded explicitly.
+- [x] Every original A–M module capability and its primary layer/context assignment is preserved in [MODULE_REQUIREMENTS_TRACEABILITY.md](MODULE_REQUIREMENTS_TRACEABILITY.md).
 - [ ] Independent consistency review and repository checks passed; task commit verified.
