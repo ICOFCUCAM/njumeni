@@ -240,21 +240,23 @@ test(
 );
 
 test(
-  'a rejected refresh token is surfaced without issuing a replacement session', async () => {
-  const harness = createHarness({ tokenStatus: 400 });
-  await establishSession(harness.client, harness.accessToken);
-  const cookiesBeforeRefresh = Array.from(harness.cookies.entries());
+  'a rejected refresh token is surfaced without issuing a replacement session',
+  async () => {
+    const harness = createHarness({ tokenStatus: 400 });
+    await establishSession(harness.client, harness.accessToken);
+    const cookiesBeforeRefresh = Array.from(harness.cookies.entries());
 
-  const { error } = await harness.client.auth.refreshSession();
+    const { error } = await harness.client.auth.refreshSession();
 
-  assert.ok(error, 'the revoked refresh token should be rejected');
-  assert.deepEqual(
-    Array.from(harness.cookies.entries()),
-    cookiesBeforeRefresh,
-    'a rejected refresh must not persist a replacement session',
-  );
-  assert.ok(
-    harness.cookies.size > 0,
-    'an unexpired access-token cookie may remain valid until its expiry even after refresh is rejected',
-  );
-});
+    assert.ok(error, 'the revoked refresh token should be rejected');
+    assert.deepEqual(
+      Array.from(harness.cookies.entries()),
+      cookiesBeforeRefresh,
+      'a rejected refresh must not persist a replacement session',
+    );
+    assert.ok(
+      harness.cookies.size > 0,
+      'an unexpired access-token cookie may remain valid until its expiry even after refresh is rejected',
+    );
+  },
+);
