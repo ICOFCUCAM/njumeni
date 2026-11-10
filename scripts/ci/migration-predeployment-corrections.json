@@ -4,6 +4,11 @@
       "path": "supabase/migrations/20261110155456_membership_invitation_lifecycle.sql",
       "blob_sha": "114a7cc02c2c70046296df2d747fb6de59cd06c2",
       "reason": "Correct the unshipped Task 1.6 migration before any hosted deployment: add the referenced workspace composite uniqueness, invitation updated_at column, and safe expiry handling. The failed local replay exposed the defect; no hosted migration was applied."
+    },
+    {
+      "path": "supabase/migrations/20261110164705_role_permission_foundation.sql",
+      "blob_sha": "f24d6300e17a96850c3e8554868b2abd42694556",
+      "reason": "Correct the unshipped Task 1.7 migration after clean local startup identified a malformed dollar-quote delimiter in the event-trigger function. The migration has not been applied to any hosted environment; the corrected template and follow-up hardening migration preserve the reviewed event semantics."
     }
   ]
 }
