@@ -17,3 +17,16 @@ cd site && python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
 All text, logos and illustrations are placeholders. Replace them with your own.
+
+
+## Legal technology research sources
+
+Njumeni maintains selected upstream legal-technology projects as separate local checkouts for engineering research. See [the source register](third-party/legal-open-source/README.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+
+To obtain the upstream repositories in your local Njumeni workspace, run:
+
+```bash
+bash scripts/bootstrap-legal-sources.sh
+```
+
+These projects are not merged into the Njumeni application. Review each project's licence and architecture before adopting code.
