@@ -199,14 +199,19 @@ The owner has now confirmed the remaining production browser checks on the Njume
 
 These observations close the owner-browser checks for sign-in, refresh persistence, local logout, protected-route denial after logout and browser cookie removal. They are owner-observed checks, not an independent automated browser test, and do not prove that the provider rejects reuse of the revoked refresh token.
 
-The current repository head passed GitHub Actions workflow `42834329355` with all three jobs successful:
+The current repository head `82e57538fdf29debd8137bef13a397f5b538046a` passed GitHub Actions workflow `42834456559` with all three jobs successful:
 - Formatting, lint, strict TypeScript, foundation/migration tests, migration immutability, architecture checks and Next.js production build.
 - Repository content/privacy-path policy.
 - Gitleaks secret scanning.
 
-The web test suite reported 16 passing tests and no failures. The production build confirmed `/dashboard` remains request-dynamic. The optional live Supabase provider lifecycle test was skipped because the four dedicated test environment variables are not configured:
-`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NJUMENI_TEST_EMAIL`, `NJUMENI_TEST_PASSWORD`.
+The web test suite reported 16 passing tests and no failures. The production build confirmed `/dashboard` remains request-dynamic. The optional live Supabase provider lifecycle test was skipped because four dedicated GitHub Actions secrets are not configured. Add these exact names under **Repository → Settings → Secrets and variables → Actions**:
+- `NJUMENI_TEST_SUPABASE_URL`
+- `NJUMENI_TEST_SUPABASE_PUBLISHABLE_KEY`
+- `NJUMENI_TEST_EMAIL`
+- `NJUMENI_TEST_PASSWORD`
+
+The workflow maps the first two secrets into the runtime environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Do not create secrets using the `NEXT_PUBLIC_` names. Use a dedicated non-production test account, not the owner's personal account. Once configured, run **Actions → Njumeni CI and security → Run workflow** on branch `claude/wonderful-franklin-lt09d7`. The live test signs in, verifies the user, refreshes the session, signs out, then attempts reuse of the revoked refresh token. It must pass before the gate can close. Afterward, remove the test identity through the approved Supabase admin workflow and verify there is no test data left.
 
 The Supabase security advisor was rechecked against the dedicated Njumeni project. It still reports `auth_leaked_password_protection` as WARN. The current Free plan does not expose this Pro+ Auth control through the connected management interface. No plan upgrade or Auth setting change has been made. Keep production onboarding and confidential legal data use gated; this is not a claim that the control is enabled.
 
-**Remaining Task 1.3 gate:** run the live provider lifecycle/revoked-refresh-token test with dedicated test-only credentials and record the result. Do not paste credentials into chat or commit them; configure them as protected GitHub Actions repository secrets. Until that test and the Auth control review are resolved, Task 1.3 remains IN PROGRESS and Task 1.4 remains locked.
+**Remaining Task 1.3 gate:** the live provider lifecycle/revoked-refresh-token test and a documented decision on the unavailable leaked-password protection control. Do not paste credentials into chat or commit them. Until these gates are resolved, Task 1.3 remains IN PROGRESS and Task 1.4 remains locked.
