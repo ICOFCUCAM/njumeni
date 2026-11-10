@@ -46,6 +46,9 @@ create index workspace_memberships_principal_id_idx
 create index workspace_memberships_workspace_status_idx
   on public.workspace_memberships (workspace_id, status);
 
+alter table public.workspaces
+  add constraint workspaces_id_organization_id_unique unique (id, organization_id);
+
 create table public.organization_invitations (
   id uuid primary key default gen_random_uuid(),
   organization_id uuid not null
@@ -60,7 +63,7 @@ create table public.organization_invitations (
   token_hash text not null unique
     check (token_hash ~ '^[0-9a-f]{64}$'),
   status text not null default 'pending'
-    check (status in ('pending', 'accepted', 'revoked')),
+    check (status in ('pending', 'accepted', 'revoked', 'expired')),
   expires_at timestamptz not null,
   created_by_principal_id uuid not null
     default private.current_principal_id()
@@ -70,6 +73,7 @@ create table public.organization_invitations (
   accepted_at timestamptz,
   revoked_at timestamptz,
   created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
   constraint organization_invitations_workspace_org_fkey
     foreign key (workspace_id, organization_id)
     references public.workspaces(id, organization_id) on delete restrict,
@@ -84,6 +88,32 @@ create table public.organization_invitations (
   constraint organization_invitations_revocation_consistency
     check ((status = 'revoked' and revoked_at is not null) or (status <> 'revoked' and revoked_at is null))
 );
+
+create or replace function private.expire_matching_invitations()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  update public.organization_invitations
+  set status = 'expired',
+      updated_at = now()
+  where organization_id = new.organization_id
+    and email_normalized = new.email_normalized
+    and workspace_id is not distinct from new.workspace_id
+    and status = 'pending'
+    and expires_at <= now();
+
+  return new;
+end;
+$;
+
+revoke all on function private.expire_matching_invitations() from public, anon, authenticated;
+
+create trigger organization_invitations_expire_previous
+  before insert on public.organization_invitations
+  for each row execute function private.expire_matching_invitations();
 
 create index organization_invitations_organization_status_idx
   on public.organization_invitations (organization_id, status, expires_at desc);
@@ -160,6 +190,8 @@ begin
       event_target := new.accepted_by_principal_id;
     elsif old.status is distinct from new.status and new.status = 'revoked' then
       event_name := 'invitation.revoked';
+    elsif old.status is distinct from new.status and new.status = 'expired' then
+      event_name := 'invitation.expired';
     else
       return new;
     end if;
@@ -442,7 +474,7 @@ begin
     invited_by_principal_id = excluded.invited_by_principal_id,
     joined_at = now(),
     updated_at = now()
-  where public.organization_memberships.status in ('suspended', 'revoked')
+  where organization_memberships.status in ('suspended', 'revoked')
   returning id into organization_membership;
 
   if organization_membership is null then
@@ -470,7 +502,7 @@ begin
       invited_by_principal_id = excluded.invited_by_principal_id,
       joined_at = now(),
       updated_at = now()
-    where public.workspace_memberships.status in ('suspended', 'revoked')
+    where workspace_memberships.status in ('suspended', 'revoked')
     returning id into workspace_membership;
 
     if workspace_membership is null then
@@ -556,7 +588,7 @@ declare
   membership_row public.organization_memberships%rowtype;
 begin
   current_principal := private.current_principal_id();
-  if current_principal is null or p_status not in ('suspended', 'revoked') then
+  if current_principal is null or p_status is null or p_status not in ('suspended', 'revoked') then
     raise exception 'Membership cannot be changed'
       using errcode = '42501';
   end if;
