@@ -9,9 +9,7 @@ export function ModuleLanding({ module }: { module: ModuleDefinition }) {
         <p className="page-description">{module.summary}</p>
         <div className="module-meta">
           <span className="module-code">MODULE {module.id}</span>
-          <span className="module-status">
-            Route boundary established · implementation pending
-          </span>
+          <span className="module-status">Route boundary established · implementation pending</span>
         </div>
       </header>
       <section className="module-panel" aria-labelledby="module-purpose">
