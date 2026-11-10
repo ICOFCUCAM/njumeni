@@ -18,20 +18,20 @@ const serverClient = await readFile(
 test(
   'sign-in does not accept an untrusted return URL and redirects to a fixed workspace route',
   () => {
-    assert.match(authActions, /export async function signIn\\(formData: FormData\\)/);
-    assert.match(authActions, /redirect\\('\\/dashboard'\\)/);
+    assert.match(authActions, /export async function signIn\(formData: FormData\)/);
+    assert.match(authActions, /redirect\('\/dashboard'\)/);
     assert.doesNotMatch(
       authActions,
-      /redirectTo|returnTo|callbackUrl|searchParams\\.get\\(['"]next/,
+      /redirectTo|returnTo|callbackUrl|searchParams\.get\(['"]next/,
     );
-    assert.doesNotMatch(authActions, /new URL\\([^\\n]*(?:formData|searchParams)/);
+    assert.doesNotMatch(authActions, /new URL\([^\n]*(?:formData|searchParams)/);
   },
 );
 
 test('protected workspace boundary verifies the current provider user', () => {
-  assert.match(workspaceLayout, /supabase\\.auth\\.getUser\\(\\)/);
-  assert.match(workspaceLayout, /if \\(error \\|\\| !user\\) redirect\\('\\/sign-in'\\)/);
-  assert.doesNotMatch(workspaceLayout, /supabase\\.auth\\.getClaims\\(\\)/);
+  assert.match(workspaceLayout, /supabase\.auth\.getUser\(\)/);
+  assert.match(workspaceLayout, /if \(error \|\| !user\) redirect\('\/sign-in'\)/);
+  assert.doesNotMatch(workspaceLayout, /supabase\.auth\.getClaims\(\)/);
 });
 
 test('server Supabase client is server-only and uses no privileged key', () => {
