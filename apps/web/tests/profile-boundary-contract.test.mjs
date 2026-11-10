@@ -61,10 +61,17 @@ test('workspace navigation exposes the profile settings route', () => {
   assert.ok(shell.includes("href: '/settings/profile'"));
 });
 
-
 test('profile schema is represented by generated database types and used by the server client', () => {
   assert.ok(databaseTypes.includes('user_profiles'));
-  for (const field of ['principal_id', 'display_name', 'given_name', 'family_name', 'avatar_url', 'locale', 'timezone']) {
+  for (const field of [
+    'principal_id',
+    'display_name',
+    'given_name',
+    'family_name',
+    'avatar_url',
+    'locale',
+    'timezone',
+  ]) {
     assert.ok(databaseTypes.includes(field), 'missing generated profile field: ' + field);
   }
   assert.ok(supabaseServer.includes('createServerClient<Database>'));
