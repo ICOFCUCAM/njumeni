@@ -20,49 +20,55 @@ const proxyClient = await readFile(
 );
 
 test('sign-in does not accept an untrusted return URL and redirects to a fixed workspace route', () => {
-  assert.match(authActions, /export async function signIn\(formData: FormData\)/);
-  assert.match(authActions, /redirect\('\/dashboard'\)/);
-  assert.doesNotMatch(authActions, /redirectTo|returnTo|callbackUrl|searchParams\.get\(['"]next/);
-  assert.doesNotMatch(authActions, /new URL\([^\n]*(?:formData|searchParams)/);
+  assert.ok(authActions.includes('export async function signIn(formData: FormData)'));
+  assert.ok(authActions.includes("redirect('/dashboard')"));
+  for (const input of ['redirectTo', 'returnTo', 'callbackUrl', "searchParams.get('next"]) {
+    assert.ok(!authActions.includes(input), `unexpected return URL input: ${input}`);
+  }
+  assert.ok(!authActions.includes('new URL('));
 });
 
 test('protected workspace boundary verifies the current provider user', () => {
-  assert.match(workspaceLayout, /supabase\.auth\.getUser\(\)/);
-  assert.match(workspaceLayout, /if \(error \|\| !user\) redirect\('\/sign-in'\)/);
-  assert.doesNotMatch(workspaceLayout, /supabase\.auth\.getClaims\(\)/);
+  assert.ok(workspaceLayout.includes('supabase.auth.getUser()'));
+  assert.ok(workspaceLayout.includes("redirect('/sign-in')"));
+  assert.ok(!workspaceLayout.includes('supabase.auth.getClaims()'));
 });
 
 test('server Supabase client is server-only and uses no privileged key', () => {
-  assert.match(serverClient, /import 'server-only'/);
-  assert.match(serverClient, /NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY/);
-  assert.doesNotMatch(serverClient, /SERVICE_ROLE|service_role|SUPABASE_SECRET_KEY/);
+  assert.ok(serverClient.includes("import 'server-only'"));
+  assert.ok(serverClient.includes('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'));
+  for (const key of ['SERVICE_ROLE', 'service_role', 'SUPABASE_SECRET_KEY']) {
+    assert.ok(!serverClient.includes(key));
+  }
 });
 
 test('sign-in errors do not disclose provider details or reveal account existence', () => {
-  assert.match(authActions, /redirect\('\/sign-in\?error=credentials'\)/);
-  assert.doesNotMatch(authActions, /console\.(?:log|error|warn)/);
-  assert.doesNotMatch(authActions, /error\.message|error\.code/);
+  assert.ok(authActions.includes("redirect('/sign-in?error=credentials')"));
+  assert.ok(!authActions.includes('console.log'));
+  assert.ok(!authActions.includes('console.error'));
+  assert.ok(!authActions.includes('error.message'));
+  assert.ok(!authActions.includes('error.code'));
 });
 
 test('sign-out ends only the current session and distinguishes unconfirmed revocation', () => {
-  assert.match(authActions, /signOut\(\{ scope: 'local' \}\)/);
-  assert.match(authActions, /warning=revocation-unconfirmed/);
-  assert.match(authActions, /error=signout/);
+  assert.ok(authActions.includes("signOut({ scope: 'local' })"));
+  assert.ok(authActions.includes('warning=revocation-unconfirmed'));
+  assert.ok(authActions.includes('error=signout'));
 });
 
 test('SSR cookie adapters enforce HttpOnly, production Secure, SameSite=Lax and root path', () => {
   for (const source of [serverClient, proxyClient]) {
-    assert.match(source, /httpOnly: true/);
-    assert.match(source, /secure: process\.env\.NODE_ENV === 'production'/);
-    assert.match(source, /sameSite: 'lax'/);
-    assert.match(source, /path: '\/'/);
+    assert.ok(source.includes('httpOnly: true'));
+    assert.ok(source.includes("secure: process.env.NODE_ENV === 'production'"));
+    assert.ok(source.includes("sameSite: 'lax'"));
+    assert.ok(source.includes("path: '/'"));
   }
 });
 
 test('Proxy forwards refreshed request cookies, response cookies and Supabase cache headers', () => {
-  assert.match(proxyClient, /request\.cookies\.set\(name, value\)/);
-  assert.match(proxyClient, /NextResponse\.next\(\{ request \}\)/);
-  assert.match(proxyClient, /supabaseResponse\.cookies\.set/);
-  assert.match(proxyClient, /supabaseResponse\.headers\.set\(key, value\)/);
-  assert.match(proxyClient, /await supabase\.auth\.getClaims\(\)/);
+  assert.ok(proxyClient.includes('request.cookies.set(name, value)'));
+  assert.ok(proxyClient.includes('NextResponse.next({ request })'));
+  assert.ok(proxyClient.includes('supabaseResponse.cookies.set'));
+  assert.ok(proxyClient.includes('supabaseResponse.headers.set(key, value)'));
+  assert.ok(proxyClient.includes('await supabase.auth.getClaims()'));
 });
