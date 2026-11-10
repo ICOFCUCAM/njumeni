@@ -169,7 +169,6 @@ test('refreshSession persists a rotated access and refresh token', async () => {
   assert.ok(harness.cookies.size > 0, 'rotated session should remain persisted in SSR cookies');
 });
 
-
 test('provider-side deleted or revoked user is rejected by getUser', async () => {
   const harness = createHarness();
   await establishSession(harness.client, harness.accessToken);
@@ -179,7 +178,11 @@ test('provider-side deleted or revoked user is rejected by getUser', async () =>
   const { data, error } = await harness.client.auth.getUser();
 
   assert.ok(error, 'provider-side user rejection must be surfaced');
-  assert.equal(data.user, null, 'a rejected provider identity must not be returned as authenticated');
+  assert.equal(
+    data.user,
+    null,
+    'a rejected provider identity must not be returned as authenticated',
+  );
   assert.ok(
     harness.requests.some(({ url }) => url.pathname.endsWith('/user')),
     'the server must consult the provider user endpoint rather than trust local claims alone',
