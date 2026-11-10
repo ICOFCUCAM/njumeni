@@ -582,7 +582,6 @@ a:focus-visible {
   }
 }
 
-
 .auth-form {
   display: grid;
   gap: 9px;
@@ -619,8 +618,11 @@ a:focus-visible {
   font-weight: 700;
   cursor: pointer;
 }
-.auth-submit:hover { background: var(--forest); }
-.auth-error, .auth-success {
+.auth-submit:hover {
+  background: var(--forest);
+}
+.auth-error,
+.auth-success {
   border-radius: 9px;
   padding: 11px 13px;
   font-size: 11px;

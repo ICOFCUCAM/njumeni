@@ -64,7 +64,6 @@ test('application shell documents every module route and preview limitation', as
   assert.match(dashboard, /no live case data is connected/);
 });
 
-
 test('Supabase SSR session boundary is server-validated and uses the Next.js 16 Proxy', async () => {
   const server = await readFile('apps/web/src/lib/supabase/server.ts', 'utf8');
   const proxy = await readFile('apps/web/src/lib/supabase/proxy.ts', 'utf8');

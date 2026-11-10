@@ -22,8 +22,8 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       <p className="page-eyebrow">Secure account access</p>
       <h1>Sign in to Njumeni.</h1>
       <p>
-        Use the email address and password issued for your Njumeni account. Account registration
-        and organisation invitations will be introduced through the controlled onboarding flow.
+        Use the email address and password issued for your Njumeni account. Account registration and
+        organisation invitations will be introduced through the controlled onboarding flow.
       </p>
       {params.message === 'signed-out' ? (
         <p className="auth-success" role="status">

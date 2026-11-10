@@ -51,7 +51,13 @@ function activeLabel(pathname: string) {
     )?.shortLabel ?? 'Workspace'
   );
 }
-export function WorkspaceShell({ children, userEmail }: { children: ReactNode; userEmail: string }) {
+export function WorkspaceShell({
+  children,
+  userEmail,
+}: {
+  children: ReactNode;
+  userEmail: string;
+}) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const title = activeLabel(pathname);
@@ -135,9 +141,13 @@ export function WorkspaceShell({ children, userEmail }: { children: ReactNode; u
             <span className="breadcrumb-label">Njumeni / {title}</span>
           </div>
           <div className="topbar-right">
-            <span className="account-email" title={userEmail}>{userEmail}</span>
+            <span className="account-email" title={userEmail}>
+              {userEmail}
+            </span>
             <form action={signOut}>
-              <button className="sign-out-button" type="submit">Sign out</button>
+              <button className="sign-out-button" type="submit">
+                Sign out
+              </button>
             </form>
           </div>
         </header>

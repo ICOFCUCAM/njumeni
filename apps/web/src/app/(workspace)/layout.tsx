@@ -14,8 +14,6 @@ export default async function WorkspaceLayout({ children }: { children: ReactNod
   if (error || !user) redirect('/sign-in');
 
   return (
-    <WorkspaceShell userEmail={user.email ?? 'Authenticated account'}>
-      {children}
-    </WorkspaceShell>
+    <WorkspaceShell userEmail={user.email ?? 'Authenticated account'}>{children}</WorkspaceShell>
   );
 }
