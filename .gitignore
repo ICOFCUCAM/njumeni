@@ -26,18 +26,8 @@ id_ed25519
 /backups/
 /exports/
 
-# Legal/customer document files are not source code.
-# Keep actual client documents, evidence and classified material outside Git.
-*.pdf
-*.doc
-*.docx
-*.odt
-*.rtf
-*.xls
-*.xlsx
-*.ppt
-*.pptx
-
+# Live customer/matter data must never be committed to source control.
+# Synthetic test fixtures and non-sensitive product templates may be versioned deliberately.
 # Local development artefacts
 .DS_Store
 Thumbs.db
