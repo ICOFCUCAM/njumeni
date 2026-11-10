@@ -197,23 +197,26 @@ test('provider-side deleted or revoked user is rejected by getUser', async () =>
   );
 });
 
-test('a tampered access token is sent for authoritative provider verification and rejected', async () => {
+test(
+  'a tampered access token is sent for authoritative provider verification and rejected',
+  async () => {
   const harness = createHarness();
   harness.setUserStatus(401);
-  const tamperedAccessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJub3QtYS11c2VyIn0.invalid-signature';
+  const tamperedAccessToken = 'tampered-access-token-not-a-valid-jwt';
 
-  const { data, error } = await harness.client.auth.getUser(tamperedAccessToken);
+    const { data, error } = await harness.client.auth.getUser(tamperedAccessToken);
 
-  assert.ok(error, 'the Auth provider must reject a tampered access token');
-  assert.equal(data.user, null, 'a rejected token must not produce an authenticated user');
-  assert.ok(
-    harness.requests.some(
-      ({ url, authorization }) =>
-        url.pathname.endsWith('/user') && authorization === `Bearer ${tamperedAccessToken}`,
-    ),
-    'the explicit token must be sent to the authoritative Auth user endpoint',
-  );
-});
+    assert.ok(error, 'the Auth provider must reject a tampered access token');
+    assert.equal(data.user, null, 'a rejected token must not produce an authenticated user');
+    assert.ok(
+      harness.requests.some(
+        ({ url, authorization }) =>
+          url.pathname.endsWith('/user') && authorization === `Bearer ${tamperedAccessToken}`,
+      ),
+      'the explicit token must be sent to the authoritative Auth user endpoint',
+    );
+  },
+);
 
 test('a rejected refresh token is surfaced without issuing a replacement session', async () => {
   const harness = createHarness({ tokenStatus: 400 });
