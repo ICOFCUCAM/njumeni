@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(16);
+select plan(18);
 
 insert into auth.users (id, email)
 values
@@ -141,8 +141,23 @@ select is(
 
 select is(
   (select count(*) from public.user_profiles where principal_id = current_setting('njumeni.test.principal_one')::uuid),
+  1::bigint,
+  'Deleting an Auth user retains the profile row for controlled tenant retention'
+);
+
+select is(
+  (select count(*) from private.principals
+   where id = current_setting('njumeni.test.principal_one')::uuid and status = 'deactivated'),
+  1::bigint,
+  'Deleting an Auth user deactivates rather than deletes the internal principal'
+);
+
+select is(
+  (select count(*) from public.user_profiles
+   where principal_id = current_setting('njumeni.test.principal_one')::uuid
+     and (display_name is not null or given_name is not null or family_name is not null or avatar_url is not null)),
   0::bigint,
-  'Deleting an Auth user cascades to its profile'
+  'Deleting an Auth user anonymises profile presentation fields'
 );
 
 select * from finish();
