@@ -285,8 +285,21 @@ select lives_ok(
 
 select lives_ok(
   $$insert into public.workspaces (organization_id, name, slug, kind)
-    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$$,
-  'Organisation administrator can create a workspace through the scoped permission policy'
+    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace Two', 'rbac-admin-created-workspace-two', 'team')$$,
+  'Organisation administrator can create a second workspace through the scoped permission policy'
+);
+
+select is(
+  (select count(*) from public.workspaces where slug = 'rbac-admin-created-workspace-two'),
+  1::bigint,
+  'Organisation administrator can read the second workspace administration metadata'
+);
+
+select lives_ok(
+  $$update public.workspaces
+    set name = 'Admin Updated Workspace Two'
+    where slug = 'rbac-admin-created-workspace-two'$$,
+  'Organisation administrator can update workspace metadata without changing its immutable creator'
 );
 
 select is(
@@ -394,7 +407,7 @@ select is(
 
 reset role;
 set local role authenticated;
-set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
+set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000007';
 
 select is(
   public.has_permission('workspace.read', current_setting('njumeni.rbac.organization_id')::uuid, current_setting('njumeni.rbac.other_workspace_id')::uuid),
