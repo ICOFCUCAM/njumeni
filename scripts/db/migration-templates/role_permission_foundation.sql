@@ -874,6 +874,15 @@ create policy "Organisation administrators can update workspace metadata"
   using (private.has_permission('workspace.update', organization_id, id))
   with check (private.has_permission('workspace.update', organization_id, id));
 
+create policy "Workspace managers can read workspace administration metadata"
+  on public.workspaces
+  for select
+  to authenticated
+  using (
+    private.has_permission('workspace.manage_members', organization_id, id)
+    or private.has_permission('workspace.manage_roles', organization_id, id)
+  );
+
 -- Expand existing read/insert policies to the scoped role evaluator.
 drop policy if exists "Principals can read their own organisation memberships"
   on public.organization_memberships;
