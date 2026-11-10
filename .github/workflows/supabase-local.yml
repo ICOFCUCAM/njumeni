@@ -14,8 +14,54 @@ permissions:
   contents: read
 
 jobs:
+  generate-migrations:
+    name: Generate pending migrations from CLI templates
+    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/wonderful-franklin-lt09d7' && contains(github.event.head_commit.message, 'db-template:')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Set up pinned Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: 3.1.0
+      - name: Initialise local-only Supabase configuration
+        run: |
+          if [ ! -f supabase/config.toml ]; then
+            supabase init
+          fi
+      - name: Generate and commit all pending CLI-named migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for template in scripts/db/migration-templates/*.sql; do
+            slug="$(basename "$template" .sql)"
+            if find supabase/migrations -maxdepth 1 -type f -name "*_${slug}.sql" -print -quit | grep -q .; then
+              continue
+            fi
+            supabase migration new "$slug"
+            migration="$(find supabase/migrations -maxdepth 1 -type f -name "*_${slug}.sql" -print -quit)"
+            test -n "$migration"
+            cp "$template" "$migration"
+            git add "$migration"
+          done
+          if git diff --cached --quiet; then
+            echo "No pending migration templates."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "db: generate CLI-named migrations from approved templates"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
   local-database:
     name: Supabase CLI generation and clean local replay
+    needs: generate-migrations
+    if: always() && (needs.generate-migrations.result == 'success' || needs.generate-migrations.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -46,6 +92,8 @@ jobs:
         run: supabase start
       - name: Replay every migration from an empty local database
         run: supabase db reset
+      - name: Lint the local database schema
+        run: supabase db lint --level error
       - name: Run PostgreSQL RLS and profile lifecycle tests
         run: supabase test db
       - name: Stop local Supabase stack
