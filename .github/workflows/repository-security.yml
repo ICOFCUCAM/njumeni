@@ -27,7 +27,11 @@ jobs:
 
       - name: Format and export the module landing component
         run: |
-          npx --no-install prettier --write apps/web/src/components/module-landing.tsx
+          npx --no-install prettier --write apps/web/src/components/module-landing.tsx scripts/ci/verify-foundation.mjs
+          echo "FOUNDATION_VERIFIER_FORMAT_B64_BEGIN"
+          base64 -w0 scripts/ci/verify-foundation.mjs
+          echo
+          echo "FOUNDATION_VERIFIER_FORMAT_B64_END"
           echo "MODULE_LANDING_FORMAT_B64_BEGIN"
           base64 -w0 apps/web/src/components/module-landing.tsx
           echo
