@@ -7,7 +7,7 @@ const MIGRATION_PATTERN = /^\d{14}_[a-z0-9]+(?:_[a-z0-9]+)*\.sql$/;
 
 export function validateMigrationFiles(entries) {
   const errors = [];
-  const sqlFiles = entries.filter((entry) => entry.endsWith('.sql'));
+  const sqlFiles = entries.filter((entry) => entry.endsWith('.sql')).sort();
   const timestamps = [];
 
   for (const file of sqlFiles) {
