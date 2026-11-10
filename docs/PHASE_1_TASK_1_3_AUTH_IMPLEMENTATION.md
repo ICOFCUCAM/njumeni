@@ -199,12 +199,12 @@ The owner has now confirmed the remaining production browser checks on the Njume
 
 These observations close the owner-browser checks for sign-in, refresh persistence, local logout, protected-route denial after logout and browser cookie removal. They are owner-observed checks, not an independent automated browser test, and do not prove that the provider rejects reuse of the revoked refresh token. The local Auth SDK test harness now also verifies that a deliberately tampered access token is passed to the authoritative Auth `/user` endpoint and that a provider rejection produces no authenticated user. This is a mocked provider-boundary test; it does not replace the live provider lifecycle test.
 
-The current repository head `82e57538fdf29debd8137bef13a397f5b538046a` passed GitHub Actions workflow `42834456559` with all three jobs successful:
+The current repository head `727989d4303caf0a5253c8d60050b8879ab12b5d` passed GitHub Actions workflow `42839971018` with all three jobs successful:
 - Formatting, lint, strict TypeScript, foundation/migration tests, migration immutability, architecture checks and Next.js production build.
 - Repository content/privacy-path policy.
 - Gitleaks secret scanning.
 
-The web test suite reported 16 passing tests and no failures. The production build confirmed `/dashboard` remains request-dynamic. The optional live Supabase provider lifecycle test was skipped because four dedicated GitHub Actions secrets are not configured. Add these exact names under **Repository → Settings → Secrets and variables → Actions**:
+The web test suite reported 18 passing tests and no failures. The Auth session harness now includes explicit provider-boundary checks for tampered and expired access tokens, provider-side user rejection, rejected refresh-token rotation, local logout cookie clearing and refresh-session rotation. The full workflow also passed 18 foundation tests, formatting, lint, strict TypeScript, migration policy, architecture checks, production build, repository content policy and Gitleaks. The production build confirmed `/dashboard` remains request-dynamic. The optional live Supabase provider lifecycle test was skipped because four dedicated GitHub Actions secrets are not configured. Add these exact names under **Repository → Settings → Secrets and variables → Actions**:
 - `NJUMENI_TEST_SUPABASE_URL`
 - `NJUMENI_TEST_SUPABASE_PUBLISHABLE_KEY`
 - `NJUMENI_TEST_EMAIL`
