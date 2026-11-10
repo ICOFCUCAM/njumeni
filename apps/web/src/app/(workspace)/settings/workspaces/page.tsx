@@ -36,6 +36,7 @@ export default async function WorkspacesSettingsPage({
         )
         .order('created_at', { ascending: true })
     : { data: [], error: null };
+  const workspaceRows = workspaces ?? [];
   const workspaceByOrganisation = new Map<string, NonNullable<typeof workspaces>>();
   for (const workspace of workspaces ?? []) {
     const current = workspaceByOrganisation.get(workspace.organization_id) ?? [];
