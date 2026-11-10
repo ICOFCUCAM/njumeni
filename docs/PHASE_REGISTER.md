@@ -5,7 +5,7 @@
 - Repository: `ICOFCUCAM/njumeni`
 - Active phase: **Phase 1 — Identity, tenancy and security foundation**
 - Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **1.1 — Define identity, authentication, tenant and workspace security contracts**
+- Next task: **1.1 — Complete and verify identity, authentication, tenant and workspace security contracts**
 - Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
 - Rule: no Phase 1 work may begin until Phase 0 is fully green and its phase-closeout commit is verified.
 
@@ -73,6 +73,29 @@ A task does not turn green because code was written. It turns green only after i
 | Master phase backlog initial commit | `b05755824b97f7f937cb4679f73cdadf4e45e471` |
 
 The security workflow passed for commits `a3b5d32`, `0c2b9d5`, `9427e26` and `c046790`. Workflow runs for the latest audit/README/master-plan corrections are still running or queued and must be checked before their commits are treated as CI-verified.
+
+## Active phase — Phase 1
+
+**Phase objective:** establish identity, tenant/workspace isolation, authorisation, audit and security foundations before Njumeni handles confidential legal matters or documents.
+
+**Phase plan:** [Phase 1 — Identity, tenancy and security foundation](PHASE_1_PLAN.md).
+
+| No. | Task / required outcome | Status | Acceptance evidence |
+|---|---|---|---|
+| 1.1 | Define identity, authentication, tenant and workspace security contracts | 🟡 IN PROGRESS | [ADR-0002 — Identity, Tenancy and Security Architecture](architecture/ADR-0002-identity-tenancy-security.md) defines principal/session/tenant/workspace/membership/permission concepts, trust boundaries, deny-by-default rules, RLS, audit, threat model and open decisions. Commit `f8a2ee06588cc985970ce8a0b8a6828d25afef96`; awaiting CI verification. |
+| 1.2 | Verify dedicated Njumeni identity/database environment readiness | 🔒 LOCKED | Verify a dedicated Njumeni Supabase project and approved region; never reuse another product's environment. |
+| 1.3 | Implement identity provider integration and secure session lifecycle | 🔒 LOCKED | Server-side Auth, secure session lifecycle and invalid/expired/revoked session tests. |
+| 1.4 | Implement user profile and principal model | 🔒 LOCKED | Provider subject mapping, profile schema, server-side update rules and tests. |
+| 1.5 | Implement organisations, workspaces and tenant ownership | 🔒 LOCKED | Tenant/workspace schema, ownership rules and isolation tests. |
+| 1.6 | Implement membership and invitation lifecycle | 🔒 LOCKED | Active/pending/revoked membership; expiring single-use identity-bound invitations and audit. |
+| 1.7 | Implement roles, permissions and server-side authorisation | 🔒 LOCKED | Explicit permission catalogue, scoped roles, deny-by-default policy and escalation tests. |
+| 1.8 | Implement PostgreSQL RLS and storage access policies | 🔒 LOCKED | Tenant-scoped RLS and private storage policies tested under realistic non-owner principals. |
+| 1.9 | Implement security audit logging | 🔒 LOCKED | Structured append-only security events, redaction, retention and access controls. |
+| 1.10 | Implement subscription identity and entitlement boundary | 🔒 LOCKED | Billing identity linkage separated from resource authorisation. |
+| 1.11 | Execute tenant-isolation and security verification suite | 🔒 LOCKED | Negative cross-tenant tests across API, DB, storage and jobs; threat-model residuals documented. |
+| 1.12 | Phase 1 acceptance and closeout | 🔒 LOCKED | All 1.1–1.11 green, phase-wide security/CI acceptance and verified closeout commit. |
+
+**Phase 1 safety gate:** no real customer legal documents or confidential matters may be accepted until identity, tenancy, RLS, private storage, audit and provider-egress controls have been implemented and verified.
 
 ## 3. Phase lock register
 
