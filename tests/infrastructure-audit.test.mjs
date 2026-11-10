@@ -8,7 +8,7 @@ test(
     const audit = await readFile('docs/INFRASTRUCTURE_AUDIT.md', 'utf8');
     const environment = await readFile('docs/ENVIRONMENT_STRATEGY.md', 'utf8');
 
-    assert.match(audit, /repository is \*\*PUBLIC\*\*/);
+    assert.match(audit, /reported \*\*PUBLIC\*\*/);
     assert.match(audit, /njumeni-marketing-website/);
     assert.match(audit, /ICOFCUCAM\/marketing-website/);
     assert.match(
