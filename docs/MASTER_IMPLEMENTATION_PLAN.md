@@ -45,23 +45,23 @@ Phases must be completed in order. A phase is not complete because folders or do
 ### Phase 0 — Foundation and repository/infrastructure audit
 
 - [ ] 0.1 Freeze and record the master product scope and the twenty-workstream register.
-- [ ] 0.2 Audit the complete current repository tree, branch, commits, existing source, scripts, workflows and third-party material.
-- [ ] 0.3 Identify and preserve useful existing Njumeni/JurisAI components; inventory before changing or replacing anything.
-- [ ] 0.4 Resolve repository boundaries: Njumeni application, independent marketing website, separate CMP archive and isolated upstream research sources.
+- [x] 0.2 Audit the complete current repository tree, branch, commits, existing source, scripts, workflows and third-party material. Evidence: [Phase 0 audit](PHASE_0_AUDIT.md).
+- [ ] 0.3 Identify and preserve useful existing Njumeni/JurisAI components; inventory before changing or replacing anything. Inventory completed; CMP archival and verification remain outstanding.
+- [ ] 0.4 Resolve repository boundaries: Njumeni application, independent marketing website, separate CMP archive and isolated upstream research sources. Application/marketing separation confirmed; CMP archive remains outstanding.
 - [ ] 0.5 Produce a product specification: users, priority use cases, first release, jurisdictions, requirements and non-goals.
 - [ ] 0.6 Confirm modular-monolith architecture and document bounded contexts, dependency rules and eight platform layers.
 - [ ] 0.7 Recover and record the original A–M module map; map every module to workstreams, layers, dependencies and phase.
 - [ ] 0.8 Establish coding standards, naming, formatting, linting, type-checking, error handling, logging and review conventions.
 - [ ] 0.9 Establish environment strategy: local development, test/CI, staging and production; document required services and configuration.
-- [ ] 0.10 Establish CI checks for formatting, lint, type checks, tests, security scanning, secret detection and repository content policy.
+- [ ] 0.10 Establish CI checks for formatting, lint, type checks, tests, security scanning, secret detection and repository content policy. Security/content-policy workflow exists and passed; quality/build/test checks remain outstanding.
 - [ ] 0.11 Establish database migration discipline: ordered immutable migrations, local reset/replay, hosted-history reconciliation, drift detection, backup and rollback/forward-fix policy.
 - [ ] 0.12 Define application shell and navigation architecture without prematurely building unfinished feature modules.
-- [ ] 0.13 Audit hosting, domains, deployment targets, secrets, storage, queues, database and external providers; record verified facts versus unknowns.
-- [ ] 0.14 Create the phase-by-phase implementation backlog with dependencies, acceptance criteria and evidence of completion.
-- [ ] 0.15 Run repository hygiene checks and document unresolved risks.
+- [ ] 0.13 Audit hosting, domains, deployment targets, secrets, storage, queues, database and external providers; record verified facts versus unknowns. GitHub/repository audit recorded; runtime infrastructure inventory remains outstanding.
+- [x] 0.14 Create the phase-by-phase implementation backlog with dependencies, acceptance criteria and evidence of completion. See this plan and [Phase 0 audit](PHASE_0_AUDIT.md).
+- [ ] 0.15 Run repository hygiene checks and document unresolved risks. GitHub Actions repository-security workflow passed on 2026-11-10; broader hygiene review remains outstanding.
 - [ ] 0.16 Phase 0 acceptance review: no unresolved product/repository boundary ambiguity, no destructive changes to unreviewed components, reproducible development setup, CI and migration policy defined, architecture mapped to all twenty workstreams and A–M modules.
 
-**Phase 0 status at plan creation: IN PROGRESS.** Existing repository security documentation and a repository-content CI workflow are present. The proposed architecture document exists. However, the repository tree currently contains the legacy CMP site alongside the Njumeni legal-platform documentation, no implemented legal application shell, and no demonstrated local/test/staging/production application environment or database migration system. These are audit findings, not completed deliverables. The separate marketing website is already in its own repository and deployed; that does not complete the Njumeni application foundation.
+**Phase 0 status: IN PROGRESS.** The repository audit and phase backlog are recorded. Existing security/content-policy CI passed on 2026-11-10. The original twenty-point headings and exact A–M module map still require reconciliation; CMP archival, product specification, architecture decisions/contracts, engineering standards, environments, complete CI, migration discipline, infrastructure inventory and application shell remain outstanding. See [Phase 0 audit](PHASE_0_AUDIT.md). The separate marketing website is already in its own repository and deployed; that does not complete the Njumeni application foundation.
 
 ### Phase 1 — Identity, tenancy and security foundation
 Organisations, users, memberships, invitations, roles/permissions, MFA/session controls, tenant/matter policies, audit primitives and adversarial isolation tests.
