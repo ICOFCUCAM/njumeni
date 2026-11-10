@@ -118,7 +118,7 @@ select lives_ok($$select * from public.accept_organization_invitation(repeat('f'
 
 select lives_ok(
   $$insert into public.workspaces (organization_id, name, slug, kind)
-    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$,
+    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$$,
   'Organisation administrator can create a workspace through the scoped permission policy'
 );
 
@@ -131,7 +131,7 @@ select is(
 select lives_ok(
   $$update public.workspaces
     set name = 'Admin Updated Workspace'
-    where id = current_setting('njumeni.rbac.workspace_id')::uuid$,
+    where id = current_setting('njumeni.rbac.workspace_id')::uuid$$,
   'Organisation administrator can update workspace metadata without changing its immutable creator'
 );
 
@@ -285,7 +285,7 @@ select lives_ok(
 
 select lives_ok(
   $$insert into public.workspaces (organization_id, name, slug, kind)
-    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$,
+    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$$,
   'Organisation administrator can create a workspace through the scoped permission policy'
 );
 
@@ -298,7 +298,7 @@ select is(
 select lives_ok(
   $$update public.workspaces
     set name = 'Admin Updated Workspace'
-    where id = current_setting('njumeni.rbac.workspace_id')::uuid$,
+    where id = current_setting('njumeni.rbac.workspace_id')::uuid$$,
   'Organisation administrator can update workspace metadata without changing its immutable creator'
 );
 
