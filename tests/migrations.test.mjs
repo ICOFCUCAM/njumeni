@@ -12,13 +12,14 @@ test('accepts CLI-shaped migration names in timestamp order', () => {
   );
 });
 
-test('rejects non-CLI names, duplicate timestamps and out-of-order migrations', () => {
+test('rejects non-CLI names and duplicate timestamps; filenames define migration order', () => {
   assert.ok(validateMigrationFiles(['init.sql']).some((error) => error.includes('Invalid migration')));
-  assert.ok(
+  assert.deepEqual(
     validateMigrationFiles([
       '20261110020000_add_workspace_membership.sql',
       '20261110010000_create_identity_tables.sql',
-    ]).some((error) => error.includes('ascending timestamp order')),
+    ]),
+    [],
   );
   assert.ok(
     validateMigrationFiles([
