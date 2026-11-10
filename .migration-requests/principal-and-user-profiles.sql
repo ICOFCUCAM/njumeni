@@ -189,3 +189,5 @@ comment on table private.principal_identities is
   'Server-managed mapping between internal principals and external identity-provider subjects.';
 comment on table public.user_profiles is
   'Self-service presentation profile. Profile attributes never grant permissions or tenant access.';
+
+-- CLI migration generation request refreshed after pinning Supabase CLI.
