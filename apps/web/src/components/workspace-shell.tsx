@@ -35,6 +35,7 @@ const navigationGroups: { label: string; items: NavigationItem[] }[] = [
       { label: 'Institutional workspace', href: '/institutional', icon: 'landmark' },
     ],
   },
+  { label: 'Account', items: [{ label: 'Profile settings', href: '/settings/profile', icon: 'user' }] },
   {
     label: 'Governance',
     items: [
