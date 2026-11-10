@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { normalizeInvitationEmail, parseInvitationExpiryDays } from '../src/lib/invitation-validation.ts';
+import {
+  normalizeInvitationEmail,
+  parseInvitationExpiryDays,
+} from '../src/lib/invitation-validation.ts';
 
 const actions = await readFile(
   new URL('../src/app/(workspace)/settings/workspaces/actions.ts', import.meta.url),
@@ -109,7 +112,6 @@ test('tenant access policies require active organisation and workspace membershi
     ),
   );
 });
-
 
 test('invitation email validation normalises addresses and rejects malformed input', () => {
   assert.equal(normalizeInvitationEmail('  COLLEAGUE@Example.COM  '), 'colleague@example.com');
