@@ -24,12 +24,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: ""
 
       - name: Install pinned CI tools
         run: |
           npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund \
-            prettier@3.5.3 eslint@9.25.1 typescript@5.8.3
+            prettier@3.5.3 eslint@9.39.2 typescript@5.8.3
 
       - name: Check formatting
         run: |
