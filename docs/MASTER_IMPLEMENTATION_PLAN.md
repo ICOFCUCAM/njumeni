@@ -66,7 +66,7 @@ Phases must be completed in order. A phase is not complete because folders or do
 
 ### Phase 0 — Foundation and repository/infrastructure audit
 
-- [ ] 0.1 Freeze and record the master product scope and the twenty-workstream register.
+- [x] 0.1 Restore and freeze the original twenty numbered outline sections and canonical A–M modules. Evidence: [Master outline and modules](MASTER_IMPLEMENTATION_PLAN.md#2-original-master-outline--20-numbered-sections); commit `0c2b9d5`.
 - [x] 0.2 Audit the complete current repository tree, branch, commits, existing source, scripts, workflows and third-party material. Evidence: [Phase 0 audit](PHASE_0_AUDIT.md).
 - [ ] 0.3 Identify and preserve useful existing Njumeni/JurisAI components; inventory before changing or replacing anything. Inventory completed; CMP archival and verification remain outstanding.
 - [ ] 0.4 Resolve repository boundaries: Njumeni application, independent marketing website, separate CMP archive and isolated upstream research sources. Application/marketing separation confirmed; CMP archive remains outstanding.
@@ -83,7 +83,7 @@ Phases must be completed in order. A phase is not complete because folders or do
 - [ ] 0.15 Run repository hygiene checks and document unresolved risks. GitHub Actions repository-security workflow passed on 2026-11-10; broader hygiene review remains outstanding.
 - [ ] 0.16 Phase 0 acceptance review: no unresolved product/repository boundary ambiguity, no destructive changes to unreviewed components, reproducible development setup, CI and migration policy defined, architecture mapped to all twenty workstreams and A–M modules.
 
-**Phase 0 status: IN PROGRESS.** The repository audit and phase backlog are recorded. Existing security/content-policy CI passed on 2026-11-10. The original twenty-point headings and exact A–M module map still require reconciliation; CMP archival, product specification, architecture decisions/contracts, engineering standards, environments, complete CI, migration discipline, infrastructure inventory and application shell remain outstanding. See [Phase 0 audit](PHASE_0_AUDIT.md). The separate marketing website is already in its own repository and deployed; that does not complete the Njumeni application foundation.
+**Live status is maintained in the [Phase Register](PHASE_REGISTER.md). Phase 0 status: IN PROGRESS.** The repository audit and phase backlog are recorded. Existing security/content-policy CI passed on 2026-11-10. The original twenty-point headings and exact A–M module map still require reconciliation; CMP archival, product specification, architecture decisions/contracts, engineering standards, environments, complete CI, migration discipline, infrastructure inventory and application shell remain outstanding. See [Phase 0 audit](PHASE_0_AUDIT.md). The separate marketing website is already in its own repository and deployed; that does not complete the Njumeni application foundation.
 
 ### Phase 1 — Identity, tenancy and security foundation
 Organisations, users, memberships, invitations, roles/permissions, MFA/session controls, tenant/matter policies, audit primitives and adversarial isolation tests.
@@ -160,6 +160,8 @@ A feature is not marked complete until all relevant items are satisfied:
 | 13 — Production launch | NOT STARTED | Depends on all required release gates |
 
 ## 6. Phase-lock and commit-gated execution rules
+
+The live task-by-task status, green indicators, commit evidence and phase locks are maintained in [PHASE_REGISTER.md](PHASE_REGISTER.md). The register is authoritative for current execution state. The rules below govern it.
 
 1. **Only one phase is open at a time.** The active phase is the only phase in which work may be executed. All later phases remain LOCKED.
 2. **Open the phase register first.** Before coding, identify the active phase, its final numbered task, task dependencies, acceptance tests and current Git branch/head.
