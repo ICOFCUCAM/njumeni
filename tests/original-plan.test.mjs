@@ -5,14 +5,21 @@ import { readFile } from 'node:fs/promises';
 
 const sourcePath = 'docs/ORIGINAL_MASTER_PLAN_SOURCE.md';
 const masterPath = 'docs/MASTER_IMPLEMENTATION_PLAN.md';
-const expectedSourceHash = '4dce95748a34c529caa74fce5f2dfd3486fc9d2fa5c88ac54cc3f14f71992fe0';
+const expectedSourceHash =
+  '4dce95748a34c529caa74fce5f2dfd3486fc9d2fa5c88ac54cc3f14f71992fe0';
 
 test('the uploaded original twenty-section plan is preserved without content loss', async () => {
   const source = await readFile(sourcePath, 'utf8');
   const master = await readFile(masterPath, 'utf8');
 
-  assert.equal(createHash('sha256').update(source, 'utf8').digest('hex'), expectedSourceHash);
-  assert.ok(master.startsWith(source), 'The canonical master plan must begin with the exact original source');
+  assert.equal(
+    createHash('sha256').update(source, 'utf8').digest('hex'),
+    expectedSourceHash,
+  );
+  assert.ok(
+    master.startsWith(source),
+    'The canonical master plan must begin with the exact original source',
+  );
   assert.match(master, /Live implementation overlay/);
   assert.equal(source.split('\n').length, 3437);
 });
@@ -47,24 +54,27 @@ test('all twenty original top-level section headings remain present', async () =
   }
 });
 
-test('the original eight layer names and five named upstream repositories remain intact', async () => {
-  const source = await readFile(sourcePath, 'utf8');
-  const layers = [
-    'Experience',
-    'API',
-    'Workflow orchestration',
-    'Evidence',
-    'Legal knowledge',
-    'Reasoning',
-    'Verification',
-    'Infrastructure',
-  ];
-  const repositories = ['OpenContracts', 'CaseCite', 'Lawgent', 'Lovspor', 'Mike'];
+test(
+  'the original eight layer names and five named upstream repositories remain intact',
+  async () => {
+    const source = await readFile(sourcePath, 'utf8');
+    const layers = [
+      'Experience',
+      'API',
+      'Workflow orchestration',
+      'Evidence',
+      'Legal knowledge',
+      'Reasoning',
+      'Verification',
+      'Infrastructure',
+    ];
+    const repositories = ['OpenContracts', 'CaseCite', 'Lawgent', 'Lovspor', 'Mike'];
 
-  for (const layer of layers) {
-    assert.ok(source.includes(layer), 'Missing original platform layer: ' + layer);
-  }
-  for (const repository of repositories) {
-    assert.ok(source.includes(repository), 'Missing original upstream project: ' + repository);
-  }
-});
+    for (const layer of layers) {
+      assert.ok(source.includes(layer), 'Missing original platform layer: ' + layer);
+    }
+    for (const repository of repositories) {
+      assert.ok(source.includes(repository), 'Missing original upstream project: ' + repository);
+    }
+  },
+);

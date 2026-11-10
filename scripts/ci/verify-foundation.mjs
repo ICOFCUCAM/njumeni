@@ -34,7 +34,10 @@ for (const path of requiredFiles) {
 
 const masterPlan = await readFile('docs/MASTER_IMPLEMENTATION_PLAN.md', 'utf8');
 const originalSource = await readFile('docs/ORIGINAL_MASTER_PLAN_SOURCE.md', 'utf8');
-assert.ok(masterPlan.startsWith(originalSource), 'Master plan does not preserve the original source as its prefix');
+assert.ok(
+  masterPlan.startsWith(originalSource),
+  'Master plan does not preserve the original source as its prefix',
+);
 const register = await readFile('docs/PHASE_REGISTER.md', 'utf8');
 const architecture = await readFile(
   'docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md',
