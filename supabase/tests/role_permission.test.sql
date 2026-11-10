@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(55);
+select plan(58);
 
 insert into auth.users (id, email, email_confirmed_at)
 values
@@ -283,6 +283,25 @@ select lives_ok(
   'Organisation administrator can assign a non-privileged workspace role'
 );
 
+select lives_ok(
+  $insert into public.workspaces (organization_id, name, slug, kind)
+    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$,
+  'Organisation administrator can create a workspace through the scoped permission policy'
+);
+
+select is(
+  (select count(*) from public.workspaces where slug = 'rbac-admin-created-workspace'),
+  1::bigint,
+  'Organisation administrator can read workspace administration metadata'
+);
+
+select lives_ok(
+  $update public.workspaces
+    set name = 'Admin Updated Workspace'
+    where id = current_setting('njumeni.rbac.workspace_id')::uuid$,
+  'Organisation administrator can update workspace metadata without changing its immutable creator'
+);
+
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000006';
@@ -321,16 +340,6 @@ select throws_ok(
   'Workspace manager cannot grant another workspace manager'
 );
 
-select lives_ok(
-  $$select public.set_workspace_membership_status(
-    (select id from public.workspace_memberships
-     where workspace_id = current_setting('njumeni.rbac.workspace_id')::uuid
-       and principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid),
-    'suspended'
-  )$$,
-  'Workspace manager can suspend a member in the managed workspace'
-);
-
 select is(
   public.has_permission('workspace.read', current_setting('njumeni.rbac.organization_id')::uuid, current_setting('njumeni.rbac.other_workspace_id')::uuid),
   false,
@@ -358,6 +367,24 @@ select is(
   false,
   'Workspace viewer cannot upload documents'
 );
+
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000006';
+
+select lives_ok(
+  $select public.set_workspace_membership_status(
+    (select id from public.workspace_memberships
+     where workspace_id = current_setting('njumeni.rbac.workspace_id')::uuid
+       and principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid),
+    'suspended'
+  )$,
+  'Workspace manager can suspend a member in the managed workspace'
+);
+
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000007';
 
 select is(
   public.has_permission('workspace.read', current_setting('njumeni.rbac.organization_id')::uuid, current_setting('njumeni.rbac.workspace_id')::uuid),
@@ -387,30 +414,13 @@ set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
 
 select lives_ok(
-  $$select public.set_organization_membership_status(
+  $select public.set_organization_membership_status(
     (select id from public.organization_memberships
      where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
        and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
     'suspended'
-  )$$,
+  )$,
   'Owner can suspend an organisation member with assigned roles'
-);
-
-select lives_ok(
-  $$select public.set_organization_membership_status(
-    (select id from public.organization_memberships
-     where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
-       and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
-    'revoked'
-  )$$,
-  'Owner can revoke a previously suspended organisation membership'
-);
-
-select is(
-  (select count(*) from private.workspace_role_bindings
-   where principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
-  0::bigint,
-  'Revoked organisation membership removes all workspace role bindings'
 );
 
 reset role;
@@ -421,6 +431,27 @@ select is(
   public.has_permission('workspace.manage_roles', current_setting('njumeni.rbac.organization_id')::uuid, current_setting('njumeni.rbac.workspace_id')::uuid),
   false,
   'Suspended organisation membership immediately disables workspace roles'
+);
+
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
+
+select lives_ok(
+  $select public.set_organization_membership_status(
+    (select id from public.organization_memberships
+     where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
+       and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
+    'revoked'
+  )$,
+  'Owner can revoke a previously suspended organisation membership'
+);
+
+select is(
+  (select count(*) from private.workspace_role_bindings
+   where principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
+  0::bigint,
+  'Revoked organisation membership removes all workspace role bindings'
 );
 
 reset role;
