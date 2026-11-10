@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(60);
+select plan(61);
 
 insert into auth.users (id, email, email_confirmed_at)
 values
@@ -228,6 +228,12 @@ set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000004';
 
 select is(
+  public.has_permission('workspace.create', current_setting('njumeni.rbac.organization_id')::uuid),
+  true,
+  'Organisation administrator has explicit workspace creation permission'
+);
+
+select is(
   public.has_permission('organization.manage_members', current_setting('njumeni.rbac.organization_id')::uuid),
   true,
   'Organisation administrator can manage organisation members'
@@ -277,7 +283,7 @@ select lives_ok(
   $$select public.assign_workspace_role(
     current_setting('njumeni.rbac.organization_id')::uuid,
     current_setting('njumeni.rbac.workspace_id')::uuid,
-    current_setting('njumeni.rbac.viewer_principal')::uuid,
+    current_setting('njumeni.rbac.member_principal')::uuid,
     'workspace_reviewer'
   )$$,
   'Organisation administrator can assign a non-privileged workspace role'
@@ -335,7 +341,7 @@ select lives_ok(
   $$select public.assign_workspace_role(
     current_setting('njumeni.rbac.organization_id')::uuid,
     current_setting('njumeni.rbac.workspace_id')::uuid,
-    current_setting('njumeni.rbac.viewer_principal')::uuid,
+    current_setting('njumeni.rbac.member_principal')::uuid,
     'workspace_editor'
   )$$,
   'Workspace manager can assign a lower-privilege editor role'
@@ -460,6 +466,7 @@ select lives_ok(
   'Owner can revoke a previously suspended organisation membership'
 );
 
+reset role;
 select is(
   (select count(*) from private.workspace_role_bindings
    where principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
