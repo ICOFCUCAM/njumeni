@@ -43,7 +43,7 @@ The route paths were reconciled with the existing tree. The implementation uses 
 5. In Next.js 16, use the `proxy.ts` convention (not the pre-16 `middleware.ts` convention) to refresh the session. Preserve refreshed cookies on both the forwarded request and response, and preserve Supabase cache-control headers.
 6. Use `auth.getClaims()` in the Proxy to validate/refresh JWT claims according to current Supabase guidance. Use `auth.getUser()` in the protected server boundary where current provider-side user/session state and revocation checks are required. Never use `getSession()` alone as proof of identity in server code.
 7. Redirect unauthenticated users to sign-in. Preserve only a validated same-origin relative return path; reject protocol-relative URLs and external origins.
-8. Sign-out must call the provider and clear session cookies. Use `scope: 'local'` so the current session is ended without signing the user out on other devices. Supabase removes the local session first and then makes a best-effort refresh-token revocation request; if that request fails, the client remains locally signed out but the refresh token may remain valid until expiry. The server action now distinguishes a returned revocation error from an unexpected failure and does not silently report full success. The owner has confirmed the production Sign out control returns to the sign-in page; browser cookie clearing and provider-side revocation still need automated verification.
+8. Sign-out must call the provider and clear session cookies. Use `scope: 'local'` so the current session is ended without signing the user out on other devices. With a successful local sign-out request, Supabase terminates the current session and destroys its refresh token while leaving other device/browser sessions active. The access JWT already issued for that session is not immediately invalidated and remains cryptographically usable until its `exp` time; protected server routes must therefore use `getUser()` for provider-side session validation, not rely on `getClaims()` alone. If the remote sign-out request itself fails, local cookies are still cleared but server-side refresh-token revocation is unconfirmed and the refresh token may remain usable. Supabase documents these distinctions in [Signing out](https://supabase.com/docs/guides/auth/signout) and the [JavaScript signOut reference](https://supabase.com/docs/reference/javascript/auth-signout). The server action now distinguishes a returned revocation error from an unexpected failure and does not silently report full success. The owner has confirmed the production Sign out control returns to the sign-in page; browser cookie clearing and provider-side revocation still need automated verification.
 9. No open registration, tenant selection, role assignment or privileged user creation is introduced in this task. Those require their own approved onboarding and tenancy tasks.
 10. All Auth/network responses are non-cacheable. Do not log credentials, tokens, raw provider payloads or confidential legal content.
 11. No real customer legal data is used in tests. No service-role credential is introduced into the browser bundle.
@@ -120,3 +120,32 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [x] Owner-confirmed Supabase Site URL and production redirect allow-list recorded; direct dashboard read-back is not available through the connected interface.
 
 **Task state:** 🟡 IN PROGRESS. The last previously confirmed production deployment was READY, and the owner successfully signed in with a confirmed test identity, reached the protected dashboard, refreshed the dashboard without being asked to sign in again, and used Sign out to return to the sign-in page. The current branch's latest code has not yet been deployed. These are owner-confirmed production browser tests for login, refresh persistence and sign-out navigation. They do not by themselves prove refresh-token rotation after expiry, browser cookie deletion, provider-side revocation, or the full session security matrix. Source-contract regression tests and four mocked SSR lifecycle tests now pass. The full repository CI/security workflow passes on commit `0f5e08393b612978482edfad3edda5b818e152d7` (run `42786737406`), including a successful application build. An opt-in live Supabase provider test is implemented but was skipped because the required test-only environment variables are not configured. The project has one email-confirmed test identity. Supabase's security advisor still reports Leaked Password Protection disabled; enable it and review the remaining Auth provider controls. Keep public self-registration disabled and do not accept confidential legal content until tenant isolation, RLS, storage, audit and provider-egress controls are implemented and verified.
+
+
+## 8. Current evidence and remaining acceptance work — 10 November 2026
+
+This section is the current status snapshot and supersedes older branch-head/run references in the historical evidence above.
+
+### Verified now
+
+- Branch: `claude/wonderful-franklin-lt09d7`.
+- Current application code passed full CI on commit `77076d6df3992a678ea36c3dd258cde0ea5c07dd`, workflow `42786940182`.
+- The Vercel project runtime is `22.x`, verified by reading the project setting back after changing it from `26.x`. This matches the web app's declared Node engine `>=22.13.0 <23`.
+- The documentation commit `616f06bafd1b83c169d33ce521df1defe68ac9fc` passed full CI, workflow `42822494156`. All three jobs passed, including the Next.js app-shell production build, tests, secret scan and private-data-path policy.
+- The last confirmed production deployment is `dpl_A1TveayEG9TtkQrbrSEu7RLN1Go6`, state READY, commit `06ae0269a1b7b6032410a398921e7e9eb02ddf1c`. It still owns `njumeni-web.vercel.app`.
+- The latest attempted deployment remains ERROR (`dpl_8LuL6S2REM7rDDBcw2pX7qS5T9co`, commit `b71b744dd9b44b5081488e22b298f7d3c9a997ea`). It did not take over the production alias. Its TypeScript error is corrected in the current branch.
+- A new production deployment is still outstanding because Vercel returned HTTP 402 `api-deployments-free-per-day` with a 24-hour retry window. The existing READY deployment predates the Node 22.x project setting change, so the new runtime has not yet been proven by a Vercel production build.
+- Supabase security advisor still reports `auth_leaked_password_protection` as WARN. No project plan upgrade or Auth security setting change has been made.
+
+### Next acceptance sequence
+
+1. After Vercel's deployment quota retry window has elapsed, create one fresh deployment from the current branch head. Do not create repeated attempts while the quota is active.
+2. Confirm Vercel reports READY, the deployment was built with Node 22.x, and `njumeni-web.vercel.app` points to that deployment.
+3. Run the opt-in provider lifecycle test against the dedicated Njumeni test identity. It must verify sign-in, provider user lookup, refresh, successful local sign-out and rejection of reuse of the revoked refresh token.
+4. In a private browser session, verify sign-in, dashboard access, refresh persistence, sign-out, direct navigation to `/dashboard` after sign-out, and that the browser no longer sends the session cookies.
+5. Verify the distinction between refresh-token revocation and access-token expiry: an already issued access JWT may remain valid until expiry, while the protected server boundary must reject a revoked session through provider-side `getUser()` validation.
+6. Verify invalid/expired refresh token, provider-side deleted/revoked user, missing environment configuration, and safe redirect handling. Keep all test data synthetic.
+7. Review the Supabase Auth controls. Enable leaked-password protection if the subscription tier supports it; otherwise record the plan limitation and do not claim the control is enabled.
+8. Remove the dedicated test identity only after all tests are complete, then verify no residual test data remains.
+
+**Gate:** Task 1.3 stays IN PROGRESS until the current branch is deployed and the live provider/browser tests above are recorded. Tasks 1.4–1.12 remain locked. No customer legal matter, document or confidential case data may be entered before the identity, tenancy, RLS, storage, audit and security gates are accepted.
