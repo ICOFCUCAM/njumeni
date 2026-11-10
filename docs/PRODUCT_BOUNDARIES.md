@@ -1,66 +1,54 @@
-# Njumeni product direction and boundaries
+# Njumeni product boundaries and security decision
 
-## Decision
+## Canonical product
 
-The existing `ICOFCUCAM/njumeni` repository is the canonical repository for the Njumeni legal AI platform. Do not create a separate `njumeni-legal` repository.
+`ICOFCUCAM/njumeni` is the legal technology platform. It is not a CMP project repository.
 
-The original CMP marketing-site work must be preserved. It is legacy product work and must be archived within this repository before the legal application occupies the primary application structure. Do not delete the original source, design tokens, scripts or architecture documentation.
+## Legacy CMP separation
 
-## Product A — Njumeni Legal AI (primary product)
+The original CMP website is unrelated legacy work and must be preserved in a separate repository, recommended name: `ICOFCUCAM/njumeni-cmp-archive`.
 
-Njumeni is being developed as a legal technology application focused on legal research and document intelligence.
+The six original files are:
+- `README.md`
+- `docs/ARCHITECTURE.md`
+- `site/index.html`
+- `site/css/main.css`
+- `site/css/tokens.css`
+- `site/js/main.js`
 
-The application will own its:
-- frontend and application API;
-- authentication, organisations, memberships and tenant boundaries;
-- database schema and migrations;
-- private document storage and processing workers;
-- AI orchestration, retrieval and citation verification;
-- jurisdiction-specific legal knowledge and source adapters;
-- audit events, retention and security controls;
-- environment variables, secrets, deployment and release process.
+They were introduced in original commit `0d9c90ff8e45477d25ed681aa6e29135b0bfbe7f`. The original commit is available at https://github.com/ICOFCUCAM/njumeni/commit/0d9c90ff8e45477d25ed681aa6e29135b0bfbe7f.
 
-The initial architecture reference is [LEGAL_AI_PLATFORM_ARCHITECTURE.md](LEGAL_AI_PLATFORM_ARCHITECTURE.md). It is a proposal, not evidence that a working legal application has already been implemented.
+The CMP files must be copied to the separate archive repository and verified there before any removal from this legal platform repository. Do not delete them until the archive has been created and checked. Prefer a Git-history-preserving extraction from the original commit if performed locally; otherwise record the original commit reference and clearly label the archive as a source snapshot.
 
-## Product B — Legacy CMP work (preserved archive)
+## Classified and confidential document policy
 
-The original Njumeni CMP skeleton was a consent-management marketing website, not a legal AI application. Preserve it as historical work under a clearly labelled archive, retaining:
-- original homepage HTML;
-- CSS and design tokens;
-- JavaScript interactions;
-- original CMP architecture document;
-- original README context and commit history.
+This repository is for application source code and non-sensitive engineering documentation only. Never commit classified, restricted, confidential or privileged legal documents; client or matter files; pleadings; contracts; correspondence; evidence; identity, health or financial records; OCR text; embeddings; production prompts or outputs; customer database dumps; or credentials.
 
-When relocating these files, use a history-preserving Git move where possible. Do not overwrite or discard the original source. Record the original commit SHA in the archive documentation.
+Customer documents must be uploaded through the legal application and stored outside Git in separately controlled private object storage. Enforce tenant isolation, least privilege, encryption, access logging, retention and deletion controls. Use synthetic or properly anonymised test fixtures only.
 
-The CMP archive is not part of the legal application's runtime, build, routing or deployment.
+The repository now has:
+- ignore rules for common legal document formats, secrets and private runtime-data directories;
+- a tracked-content policy check in CI;
+- a Gitleaks CI scan;
+- a security policy documenting prohibited content and incident handling.
 
-## Upstream legal projects
+These controls are guardrails, not a guarantee that sensitive data cannot be committed. Review changes, protect branches, and enable GitHub secret scanning and push protection where available.
 
-The five reviewed projects remain external upstream sources:
+## Repository visibility
 
+At the time of this security review, GitHub reported this repository as **public**. The repository owner must change it to private in GitHub Settings before placing non-public implementation details in it. Never store classified or customer documents in GitHub, even in a private repository.
+
+## Legal AI architecture
+
+The legal platform architecture proposal is documented in [LEGAL_AI_PLATFORM_ARCHITECTURE.md](LEGAL_AI_PLATFORM_ARCHITECTURE.md). It is a design document, not a claim that the application is already implemented.
+
+## Upstream projects
+
+The five reviewed legal projects remain independent upstream sources:
 1. OpenContracts — MIT
 2. CaseCite — Apache-2.0
 3. Lawgent — no clear licence identified in the initial review; do not copy code without permission or a confirmed licence.
-4. Lovspor — AGPL-3.0 engine; review the corpus/data licence separately.
+4. Lovspor — AGPL-3.0 engine; review corpus/data rights separately.
 5. Mike — AGPL-3.0
 
-Do not copy all five projects wholesale into Njumeni. Evaluate specific components, exact upstream commits, dependency licences, data rights and compatibility with the intended commercial distribution model before integration. Preserve attribution and upstream history where code is lawfully adopted.
-
-## Implementation sequence
-
-1. Keep the original CMP source recoverable and preserve its history.
-2. Establish a clearly separated legacy CMP archive within this repository.
-3. Build the Njumeni legal application as the primary product, with its own runtime and application structure.
-4. Establish authentication, tenant isolation, auditability and secure document storage before enabling sensitive workflows.
-5. Inspect and pin the five upstream projects to reviewed commits.
-6. Implement the first vertical slice: secure document upload, extraction, source-grounded search and verifiable citations.
-7. Add jurisdiction-specific legal sources and advanced workflows only after security and quality checks.
-
-## Repository discipline
-
-- One repository: `ICOFCUCAM/njumeni`.
-- Primary application: Njumeni Legal AI.
-- Preserved archive: legacy CMP website and documentation.
-- No separate `njumeni-legal` repository.
-- Never remove the original CMP work as part of the transition.
+Review exact upstream commits, dependency licences, data rights and commercial compatibility before adopting code.
