@@ -59,7 +59,7 @@ select set_config(
 );
 
 select lives_ok(
-  $$sql$insert into public.workspaces (organization_id, name, slug, kind)
+  $sql$insert into public.workspaces (organization_id, name, slug, kind)
     values (current_setting('njumeni.rbac.organization_id')::uuid, 'RBAC Main Workspace', 'rbac-main-workspace', 'team')$sql$,
   'Owner can create the RBAC workspace'
 );
@@ -71,7 +71,7 @@ select set_config(
 );
 
 select lives_ok(
-  $$sql$insert into public.workspaces (organization_id, name, slug, kind)
+  $sql$insert into public.workspaces (organization_id, name, slug, kind)
     values (current_setting('njumeni.rbac.organization_id')::uuid, 'RBAC Other Workspace', 'rbac-other-workspace', 'team')$sql$,
   'Owner can create a second workspace for isolation tests'
 );
@@ -83,7 +83,7 @@ select set_config(
 );
 
 select lives_ok(
-  $$sql$insert into public.organization_invitations
+  $sql$insert into public.organization_invitations
     (organization_id, email_normalized, token_hash, expires_at)
     values
       (current_setting('njumeni.rbac.organization_id')::uuid, 'rbac-admin@njumeni.test', repeat('a', 64), now() + interval '7 days'),
@@ -94,7 +94,7 @@ select lives_ok(
 );
 
 select lives_ok(
-  $$sql$insert into public.organization_invitations
+  $sql$insert into public.organization_invitations
     (organization_id, workspace_id, email_normalized, token_hash, expires_at)
     values
       (current_setting('njumeni.rbac.organization_id')::uuid, current_setting('njumeni.rbac.workspace_id')::uuid, 'rbac-admin@njumeni.test', repeat('e', 64), now() + interval '7 days'),
