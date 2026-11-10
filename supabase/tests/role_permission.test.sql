@@ -59,7 +59,7 @@ select set_config(
 );
 
 select lives_ok(
-  $sql$insert into public.workspaces (organization_id, name, slug, kind)
+  $$sql$insert into public.workspaces (organization_id, name, slug, kind)
     values (current_setting('njumeni.rbac.organization_id')::uuid, 'RBAC Main Workspace', 'rbac-main-workspace', 'team')$sql$,
   'Owner can create the RBAC workspace'
 );
@@ -71,7 +71,7 @@ select set_config(
 );
 
 select lives_ok(
-  $sql$insert into public.workspaces (organization_id, name, slug, kind)
+  $$sql$insert into public.workspaces (organization_id, name, slug, kind)
     values (current_setting('njumeni.rbac.organization_id')::uuid, 'RBAC Other Workspace', 'rbac-other-workspace', 'team')$sql$,
   'Owner can create a second workspace for isolation tests'
 );
@@ -83,7 +83,7 @@ select set_config(
 );
 
 select lives_ok(
-  $sql$insert into public.organization_invitations
+  $$sql$insert into public.organization_invitations
     (organization_id, email_normalized, token_hash, expires_at)
     values
       (current_setting('njumeni.rbac.organization_id')::uuid, 'rbac-admin@njumeni.test', repeat('a', 64), now() + interval '7 days'),
@@ -94,7 +94,7 @@ select lives_ok(
 );
 
 select lives_ok(
-  $sql$insert into public.organization_invitations
+  $$sql$insert into public.organization_invitations
     (organization_id, workspace_id, email_normalized, token_hash, expires_at)
     values
       (current_setting('njumeni.rbac.organization_id')::uuid, current_setting('njumeni.rbac.workspace_id')::uuid, 'rbac-admin@njumeni.test', repeat('e', 64), now() + interval '7 days'),
@@ -117,7 +117,7 @@ select lives_ok($$select * from public.accept_organization_invitation(repeat('b'
 select lives_ok($$select * from public.accept_organization_invitation(repeat('f', 64))$$, 'Member identity accepts its workspace invitation');
 
 select lives_ok(
-  $insert into public.workspaces (organization_id, name, slug, kind)
+  $$insert into public.workspaces (organization_id, name, slug, kind)
     values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$,
   'Organisation administrator can create a workspace through the scoped permission policy'
 );
@@ -129,7 +129,7 @@ select is(
 );
 
 select lives_ok(
-  $update public.workspaces
+  $$update public.workspaces
     set name = 'Admin Updated Workspace'
     where id = current_setting('njumeni.rbac.workspace_id')::uuid$,
   'Organisation administrator can update workspace metadata without changing its immutable creator'
@@ -284,7 +284,7 @@ select lives_ok(
 );
 
 select lives_ok(
-  $insert into public.workspaces (organization_id, name, slug, kind)
+  $$insert into public.workspaces (organization_id, name, slug, kind)
     values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$,
   'Organisation administrator can create a workspace through the scoped permission policy'
 );
@@ -296,7 +296,7 @@ select is(
 );
 
 select lives_ok(
-  $update public.workspaces
+  $$update public.workspaces
     set name = 'Admin Updated Workspace'
     where id = current_setting('njumeni.rbac.workspace_id')::uuid$,
   'Organisation administrator can update workspace metadata without changing its immutable creator'
@@ -373,12 +373,12 @@ set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000006';
 
 select lives_ok(
-  $select public.set_workspace_membership_status(
+  $$select public.set_workspace_membership_status(
     (select id from public.workspace_memberships
      where workspace_id = current_setting('njumeni.rbac.workspace_id')::uuid
        and principal_id = current_setting('njumeni.rbac.viewer_principal')::uuid),
     'suspended'
-  )$,
+  )$$,,
   'Workspace manager can suspend a member in the managed workspace'
 );
 
@@ -414,12 +414,12 @@ set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
 
 select lives_ok(
-  $select public.set_organization_membership_status(
+  $$select public.set_organization_membership_status(
     (select id from public.organization_memberships
      where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
        and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
     'suspended'
-  )$,
+  )$$,,
   'Owner can suspend an organisation member with assigned roles'
 );
 
@@ -438,12 +438,12 @@ set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
 
 select lives_ok(
-  $select public.set_organization_membership_status(
+  $$select public.set_organization_membership_status(
     (select id from public.organization_memberships
      where organization_id = current_setting('njumeni.rbac.organization_id')::uuid
        and principal_id = current_setting('njumeni.rbac.manager_principal')::uuid),
     'revoked'
-  )$,
+  )$$,,
   'Owner can revoke a previously suspended organisation membership'
 );
 
