@@ -3,7 +3,15 @@ name: Njumeni local database verification
 on:
   push:
     branches: ["**"]
+    paths:
+      - "supabase/**"
+      - "scripts/db/**"
+      - ".github/workflows/supabase-local.yml"
   pull_request:
+    paths:
+      - "supabase/**"
+      - "scripts/db/**"
+      - ".github/workflows/supabase-local.yml"
   workflow_dispatch:
 
 concurrency:
