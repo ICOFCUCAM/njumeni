@@ -3,6 +3,7 @@ import type { Database } from './database.types';
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import type { Database } from './database.types';
 
 export function isSupabaseConfigured(): boolean {
   return Boolean(
