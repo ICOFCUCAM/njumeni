@@ -1,6 +1,5 @@
 # Phase 0 closeout — Foundation and repository/infrastructure audit
 
-<badge> </badge>
 
 - **Phase:** 0 — Foundation and repository/infrastructure audit
 - **Closeout date:** 10 November 2026
