@@ -9,6 +9,11 @@
       "path": "supabase/migrations/20261110164705_role_permission_foundation.sql",
       "blob_sha": "538d5b67d1b2de690fcf966a978a5c55b7040f8b",
       "reason": "Correct the unshipped Task 1.7 migration after clean local replay exposed a malformed dollar-quote terminator in the role-binding event-trigger function. The migration and its source template now use the matching PL/pgSQL delimiter; no hosted migration has been applied."
+    },
+    {
+      "path": "supabase/migrations/20261110171000_tenant_scoped_storage_policies.sql",
+      "blob_sha": "aa18e6ccf18182a2a3ff9456e9b8b03c9171806b",
+      "reason": "Correct the unshipped Task 1.8 migration after clean local replay showed the migration role is not the owner of Supabase-managed storage.objects. Storage provisions RLS; the application migration now verifies that invariant without attempting an ownership-protected ALTER. No hosted migration has been applied."
     }
   ]
 }

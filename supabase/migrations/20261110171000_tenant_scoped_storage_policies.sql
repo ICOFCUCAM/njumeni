@@ -31,7 +31,22 @@ set name = excluded.name,
     file_size_limit = excluded.file_size_limit,
     allowed_mime_types = excluded.allowed_mime_types;
 
-alter table storage.objects enable row level security;
+-- Supabase Storage owns storage.objects. Its managed schema provisions RLS;
+-- the application migration role must not attempt to change ownership-protected table flags.
+do $
+begin
+  if not exists (
+    select 1
+    from pg_catalog.pg_class c
+    join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'storage'
+      and c.relname = 'objects'
+      and c.relrowsecurity
+  ) then
+    raise exception 'Supabase Storage must provision storage.objects with row-level security enabled';
+  end if;
+end;
+$;
 
 create or replace function private.storage_object_scope_allows(
   p_bucket_id text,

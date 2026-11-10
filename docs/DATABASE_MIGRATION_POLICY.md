@@ -46,6 +46,10 @@ After the Supabase CLI and Docker/local runtime are installed and pinned in the 
 
 The exact CLI version and command flags must be pinned and verified when the local environment is provisioned. Do not use guessed flags. Run supabase --help, supabase db --help and the relevant command help against the installed version before use.
 
+### Pre-deployment correction record
+
+An unshipped migration may be corrected only when the correction is recorded in `scripts/ci/migration-predeployment-corrections.json` with its exact Git blob SHA and a reason confirming that it has not been applied to any shared environment. CI verifies the exact content hash. Once a migration has been applied to a shared environment, this exception no longer applies; use a forward migration.
+
 ## 4. Review and immutable migration controls
 
 Every migration pull request must include:
