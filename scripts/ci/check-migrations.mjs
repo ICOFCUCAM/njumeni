@@ -60,10 +60,10 @@ async function main() {
     entries = await readdir(MIGRATIONS_DIR);
   } catch (error) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
-      console.log('No SQL migrations exist yet; the repository has a verified zero-migration baseline.');
-      return;
+      entries = [];
+    } else {
+      throw error;
     }
-    throw error;
   }
 
   const errors = validateMigrationFiles(entries);
