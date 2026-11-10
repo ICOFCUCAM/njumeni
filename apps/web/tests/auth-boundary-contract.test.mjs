@@ -30,6 +30,7 @@ test('sign-in does not accept an untrusted return URL and redirects to a fixed w
 
 test('protected workspace boundary verifies the current provider user', () => {
   assert.ok(workspaceLayout.includes('supabase.auth.getUser()'));
+  assert.ok(workspaceLayout.includes("export const dynamic = 'force-dynamic'"));
   assert.ok(workspaceLayout.includes("redirect('/sign-in')"));
   assert.ok(!workspaceLayout.includes('supabase.auth.getClaims()'));
 });
