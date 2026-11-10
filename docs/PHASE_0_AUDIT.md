@@ -77,7 +77,7 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 | 0.2 Full repository/branch/tree audit | COMPLETE | Current tree, branch head, workflow, existing files and repository metadata inspected. Re-audit before destructive changes. |
 | 0.3 Preserve existing components | COMPLETE | CMP source preserved in `ICOFCUCAM/njumeni-cmp-archive`; six of six original Git blob SHAs match. CMP-only source files removed from Njumeni only after verification. No legal app runtime was found to preserve. |
 | 0.4 Repository boundaries | COMPLETE | Canonical repository map committed in `docs/PRODUCT_BOUNDARIES.md`: Njumeni legal app, independent public marketing website, verified private CMP archive and isolated upstream legal research. README and audit references aligned. Marketing repository is separate; its application implementation is not part of this task. |
-| 0.5 Product specification | NOT STARTED | Define users, launch use cases, jurisdictions, requirements, non-goals and release scope. |
+| 0.5 Product specification | COMPLETE | [Product Specification](PRODUCT_SPECIFICATION.md) defines target segments, seven priority journeys, first-release P0/P1 scope, jurisdiction priorities, functional and trust requirements, A–M positioning, non-goals, acceptance criteria and unresolved release decision gates. Commit `67f3a9a`. |
 | 0.6 Modular-monolith and eight-layer architecture | PARTIAL | Proposed domain/topology document exists. Formal architecture decision, layer contracts and dependency rules still required. |
 | 0.7 Original A–M module map | IN PROGRESS | Canonical A–M names restored in the Master Implementation Plan; map each module to layers, ownership, dependencies, APIs/events, permissions, tests and phase delivery. |
 | 0.8 Engineering standards | NOT STARTED | Decide and document after stack and repo strategy are confirmed. |
@@ -94,14 +94,14 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 
 - **Public source visibility:** the repository is public. Do not add secrets, customer data, proprietary third-party code or sensitive operational configuration. The owner should make a deliberate visibility decision before proprietary implementation begins.
 - **Unprotected branch:** branch protection was observed as disabled. Define required checks and branch rules as part of Phase 0 release discipline.
-- **Legacy CMP co-location:** CMP files remain in the repository. Archive and verify before removal; do not intermingle future application source with the CMP site.
+- **Legacy CMP preservation:** CMP files were transferred to the separate private archive and verified by exact Git blob SHA before removal. Preserve the archive as the canonical historical snapshot.
 - **Architecture drift:** the 20-workstream register is an operational mapping from the recovered outline summary. Exact original headings and the A–M module map must be restored from the original outline rather than guessed.
 - **False completion:** architecture documents and repository guardrails do not constitute a working application.
 
 ## Immediate next execution items
 
 1. CMP archival is complete and verified; preserve the separate archive as the canonical legacy source.
-2. Complete the product specification and first-release scope.
+2. Product specification and first-release scope are recorded in `docs/PRODUCT_SPECIFICATION.md`; strategic release decisions remain explicitly gated.
 3. Record the modular-monolith architecture decision and eight-layer contracts.
 4. Map all A–M modules to the architecture, dependencies, contracts and delivery phases.
 5. Complete the hosting/database/storage/queue/domain/provider inventory.
