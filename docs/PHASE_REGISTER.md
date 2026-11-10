@@ -5,7 +5,7 @@
 - Repository: `ICOFCUCAM/njumeni`
 - Active phase: **Phase 0 — Foundation and repository/infrastructure audit**
 - Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **0.11 — Define immutable migration, hosted-history reconciliation, drift, backup and forward-fix discipline**
+- Next task: **0.12 — Build the legal application shell, navigation, route boundaries and module entry points**
 - Phase completion commit: **NOT CREATED**
 - Rule: no Phase 1 work may begin until Phase 0 is fully green and its phase-closeout commit is verified.
 
