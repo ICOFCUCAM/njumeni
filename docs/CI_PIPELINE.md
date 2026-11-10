@@ -29,13 +29,14 @@
 
 ## 3. Current successful baseline
 
-The initial pipeline was exercised against the integration branch. The first run exposed two inaccurate foundation assertions; those assertions were corrected against the actual phase register and traceability document. The successful run for commit db70491c7013f93b28979ea3d9f21a9b97c7488a is GitHub Actions run 42740638198.
+The initial pipeline was exercised against the integration branch. The first runs exposed inaccurate foundation assertions and formatting issues; these were corrected against the actual phase register, traceability document and canonical Prettier output. The final successful run is the migration-enabled run recorded above.
 
-The successful baseline run confirms:
-- formatting check passed;
+The final migration-enabled baseline passed in GitHub Actions run 42741685025 on commit 3516acfc23e9f68db8b93fa6f0ca9f0100144acc. It confirms:
+- Prettier formatting check passed;
 - ESLint passed;
 - strict TypeScript baseline passed;
-- all five foundation tests passed;
+- all eight tests passed (five foundation tests and three migration-guard tests);
+- migration naming/order/immutability check passed against the zero-migration baseline;
 - foundation architecture integrity check passed;
 - repository content policy passed;
 - Gitleaks secret scan passed.
