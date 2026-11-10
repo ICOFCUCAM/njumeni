@@ -13,7 +13,9 @@ test('accepts CLI-shaped migration names in timestamp order', () => {
 });
 
 test('rejects non-CLI names and duplicate timestamps; filenames define migration order', () => {
-  assert.ok(validateMigrationFiles(['init.sql']).some((error) => error.includes('Invalid migration')));
+  assert.ok(
+    validateMigrationFiles(['init.sql']).some((error) => error.includes('Invalid migration')),
+  );
   assert.deepEqual(
     validateMigrationFiles([
       '20261110020000_add_workspace_membership.sql',
@@ -42,6 +44,8 @@ test('allows new migration additions but rejects edits, deletions and renames', 
     ),
   );
   assert.ok(
-    validateMigrationChanges(['R100 supabase/migrations/20261110010000_old.sql supabase/migrations/20261110020000_new.sql']).length > 0,
+    validateMigrationChanges([
+      'R100 supabase/migrations/20261110010000_old.sql supabase/migrations/20261110020000_new.sql',
+    ]).length > 0,
   );
 });
