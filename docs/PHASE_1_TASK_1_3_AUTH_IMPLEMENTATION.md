@@ -110,7 +110,7 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [x] Owner-reported production sign-in completed successfully and reached the protected dashboard.
 - [x] Owner verified that refreshing the production dashboard preserves the authenticated session without requesting sign-in again.
 - [x] Owner verified production Sign out returns to the sign-in page.
-- [ ] Owner to verify that directly opening `/dashboard` after sign-out redirects back to sign-in.
+- [x] Owner verified that directly opening `/dashboard` after sign-out redirects back to sign-in on the production application.
 - [ ] Verify token refresh/rotation under expiry, cookie clearing at the browser/provider boundary, and revoked-session rejection; the owner-observed sign-out navigation alone does not prove all of these.
 - [x] Full repository CI/security workflow succeeds on current branch head `77076d6df3992a678ea36c3dd258cde0ea5c07dd`; run `42786940182` SUCCESS. All three jobs passed: formatting/lint/type/tests/build/migration policy, content policy, and secret scanning. The app build and four mocked SSR lifecycle tests passed; the opt-in live provider test was skipped because its dedicated credentials were not configured. The opt-in live provider test was correctly skipped because its four dedicated environment variables were not configured.
 - [x] Dedicated Supabase project and Vercel environment variables re-verified. Health advisor has no reported notices; security advisor still reports Leaked Password Protection disabled.
@@ -179,3 +179,8 @@ The public web inspection tool could not independently open the production sign-
 10. [ ] Remove the dedicated test identity only after all tests are complete, then verify no residual test data remains.
 
 **Current gate:** Task 1.3 remains IN PROGRESS. Deployment is no longer the blocker; live provider and browser acceptance, and the remaining Auth security configuration review, are the active acceptance work. Tasks 1.4–1.12 remain locked until Task 1.3 is accepted.
+
+
+### Owner browser acceptance update — 10 November 2026
+
+The owner has now confirmed on the current production application that, after signing out, directly navigating to `/dashboard` leads back to the sign-in page. This closes the direct protected-route-after-sign-out browser check. It does not by itself prove cookie deletion, refresh-token revocation, expired-token rejection or provider-side user revocation; those remain separate acceptance tests.
