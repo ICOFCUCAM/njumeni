@@ -115,7 +115,8 @@ export default async function WorkspacesSettingsPage({
             canManageMembers: manageMembers.data === true,
             canManageRoles: manageRoles.data === true,
             canCreateWorkspaces: createWorkspaces.data === true,
-            error: owner.error ?? manageMembers.error ?? manageRoles.error ?? createWorkspaces.error,
+            error:
+              owner.error ?? manageMembers.error ?? manageRoles.error ?? createWorkspaces.error,
           };
         }),
       ),
@@ -132,9 +133,7 @@ export default async function WorkspacesSettingsPage({
     invitationsResult.error ||
     workspaceMembershipsResult.error ||
     ownerError;
-  const accessByOrganisation = new Map(
-    ownerChecks.map((check) => [check.organizationId, check]),
-  );
+  const accessByOrganisation = new Map(ownerChecks.map((check) => [check.organizationId, check]));
   const roleManagementByOrganisation = await Promise.all(
     organisationList.map(async (organisation) => {
       const access = accessByOrganisation.get(organisation.id);
@@ -316,7 +315,9 @@ export default async function WorkspacesSettingsPage({
                 const canManageMembers = organisationAccess?.canManageMembers === true;
                 const canManageRoles = organisationAccess?.canManageRoles === true;
                 const canCreateWorkspaces = organisationAccess?.canCreateWorkspaces === true;
-                const organisationRoleManagement = roleManagementByOrganisationId.get(organisation.id);
+                const organisationRoleManagement = roleManagementByOrganisationId.get(
+                  organisation.id,
+                );
                 const organisationWorkspaces = workspaceRows.filter(
                   (workspace) => workspace.organization_id === organisation.id,
                 );
@@ -594,7 +595,8 @@ export default async function WorkspacesSettingsPage({
                         </>
                       ) : (
                         <p>
-                          Invitation creation and revocation require organisation membership-administration permission.
+                          Invitation creation and revocation require organisation
+                          membership-administration permission.
                         </p>
                       )}
                     </div>

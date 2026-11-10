@@ -15,14 +15,21 @@ const panel = await readFile(
   'utf8',
 );
 const migration = await readFile(
-  new URL('../../../scripts/db/migration-templates/role_permission_foundation.sql', import.meta.url),
+  new URL(
+    '../../../scripts/db/migration-templates/role_permission_foundation.sql',
+    import.meta.url,
+  ),
   'utf8',
 );
 
 test('role assignment and revocation require authenticated scoped permission checks', () => {
   assert.ok(actions.includes('export async function assignRole'));
   assert.ok(actions.includes('export async function revokeRole'));
-  assert.ok(actions.includes("scope === 'organization' ? 'organization.manage_roles' : 'workspace.manage_roles'"));
+  assert.ok(
+    actions.includes(
+      "scope === 'organization' ? 'organization.manage_roles' : 'workspace.manage_roles'",
+    ),
+  );
   assert.ok(actions.includes("rpc('assign_organization_role'"));
   assert.ok(actions.includes("rpc('assign_workspace_role'"));
   assert.ok(actions.includes("rpc('revoke_organization_role'"));
@@ -33,8 +40,14 @@ test('role assignment and revocation require authenticated scoped permission che
 
 test('organisation, workspace, invitation and membership mutations have server-side permission guards', () => {
   assert.ok(actions.includes("requirePermission(supabase, 'workspace.create', organizationId)"));
-  assert.ok(actions.includes("requirePermission(supabase, 'organization.manage_members', organizationId)"));
-  assert.ok(actions.includes("requirePermission(supabase, 'workspace.manage_members', workspace.organization_id, membership.workspace_id)"));
+  assert.ok(
+    actions.includes("requirePermission(supabase, 'organization.manage_members', organizationId)"),
+  );
+  assert.ok(
+    actions.includes(
+      "requirePermission(supabase, 'workspace.manage_members', workspace.organization_id, membership.workspace_id)",
+    ),
+  );
   assert.ok(!actions.includes("formData.get('owner_principal_id')"));
   assert.ok(!actions.includes("formData.get('permissions')"));
 });
@@ -54,7 +67,7 @@ test('permission evaluator is caller-scoped, deny-by-default and validates tenan
   assert.ok(migration.includes('create or replace function private.has_permission'));
   assert.ok(migration.includes('private.current_principal_id()'));
   assert.ok(migration.includes("v_permission_scope <> 'workspace'"));
-  assert.ok(migration.includes('and membership.status = \'active\''));
+  assert.ok(migration.includes("and membership.status = 'active'"));
   assert.ok(migration.includes('exception\n  when others then\n    return false'));
   assert.ok(migration.includes('create or replace function public.has_permission'));
 });
@@ -75,9 +88,13 @@ test('role catalog and role bindings are private and not directly writable by AP
 });
 
 test('role assignment is membership-bound and restricts privilege escalation', () => {
-  assert.ok(migration.includes('membership.status = \'active\''));
+  assert.ok(migration.includes("membership.status = 'active'"));
   assert.ok(migration.includes("return p_role_key = 'org_member'"));
-  assert.ok(migration.includes("p_role_key in ('workspace_editor', 'workspace_reviewer', 'workspace_viewer')"));
+  assert.ok(
+    migration.includes(
+      "p_role_key in ('workspace_editor', 'workspace_reviewer', 'workspace_viewer')",
+    ),
+  );
   assert.ok(migration.includes('p_principal_id = v_owner'));
   assert.ok(migration.includes('on conflict (organization_id, principal_id, role_key) do nothing'));
   assert.ok(migration.includes('on conflict (workspace_id, principal_id, role_key) do nothing'));

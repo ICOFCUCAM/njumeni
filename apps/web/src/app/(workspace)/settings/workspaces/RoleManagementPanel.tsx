@@ -104,9 +104,7 @@ export function RoleManagementPanel({
               </select>
             </div>
             <div className="profile-field">
-              <label htmlFor={`role-key-${scope}-${workspaceId ?? organizationId}`}>
-                Role
-              </label>
+              <label htmlFor={`role-key-${scope}-${workspaceId ?? organizationId}`}>Role</label>
               <select
                 id={`role-key-${scope}-${workspaceId ?? organizationId}`}
                 name="role_key"
