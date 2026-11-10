@@ -60,6 +60,26 @@ jobs:
           npm run typecheck
           npm run build
 
+      - name: Require dedicated test credentials for manual live verification
+        if: github.event_name == 'workflow_dispatch' && hashFiles('apps/web/package.json') != ''
+        env:
+          NJUMENI_TEST_SUPABASE_URL: ${{ secrets.NJUMENI_TEST_SUPABASE_URL }}
+          NJUMENI_TEST_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NJUMENI_TEST_SUPABASE_PUBLISHABLE_KEY }}
+          NJUMENI_TEST_EMAIL: ${{ secrets.NJUMENI_TEST_EMAIL }}
+          NJUMENI_TEST_PASSWORD: ${{ secrets.NJUMENI_TEST_PASSWORD }}
+        shell: bash
+        run: |
+          missing=()
+          for name in NJUMENI_TEST_SUPABASE_URL NJUMENI_TEST_SUPABASE_PUBLISHABLE_KEY NJUMENI_TEST_EMAIL NJUMENI_TEST_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              missing+=("$name")
+            fi
+          done
+          if (( ${#missing[@]} > 0 )); then
+            printf '::error::Manual live Auth verification requires these repository Actions secrets: %s\\n' "${missing[*]}"
+            exit 1
+          fi
+
       - name: Run optional live Supabase Auth integration test
         if: hashFiles('apps/web/package.json') != ''
         working-directory: apps/web
