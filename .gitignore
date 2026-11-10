@@ -1,0 +1,49 @@
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+*.tfstate
+*.tfstate.*
+
+# Runtime data: never commit customer, matter or case content
+/uploads/
+/storage/
+/data/
+/private-data/
+/case-files/
+/matter-files/
+/evidence/
+/customer-documents/
+/legal-documents/
+/backups/
+/exports/
+
+# Legal/customer document files are not source code.
+# Keep actual client documents, evidence and classified material outside Git.
+*.pdf
+*.doc
+*.docx
+*.odt
+*.rtf
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+
+# Local development artefacts
+.DS_Store
+Thumbs.db
+*.log
+coverage/
+.next/
+dist/
+build/
+node_modules/
