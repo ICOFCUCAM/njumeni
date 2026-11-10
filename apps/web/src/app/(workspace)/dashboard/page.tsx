@@ -40,9 +40,10 @@ export default function DashboardPage() {
           i
         </span>
         <div>
-          <strong>Foundation preview — no live case data is connected.</strong> Authentication,
-          database access, document storage and AI providers are not connected in this shell. No
-          customer or matter records are being displayed.
+          <strong>Identity is active; legal data services are not connected.</strong> Your
+          authenticated session confirms account identity only. Organisation and workspace
+          membership, matter data, document storage and AI workflows remain disabled. No customer
+          or matter records are being displayed.
         </div>
       </div>
       <section aria-labelledby="workspace-status-title">

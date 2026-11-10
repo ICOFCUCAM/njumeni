@@ -60,7 +60,7 @@ test('application shell documents every module route and preview limitation', as
   const dashboard = await readFile('apps/web/src/app/(workspace)/dashboard/page.tsx', 'utf8');
   assert.match(docs, /\/intelligence/);
   assert.match(docs, /\/knowledge/);
-  assert.match(docs, /server-side identity\/tenant guard/);
+  assert.match(docs, /server-side Supabase Auth user check/);
   assert.match(dashboard, /no live case data is connected/);
 });
 
