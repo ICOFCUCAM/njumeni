@@ -13,30 +13,52 @@ Do not combine Njumeni source code, build pipelines, deployment configuration or
 
 This document governs implementation. Supporting architecture documents explain design; they do not count as implementation.
 
-## 2. Master 20-workstream register
+## 2. Original master outline — 20 numbered sections
 
-These twenty workstreams are the controlled scope register. They are not twenty parallel projects: their dependencies are resolved in the phase sequence below. Each item must eventually have implemented code/configuration, tests, documentation and an acceptance record where applicable.
+These are the original twenty agreed sections, restored from the earlier project outline. Preserve these names and their sequence. Do not replace them with a newly invented workstream list.
 
-1. **Product definition and scope** — product promise, boundaries, target users, use cases, product requirements and non-goals.
-2. **System architecture** — modular monolith first, bounded domains, deployment topology, service boundaries and evolution criteria.
-3. **Eight-layer platform architecture** — presentation, application/API, identity/access, domain services, AI orchestration, knowledge/retrieval, data/storage, and infrastructure/observability layers; maintain explicit contracts between them.
-4. **Domain modules A–M** — define each module's responsibility, inputs/outputs, ownership, dependencies, permissions and events before implementation. Preserve the original A–M module map as the detailed module register; do not silently rename or collapse modules.
-5. **Identity and organisations** — authentication, organisations, memberships, invitations, roles, MFA, session management and tenant isolation.
-6. **Matters and workspaces** — client/matter context, teams, matter membership, status, permissions and activity.
-7. **Document and evidence lifecycle** — secure intake, validation, malware inspection, immutable originals, versioning, metadata, derivatives, retention, legal hold, export and deletion.
-8. **Document intelligence** — OCR, layout-aware parsing, page/span anchors, extraction, chunking, embeddings and indexing.
-9. **Legal knowledge system** — jurisdiction-aware legislation, case law, regulations, official guidance and approved commentary; version history, effective dates, source lineage and coverage limitations.
-10. **Research and retrieval** — hybrid lexical/semantic retrieval, filters, jurisdiction resolution, ranking, reranking and research history.
-11. **Evidence provenance** — exact source/version/page/span/coordinates, evidence records and reproducible links from every material assertion to its source.
-12. **Legal reasoning and argument graph** — represent issues, rules, elements, facts, evidence, inferences, counterarguments, uncertainty and conclusions as explicit relationships; never present unsupported inference as fact.
-13. **AI orchestration** — provider/model abstraction, model routing, BYOK where appropriate, prompt and tool versioning, policy controls, budgets, structured outputs and evaluation; avoid provider lock-in.
-14. **Verification and citation integrity** — verify source existence, exact quotations, claim-to-evidence mapping, jurisdiction, temporal validity, conflicts and unsupported claims; fail visibly when verification fails.
-15. **Contract review and drafting** — clause extraction, playbooks, comparison, issue detection, suggested amendments, document generation and human approval.
-16. **Workflow automation** — versioned workflows, background jobs, retries, resumability, approvals, notifications and traceable state transitions.
-17. **Security, privacy and governance** — tenant/matter enforcement, least privilege, encryption, secrets, audit, retention, data residency, AI data controls, backups, recovery and incident response; classification-specific hosting approval.
-18. **Interfaces and integrations** — accessible web application, API contracts, search/document experiences, controlled external adapters, import/export and professional integrations.
-19. **Engineering quality and operations** — repository controls, migrations, CI/CD, environments, testing, observability, performance, disaster recovery and release discipline.
-20. **Commercialisation and global expansion** — packaging, pricing, customer segments, onboarding, support, jurisdiction expansion, local legal-source adapters and sustainable operating model.
+1. **Brand/corporate identity** — Njumeni's brand, institutional positioning, naming, visual identity and corporate presentation.
+2. **Product architecture** — product definition, system boundaries, product structure and overall architecture.
+3. **Complete product modules** — the complete A–M module portfolio and the responsibility of each module.
+4. **Complete AI architecture** — AI capabilities, agent architecture, model/provider strategy, orchestration, tools, evaluation and controls.
+5. **Technical architecture/stack** — application architecture, technology choices, service boundaries, contracts and engineering patterns.
+6. **Legal knowledge infrastructure** — jurisdictions, legislation, case law, regulations, official sources, source versions and update pipelines.
+7. **Security/privacy/governance** — identity, tenant isolation, access control, confidentiality, audit, retention, data governance and classification requirements.
+8. **Open-source research/software reuse** — upstream research, technical evaluation, licence assessment and controlled component reuse.
+9. **API/integration framework** — internal/external APIs, legal-source adapters, provider integrations and interoperability.
+10. **Infrastructure/hosting/deployment** — environments, hosting, database, storage, queues, domains, CI/CD, secrets and operations.
+11. **User journeys/operational workflows** — user journeys, professional workflows, approvals, collaboration and end-to-end task flows.
+12. **Administration/platform operations** — platform administration, organisation controls, support, monitoring and operational management.
+13. **Commercial architecture/monetisation** — plans, packaging, entitlements, usage, billing, pricing and commercial model.
+14. **Testing/evaluation/QA** — automated tests, legal answer evaluation, security testing, quality gates and regression controls.
+15. **Repository/development structure** — repository boundaries, code organisation, standards, branching, migrations and developer experience.
+16. **Complete implementation roadmap** — dependency-aware phases, numbered tasks, milestones and release sequencing.
+17. **Definition of completion** — acceptance criteria, quality requirements and evidence required before marking work complete.
+18. **Initial strategic priorities** — first-release scope, priority capabilities and sequencing rationale.
+19. **Permanent architectural decisions** — decisions that must remain stable unless formally reviewed and changed.
+20. **Immediate execution/foundation** — the initial audit, environment, engineering foundation and first executable tasks.
+
+### Original complete product modules A–M
+
+These module names are canonical. Keep their names and identity intact in architecture, code, navigation, documentation and implementation mapping. A module may be delivered across several phases, but must not be silently merged into another module or renamed.
+
+| ID | Canonical module | Responsibility |
+|---|---|---|
+| A | **Njumeni Legal Intelligence** | The central legal intelligence platform and unified experience |
+| B | **Legal Research Engine** | Legal research, source discovery, retrieval and research workflows |
+| C | **Evidence Intelligence Engine** | Evidence ingestion, analysis, provenance, organisation and evidential relationships |
+| D | **Legal Case Management** | Matters, cases, clients, teams, timelines, tasks and case workflows |
+| E | **Legal Document Intelligence** | Secure legal document handling, OCR, extraction, understanding and versioning |
+| F | **Legal Argument and Reasoning Engine** | Issues, rules, facts, arguments, counterarguments, inference and reasoning structures |
+| G | **Jurisdiction and Legal Systems Engine** | Jurisdiction selection, legal systems, applicable law and jurisdiction-specific rules |
+| H | **Personal Legal Assistant** | Individual legal assistance and personal legal workflows |
+| I | **Professional Legal Workspace** | Tools and workspace for individual legal professionals |
+| J | **Enterprise and Law Firm Workspace** | Firm, enterprise, team and multi-user legal operations |
+| K | **Institutional Workspace** | Institutional and public-sector legal operations and governance |
+| L | **Legal Compliance and Risk Intelligence** | Compliance, obligations, risk identification and monitoring |
+| M | **Legal Knowledge Management** | Knowledge libraries, institutional knowledge, precedents and managed legal knowledge |
+
+The detailed module contracts must specify each module's purpose, users, capabilities, inputs, outputs, data ownership, APIs/events, permissions, dependencies, AI responsibilities, security controls, tests and acceptance criteria.
 
 ## 3. Mandatory execution phases
 
@@ -136,6 +158,22 @@ A feature is not marked complete until all relevant items are satisfied:
 | 11 — Commercial | NOT STARTED | Depends on product entitlements and usage model |
 | 12 — Global expansion | NOT STARTED | Depends on jurisdiction/source governance |
 | 13 — Production launch | NOT STARTED | Depends on all required release gates |
+
+## 6. Phase-lock and commit-gated execution rules
+
+1. **Only one phase is open at a time.** The active phase is the only phase in which work may be executed. All later phases remain LOCKED.
+2. **Open the phase register first.** Before coding, identify the active phase, its final numbered task, task dependencies, acceptance tests and current Git branch/head.
+3. **Execute in strict task order.** Work on the first incomplete task in the active phase. Do not jump to a later task merely because it is easier or more interesting. If blocked, resolve the blocker within the same phase.
+4. **Green means verified and committed.** A task turns green only after its implementation/deliverable is complete, relevant tests and checks pass, documentation is updated, and its changes are committed to Git. For a documentation-only task, review and validation appropriate to the document are required before its commit.
+5. **No speculative green.** A proposal, scaffold, placeholder, empty folder, generated plan, partial code or unverified claim is not complete. Use BLOCKED, IN PROGRESS or NOT STARTED until acceptance evidence exists.
+6. **Record commit evidence.** Every green task must have a commit SHA and a concise test/acceptance record in the phase register. If a task spans multiple commits, record all relevant SHAs.
+7. **Complete the final numbered task.** Do not close a phase while any numbered task, test, review, security check, documentation item or acceptance criterion remains incomplete.
+8. **Run phase-wide acceptance.** After the final task, run the complete phase test suite, relevant security checks, migration checks, build checks and end-to-end acceptance tests. Record the actual results.
+9. **Create a phase completion commit.** After all phase tasks and phase-wide checks pass, create a dedicated phase-closeout commit containing the completed register, acceptance report and any final integration changes.
+10. **Unlock the next phase only after closeout.** The phase is marked COMPLETE/GREEN only when the phase-closeout commit exists and is verified. Only then may the next phase become OPEN.
+11. **A failed check revokes green.** If later changes break a completed task or phase acceptance, mark the affected task/phase REGRESSION and resolve it before proceeding.
+12. **Every "go next" follows the register.** Resume the first incomplete task in the one open phase. Never start the next phase until the active phase has been fully completed and its closeout commit verified.
+13. **Preserve the original outline.** The twenty original sections and canonical A–M module names above are binding. Any proposed change requires a documented decision; never silently replace or omit them.
 
 ## 6. Change-control rules
 
