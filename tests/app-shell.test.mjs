@@ -61,7 +61,7 @@ test('application shell documents every module route and preview limitation', as
   assert.match(docs, /\/intelligence/);
   assert.match(docs, /\/knowledge/);
   assert.match(docs, /server-side Supabase Auth user check/);
-  assert.match(dashboard, /no live case data is connected/);
+  assert.match(dashboard, /Identity is active/);
 });
 
 test('Supabase SSR session boundary is server-validated and uses the Next.js 16 Proxy', async () => {
@@ -77,6 +77,9 @@ test('Supabase SSR session boundary is server-validated and uses the Next.js 16 
   assert.match(server, /import 'server-only'/);
   assert.match(server, /createServerClient/);
   assert.match(server, /await cookies/);
+  assert.match(server, /httpOnly: true/);
+  assert.match(server, /sameSite: 'lax'/);
+  assert.match(server, /secure: process\.env\.NODE_ENV === 'production'/);
   assert.doesNotMatch(server, /SUPABASE_SERVICE_ROLE_KEY/);
   assert.match(proxy, /auth\.getClaims/);
   assert.match(proxy, /request\.cookies\.set/);
