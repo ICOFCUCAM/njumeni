@@ -867,6 +867,16 @@ create policy "Organisation administrators can create workspaces"
     and private.has_permission('workspace.create', organization_id, null)
   );
 
+create policy "Organisation administrators can update workspace metadata"
+  on public.workspaces
+  for update
+  to authenticated
+  using (private.has_permission('workspace.update', organization_id, id))
+  with check (
+    created_by_principal_id = private.current_principal_id()
+    and private.has_permission('workspace.update', organization_id, id)
+  );
+
 -- Expand existing read/insert policies to the scoped role evaluator.
 drop policy if exists "Principals can read their own organisation memberships"
   on public.organization_memberships;
