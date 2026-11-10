@@ -38,6 +38,20 @@ async function requireAuthenticatedUser() {
   return supabase;
 }
 
+async function requirePermission(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  permission: string,
+  organizationId: string,
+  workspaceId: string | null = null,
+): Promise<void> {
+  const { data, error } = await supabase.rpc('has_permission', {
+    p_permission_key: permission,
+    p_organization_id: organizationId,
+    p_workspace_id: workspaceId,
+  });
+  if (error || data !== true) redirect('/settings/workspaces?error=not-authorized');
+}
+
 export async function createOrganization(formData: FormData): Promise<void> {
   const name = readField(formData, 'name', 160);
   const kindValue = formData.get('kind');
@@ -85,6 +99,7 @@ export async function createWorkspace(formData: FormData): Promise<void> {
   if (slug.length < 3) redirect('/settings/workspaces?error=invalid-workspace');
 
   const supabase = await requireAuthenticatedUser();
+  await requirePermission(supabase, 'workspace.create', organizationId);
   const { error } = await supabase.from('workspaces').insert({
     organization_id: organizationId,
     name,
@@ -129,6 +144,7 @@ export async function createInvitation(formData: FormData): Promise<InvitationCr
 
   try {
     const supabase = await requireAuthenticatedUser();
+    await requirePermission(supabase, 'organization.manage_members', organizationId);
     const token = randomBytes(32).toString('base64url');
     const tokenHash = createHash('sha256').update(token).digest('hex');
     const expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000).toISOString();
@@ -166,6 +182,13 @@ export async function revokeInvitation(formData: FormData): Promise<void> {
   }
 
   const supabase = await requireAuthenticatedUser();
+  const { data: invitation } = await supabase
+    .from('organization_invitations')
+    .select('organization_id')
+    .eq('id', invitationId)
+    .maybeSingle();
+  if (!invitation) redirect('/settings/workspaces?error=invitation-update-failed');
+  await requirePermission(supabase, 'organization.manage_members', invitation.organization_id);
   const { error } = await supabase.rpc('revoke_organization_invitation', {
     p_invitation_id: invitationId,
   });
@@ -187,6 +210,13 @@ export async function setOrganizationMembershipStatus(formData: FormData): Promi
   }
 
   const supabase = await requireAuthenticatedUser();
+  const { data: membership } = await supabase
+    .from('organization_memberships')
+    .select('organization_id')
+    .eq('id', membershipId)
+    .maybeSingle();
+  if (!membership) redirect('/settings/workspaces?error=membership-update-failed');
+  await requirePermission(supabase, 'organization.manage_members', membership.organization_id);
   const { error } = await supabase.rpc('set_organization_membership_status', {
     p_membership_id: membershipId,
     p_status: status,
@@ -209,6 +239,19 @@ export async function setWorkspaceMembershipStatus(formData: FormData): Promise<
   }
 
   const supabase = await requireAuthenticatedUser();
+  const { data: membership } = await supabase
+    .from('workspace_memberships')
+    .select('workspace_id')
+    .eq('id', membershipId)
+    .maybeSingle();
+  if (!membership) redirect('/settings/workspaces?error=membership-update-failed');
+  const { data: workspace } = await supabase
+    .from('workspaces')
+    .select('organization_id')
+    .eq('id', membership.workspace_id)
+    .maybeSingle();
+  if (!workspace) redirect('/settings/workspaces?error=membership-update-failed');
+  await requirePermission(supabase, 'workspace.manage_members', workspace.organization_id, membership.workspace_id);
   const { error } = await supabase.rpc('set_workspace_membership_status', {
     p_membership_id: membershipId,
     p_status: status,
@@ -250,4 +293,95 @@ export async function acceptInvitation(formData: FormData): Promise<InvitationAc
   } catch {
     return { error: 'unavailable' };
   }
+}
+
+
+const ROLE_KEY_PATTERN = /^[a-z][a-z0-9_]{2,63}$/;
+
+export async function assignRole(formData: FormData): Promise<void> {
+  const scope = formData.get('scope');
+  const organizationId = formData.get('organization_id');
+  const workspaceValue = formData.get('workspace_id');
+  const principalId = formData.get('principal_id');
+  const roleKey = formData.get('role_key');
+  const workspaceId =
+    typeof workspaceValue === 'string' && workspaceValue.trim() ? workspaceValue.trim() : null;
+
+  if (
+    (scope !== 'organization' && scope !== 'workspace') ||
+    typeof organizationId !== 'string' ||
+    !UUID_PATTERN.test(organizationId) ||
+    typeof principalId !== 'string' ||
+    !UUID_PATTERN.test(principalId) ||
+    typeof roleKey !== 'string' ||
+    !ROLE_KEY_PATTERN.test(roleKey) ||
+    (scope === 'workspace' && (!workspaceId || !UUID_PATTERN.test(workspaceId))) ||
+    (scope === 'organization' && workspaceId !== null)
+  ) {
+    redirect('/settings/workspaces?error=invalid-role');
+  }
+
+  const supabase = await requireAuthenticatedUser();
+  await requirePermission(
+    supabase,
+    scope === 'organization' ? 'organization.manage_roles' : 'workspace.manage_roles',
+    organizationId,
+    workspaceId,
+  );
+
+  const { error } =
+    scope === 'organization'
+      ? await supabase.rpc('assign_organization_role', {
+          p_organization_id: organizationId,
+          p_principal_id: principalId,
+          p_role_key: roleKey,
+        })
+      : await supabase.rpc('assign_workspace_role', {
+          p_organization_id: organizationId,
+          p_workspace_id: workspaceId!,
+          p_principal_id: principalId,
+          p_role_key: roleKey,
+        });
+
+  if (error) redirect('/settings/workspaces?error=role-assignment-failed');
+  revalidatePath('/settings/workspaces');
+  redirect('/settings/workspaces?message=role-assigned');
+}
+
+export async function revokeRole(formData: FormData): Promise<void> {
+  const scope = formData.get('scope');
+  const organizationId = formData.get('organization_id');
+  const workspaceValue = formData.get('workspace_id');
+  const bindingId = formData.get('binding_id');
+  const workspaceId =
+    typeof workspaceValue === 'string' && workspaceValue.trim() ? workspaceValue.trim() : null;
+
+  if (
+    (scope !== 'organization' && scope !== 'workspace') ||
+    typeof organizationId !== 'string' ||
+    !UUID_PATTERN.test(organizationId) ||
+    typeof bindingId !== 'string' ||
+    !UUID_PATTERN.test(bindingId) ||
+    (scope === 'workspace' && (!workspaceId || !UUID_PATTERN.test(workspaceId))) ||
+    (scope === 'organization' && workspaceId !== null)
+  ) {
+    redirect('/settings/workspaces?error=invalid-role');
+  }
+
+  const supabase = await requireAuthenticatedUser();
+  await requirePermission(
+    supabase,
+    scope === 'organization' ? 'organization.manage_roles' : 'workspace.manage_roles',
+    organizationId,
+    workspaceId,
+  );
+
+  const { error } =
+    scope === 'organization'
+      ? await supabase.rpc('revoke_organization_role', { p_binding_id: bindingId })
+      : await supabase.rpc('revoke_workspace_role', { p_binding_id: bindingId });
+
+  if (error) redirect('/settings/workspaces?error=role-revocation-failed');
+  revalidatePath('/settings/workspaces');
+  redirect('/settings/workspaces?message=role-revoked');
 }
