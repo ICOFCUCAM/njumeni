@@ -1,10 +1,11 @@
-name: Generate Supabase migration from reviewed request
+name: Generate Supabase migrations from reviewed templates
 
 on:
   push:
     branches: ["claude/wonderful-franklin-lt09d7"]
     paths:
-      - ".migration-requests/principal-profile-backfill.sql"
+      - ".migration-requests/*.sql"
+      - "scripts/db/migration-templates/*.sql"
       - ".github/workflows/generate-supabase-migration.yml"
 
 permissions:
@@ -24,25 +25,50 @@ jobs:
         with:
           version: "3.1.0"
 
-      - name: Verify CLI commands and generate migration filename
+      - name: Generate immutable migration files with the Supabase CLI
         shell: bash
         run: |
+          set -euo pipefail
           supabase --version
           supabase migration new --help
-          supabase migration new principal_profile_backfill
-          migration_file="$(find supabase/migrations -maxdepth 1 -type f -name '*_principal_profile_backfill.sql' -print -quit)"
-          test -n "$migration_file"
-          test -f .migration-requests/principal-profile-backfill.sql
-          cp .migration-requests/principal-profile-backfill.sql "$migration_file"
-          test -s "$migration_file"
-          rm .migration-requests/principal-profile-backfill.sql
-          echo "Generated migration: $migration_file"
+          mkdir -p supabase/migrations
 
-      - name: Commit CLI-generated migration
+          for template in scripts/db/migration-templates/*.sql; do
+            [ -f "$template" ] || continue
+            migration_name="$(basename "$template" .sql)"
+            if compgen -G "supabase/migrations/*_${migration_name}.sql" > /dev/null; then
+              echo "Migration already exists for template: $migration_name"
+              continue
+            fi
+
+            supabase migration new "$migration_name"
+            migration_file="$(find supabase/migrations -maxdepth 1 -type f -name "*_${migration_name}.sql" -print -quit)"
+            test -n "$migration_file"
+            cp "$template" "$migration_file"
+            test -s "$migration_file"
+            echo "Generated migration: $migration_file"
+          done
+
+          # Preserve the original one-time reviewed request path while it exists.
+          request=".migration-requests/principal-profile-backfill.sql"
+          if [ -f "$request" ]; then
+            supabase migration new principal_profile_backfill
+            migration_file="$(find supabase/migrations -maxdepth 1 -type f -name '*_principal_profile_backfill.sql' -print -quit)"
+            test -n "$migration_file"
+            cp "$request" "$migration_file"
+            rm "$request"
+            echo "Generated migration: $migration_file"
+          fi
+
+      - name: Commit CLI-generated migrations
         shell: bash
         run: |
+          if git diff --quiet -- supabase/migrations .migration-requests; then
+            echo "No pending migration templates."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add supabase/migrations .migration-requests/principal-profile-backfill.sql
-          git commit -m "db: backfill existing principal profiles"
+          git add -A supabase/migrations .migration-requests
+          git commit -m "db-template: generate CLI migrations from reviewed templates"
           git push
