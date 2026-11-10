@@ -136,7 +136,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '20000000-0000-4000-8000-000000000005';
 
 select throws_ok(
-  $select * from public.accept_organization_invitation(repeat('a', 64))$,
+  $$select * from public.accept_organization_invitation(repeat('a', 64))$$,
   '42501',
   'Invitation cannot be accepted',
   'A different confirmed email cannot accept the invitation'
