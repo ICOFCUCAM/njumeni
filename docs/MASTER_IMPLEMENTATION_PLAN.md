@@ -3452,10 +3452,12 @@ This overlay is execution metadata added after the original source. It does not 
 ## Current Phase 0 execution status
 
 - Phase 0 remains the only open phase.
-- Tasks 0.1–0.5, 0.11 and 0.14 are recorded green in the live register.
-- Task 0.6 remains open until the original eight-layer names are incorporated into ADR-0001 and the A–M layer/context mapping is reviewed.
-- Task 0.12 remains open while the application shell receives its final committed CI verification.
-- Tasks 0.7–0.10, 0.13 and 0.15 remain governed by the live register; 0.16 cannot close until all prerequisite tasks pass.
+- Tasks 0.1–0.10 and 0.14 are recorded green in the live register.
+- Task 0.6 is green: the exact original eight layer names and definitions are recovered and recorded in ADR-0001.
+- Task 0.7 is green: the A–M modules are mapped to the approved layers, bounded contexts, ownership, contracts, permissions and phase delivery in MODULE_LAYER_MAP.md and MODULE_REQUIREMENTS_TRACEABILITY.md.
+- Tasks 0.11 and 0.12 remain in progress: migration discipline is implemented but its register closeout needs final evidence; the application shell is implemented and awaiting final committed CI verification.
+- Tasks 0.13 and 0.15 remain not started; 0.16 remains locked until all prerequisite tasks pass.
+- Current register count: 11 of 16 tasks green, 2 in progress, 2 not started and 1 locked.
 - No Phase 1 or later work is authorised by this overlay.
 
 ## Recovered original eight platform layers
@@ -3486,4 +3488,3 @@ The original source explicitly names five public repositories: OpenContracts, Ca
 ## Preservation checksum
 
 The uploaded source was 60,927 bytes, 60,008 decoded characters, 3,437 lines and approximately 6,381 words. SHA-256 of the uploaded source bytes: `4dce95748a34c529caa74fce5f2dfd3486fc9d2fa5c88ac54cc3f14f71992fe0`.
-
