@@ -58,35 +58,10 @@ begin
     raise exception 'LEGAL_SOURCE_COVERAGE_REVIEW_INVALID' using errcode='22023';
   end if;
   if exists(select 1 from unnest(p_authority_types) item where item is null or not item=any(v_allowed_types))
-    or exists(select 1 from unnest(p_languages) item where item is null or item !~ '^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*)
+    or exists(select 1 from unnest(p_languages) item
+      where item is null or item !~ '^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$')
     or exists(select 1 from unnest(coalesce(p_known_gaps,'{}'::text[])) item
-      where length(btrim(item)) not between 1 and 500) then
-    raise exception 'LEGAL_SOURCE_COVERAGE_SCOPE_INVALID' using errcode='22023';
-  end if;
-  select * into v_source from private.legal_sources where id=p_source_id for update;
-  if not found then raise exception 'LEGAL_SOURCE_NOT_FOUND' using errcode='P0002'; end if;
-  v_coverage:=coalesce(v_source.coverage,'{}'::jsonb)||jsonb_build_object(
-    'authorityTypes',to_jsonb(p_authority_types),
-    'languages',to_jsonb(p_languages),
-    'coverageFrom',p_coverage_from,
-    'coverageUntil',p_coverage_until,
-    'lastVerifiedAt',p_last_verified_at,
-    'knownGaps',to_jsonb(coalesce(p_known_gaps,'{}'::text[]))
-  );
-  insert into private.legal_source_coverage_review_audit(
-    source_id,reviewer,reason,previous_coverage,new_coverage
-  ) values(p_source_id,btrim(p_reviewer),btrim(p_reason),v_source.coverage,v_coverage);
-  update private.legal_sources set coverage=v_coverage,updated_at=now() where id=p_source_id;
-  return jsonb_build_object('sourceId',p_source_id,'sourceKey',v_source.source_key,'coverage',v_coverage);
-end;
-$$;
-revoke all on function public.legal_source_record_coverage_review(uuid,text,text,text[],text[],date,date,timestamptz,text[]) from public,anon,authenticated;
-grant execute on function public.legal_source_record_coverage_review(uuid,text,text,text[],text[],date,date,timestamptz,text[]) to service_role;
-comment on function public.legal_source_record_coverage_review(uuid,text,text,text[],text[],date,date,timestamptz,text[]) is
-  'Records a human-reviewed source coverage declaration with append-only audit; does not activate or enable the source.';
-)
-    or exists(select 1 from unnest(coalesce(p_known_gaps,'{}'::text[])) item
-      where length(btrim(item)) not between 1 and 500) then
+      where item is null or length(btrim(item)) not between 1 and 500) then
     raise exception 'LEGAL_SOURCE_COVERAGE_SCOPE_INVALID' using errcode='22023';
   end if;
   select * into v_source from private.legal_sources where id=p_source_id for update;
