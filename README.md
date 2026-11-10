@@ -32,9 +32,9 @@ bash scripts/bootstrap-legal-sources.sh
 These projects are not merged into the Njumeni application. Review each project's licence and architecture before adopting code.
 
 
-## Product direction and boundaries
+## Product direction and security
 
-Njumeni is the legal AI platform. The original CMP website and its history must be preserved in a clearly separated legacy archive within this repository. No separate `njumeni-legal` repository will be created. See [the product-boundary decision](docs/PRODUCT_BOUNDARIES.md).
+Njumeni is the legal technology platform. The unrelated legacy CMP website is to be preserved in a separate repository (`njumeni-cmp-archive`), not inside this repository. This repository must never contain classified or confidential legal documents, case files, evidence, customer data or credentials. See [the product-boundary and security decision](docs/PRODUCT_BOUNDARIES.md) and [the security policy](SECURITY.md).
 
 ## Legal AI platform direction
 
