@@ -58,9 +58,7 @@ The web application requires:
 
 These must be supplied through the deployment/local environment secret/configuration system. A publishable key is not an access-control boundary; RLS and server-side authorisation remain mandatory. No live key value is to be committed to Git or written into CI logs.
 
-The dedicated project is provisioned and healthy in `eu-north-1`. The Njumeni Vercel application project `njumeni-web` is linked to `ICOFCUCAM/njumeni`; its production deployment of commit `8bb54c1fff5027be2b318ab997fc9bc27897e65a` is READY. The two required public Supabase variables (`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) are configured for Production, Preview and Development. The current production alias is `https://njumeni-web.vercel.app`. The deployment build completed successfully, including Next.js compilation, TypeScript validation and route generation. Direct HTTP smoke testing could not be completed from the execution environment, and Vercel's runtime-error query returned no errors in its selected 24-hour window.
-
-Auth redirect allow-lists, Site URL, email provider/SMTP, MFA policy, password policy, rate limits and email-confirmation behaviour have not yet been verified. The available connected Supabase management interface exposes project metadata, migrations, keys and advisors, but not Auth URL/provider configuration. Configure and review these settings in Supabase Dashboard → Authentication → URL Configuration and Sign In / Providers before enabling real user sign-in. Use `https://njumeni-web.vercel.app` as the Site URL; add only the exact required production and preview callback/redirect URLs, avoiding wildcard production redirects. Do not create a test user in the project as a substitute for configuration review.
+The dedicated project is provisioned, but Auth redirect allow-lists, email provider/SMTP, MFA policy, password policy, rate limits and email-confirmation behaviour have not yet been verified through the connected management interface. These settings must be reviewed before enabling real user sign-in. The current application repository has no linked Njumeni Vercel application deployment and no deployment environment variables have been configured. Do not create a test user in the project as a substitute for configuration review.
 
 ## 5. Test and acceptance matrix
 
@@ -103,8 +101,6 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [x] Request-scoped SSR server client, Next.js 16 Proxy refresh helper and server-side protected workspace user check implemented.
 - [x] Email/password sign-in and local sign-out server actions implemented; public self-registration remains disabled.
 - [ ] Automated session and security tests pass in full repository CI.
-- [ ] Supabase Auth Site URL, redirect allow-list and provider/security settings reviewed and configured.
-- [ ] Direct HTTP smoke test of production sign-in and protected-route behaviour passes.
 - [ ] Dedicated-project integration checks pass and test identity is removed.
 - [x] CI succeeds on implementation commit `f3d9ede729ee65e321cc1c98a73f4e41bf4dc011`; run `42773609043` SUCCESS.
 
