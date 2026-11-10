@@ -10,20 +10,20 @@ test(
 
     assert.match(audit, /repository is \*\*PUBLIC\*\*/);
     assert.match(audit, /njumeni-marketing-website/);
-    assert.match(audit, /ICOFCUCAM\\/marketing-website/);
+    assert.match(audit, /ICOFCUCAM\/marketing-website/);
     assert.match(
       audit,
-      /No Njumeni application project\\/deployment is linked/,
+      /No Njumeni application project\/deployment is linked/,
     );
     assert.match(audit, /no project identifiable as Njumeni/);
     assert.match(audit, /authenticationConnected: false/);
     assert.match(audit, /databaseConnected: false/);
-    assert.match(audit, /branch protection\\/ruleset settings were not exposed/);
+    assert.match(audit, /branch protection\/ruleset settings were not exposed/);
     assert.match(audit, /No secret values were read/);
-    assert.match(environment, /apps\\/web\\/package.json/);
+    assert.match(environment, /apps\/web\/package.json/);
     assert.match(
       environment,
-      /no Njumeni application project\\/deployment is linked/i,
+      /no Njumeni application project\/deployment is linked/i,
     );
   },
 );
@@ -53,6 +53,6 @@ test(
       audit,
       /No provider, project, domain, region, bucket or secret value is selected/,
     );
-    assert.match(audit, /task 0\\.13 is complete as an infrastructure audit/);
+    assert.match(audit, /task 0\.13 is complete as an infrastructure audit/);
   },
 );
