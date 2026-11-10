@@ -185,3 +185,28 @@ The public web inspection tool could not independently open the production sign-
 ### Owner browser acceptance update — 10 November 2026
 
 The owner has now confirmed on the current production application that, after signing out, directly navigating to `/dashboard` leads back to the sign-in page. This closes the direct protected-route-after-sign-out browser check. It does not by itself prove cookie deletion, refresh-token revocation, expired-token rejection or provider-side user revocation; those remain separate acceptance tests.
+
+
+## 10. Owner browser verification and latest CI — 10 November 2026
+
+The owner has now confirmed the remaining production browser checks on the Njumeni application:
+
+- [x] Sign-in reaches the protected dashboard.
+- [x] Refreshing the dashboard preserves the authenticated session and does not ask the owner to sign in again.
+- [x] Sign-out returns to the sign-in page.
+- [x] Direct navigation to `/dashboard` after sign-out redirects to sign-in.
+- [x] The owner confirmed no Supabase Auth session cookies remain after sign-out.
+
+These observations close the owner-browser checks for sign-in, refresh persistence, local logout, protected-route denial after logout and browser cookie removal. They are owner-observed checks, not an independent automated browser test, and do not prove that the provider rejects reuse of the revoked refresh token.
+
+The current repository head passed GitHub Actions workflow `42834010390` with all three jobs successful:
+- Formatting, lint, strict TypeScript, foundation/migration tests, migration immutability, architecture checks and Next.js production build.
+- Repository content/privacy-path policy.
+- Gitleaks secret scanning.
+
+The web test suite reported 16 passing tests and no failures. The production build confirmed `/dashboard` remains request-dynamic. The optional live Supabase provider lifecycle test was skipped because the four dedicated test environment variables are not configured:
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NJUMENI_TEST_EMAIL`, `NJUMENI_TEST_PASSWORD`.
+
+The Supabase security advisor was rechecked against the dedicated Njumeni project. It still reports `auth_leaked_password_protection` as WARN. The current Free plan does not expose this Pro+ Auth control through the connected management interface. No plan upgrade or Auth setting change has been made. Keep production onboarding and confidential legal data use gated; this is not a claim that the control is enabled.
+
+**Remaining Task 1.3 gate:** run the live provider lifecycle/revoked-refresh-token test with dedicated test-only credentials and record the result. Do not paste credentials into chat or commit them; configure them as protected GitHub Actions repository secrets. Until that test and the Auth control review are resolved, Task 1.3 remains IN PROGRESS and Task 1.4 remains locked.
