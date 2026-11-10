@@ -122,7 +122,7 @@ begin
     case when new.kind = 'personal' then 'personal' else 'general' end,
     case when new.kind = 'personal' then 'personal' else 'general' end
   )
-  on conflict (organization_id, lower(slug)) do nothing;
+  on conflict (organization_id, (lower(slug))) do nothing;
 
   return new;
 end;
