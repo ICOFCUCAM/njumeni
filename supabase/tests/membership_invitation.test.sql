@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(45);
+select plan(47);
 
 insert into auth.users (id, email, email_confirmed_at)
 values
@@ -69,6 +69,12 @@ select set_config(
   true
 );
 
+select is(
+  public.is_organization_owner(current_setting('njumeni.test.organization_id')::uuid),
+  true,
+  'Owner predicate recognises the authenticated organisation owner'
+);
+
 select lives_ok(
   $sql$insert into public.organization_invitations
     (organization_id, email_normalized, token_hash, expires_at)
@@ -110,6 +116,12 @@ select throws_ok(
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub = '20000000-0000-4000-8000-000000000004';
+
+select is(
+  public.is_organization_owner(current_setting('njumeni.test.organization_id')::uuid),
+  false,
+  'Owner predicate does not disclose ownership to an ordinary member'
+);
 
 select is(
   (select count(*) from public.organization_invitations),
