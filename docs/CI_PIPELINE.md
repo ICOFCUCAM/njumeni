@@ -11,11 +11,11 @@
 |---|---|---|
 | Formatting | Prettier 3.5.3 | CI configuration, foundation scripts, TypeScript probe and tests |
 | Lint | ESLint 10.0.0 | CI JavaScript modules, lint configuration and foundation tests |
-| Type-check | TypeScript 5.8.3, strict compiler options | Foundation TypeScript compiler probe; application packages are not present yet |
-| Tests | Node.js built-in test runner | Foundation and migration tests for configuration, environment safety, phase locks, A–M names/layers, migration naming, timestamp uniqueness and immutability |
+| Type-check | TypeScript 5.8.3 at root; TypeScript 5.9.3 in the web package | Strict foundation compiler probe plus apps/web TypeScript check |
+| Tests | Node.js built-in test runner | Foundation, migration and app-shell contract tests for environment safety, phase locks, A–M registry, route boundaries, dependency lock consistency and migration immutability |
 | Migration guard | scripts/ci/check-migrations.mjs | Validates CLI-shaped timestamp filenames, uniqueness, non-empty SQL, and rejects edits/deletions of existing migrations; reports a zero-migration baseline until schema work begins |
 | Foundation build | scripts/ci/verify-foundation.mjs | Required architecture, phase, environment and migration-policy documents; canonical layers/modules and safe environment template |
-| Application build | Conditional apps/web package build | Explicitly deferred until task 0.12 creates the application shell; the workflow emits a notice rather than pretending an application build ran |
+| Application build | npm ci, npm run typecheck and next build in apps/web | Active for the Next.js shell; future module code remains gated by its delivery phase |
 | Repository content policy | scripts/security/check-repository-content.sh | Blocks tracked runtime/customer-data paths |
 | Secret scanning | Gitleaks GitHub Action | Scans Git history for accidentally committed secrets |
 
@@ -43,12 +43,12 @@ The final migration-enabled baseline passed in GitHub Actions run 42741685025 on
 
 ## 4. Explicit limits
 
-This is a real foundation CI pipeline, not yet a full application CI pipeline:
-- There is no application package.json, web application, API, worker or scheduler in the repository yet.
-- The TypeScript check currently validates the strict compiler baseline, not application source.
-- Lint currently covers the CI JavaScript modules, not future TypeScript application packages.
-- Foundation tests protect repository/architecture invariants; they are not legal-intelligence product tests.
-- The application build gate activates when task 0.12 creates apps/web and defines its build script.
+This is a foundation plus application-shell CI pipeline, not yet a complete product CI pipeline:
+- The Next.js web shell exists, but no application API/worker/scheduler or authenticated data services exist yet.
+- The TypeScript check validates the strict root baseline and the web package source.
+- ESLint currently covers CI JavaScript modules and test files; dedicated Next.js/TypeScript application lint rules remain to be added.
+- Foundation and app-shell tests protect architecture/route contracts; they are not legal-intelligence product evaluations.
+- Database, RLS, migration replay against a live Njumeni database, browser E2E and legal-source evaluations remain gated by their numbered phases.
 - Integration, database, RLS, migration, browser, legal-evaluation and performance tests are added as their corresponding code and environments become available.
 
 Do not describe skipped or not-yet-applicable application checks as passed. The CI report and Phase Register must preserve this distinction.
