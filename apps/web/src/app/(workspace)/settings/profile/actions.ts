@@ -23,8 +23,12 @@ export async function updateProfile(formData: FormData): Promise<void> {
   const timezone = field(formData, 'timezone', 100);
 
   if (
-    displayName === null || givenName === null || familyName === null ||
-    avatarUrl === null || locale === null || timezone === null ||
+    displayName === null ||
+    givenName === null ||
+    familyName === null ||
+    avatarUrl === null ||
+    locale === null ||
+    timezone === null ||
     (locale !== '' && !LOCALE_PATTERN.test(locale)) ||
     (avatarUrl !== '' && !/^https:\/\//i.test(avatarUrl)) ||
     timezone.length === 0
@@ -34,7 +38,10 @@ export async function updateProfile(formData: FormData): Promise<void> {
 
   try {
     const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
     if (userError || !user) redirect('/sign-in');
 
     // Resolve the principal through the caller's RLS-filtered profile row.
@@ -61,9 +68,13 @@ export async function updateProfile(formData: FormData): Promise<void> {
     if (updateError) redirect('/settings/profile?error=save-failed');
   } catch (error) {
     if (
-      error && typeof error === 'object' && 'digest' in error &&
-      typeof error.digest === 'string' && error.digest.startsWith('NEXT_REDIRECT')
-    ) throw error;
+      error &&
+      typeof error === 'object' &&
+      'digest' in error &&
+      typeof error.digest === 'string' &&
+      error.digest.startsWith('NEXT_REDIRECT')
+    )
+      throw error;
     redirect('/settings/profile?error=unavailable');
   }
 

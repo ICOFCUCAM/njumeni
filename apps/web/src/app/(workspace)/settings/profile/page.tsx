@@ -39,8 +39,7 @@ export default async function ProfileSettingsPage({
       </header>
       {params.error ? (
         <p className="auth-error" role="alert">
-          {errorMessages[params.error] ??
-            'The requested profile operation could not be completed.'}
+          {errorMessages[params.error] ?? 'The requested profile operation could not be completed.'}
         </p>
       ) : null}
       {params.message === 'saved' ? (
