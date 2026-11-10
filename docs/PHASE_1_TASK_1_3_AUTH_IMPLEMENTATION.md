@@ -1,6 +1,6 @@
 # Phase 1 task 1.3 — Supabase identity integration and secure session lifecycle
 
-- **Status:** IN PROGRESS — production email/password sign-in and authenticated dashboard persistence after browser refresh have been owner-tested successfully; sign-out, revocation and automated lifecycle tests remain.
+- **Status:** IN PROGRESS — production email/password sign-in, authenticated dashboard persistence after browser refresh, and sign-out returning to the sign-in page have been owner-tested successfully; revocation and automated lifecycle tests remain.
 - **Date opened:** 10 November 2026
 - **Repository:** `ICOFCUCAM/njumeni`
 - **Dedicated Supabase project:** `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`
@@ -43,7 +43,7 @@ The route paths were reconciled with the existing tree. The implementation uses 
 5. In Next.js 16, use the `proxy.ts` convention (not the pre-16 `middleware.ts` convention) to refresh the session. Preserve refreshed cookies on both the forwarded request and response, and preserve Supabase cache-control headers.
 6. Use `auth.getClaims()` in the Proxy to validate/refresh JWT claims according to current Supabase guidance. Use `auth.getUser()` in the protected server boundary where current provider-side user/session state and revocation checks are required. Never use `getSession()` alone as proof of identity in server code.
 7. Redirect unauthenticated users to sign-in. Preserve only a validated same-origin relative return path; reject protocol-relative URLs and external origins.
-8. Sign-out must call the provider and clear session cookies. Do not treat client-side navigation or cookie deletion alone as provider-side revocation.
+8. Sign-out must call the provider and clear session cookies. Do not treat client-side navigation or cookie deletion alone as provider-side revocation. The owner has confirmed that the production Sign out control returned successfully to the sign-in page; this is a browser-observed flow, not yet a provider-backed revocation or cookie-inspection test.
 9. No open registration, tenant selection, role assignment or privileged user creation is introduced in this task. Those require their own approved onboarding and tenancy tasks.
 10. All Auth/network responses are non-cacheable. Do not log credentials, tokens, raw provider payloads or confidential legal content.
 11. No real customer legal data is used in tests. No service-role credential is introduced into the browser bundle.
@@ -71,7 +71,7 @@ The dedicated project is provisioned. The owner confirmed the Site URL `https://
 | Expired access token with valid refresh state | Proxy refreshes and propagates replacement cookies |
 | Expired/revoked refresh token | Session cleared; sign-in required |
 | Provider-side revoked/deleted user | Protected server boundary rejects user |
-| Sign-out | Provider sign-out invoked and cookies cleared |
+| Sign-out | Provider sign-out invoked and cookies cleared; owner confirmed production flow returned to sign-in (cookie clearing/provider response still needs automated verification) |
 | External/protocol-relative return URL | Rejected; redirect remains same-origin |
 | Cookie security | HttpOnly, Secure in production, SameSite policy and path/domain scope reviewed |
 | Cache handling | Auth responses and user-specific content are not publicly cached |
@@ -104,10 +104,11 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [x] Dedicated test identity provisioned through the Supabase Dashboard; `auth.users` count is 1 and the account is email-confirmed.
 - [x] Owner-reported production sign-in completed successfully and reached the protected dashboard.
 - [x] Owner verified that refreshing the production dashboard preserves the authenticated session without requesting sign-in again.
-- [ ] Verify token refresh/rotation under expiry, sign-out and revoked-session rejection; do not claim these lifecycle checks passed yet.
+- [x] Owner verified production Sign out returns to the sign-in page.
+- [ ] Verify token refresh/rotation under expiry, cookie clearing at the browser/provider boundary, and revoked-session rejection; the owner-observed sign-out navigation alone does not prove all of these.
 - [x] Full repository CI/security workflow succeeds on commit `8b27fec6b1a1a74109b8f73f865d9b7ef50be2e0`; run `42777330545` SUCCESS, including format, lint, strict TypeScript baseline, foundation/migration tests, app build, secret scan and repository content policy.
 - [x] Dedicated Supabase project and Vercel environment variables re-verified; no Supabase security or health advisor notices.
 - [x] Production deployment rebuilt successfully from recovery commit `438f0f99a5910cb653d1b4b2740c2b9143ea2e38`; Vercel state READY and application build, TypeScript validation and route generation passed.
 - [x] Owner-confirmed Supabase Site URL and production redirect allow-list recorded; direct dashboard read-back is not available through the connected interface.
 
-**Task state:** 🟡 IN PROGRESS. The production application is READY; the owner has successfully signed in with a confirmed test identity, reached the protected dashboard, and refreshed the dashboard without being asked to sign in again. This verifies a real login and session persistence across a browser refresh. It does not yet prove refresh-token rotation after expiry, sign-out, revocation handling or the full session security matrix. Automated provider-backed lifecycle tests remain outstanding. Supabase's security advisor also reports Leaked Password Protection disabled; enable it and review the remaining Auth provider controls. Keep public self-registration disabled and do not accept confidential legal content until tenant isolation, RLS, storage, audit and provider-egress controls are implemented and verified.
+**Task state:** 🟡 IN PROGRESS. The production application is READY; the owner has successfully signed in with a confirmed test identity, reached the protected dashboard, refreshed the dashboard without being asked to sign in again, and used Sign out to return to the sign-in page. These are owner-confirmed production browser tests for login, refresh persistence and sign-out navigation. They do not by themselves prove refresh-token rotation after expiry, browser cookie deletion, provider-side revocation, or the full session security matrix. Automated provider-backed lifecycle tests remain outstanding. Supabase's security advisor also reports Leaked Password Protection disabled; enable it and review the remaining Auth provider controls. Keep public self-registration disabled and do not accept confidential legal content until tenant isolation, RLS, storage, audit and provider-egress controls are implemented and verified.
