@@ -159,7 +159,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '20000000-0000-4000-8000-000000000004';
 
 select lives_ok(
-  $select * from public.accept_organization_invitation(repeat('a', 64))$,
+  $$select * from public.accept_organization_invitation(repeat('a', 64))$$,
   'The invited confirmed email can accept an organisation invitation'
 );
 
