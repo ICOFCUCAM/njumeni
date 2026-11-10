@@ -21,6 +21,8 @@ The [Master Implementation Plan](docs/MASTER_IMPLEMENTATION_PLAN.md) preserves t
 
 ## Architecture and security
 
+- [Engineering Standards](docs/ENGINEERING_STANDARDS.md) — coding, naming, formatting, validation, errors, logging, security and review conventions.
+- [Contributing Guide](CONTRIBUTING.md) — task discipline, change requirements and pull-request review.
 - [ADR-0001 — Modular monolith and bounded contexts](docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md) — approved architecture decision, canonical eight layers, dependency rules and security boundaries.
 - [A–M Module Layer Map](docs/architecture/MODULE_LAYER_MAP.md) — module ownership, layer assignment, contracts, dependencies, permissions and phase delivery.
 - [A–M Capability Traceability](docs/architecture/MODULE_REQUIREMENTS_TRACEABILITY.md) — original module capabilities mapped to their implementation layers.
