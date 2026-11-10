@@ -8,16 +8,14 @@ type SignInPageProps = {
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const params = await searchParams;
   const configured = isSupabaseConfigured();
-  const errorMessage =
-    params.error === 'credentials'
-      ? 'The email address or password is incorrect.'
-      : params.error === 'invalid'
-        ? 'Enter a valid email address and password.'
-        : params.error === 'unavailable'
-          ? 'Sign-in is temporarily unavailable. Please try again later.'
-          : params.error === 'signout'
-            ? 'We could not complete sign-out. Please try again; your session status could not be confirmed.'
-            : null;
+  const errorMessages: Record<string, string> = {
+    credentials: 'The email address or password is incorrect.',
+    invalid: 'Enter a valid email address and password.',
+    unavailable: 'Sign-in is temporarily unavailable. Please try again later.',
+    signout:
+      'We could not complete sign-out. Please try again; your session status could not be confirmed.',
+  };
+  const errorMessage = params.error ? (errorMessages[params.error] ?? null) : null;
 
   return (
     <main className="signin-panel">
@@ -34,7 +32,8 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       ) : null}
       {params.message === 'signed-out' && params.warning === 'revocation-unconfirmed' ? (
         <p className="auth-error" role="alert">
-          You have been signed out on this device, but the server could not confirm revocation of the refresh token. It may remain valid until it expires.
+          You have been signed out on this device, but the server could not confirm revocation
+          of the refresh token. It may remain valid until it expires.
         </p>
       ) : null}
       {errorMessage ? (
