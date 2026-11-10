@@ -63,7 +63,7 @@ jobs:
       - name: Commit CLI-generated migrations
         shell: bash
         run: |
-          if git diff --quiet -- supabase/migrations .migration-requests; then
+          if [ -z "$(git status --porcelain -- supabase/migrations .migration-requests)" ]; then
             echo "No pending migration templates."
             exit 0
           fi
