@@ -7,8 +7,8 @@
     },
     {
       "path": "supabase/migrations/20261110164705_role_permission_foundation.sql",
-      "blob_sha": "f24d6300e17a96850c3e8554868b2abd42694556",
-      "reason": "Correct the unshipped Task 1.7 migration after clean local replay exposed a malformed dollar-quote terminator in the role-binding event-trigger function. This migration has not been applied to any hosted environment; the corrected migration and source template now use the matching PL/pgSQL delimiter."
+      "blob_sha": "538d5b67d1b2de690fcf966a978a5c55b7040f8b",
+      "reason": "Correct the unshipped Task 1.7 migration after clean local replay exposed a malformed dollar-quote terminator in the role-binding event-trigger function. The migration and its source template now use the matching PL/pgSQL delimiter; no hosted migration has been applied."
     }
   ]
 }
