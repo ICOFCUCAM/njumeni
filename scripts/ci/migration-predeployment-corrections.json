@@ -12,8 +12,8 @@
     },
     {
       "path": "supabase/migrations/20261110171000_tenant_scoped_storage_policies.sql",
-      "blob_sha": "aa18e6ccf18182a2a3ff9456e9b8b03c9171806b",
-      "reason": "Correct the unshipped Task 1.8 migration after clean local replay showed the migration role is not the owner of Supabase-managed storage.objects. Storage provisions RLS; the application migration now verifies that invariant without attempting an ownership-protected ALTER. No hosted migration has been applied."
+      "blob_sha": "fa030a5e66035db0930db55bf3b73807d4ae1fe6",
+      "reason": "Correct the unshipped Task 1.8 migration after clean local replay showed the migration role is not the owner of Supabase-managed storage.objects. Supabase Storage provisions RLS; the application migration relies on that managed invariant and only adds tenant-scoped policies. No hosted migration has been applied."
     }
   ]
 }
