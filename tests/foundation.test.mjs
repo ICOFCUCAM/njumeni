@@ -26,7 +26,7 @@ test('repository ignores populated environment files but allows the template', a
 
 test('the phase register records verified Phase 0 closeout and opens Phase 1 only', async () => {
   const register = await readFile('docs/PHASE_REGISTER.md', 'utf8');
-  assert.match(register, /Phase 0 — Foundation and repository\/infrastructure audit/);
+  assert.match(register, /\| 0 \| Foundation and repository\/infrastructure audit \| 🟢 CLOSED \|/);
   assert.match(register, /\| 0 \| Foundation and repository\/infrastructure audit \| 🟢 CLOSED \|/);
   assert.match(register, /\| 1 \| Identity, tenancy and security foundation \| 🟡 OPEN \|/);
   assert.match(register, /\| 2 \| Legal knowledge foundation \| 🔒 LOCKED \|/);
