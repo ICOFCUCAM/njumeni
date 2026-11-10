@@ -64,7 +64,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "db: generate CLI-named migrations from approved templates"
-          git push origin "HEAD:$GITHUB_REF_NAME"
+          for attempt in 1 2 3; do
+            git fetch origin "$GITHUB_REF_NAME"
+            git rebase "origin/$GITHUB_REF_NAME"
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then
+              exit 0
+            fi
+            echo "Migration commit push attempt $attempt failed; retrying against the latest branch head."
+          done
+          exit 1
 
   local-database:
     name: Supabase CLI generation and clean local replay
