@@ -217,6 +217,24 @@ test(
     );
   },
 );
+test('an expired access token is rejected by the authoritative Auth user endpoint', async () => {
+  const harness = createHarness();
+  harness.setUserStatus(401);
+  const expiredAccessToken = makeJwt(Math.floor(Date.now() / 1000) - 3600);
+
+  const { data, error } = await harness.client.auth.getUser(expiredAccessToken);
+
+  assert.ok(error, 'the Auth provider must reject an expired access token');
+  assert.equal(data.user, null, 'an expired token must not produce an authenticated user');
+  assert.ok(
+    harness.requests.some(
+      ({ url, authorization }) =>
+        url.pathname.endsWith('/user') && authorization === `Bearer ${expiredAccessToken}`,
+    ),
+    'the expired token must be checked by the authoritative Auth user endpoint',
+  );
+});
+
 test('a rejected refresh token is surfaced without issuing a replacement session', async () => {
   const harness = createHarness({ tokenStatus: 400 });
   await establishSession(harness.client, harness.accessToken);
