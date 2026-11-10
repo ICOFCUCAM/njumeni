@@ -35,6 +35,7 @@ function jsonResponse(body, status = 200) {
 
 function createHarness({ logoutStatus = 204, tokenStatus = 200 } = {}) {
   const cookies = new Map();
+  let userStatus = 200;
   const requests = [];
   const accessToken = makeJwt(Math.floor(Date.now() / 1000) + 3600);
   const rotatedAccessToken = makeJwt(Math.floor(Date.now() / 1000) + 7200);
@@ -45,7 +46,9 @@ function createHarness({ logoutStatus = 204, tokenStatus = 200 } = {}) {
     requests.push({ url: requestUrl, method, body: init.body });
 
     if (requestUrl.pathname.endsWith('/user')) {
-      return jsonResponse(testUser);
+      return userStatus === 200
+        ? jsonResponse(testUser)
+        : jsonResponse({ code: 'user_not_found', message: 'User not found' }, userStatus);
     }
 
     if (requestUrl.pathname.endsWith('/logout')) {
@@ -94,7 +97,16 @@ function createHarness({ logoutStatus = 204, tokenStatus = 200 } = {}) {
     },
   });
 
-  return { client, cookies, requests, accessToken, rotatedAccessToken };
+  return {
+    client,
+    cookies,
+    requests,
+    accessToken,
+    rotatedAccessToken,
+    setUserStatus(status) {
+      userStatus = status;
+    },
+  };
 }
 
 async function establishSession(client, accessToken) {
@@ -155,6 +167,23 @@ test('refreshSession persists a rotated access and refresh token', async () => {
     'Auth should receive a refresh-token grant',
   );
   assert.ok(harness.cookies.size > 0, 'rotated session should remain persisted in SSR cookies');
+});
+
+
+test('provider-side deleted or revoked user is rejected by getUser', async () => {
+  const harness = createHarness();
+  await establishSession(harness.client, harness.accessToken);
+
+  // Simulate Supabase Auth rejecting the principal on its authoritative user endpoint.
+  harness.setUserStatus(401);
+  const { data, error } = await harness.client.auth.getUser();
+
+  assert.ok(error, 'provider-side user rejection must be surfaced');
+  assert.equal(data.user, null, 'a rejected provider identity must not be returned as authenticated');
+  assert.ok(
+    harness.requests.some(({ url }) => url.pathname.endsWith('/user')),
+    'the server must consult the provider user endpoint rather than trust local claims alone',
+  );
 });
 
 test('a rejected refresh token is surfaced without issuing a replacement session', async () => {
