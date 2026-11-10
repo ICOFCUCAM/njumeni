@@ -94,7 +94,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 begin
   update public.organization_invitations
   set status = 'expired',
@@ -107,7 +107,7 @@ begin
 
   return new;
 end;
-$;
+$$;
 
 revoke all on function private.expire_matching_invitations() from public, anon, authenticated;
 
