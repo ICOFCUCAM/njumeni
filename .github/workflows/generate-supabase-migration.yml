@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: njumeni-migration-generator
@@ -78,3 +79,13 @@ jobs:
           git commit -m "db-template: generate CLI migrations from reviewed templates"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Dispatch clean local database verification
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run supabase-local.yml --ref "${GITHUB_REF_NAME}"
+
+      - name: Dispatch full application and repository verification
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run repository-security.yml --ref "${GITHUB_REF_NAME}"
