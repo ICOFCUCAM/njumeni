@@ -10,47 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  generate-migration:
-    name: Generate the CLI-named profile hardening migration
-    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/wonderful-franklin-lt09d7'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-      - name: Set up pinned Supabase CLI
-        uses: supabase/setup-cli@v3
-        with:
-          version: 3.1.0
-      - name: Initialise local-only Supabase configuration
-        run: |
-          if [ ! -f supabase/config.toml ]; then
-            supabase init
-          fi
-      - name: Generate and commit the profile hardening migration
-        shell: bash
-        run: |
-          set -euo pipefail
-          if find supabase/migrations -maxdepth 1 -type f -name '*_principal_profile_hardening.sql' -print -quit | grep -q .; then
-            echo "Profile hardening migration already exists."
-            exit 0
-          fi
-          supabase migration new principal_profile_hardening
-          migration="$(find supabase/migrations -maxdepth 1 -type f -name '*_principal_profile_hardening.sql' -print -quit)"
-          test -n "$migration"
-          cp scripts/db/principal-profile-hardening.sql "$migration"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$migration"
-          git commit -m "db(profile): generate CLI-named principal hardening migration"
-          git push origin "HEAD:$GITHUB_REF_NAME"
-
   local-database:
     name: Supabase CLI generation and clean local replay
-    needs: generate-migration
-    if: always() && (needs.generate-migration.result == 'success' || needs.generate-migration.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
