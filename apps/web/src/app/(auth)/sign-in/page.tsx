@@ -12,8 +12,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     credentials: 'The email address or password is incorrect.',
     invalid: 'Enter a valid email address and password.',
     unavailable: 'Sign-in is temporarily unavailable. Please try again later.',
-    signout:
-      'Sign-out could not be confirmed. Please try again.',
+    signout: 'Sign-out could not be confirmed. Please try again.',
   };
   let errorMessage: string | null = null;
   if (params.error && params.error in errorMessages) {
@@ -37,8 +36,8 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       ) : null}
       {showRevocationWarning ? (
         <p className="auth-error" role="alert">
-          You have been signed out on this device, but the server could not confirm revocation
-          of the refresh token. It may remain valid until it expires.
+          You have been signed out on this device, but the server could not confirm revocation of
+          the refresh token. It may remain valid until it expires.
         </p>
       ) : null}
       {errorMessage ? (
