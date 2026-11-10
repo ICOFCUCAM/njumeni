@@ -43,7 +43,7 @@ The owner has instructed that implementation must continue sequentially through 
 ## Owner/environment gates
 
 - The repository is currently public although the original plan specifies private. This remains an owner-level risk; do not place confidential deployment configuration or data in Git.
-- Dedicated Njumeni Supabase project `${id}` is provisioned in `eu-north-1`. Task 1.2 records project/database readiness. Auth service-specific health and security configuration must be checked during Task 1.3 before enabling authentication.
+- Dedicated Njumeni Supabase project `vvjpsejeeffykaozfbik` is provisioned in `eu-north-1`. Task 1.2 records project/database readiness. Auth service-specific health and security configuration is a deferred release-verification item assigned to Task 1.11/Phase 1.12 under the owner-directed autonomous build sequence.
 - Region/data residency and classification approval remain unresolved. Do not select a region based on another product's configuration.
 - No real legal documents or customer matters may be used for tests; use synthetic fixtures.
 - Supabase Auth is the planned identity provider from the original architecture. Any change requires a documented ADR and owner decision.
