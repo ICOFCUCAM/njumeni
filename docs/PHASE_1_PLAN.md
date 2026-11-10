@@ -23,7 +23,7 @@
 
 | No. | Task | Required deliverable and acceptance criteria | Status |
 |---|---|---|---|
-| 1.1 | Define identity, authentication, tenant and workspace security contracts | Security architecture/ADR; threat model; principal, session, organisation, workspace, membership and permission concepts; trust boundaries; deny-by-default rules; explicit decisions and open dependencies. Reviewed against original plan and ADR-0001. | 🟡 IN PROGRESS |
+| 1.1 | Define identity, authentication, tenant and workspace security contracts | Security architecture/ADR; threat model; principal, session, organisation, workspace, membership and permission concepts; trust boundaries; deny-by-default rules; explicit decisions and open dependencies. Reviewed against original plan and ADR-0001; verified by CI run `42769220793` on commit `2f22fddc14881c18a96a0cd6bcee12ad709943f8`. | 🟢 GREEN |
 | 1.2 | Verify dedicated Njumeni identity/database environment readiness | Confirm a dedicated Njumeni Supabase project and approved region exist; verify Auth/Postgres capability and environment separation without reading unrelated product data. If absent, record provisioning as an owner/environment dependency; do not invent project IDs or reuse another product. | 🔒 LOCKED |
 | 1.3 | Implement identity provider integration and secure session lifecycle | Server-side Supabase Auth integration, session validation/refresh/sign-out, secure cookie/session handling, error boundaries and no service-role exposure. Tests cover invalid, expired and revoked sessions. | 🔒 LOCKED |
 | 1.4 | Implement user profile and principal model | User profile schema and server-side identity mapping; immutable provider subject mapping; safe profile update rules; migrations and tests. | 🔒 LOCKED |
