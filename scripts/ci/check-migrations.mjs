@@ -12,7 +12,9 @@ export function validateMigrationFiles(entries) {
 
   for (const file of sqlFiles) {
     if (!MIGRATION_PATTERN.test(file)) {
-      errors.push(`Invalid migration filename: ${file}. Create migrations with the pinned Supabase CLI.`);
+      errors.push(
+        `Invalid migration filename: ${file}. Create migrations with the pinned Supabase CLI.`,
+      );
       continue;
     }
 
