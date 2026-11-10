@@ -144,8 +144,8 @@ export default async function WorkspacesSettingsPage({
         <section className="module-panel" aria-labelledby="tenant-unavailable-title">
           <h2 id="tenant-unavailable-title">Tenant services are not available yet</h2>
           <p>
-            The organisation, membership or invitation database migrations have not been deployed
-            to this environment, or the service is temporarily unavailable. No tenant or membership
+            The organisation, membership or invitation database migrations have not been deployed to
+            this environment, or the service is temporarily unavailable. No tenant or membership
             data has been changed.
           </p>
         </section>
@@ -278,7 +278,11 @@ export default async function WorkspacesSettingsPage({
                                                 name="membership_id"
                                                 value={membership.id}
                                               />
-                                              <input type="hidden" name="status" value="suspended" />
+                                              <input
+                                                type="hidden"
+                                                name="status"
+                                                value="suspended"
+                                              />
                                               <button className="sign-out-button" type="submit">
                                                 Suspend
                                               </button>
@@ -457,7 +461,9 @@ export default async function WorkspacesSettingsPage({
                           />
                         </>
                       ) : (
-                        <p>Invitation creation and revocation are managed by the organisation owner.</p>
+                        <p>
+                          Invitation creation and revocation are managed by the organisation owner.
+                        </p>
                       )}
                     </div>
                   </section>

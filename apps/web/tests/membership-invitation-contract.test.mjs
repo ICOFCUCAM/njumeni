@@ -19,11 +19,17 @@ const acceptPage = await readFile(
   'utf8',
 );
 const migration = await readFile(
-  new URL('../../../supabase/migrations/20261110155456_membership_invitation_lifecycle.sql', import.meta.url),
+  new URL(
+    '../../../supabase/migrations/20261110155456_membership_invitation_lifecycle.sql',
+    import.meta.url,
+  ),
   'utf8',
 );
 const accessMigration = await readFile(
-  new URL('../../../supabase/migrations/20261110160651_membership_invitation_access_policies.sql', import.meta.url),
+  new URL(
+    '../../../supabase/migrations/20261110160651_membership_invitation_access_policies.sql',
+    import.meta.url,
+  ),
   'utf8',
 );
 
@@ -31,7 +37,7 @@ test('invitation creation generates a high-entropy token and stores only its has
   assert.ok(actions.includes("randomBytes(32).toString('base64url')"));
   assert.ok(actions.includes("createHash('sha256').update(token).digest('hex')"));
   assert.ok(actions.includes('token_hash: tokenHash'));
-  assert.ok(actions.includes("email_normalized: email"));
+  assert.ok(actions.includes('email_normalized: email'));
   assert.ok(actions.includes('expiryDays < 1'));
   assert.ok(actions.includes('expiryDays > 30'));
   assert.ok(actions.includes('supabase.auth.getUser()'));
@@ -41,7 +47,9 @@ test('invitation creation generates a high-entropy token and stores only its has
 
 test('invitation acceptance requires a verified signed-in identity and hashes the raw token server-side', () => {
   assert.ok(actions.includes('export async function acceptInvitation'));
-  assert.ok(actions.includes("const tokenHash = createHash('sha256').update(tokenValue).digest('hex')"));
+  assert.ok(
+    actions.includes("const tokenHash = createHash('sha256').update(tokenValue).digest('hex')"),
+  );
   assert.ok(actions.includes("rpc('accept_organization_invitation'"));
   assert.ok(actions.includes("return { error: 'sign-in-required' }"));
   assert.ok(actions.includes("return { error: 'invalid' }"));
@@ -89,6 +97,14 @@ test('tenant access policies require active organisation and workspace membershi
   assert.ok(accessMigration.includes('private.has_active_workspace_membership'));
   assert.ok(accessMigration.includes('Active organisation members can read their organisation'));
   assert.ok(accessMigration.includes('Active workspace members can read their workspace'));
-  assert.ok(accessMigration.includes('on conflict on constraint organization_memberships_org_principal_unique'));
-  assert.ok(accessMigration.includes('on conflict on constraint workspace_memberships_workspace_principal_unique'));
+  assert.ok(
+    accessMigration.includes(
+      'on conflict on constraint organization_memberships_org_principal_unique',
+    ),
+  );
+  assert.ok(
+    accessMigration.includes(
+      'on conflict on constraint workspace_memberships_workspace_principal_unique',
+    ),
+  );
 });
