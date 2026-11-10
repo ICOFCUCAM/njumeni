@@ -36,7 +36,6 @@ export default async function WorkspacesSettingsPage({
         )
         .order('created_at', { ascending: true })
     : { data: [], error: null };
-  const workspaceRows = workspaces ?? [];
   const workspaceRows: Array<{
     id: string;
     organization_id: string;
