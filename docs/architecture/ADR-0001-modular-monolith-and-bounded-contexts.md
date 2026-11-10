@@ -150,7 +150,7 @@ The layer definitions are consistent with the original product architecture: Exp
 
 This is a high-level responsibility map, not a replacement for the original section titles or the detailed A–M module mapping owned by task 0.7.
 
-Short handles in the table below map to the exact canonical names: Experience = Experience; API = API; Workflow orchestration = Workflow orchestration; Evidence = Evidence; Legal knowledge = Legal knowledge; Reasoning = Reasoning; Verification = Verification; Infrastructure = Infrastructure.
+The table below uses the exact canonical layer names and spelling from the original source; each label refers to the corresponding numbered layer in section 6.
 
 | Original section | Primary platform-layer responsibility |
 |---|---|

@@ -24,16 +24,7 @@ The bounded contexts are those established in ADR-0001: Identity and organisatio
 
 **Ownership rule:** each module has one primary product owner-context and may consume other contexts through explicit application/query contracts or versioned events. The owner-context is authoritative for the records named in its row. No cross-context direct table writes are permitted.
 
-### Layer shorthand used in mapping tables
-
-- Experience = Experience
-- API = API
-- Workflow orchestration = Workflow orchestration
-- Evidence = Evidence
-- Legal knowledge = Legal knowledge
-- Reasoning = Reasoning
-- Verification = Verification
-- Infrastructure = Infrastructure
+**Layer naming rule:** the capability mapping tables use the exact canonical layer names and spelling from the original source; they are not alternate names or additional layers.
 
 ## 2. Complete A–M responsibility map
 
