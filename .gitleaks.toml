@@ -1,0 +1,11 @@
+title = "Njumeni Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Exact false-positive fixture from the historical Auth test commit; not a credential and no other JWT-like strings are exempted."
+regexTarget = "match"
+regexes = [
+  '''eyJhbGciOiJIUzI1NiJ9\.eyJzdWIiOiJub3QtYS11c2VyIn0\.invalid-signature''',
+]
