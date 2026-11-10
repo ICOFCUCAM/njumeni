@@ -5,7 +5,7 @@
 - Repository: `ICOFCUCAM/njumeni`
 - Active phase: **Phase 1 — Identity, tenancy and security foundation**
 - Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **1.6 — Implement membership and invitation lifecycle**
+- Next task: **Complete Task 1.11 verification-suite preparation and Phase 1 closeout documentation.** The combined tests are authored but not executed. Tasks 1.7–1.11 remain uncommitted; the owner has directed one commit at the end of Phase 1.
 - Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
 - Rule: work may proceed only in the single active phase; later phases remain locked until their dedicated closeout commits and CI checks are verified.
 
@@ -88,11 +88,11 @@ The security workflow passed for commits `a3b5d32`, `0c2b9d5`, `9427e26` and `c0
 | 1.4 | Implement user profile and principal model | 🟢 GREEN | Principal/profile schema, immutable provider mapping, active-principal RLS resolution, safe profile updates, HTTPS/IANA validation, CLI-generated migrations, generated types, clean local replay, database lint and 16/16 pgTAP assertions. Local run `42845114187`; application CI `42846043378`. See [Task 1.4 acceptance](PHASE_1_TASK_1_4_ACCEPTANCE.md). Hosted schema remains unchanged. |
 | 1.5 | Implement organisations, workspaces and tenant ownership | 🟢 GREEN | Owner-scoped organisation/workspace schema, personal tenant provisioning and backfill, owner-only RLS, immutable ownership, lifecycle triggers, server actions and settings UI. Local clean replay, type generation, database lint and 38/38 pgTAP assertions passed in run `42846849437`; application CI `42848567330` passed all three jobs, including 26 web tests and production build. See [Task 1.5 acceptance](PHASE_1_TASK_1_5_ACCEPTANCE.md). Hosted schema remains unchanged. |
 | 1.6 | Implement membership and invitation lifecycle | 🟢 GREEN | Organisation/workspace membership states, 256-bit single-use email-bound invitations, hash-only token persistence, confirmed-email acceptance, expiry/revocation/replay protection, private lifecycle events, RLS, Server Actions and UI. Local clean replay, generated types, database lint and 85/85 pgTAP assertions passed in run `42855740183`; application CI `42855740121` passed all three jobs, including 35/35 web tests and production build. See [Task 1.6 acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md). Hosted schema unchanged. |
-| 1.7 | Implement roles, permissions and server-side authorisation | 🟡 IN PROGRESS | Explicit permission catalogue, scoped role bindings, deny-by-default policy evaluator, server-side use-case guards and privilege-escalation tests. |
-| 1.8 | Implement PostgreSQL RLS and storage access policies | 🔒 LOCKED | Tenant-scoped RLS and private storage policies tested under realistic non-owner principals. |
-| 1.9 | Implement security audit logging | 🔒 LOCKED | Structured append-only security events, redaction, retention and access controls. |
-| 1.10 | Implement subscription identity and entitlement boundary | 🔒 LOCKED | Billing identity linkage separated from resource authorisation. |
-| 1.11 | Execute tenant-isolation and security verification suite | 🔒 LOCKED | Negative cross-tenant tests across API, DB, storage and jobs; threat-model residuals documented. |
+| 1.7 | Implement roles, permissions and server-side authorisation | 🟡 IMPLEMENTATION WRITTEN | RBAC catalogue, scoped bindings, evaluator, assignment/revocation RPCs, server guards, UI and tests prepared; combined verification pending. |
+| 1.8 | Implement PostgreSQL RLS and storage access policies | 🟡 IMPLEMENTATION WRITTEN | Private workspace storage, scoped object paths, server upload/download/delete helpers and synthetic isolation tests prepared; verification pending. |
+| 1.9 | Implement security audit logging | 🟡 IMPLEMENTATION WRITTEN | Central append-only audit stream, lifecycle/role/membership capture, metadata minimisation and scoped read RPC prepared; verification pending. |
+| 1.10 | Implement subscription identity and entitlement boundary | 🟡 IMPLEMENTATION WRITTEN | Provider-neutral billing identity, tenant-bound subscription snapshots, versioned entitlements, idempotent provider events, usage ledger and separate billing read/usage RPCs prepared; verification pending. |
+| 1.11 | Execute tenant-isolation and security verification suite | 🟡 SUITE AUTHORED — EXECUTION DEFERRED | Consolidated pgTAP contract suite and task-specific negative tests prepared; live Auth, cross-tenant and release checks remain pending the single Phase 1 closeout verification. See [Task 1.11 verification design](PHASE_1_TASK_1_11_SECURITY_VERIFICATION.md). |
 | 1.12 | Phase 1 acceptance and closeout | 🔒 LOCKED | All 1.1–1.11 green, phase-wide security/CI acceptance and verified closeout commit. |
 
 **Phase 1 safety gate:** no real customer legal documents or confidential matters may be accepted until identity, tenancy, RLS, private storage, audit and provider-egress controls have been implemented and verified.
@@ -121,16 +121,15 @@ Phase 0 is CLOSED. Phase 1 is now OPEN after successful verification of the dedi
 ## 4. Required workflow for every task
 
 1. Read this register and the relevant master-plan section before editing code.
-2. Confirm the active task number, dependencies, acceptance criteria and current branch/head.
+2. Confirm dependencies, acceptance criteria and current branch/head.
 3. Inspect existing implementation and tests before making changes.
-4. Implement only the active task and its necessary prerequisites.
-5. Run the task's tests, security checks and relevant integration checks.
-6. Update documentation and this register with the result.
-7. Commit the task. Record the full commit SHA.
-8. Mark it 🟢 GREEN only after verification and commit.
-9. Move to the next numbered task in the same phase.
-10. When the last task is complete, run the entire phase acceptance suite, create the phase acceptance report and a dedicated phase-closeout commit.
-11. Verify the closeout commit and then unlock the next phase.
+4. Implement sequentially and write the corresponding tests and documentation.
+5. Do not repeatedly poll CI or run the full verification suite after each small change.
+6. Do not create intermediate commits during Phase 1; retain related changes as one prepared phase batch.
+7. At Phase 1 closeout, present one complete phase commit, then run the combined verification once and resolve any failures before marking tasks GREEN.
+8. Keep hosted Supabase unchanged unless the owner separately authorises migration deployment.
+9. Continue with the next implementation task while verification is pending, without representing unverified work as accepted.
+10. At phase closeout, run the full phase acceptance suite, create the acceptance report and dedicated closeout commit, then verify before unlocking the next phase.
 
 ## 5. Autonomous build instruction
 
@@ -144,3 +143,8 @@ When the user says **"go next"**, continue the first incomplete task in the one 
 ## Owner decision — upstream reference set (10 November 2026)
 
 The product owner has confirmed that the five repositories named in the original master source—OpenContracts, CaseCite, Lawgent, Lovspor and Mike—are the selected upstream reference projects for the initial architecture assessment. They are architectural inputs, not the exclusive set of technologies, components or sources Njumeni may use. Njumeni's wider architecture may incorporate other suitable open-source and commercial technologies, independently developed components and further capabilities as requirements demand. Each of the five named projects requires an individual capability inventory, exact-version licence review, security assessment, architecture/compatibility decision, implementation mapping and tests. For each capability, the outcome may be adopt, adapt, reimplement in Njumeni-owned code, isolate behind an adapter, replace or discard. Product requirements and Njumeni's approved architecture govern selection; wholesale copying and licence circumvention are not authorised. The earlier uncertainty is closed only as to whether a sixth project is needed to complete this initial five-project assessment set. Future technologies and projects may still be evaluated when justified, without changing this decision.
+
+
+## Owner execution cadence update — 10 November 2026
+
+The owner has instructed that all Phase 1 implementation and verification artifacts be prepared first, with **one commit at the end of Phase 1**. Do not commit the current prepared tree, do not poll CI, and do not run intermediate verification after each task. Continue writing the remaining Phase 1 deliverables. The consolidated Task 1.11 suite is authored but not executed. Phase 1 cannot be marked GREEN or closed until the combined acceptance run passes. Hosted Supabase remains unchanged unless separately authorised.
