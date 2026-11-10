@@ -1,9 +1,9 @@
 # Njumeni CI pipeline
 
-- **Workflow:** .github/workflows/ci.yml
+- **Workflow:** .github/workflows/repository-security.yml
 - **Status:** Phase 0 task 0.10 initial CI baseline
 - **Runtime:** GitHub Actions, Ubuntu runner, Node.js 22
-- **Security companion:** .github/workflows/repository-security.yml
+- **Pipeline name:** Njumeni CI and security (quality, repository content policy and secret scanning are consolidated in one proven workflow)
 
 ## 1. Checks currently executed
 
