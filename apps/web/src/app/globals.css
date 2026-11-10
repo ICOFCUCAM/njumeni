@@ -961,6 +961,33 @@ a:focus-visible {
   padding: 15px;
 }
 
+.role-management-panel {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.role-assignment-form {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fbfaf6;
+  padding: 13px;
+}
+
+.role-description-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 17px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.role-description-list strong {
+  color: var(--ink-soft);
+}
+
 .membership-invite-form {
   gap: 13px;
   padding-top: 14px;
