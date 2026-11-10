@@ -27,7 +27,7 @@ jobs:
         run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund prettier@3.5.3 eslint@10.0.0 typescript@5.8.3
 
       - name: Check formatting
-        run: npx --no-install prettier --check .prettierrc.json tsconfig.ci.json eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs scripts/ci/typecheck-probe.ts tests/foundation.test.mjs tests/migrations.test.mjs tests/app-shell.test.mjs tests/original-plan.test.mjs tests/infrastructure-audit.test.mjs apps/web/package.json apps/web/package-lock.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/postcss.config.mjs apps/web/src/app/globals.css apps/web/src/modules/registry.ts "apps/web/src/**/*.tsx"
+        run: npx --no-install prettier --check .prettierrc.json tsconfig.ci.json eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs scripts/ci/typecheck-probe.ts tests/foundation.test.mjs tests/migrations.test.mjs tests/app-shell.test.mjs tests/original-plan.test.mjs tests/infrastructure-audit.test.mjs apps/web/package.json apps/web/package-lock.json apps/web/tsconfig.json apps/web/next.config.ts apps/web/postcss.config.mjs apps/web/src/app/globals.css apps/web/src/modules/registry.ts apps/web/tests/auth-session.test.mjs "apps/web/src/**/*.tsx"
 
       - name: Lint CI scripts and tests
         run: npx --no-install eslint eslint.config.mjs scripts/ci/verify-foundation.mjs scripts/ci/check-migrations.mjs tests/foundation.test.mjs tests/migrations.test.mjs tests/app-shell.test.mjs tests/original-plan.test.mjs tests/infrastructure-audit.test.mjs
@@ -52,6 +52,7 @@ jobs:
           if [[ -f apps/web/package.json ]]; then
             cd apps/web
             npm ci --no-audit --no-fund
+            npm run test:auth
             npm run typecheck
             npm run build
           else
