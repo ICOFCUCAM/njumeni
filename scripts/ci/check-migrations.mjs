@@ -125,7 +125,9 @@ async function main() {
         ['diff', '--name-status', baseSha, headSha, '--', MIGRATIONS_DIR],
         { encoding: 'utf8' },
       );
-      errors.push(...validateMigrationChanges(diff.split('\n').filter(Boolean), allowedCorrections));
+      errors.push(
+        ...validateMigrationChanges(diff.split('\n').filter(Boolean), allowedCorrections),
+      );
     } catch (error) {
       throw new Error(
         `Unable to verify migration immutability against base ${baseSha}; full Git history is required.`,
