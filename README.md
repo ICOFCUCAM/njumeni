@@ -34,7 +34,7 @@ These projects are not merged into the Njumeni application. Review each project'
 
 ## Product direction and security
 
-Njumeni is the legal technology platform. The unrelated legacy CMP website is to be preserved in a separate repository (`njumeni-cmp-archive`), not inside this repository. This repository must never contain classified or confidential legal documents, case files, evidence, customer data or credentials. See [the product-boundary and security decision](docs/PRODUCT_BOUNDARIES.md) and [the security policy](SECURITY.md).
+Njumeni is the legal technology platform. The unrelated legacy CMP website is to be preserved in a separate repository (`njumeni-cmp-archive`), not inside this repository. Njumeni is intended to securely handle confidential legal documents, case files and evidence through its application data/storage architecture. Those live records must not be committed to this source-code repository. Keep Njumeni's codebase separate from unrelated products such as the legacy CMP project. See [the product-boundary and security decision](docs/PRODUCT_BOUNDARIES.md) and [the security policy](SECURITY.md).
 
 ## Legal AI platform direction
 
