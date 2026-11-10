@@ -152,11 +152,11 @@ export default async function WorkspacesSettingsPage({
 
                   <div className="tenant-workspaces">
                     <h3>Workspaces</h3>
-                    {(workspaceByOrganisation.get(organisation.id) ?? []).length === 0 ? (
+                    {workspaceRows.filter((workspace) => workspace.organization_id === organisation.id).length === 0 ? (
                       <p>No workspace is currently available.</p>
                     ) : (
                       <ul>
-                        {(workspaceByOrganisation.get(organisation.id) ?? []).map((workspace) => (
+                        {workspaceRows.filter((workspace) => workspace.organization_id === organisation.id).map((workspace) => (
                           <li key={workspace.id}>
                             <span>
                               <strong>{workspace.name}</strong>
