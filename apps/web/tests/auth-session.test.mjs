@@ -155,16 +155,16 @@ test('refreshSession persists a rotated access and refresh token', async () => {
   assert.ok(harness.cookies.size > 0, 'rotated session should remain persisted in SSR cookies');
 });
 
-test('a rejected refresh token does not leave a usable SSR cookie session', async () => {
+test('a rejected refresh token is surfaced without issuing a replacement session', async () => {
   const harness = createHarness({ tokenStatus: 400 });
   await establishSession(harness.client, harness.accessToken);
 
   const { error } = await harness.client.auth.refreshSession();
 
   assert.ok(error, 'the revoked refresh token should be rejected');
-  assert.equal(
-    harness.cookies.size,
-    0,
-    'rejected refresh credentials must be cleared from SSR cookies',
+  assert.equal(data.session, null, 'a rejected refresh token must not produce a new session');
+  assert.ok(
+    harness.cookies.size > 0,
+    'an unexpired access-token cookie may remain valid until its expiry even after refresh is rejected',
   );
 });
