@@ -1,6 +1,6 @@
 # Phase 1 task 1.3 — Supabase identity integration and secure session lifecycle
 
-- **Status:** IN PROGRESS — production email/password sign-in, authenticated dashboard persistence after browser refresh, and sign-out returning to the sign-in page have been owner-tested successfully; revocation and automated lifecycle tests remain.
+- **Status:** IN PROGRESS — production email/password sign-in, authenticated dashboard persistence after browser refresh, and sign-out returning to the sign-in page have been owner-tested successfully. Sign-out error handling and regression coverage are implemented; provider-backed lifecycle and revocation tests remain.
 - **Date opened:** 10 November 2026
 - **Repository:** `ICOFCUCAM/njumeni`
 - **Dedicated Supabase project:** `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`
