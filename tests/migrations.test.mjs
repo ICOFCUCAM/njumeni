@@ -34,6 +34,29 @@ test('rejects non-CLI names and duplicate timestamps; filenames define migration
   );
 });
 
+test('allows only explicitly hash-pinned pre-deployment migration corrections', () => {
+  const allowed = new Set(['supabase/migrations/20261110155456_membership_invitation_lifecycle.sql']);
+  assert.deepEqual(
+    validateMigrationChanges(
+      ['M supabase/migrations/20261110155456_membership_invitation_lifecycle.sql'],
+      allowed,
+    ),
+    [],
+  );
+  assert.ok(
+    validateMigrationChanges(
+      ['M supabase/migrations/20261110141433_principal_and_user_profiles.sql'],
+      allowed,
+    ).some((error) => error.includes('immutable')),
+  );
+  assert.ok(
+    validateMigrationChanges(
+      ['D supabase/migrations/20261110155456_membership_invitation_lifecycle.sql'],
+      allowed,
+    ).some((error) => error.includes('immutable')),
+  );
+});
+
 test('allows new migration additions but rejects edits, deletions and renames', () => {
   assert.deepEqual(
     validateMigrationChanges(['A supabase/migrations/20261110010000_initial.sql']),
