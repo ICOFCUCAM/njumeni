@@ -1,0 +1,9 @@
+{
+  "corrections": [
+    {
+      "path": "supabase/migrations/20261110155456_membership_invitation_lifecycle.sql",
+      "blob_sha": "6f5d081299c7733cdd35b90e3f17dcd958f0dfaa",
+      "reason": "Correct the unshipped Task 1.6 migration before any hosted deployment: add the referenced workspace composite uniqueness, invitation updated_at column, and safe expiry handling. The failed local replay exposed the defect; no hosted migration was applied."
+    }
+  ]
+}
