@@ -37,3 +37,9 @@ coverage/
 dist/
 build/
 node_modules/
+
+# Njumeni web application build artefacts
+apps/web/.next/
+apps/web/node_modules/
+apps/web/out/
+apps/web/tsconfig.tsbuildinfo
