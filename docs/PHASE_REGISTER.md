@@ -112,3 +112,8 @@ Only Phase 0 is open. All future phases remain locked until the active phase has
 ## 5. "Go next" instruction
 
 When the user says **"go next"**, continue the first incomplete task in the one active phase shown above. Do not ask the user to select a task already determined by this register. Do not start work in a locked phase. If blocked, explain the blocker and resolve the next prerequisite within the same phase.
+
+
+## Owner decision — upstream reference set (10 November 2026)
+
+The product owner has confirmed that Njumeni will use the five repositories named in the original master source as the complete selected upstream set: OpenContracts, CaseCite, Lawgent, Lovspor and Mike. No sixth repository is required or to be guessed. This closes the earlier uncertainty about the sixth project. Each of the five still requires an individual capability inventory, exact-version licence review, security assessment, architecture/compatibility decision, implementation mapping and tests. Approved capabilities may be implemented in Njumeni-owned code or isolated adapters; this is not permission for wholesale copying or licence circumvention. Any later change to the selected set requires an explicit owner decision.
