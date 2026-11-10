@@ -6,6 +6,8 @@ const requiredFiles = [
   'SECURITY.md',
   'CONTRIBUTING.md',
   'docs/MASTER_IMPLEMENTATION_PLAN.md',
+  'docs/ORIGINAL_MASTER_PLAN_SOURCE.md',
+  'docs/ORIGINAL_SOURCE_RECONCILIATION.md',
   'docs/PHASE_REGISTER.md',
   'docs/ENGINEERING_STANDARDS.md',
   'docs/ENVIRONMENT_STRATEGY.md',
@@ -20,6 +22,7 @@ const requiredFiles = [
   'docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md',
   'docs/architecture/MODULE_LAYER_MAP.md',
   'docs/architecture/MODULE_REQUIREMENTS_TRACEABILITY.md',
+  'tests/original-plan.test.mjs',
   '.editorconfig',
   '.prettierrc.json',
   '.env.example',
@@ -30,6 +33,8 @@ for (const path of requiredFiles) {
 }
 
 const masterPlan = await readFile('docs/MASTER_IMPLEMENTATION_PLAN.md', 'utf8');
+const originalSource = await readFile('docs/ORIGINAL_MASTER_PLAN_SOURCE.md', 'utf8');
+assert.ok(masterPlan.startsWith(originalSource), 'Master plan does not preserve the original source as its prefix');
 const register = await readFile('docs/PHASE_REGISTER.md', 'utf8');
 const architecture = await readFile(
   'docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md',
@@ -42,14 +47,14 @@ const traceability = await readFile(
 );
 
 const layers = [
-  'Experience',
-  'API',
-  'Workflow orchestration',
-  'Evidence',
-  'Legal knowledge',
-  'Reasoning',
-  'Verification',
-  'Infrastructure',
+  'Experience Layer',
+  'API Layer',
+  'Workflow Orchestration Layer',
+  'Evidence Layer',
+  'Legal Knowledge Layer',
+  'Reasoning Layer',
+  'Verification Layer',
+  'Infrastructure Layer',
 ];
 
 const modules = [
@@ -71,6 +76,7 @@ const modules = [
 for (const layer of layers) {
   assert.ok(masterPlan.includes(layer), `Master plan is missing layer: ${layer}`);
   assert.ok(architecture.includes(layer), `ADR is missing layer: ${layer}`);
+  assert.ok(moduleMap.includes(layer), `Module layer map is missing layer: ${layer}`);
 }
 
 for (const [index, moduleName] of modules.entries()) {
