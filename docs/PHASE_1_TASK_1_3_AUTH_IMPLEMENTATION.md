@@ -197,7 +197,7 @@ The owner has now confirmed the remaining production browser checks on the Njume
 - [x] Direct navigation to `/dashboard` after sign-out redirects to sign-in.
 - [x] The owner confirmed no Supabase Auth session cookies remain after sign-out.
 
-These observations close the owner-browser checks for sign-in, refresh persistence, local logout, protected-route denial after logout and browser cookie removal. They are owner-observed checks, not an independent automated browser test, and do not prove that the provider rejects reuse of the revoked refresh token.
+These observations close the owner-browser checks for sign-in, refresh persistence, local logout, protected-route denial after logout and browser cookie removal. They are owner-observed checks, not an independent automated browser test, and do not prove that the provider rejects reuse of the revoked refresh token. The local Auth SDK test harness now also verifies that a deliberately tampered access token is passed to the authoritative Auth `/user` endpoint and that a provider rejection produces no authenticated user. This is a mocked provider-boundary test; it does not replace the live provider lifecycle test.
 
 The current repository head `82e57538fdf29debd8137bef13a397f5b538046a` passed GitHub Actions workflow `42834456559` with all three jobs successful:
 - Formatting, lint, strict TypeScript, foundation/migration tests, migration immutability, architecture checks and Next.js production build.
