@@ -124,6 +124,34 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
+            "assign_organization_role": {
+              Args: { "p_organization_id": string, "p_principal_id": string, "p_role_key": string }
+              Returns: string
+            },
+            "assign_workspace_role": {
+              Args: { "p_organization_id": string, "p_workspace_id": string, "p_principal_id": string, "p_role_key": string }
+              Returns: string
+            },
+            "has_permission": {
+              Args: { "p_permission_key": string, "p_organization_id": string, "p_workspace_id"?: string | null }
+              Returns: boolean
+            },
+            "list_assignable_roles": {
+              Args: { "p_organization_id": string, "p_workspace_id"?: string | null }
+              Returns: { "role_key": string, "scope": string, "display_name": string, "description": string }[]
+            },
+            "list_role_bindings": {
+              Args: { "p_organization_id": string, "p_workspace_id"?: string | null }
+              Returns: { "binding_id": string, "principal_id": string, "role_key": string, "role_name": string, "assigned_at": string }[]
+            },
+            "revoke_organization_role": {
+              Args: { "p_binding_id": string }
+              Returns: boolean
+            },
+            "revoke_workspace_role": {
+              Args: { "p_binding_id": string }
+              Returns: boolean
+            },
             "accept_organization_invitation":
 { Args: { "p_token_hash": string }; Returns: {
               "organization_id": string,"organization_membership_id": string,"workspace_id": string,"workspace_membership_id": string
