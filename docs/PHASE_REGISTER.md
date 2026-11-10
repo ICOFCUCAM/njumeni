@@ -47,18 +47,18 @@ A task does not turn green because code was written. It turns green only after i
 | 0.1 | Restore and freeze the original 20 numbered outline sections and canonical A–M modules | 🟢 GREEN | Restored in [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md); commit `0c2b9d5` |
 | 0.2 | Audit complete repository tree, branch, commits, scripts, workflows and upstream material | 🟢 GREEN | [Phase 0 audit](PHASE_0_AUDIT.md); audit commit `a3b5d32`; repository security workflow passed |
 | 0.3 | Inventory and preserve existing Njumeni/JurisAI components; archive legacy CMP separately and verify preservation before removal | 🟡 IN PROGRESS | Inventory recorded; CMP archive repository and verified transfer still outstanding |
-| 0.4 | Finalise repository boundaries: Njumeni app, marketing website, CMP archive and isolated upstream research | 🟡 IN PROGRESS | Marketing website is separate; CMP archive still outstanding |
+| 0.4 | Finalise repository boundaries: Njumeni app, marketing website, CMP archive and isolated upstream research | ⚪ NOT STARTED | Marketing website is already separate; execute this task after 0.3 completes the CMP preservation/archive work |
 | 0.5 | Produce complete product specification: users, priority journeys, launch scope, jurisdiction, requirements and non-goals | ⚪ NOT STARTED | Must be reviewed and committed |
 | 0.6 | Approve modular-monolith architecture, bounded contexts, eight platform layers and dependency rules | ⚪ NOT STARTED | Architecture decision record and contracts required |
 | 0.7 | Map A–M modules to layers, workstreams, ownership, dependencies, APIs/events, permissions and phase delivery | ⚪ NOT STARTED | Complete module-contract register required |
 | 0.8 | Establish coding, naming, formatting, lint, type, error, logging and review standards | ⚪ NOT STARTED | Standards and automated enforcement required |
 | 0.9 | Establish reproducible local, test/CI, staging and production environment strategy | ⚪ NOT STARTED | Environment matrix, setup and configuration contract required |
-| 0.10 | Complete CI for format, lint, type-check, tests, build, security, secrets and repository policy | 🟡 IN PROGRESS | Existing security workflow passed; quality/build/test jobs not yet implemented |
+| 0.10 | Complete CI for format, lint, type-check, tests, build, security, secrets and repository policy | ⚪ NOT STARTED | Existing security workflow is a baseline; expand it when this numbered task becomes active |
 | 0.11 | Define migration discipline: immutable ordered migrations, local replay/reset, hosted history reconciliation, drift, backup and forward-fix | ⚪ NOT STARTED | Migration policy and verified database inventory required |
 | 0.12 | Define legal application shell, navigation, route boundaries and module entry points | ⚪ NOT STARTED | Architecture specification and acceptance review required |
-| 0.13 | Audit hosting, domains, deployment, secrets, DB, storage, queues and external providers | 🟡 IN PROGRESS | GitHub/repository audited; application infrastructure inventory incomplete |
+| 0.13 | Audit hosting, domains, deployment, secrets, DB, storage, queues and external providers | ⚪ NOT STARTED | Repository facts are recorded; complete the runtime infrastructure inventory when this numbered task becomes active |
 | 0.14 | Create dependency-aware Phase 0–13 backlog and acceptance criteria | 🟢 GREEN | [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md); initial commit `b057558`, updated register commit `0c2b9d5` |
-| 0.15 | Run full repository hygiene checks and document unresolved risks | 🟡 IN PROGRESS | Repository security workflow passed; broader checks and risk review remain |
+| 0.15 | Run full repository hygiene checks and document unresolved risks | ⚪ NOT STARTED | Existing security check is a baseline; complete the full hygiene review when this numbered task becomes active |
 | 0.16 | Conduct Phase 0 acceptance review and prepare closeout commit | 🔒 LOCKED | Opens only after 0.1–0.15 are all green |
 
 ### Phase 0 verified commits
@@ -69,7 +69,7 @@ A task does not turn green because code was written. It turns green only after i
 | Original 20-point outline and A–M register restored; phase-lock rules added | `0c2b9d5c970a8de8670cc5823374dd246aa7483b` |
 | Master phase backlog initial commit | `b05755824b97f7f937cb4679f73cdadf4e45e471` |
 
-The security workflow passed for the audit commit. The latest workflow after the master-plan update must be checked to completion before recording its result as passed.
+The security workflow passed for commits `a3b5d32`, `0c2b9d5`, `9427e26` and `c046790`. Workflow runs for the latest audit/README/master-plan corrections are still running or queued and must be checked before their commits are treated as CI-verified.
 
 ## 3. Phase lock register
 
