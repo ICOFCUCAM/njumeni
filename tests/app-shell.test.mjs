@@ -88,7 +88,7 @@ test('Supabase SSR auth is server-validated through the Next.js 16 Proxy', async
   assert.match(entry, /export async function proxy/);
   assert.match(actions, /signInWithPassword/);
   assert.match(actions, /signOut/);
-  assert.match(actions, /signOut\\(\\{ scope: 'local' \\}\\)/);
+  assert.ok(actions.includes("signOut({ scope: 'local' })"));
   assert.match(actions, /warning=revocation-unconfirmed/);
   assert.match(actions, /error=signout/);
   assert.match(signInPage, /revocation-unconfirmed/);
