@@ -199,7 +199,7 @@ The owner has now confirmed the remaining production browser checks on the Njume
 
 These observations close the owner-browser checks for sign-in, refresh persistence, local logout, protected-route denial after logout and browser cookie removal. They are owner-observed checks, not an independent automated browser test, and do not prove that the provider rejects reuse of the revoked refresh token.
 
-The current repository head passed GitHub Actions workflow `42834010390` with all three jobs successful:
+The current repository head passed GitHub Actions workflow `42834329355` with all three jobs successful:
 - Formatting, lint, strict TypeScript, foundation/migration tests, migration immutability, architecture checks and Next.js production build.
 - Repository content/privacy-path policy.
 - Gitleaks secret scanning.
