@@ -13,6 +13,7 @@ const requiredFiles = [
   'docs/ENVIRONMENT_STRATEGY.md',
   'docs/DATABASE_MIGRATION_POLICY.md',
   'docs/APP_SHELL.md',
+  'docs/INFRASTRUCTURE_AUDIT.md',
   'apps/web/package.json',
   'apps/web/package-lock.json',
   'apps/web/src/modules/registry.ts',

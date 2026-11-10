@@ -40,6 +40,7 @@ The repository includes a GitHub Actions [CI pipeline](docs/CI_PIPELINE.md) for 
 - [Environment Strategy](docs/ENVIRONMENT_STRATEGY.md) — separation of local, test/CI, staging and production, service topology, secret boundaries and deployment promotion.
 - [Database Migration Policy](docs/DATABASE_MIGRATION_POLICY.md) — immutable migrations, local replay, hosted history reconciliation, drift, backup and forward-fix controls.
 - [CI Pipeline](docs/CI_PIPELINE.md) — formatting, lint, type, tests, security, repository policy and migration checks.
+- [Infrastructure Audit](docs/INFRASTRUCTURE_AUDIT.md) — verified hosting, database, domain, storage, queue and provider state.
 - [Application Shell](docs/APP_SHELL.md) — route boundaries, A–M module entry points and current preview limitations.
 - [.env.example](.env.example) — placeholder-only configuration template; it contains no real credentials.
 

@@ -12,12 +12,12 @@
 |---|---|
 | GitHub repository | ICOFCUCAM/njumeni exists; active branch is claude/wonderful-franklin-lt09d7 |
 | Repository visibility | GitHub metadata currently reports PUBLIC. This conflicts with the original plan's requirement that the application repository be private and must be resolved in the Phase 0 security/hosting review before sensitive source or deployment configuration is added. |
-| Application package manifest | No root package.json is currently present |
-| Application runtime | No runnable Njumeni web/API/worker application has been verified in this repository |
-| Local environment | No reproducible local application setup has been verified |
-| CI | Repository-security workflow exists and runs content-policy and Gitleaks checks; full build/test/type/lint CI is not yet implemented |
+| Application package manifest | No root package.json; `apps/web/package.json` and `apps/web/package-lock.json` are present with pinned Next.js/React/Tailwind/TypeScript versions |
+| Application runtime | A real Next.js web foundation shell exists in `apps/web`; no authenticated product workflows, API service, worker or scheduler are connected |
+| Local environment | The web package has pinned dependencies and `dev`, `build`, `start` and `typecheck` scripts; local database/auth/storage/queue services and a full local stack are not configured |
+| CI | Consolidated formatting, ESLint, strict TypeScript, source/foundation/migration/app-shell tests, migration guard, architecture checks, content policy, Gitleaks and web production build are active; final combined run `42744161490` passed |
 | Supabase project | No Njumeni-specific project ID, URL, region or hosted database was verified in this task |
-| Vercel project | No Njumeni-specific project/deployment was verified in this task |
+| Vercel project | No Njumeni application project/deployment is linked. The only matching project is `njumeni-marketing-website`, linked to the separate `ICOFCUCAM/marketing-website` repository; see `INFRASTRUCTURE_AUDIT.md` |
 | Redis, object storage, worker hosting, domains and AI provider credentials | Not verified as provisioned for Njumeni |
 | Environment secrets | No real secrets are recorded in this document or repository |
 
