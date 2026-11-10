@@ -3,11 +3,12 @@
 **This is the operational register.** The [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md) defines the scope and architecture; this register controls the actual work and phase locks.
 
 - Repository: `ICOFCUCAM/njumeni`
-- Active phase: **Phase 1 — Identity, tenancy and security foundation**
-- Phase state: **🟡 OPEN — IN PROGRESS**
-- Next task: **Complete Task 1.11 verification-suite preparation and Phase 1 closeout documentation.** The combined tests are authored but not executed. Tasks 1.7–1.11 remain uncommitted; the owner has directed one commit at the end of Phase 1.
+- Active phases: **Phase 1 — Identity, tenancy and security foundation (acceptance pending)**; **Phase 2 — Legal knowledge infrastructure (parallel implementation authorised)**
+- Phase 1 state: **🟡 OPEN — IN PROGRESS**
+- Phase 2 state: **🟡 IN PROGRESS — PARALLEL DEVELOPMENT**
+- Phase 1 next action: **Run the consolidated Phase 1 acceptance verification and resolve any failures.** The implementation batch was committed as b08605486b6782f5fda030aa4fe27a8b86c9989a; a formatting follow-up is present at 90d9a5f619b29fd5a49f5b0cfe9d35d3b9aa4368. Phase 1 remains OPEN and acceptance evidence is still pending.
 - Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
-- Rule: work may proceed only in the single active phase; later phases remain locked until their dedicated closeout commits and CI checks are verified.
+- Phase 2 exception: the owner has expressly authorised Phase 2 implementation to proceed in parallel with Phase 1 verification. This is a development scheduling exception only; it does not waive Phase 1 acceptance, customer-data restrictions, source-rights approval or production release gates. Phases 3–13 remain locked.
 
 ## 1. Register legend
 
@@ -105,7 +106,7 @@ Phase 0 is CLOSED. Phase 1 is now OPEN after successful verification of the dedi
 |---|---|---|---|
 | 0 | Foundation and repository/infrastructure audit | 🟢 CLOSED | All 0.1–0.16 green; closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
 | 1 | Identity, tenancy and security foundation | 🟡 OPEN | Active; Phase 0 closeout verified |
-| 2 | Legal knowledge foundation | 🔒 LOCKED | Phase 1 closeout verified |
+| 2 | Legal knowledge foundation | 🟡 IN PROGRESS — PARALLEL | Owner authorised parallel implementation on 2026-11-10; Phase 1 acceptance remains a prerequisite for customer-facing legal data access and production release |
 | 3 | Evidence and document foundation | 🔒 LOCKED | Phase 2 closeout verified |
 | 4 | Document intelligence | 🔒 LOCKED | Phase 3 closeout verified |
 | 5 | Legal research | 🔒 LOCKED | Phase 4 closeout verified |
@@ -118,6 +119,25 @@ Phase 0 is CLOSED. Phase 1 is now OPEN after successful verification of the dedi
 | 12 | Global and multi-jurisdiction expansion | 🔒 LOCKED | Phase 11 closeout verified |
 | 13 | Production hardening and launch | 🔒 LOCKED | Phase 12 closeout verified |
 
+## Phase 2 — Legal knowledge infrastructure (parallel implementation)
+
+**Phase objective:** establish the governed, jurisdiction-aware, versioned legal-authority registry and retrieval substrate. Phase 1 remains OPEN and all Phase 1 safety restrictions continue to apply.
+
+**Phase plan:** [Phase 2 — Legal knowledge infrastructure](PHASE_2_PLAN.md).
+
+| No. | Task / required outcome | Status | Acceptance evidence |
+|---|---|---|---|
+| 2.1 | Jurisdiction and legal-source registry | 🟡 IMPLEMENTATION WRITTEN | Jurisdiction and source catalogues, rights/ingestion gates, private RLS-protected schema and initial source discovery entries; combined verification pending |
+| 2.2 | Legal authority identity and version model | 🟡 FOUNDATION WRITTEN | Stable authority identities, immutable version contract, effective periods and source/normalised hashes; application-level immutability and migration tests pending |
+| 2.3 | Normalisation and provenance contract | 🟡 IMPLEMENTATION WRITTEN | Adapter manifest, rights evidence/permission matrix with separate ingestion, display and redistribution gates, allow-listed HTTPS URI validation, Unicode normalisation, source/normalised SHA-256 hashes and passage anchors; tests authored, execution pending |
+| 2.4 | Full-text and vector retrieval substrate | 🟡 IMPLEMENTATION WRITTEN | Full-text GIN and partial HNSW indexes, private lexical/semantic SQL RPCs, hybrid retrieval orchestration, effective-date and language filters, citation bundles with source hashes/attribution, separate quote/display rights and a composed jurisdiction-scoped legal search service; embedding profile and evaluation remain pending |
+| 2.5 | Source ingestion lifecycle | 🟡 EXECUTOR WRITTEN | Deterministic batches, idempotency, rights checks, bounded concurrent fetch, live rights-registry recheck before every fetch, host allow-list, provenance persistence boundary, run counts and partial-failure reporting; trusted persistence adapter/queue/checkpoints pending |
+| 2.6 | Legal authority relationship graph | 🟡 IMPLEMENTATION WRITTEN | Directional relationship schema, provenance validation, inverse mapping and bounded breadth-first graph traversal with as-of/type filters, cycle protection and truncation reporting; database-backed graph queries pending |
+| 2.7 | Jurisdiction/source coverage governance | ⚪ NOT STARTED | Coverage evidence, supported classes, update cadence, language and omission reporting |
+| 2.8 | Phase 2 verification and closeout | 🔒 LOCKED | All 2.1–2.7 green, rights review, combined verification and verified closeout commit |
+
+**Phase 2 safety gates:** no source ingestion until rights/terms/attribution are approved; no embeddings until the model profile is selected; no customer legal documents or matter data before Phase 1 acceptance; no hosted migration deployment without separate owner authorisation.
+
 ## 4. Required workflow for every task
 
 1. Read this register and the relevant master-plan section before editing code.
@@ -125,7 +145,7 @@ Phase 0 is CLOSED. Phase 1 is now OPEN after successful verification of the dedi
 3. Inspect existing implementation and tests before making changes.
 4. Implement sequentially and write the corresponding tests and documentation.
 5. Do not repeatedly poll CI or run the full verification suite after each small change.
-6. Do not create intermediate commits during Phase 1; retain related changes as one prepared phase batch.
+6. Do not create intermediate commits during Phase 1 or Phase 2; retain each phase's related changes as one prepared phase batch. Keep phase-specific changes separately identifiable.
 7. At Phase 1 closeout, present one complete phase commit, then run the combined verification once and resolve any failures before marking tasks GREEN.
 8. Keep hosted Supabase unchanged unless the owner separately authorises migration deployment.
 9. Continue with the next implementation task while verification is pending, without representing unverified work as accepted.
@@ -133,7 +153,7 @@ Phase 0 is CLOSED. Phase 1 is now OPEN after successful verification of the dedi
 
 ## 5. Autonomous build instruction
 
-On the owner’s instruction dated 10 November 2026, continue implementation sequentially across the remaining numbered tasks and phases without waiting for repeated “go next” messages. External security verification, plan-dependent Auth controls and final launch reviews must remain recorded as release gates and be revisited at the designated security/phase acceptance tasks; they must not repeatedly interrupt functional product development. This does not authorise production use, customer onboarding or confidential legal data before the relevant phase safety gates pass. Do not report a task or phase GREEN until its own implementation, tests, review, CI and evidence requirements pass.
+On the owner's instructions dated 10 November 2026, continue implementation autonomously without waiting for repeated “go next” messages. Phase 2 is expressly authorised to proceed in parallel with unfinished Phase 1 acceptance work. Keep separate task registers, change scopes and phase-end commits. External security verification, plan-dependent Auth controls and final launch reviews remain release gates; they must not repeatedly interrupt functional product development. This does not authorise production use, customer onboarding or confidential legal data before Phase 1 acceptance. Do not report a task or phase GREEN until its own implementation, tests, review, CI and evidence requirements pass.
 
 ## 6. "Go next" instruction
 
@@ -147,4 +167,4 @@ The product owner has confirmed that the five repositories named in the original
 
 ## Owner execution cadence update — 10 November 2026
 
-The owner has instructed that all Phase 1 implementation and verification artifacts be prepared first, with **one commit at the end of Phase 1**. Do not commit the current prepared tree, do not poll CI, and do not run intermediate verification after each task. Continue writing the remaining Phase 1 deliverables. The consolidated Task 1.11 suite is authored but not executed. Phase 1 cannot be marked GREEN or closed until the combined acceptance run passes. Hosted Supabase remains unchanged unless separately authorised.
+The owner previously instructed that Phase 1 implementation be consolidated into one phase batch. That implementation batch is now committed at b08605486b6782f5fda030aa4fe27a8b86c9989a; the branch also contains a formatting-only follow-up. The commit is not Phase 1 acceptance. The consolidated Task 1.11 suite and all remaining acceptance gates must still be executed at closeout. Do not poll CI or run intermediate verification after each small task. Hosted Supabase remains unchanged unless separately authorised.
