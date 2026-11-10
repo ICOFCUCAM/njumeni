@@ -22,16 +22,16 @@ The audited tracked tree contains:
 | `README.md` | Updated to identify Njumeni legal platform and binding plan | Preserve |
 | `SECURITY.md` | Application-data security and source-control policy | Preserve |
 | `THIRD_PARTY_NOTICES.md` | Third-party notices | Preserve and update after every approved reuse |
-| `docs/ARCHITECTURE.md` | Legacy CMP site architecture/design document | CMP material; archive separately before removal |
+| `docs/ARCHITECTURE.md` | Legacy CMP site architecture/design document | Archived and removed after exact blob verification; see [CMP archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive) |
 | `docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md` | Proposed legal platform architecture and source assessments | Preserve; proposal is not implementation |
 | `docs/MASTER_IMPLEMENTATION_PLAN.md` | Twenty workstreams and Phases 0–13 execution register | New binding execution control |
 | `docs/PRODUCT_BOUNDARIES.md` | Confirmed project and data boundaries | Preserve |
 | `scripts/bootstrap-legal-sources.sh` | Bootstrap script for upstream research sources | Preserve; inspect exact pins/licences before running |
 | `scripts/security/check-repository-content.sh` | Tracked runtime/customer-data path guard | Preserve; test in CI |
-| `site/` | Legacy CMP static website files | Archive separately; do not mix with legal application |
+| `site/` | Legacy CMP static website files | Archived and removed after exact blob verification; see [CMP archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive) |
 | `third-party/legal-open-source/README.md` | Upstream legal-project source register | Preserve as research register, not imported product code |
 
-The original CMP site consists of `site/index.html`, `site/css/main.css`, `site/css/tokens.css` and `site/js/main.js`, alongside the CMP-specific `README.md` and `docs/ARCHITECTURE.md` from the original commit recorded in `docs/PRODUCT_BOUNDARIES.md`. The current README has been corrected, but the old CMP files remain and must not be deleted until a separate archive is verified.
+The original CMP site consisted of `site/index.html`, `site/css/main.css`, `site/css/tokens.css` and `site/js/main.js`, alongside the CMP-specific README and `docs/ARCHITECTURE.md` from source commit `0d9c90ff8e45477d25ed681aa6e29135b0bfbe7f`. On 2026-11-10, all six original files were transferred to `ICOFCUCAM/njumeni-cmp-archive`. Each archived Git blob SHA was compared with the original source blob SHA and all six matched exactly. The archive tree was inspected; it contains the six preserved files and an archive manifest. Only after that verification were the CMP-only `docs/ARCHITECTURE.md` and five `site/` files removed from Njumeni. The current Njumeni README remains the legal-platform README.
 
 ## Product and repository boundary decisions
 
@@ -75,7 +75,7 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 |---|---|---|
 | 0.1 Master scope and 20-workstream register | PARTIAL | Execution plan committed. The original 20-point headings and canonical A–M names have since been restored in the Master Implementation Plan; detailed contracts and phase mapping remain in task 0.7. |
 | 0.2 Full repository/branch/tree audit | COMPLETE | Current tree, branch head, workflow, existing files and repository metadata inspected. Re-audit before destructive changes. |
-| 0.3 Preserve existing components | PARTIAL | Legal-source register, architecture and security guardrails inventoried. CMP files identified and must be archived. No legal app runtime was found to preserve. |
+| 0.3 Preserve existing components | COMPLETE | CMP source preserved in `ICOFCUCAM/njumeni-cmp-archive`; six of six original Git blob SHAs match. CMP-only source files removed from Njumeni only after verification. No legal app runtime was found to preserve. |
 | 0.4 Repository boundaries | PARTIAL | Legal app and marketing-site separation confirmed. CMP archive still outstanding. |
 | 0.5 Product specification | NOT STARTED | Define users, launch use cases, jurisdictions, requirements, non-goals and release scope. |
 | 0.6 Modular-monolith and eight-layer architecture | PARTIAL | Proposed domain/topology document exists. Formal architecture decision, layer contracts and dependency rules still required. |
@@ -100,7 +100,7 @@ This is an inventory finding, not a recommendation to select a new stack immedia
 
 ## Immediate next execution items
 
-1. Complete CMP archival, verify the separate archive, then remove CMP material from Njumeni only after preservation is proven.
+1. CMP archival is complete and verified; preserve the separate archive as the canonical legacy source.
 2. Complete the product specification and first-release scope.
 3. Record the modular-monolith architecture decision and eight-layer contracts.
 4. Map all A–M modules to the architecture, dependencies, contracts and delivery phases.
