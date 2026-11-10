@@ -11,7 +11,7 @@
 
 **Njumeni has a working web application foundation shell, but it is not yet deployed as a Njumeni application and has no Njumeni production data infrastructure.**
 
-The connected Vercel account has a separate `njumeni-marketing-website` project linked to `ICOFCUCAM/marketing-website`, not to this repository. The connected Supabase project inventory contains no project identifiable as Njumeni. The repository has no Supabase configuration, migrations, API/worker/scheduler services, object-storage configuration, Redis/queue configuration, infrastructure-as-code, custom domain or production provider credentials.
+The connected Vercel account has a separate `njumeni-marketing-website` project linked to `ICOFCUCAM/marketing-website`, not to this repository. **No Njumeni application project/deployment is linked.** The connected Supabase project inventory contains no project identifiable as Njumeni. The repository has no Supabase configuration, migrations, API/worker/scheduler services, object-storage configuration, Redis/queue configuration, infrastructure-as-code, custom domain or production provider credentials.
 
 The current web health endpoint explicitly reports `authenticationConnected: false` and `databaseConnected: false`. This is consistent with the verified repository state: the web shell is a route/layout foundation, not an operational legal platform.
 
