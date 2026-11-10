@@ -82,21 +82,69 @@ The following rules are binding for implementation:
 - Provider egress is an explicit policy-controlled operation. No provider receives customer content merely because an SDK is configured.
 - Retention, deletion, legal hold, export, backup and restore must preserve legal and audit obligations and will be specified/tested in the relevant Phase 0/1/3 tasks.
 
-## 6. Platform layers — original naming recovery is a blocking preservation gate
+## 6. The eight canonical platform layers
 
-The binding Phase 0 checklist requires **the originally agreed eight platform layers**. The current checked-in master plan, product specification, phase register, architecture assessment and Phase 0 audit do not contain their eight canonical names, order or definitions. The available prior-conversation retrieval also did not recover those exact names.
+The original Njumeni master architecture supplied on 2026-11-10 establishes the following eight layers, in this exact order and with these canonical names and responsibilities. These names and base responsibilities are preserved verbatim; the contracts below elaborate them without renaming or replacing them.
 
-To avoid silently replacing the original architecture with an invented taxonomy, this ADR does **not** assign substitute names or claim that the eight layers have been approved.
+| Order | Canonical layer | Original architectural responsibility |
+|---:|---|---|
+| 1 | **Experience** | Web applications, dashboards, mobile-ready interfaces |
+| 2 | **API** | Authentication, API gateway, tenant and permission enforcement |
+| 3 | **Workflow orchestration** | Case workflows, queues, tasks, AI agent execution |
+| 4 | **Evidence** | Documents, exhibits, chronology, provenance and extraction |
+| 5 | **Legal knowledge** | Legislation, cases, regulations, treaties and legal authorities |
+| 6 | **Reasoning** | Legal issue identification, argument graphs, analysis and research |
+| 7 | **Verification** | Citations, source validation, legal currency and human review |
+| 8 | **Infrastructure** | Database, storage, AI providers, security, monitoring and deployment |
 
-The eight-layer section remains intentionally open. Before task 0.6 can turn green, recover the original eight layer names and their intended order/definitions from the original source material, then add for each layer:
-- purpose and responsibility;
-- allowed contents and prohibited responsibilities;
-- dependencies and permitted dependency direction;
-- interfaces/contracts to adjacent layers;
-- security/trust responsibilities;
-- mapping to all twenty original sections and A–M modules (the detailed module mapping is task 0.7).
+These are logical responsibility layers, not a requirement for eight separate deployables or a strictly linear request path. They are implemented within the approved modular monolith and may use separately operated infrastructure or worker processes where justified.
 
-If the original source cannot be recovered, the product owner must explicitly approve a documented replacement through change control. No replacement is assumed by this ADR.
+### 6.1 Layer contracts
+
+| Layer | Purpose and permitted responsibilities | Exclusions / prohibited ownership | Interfaces and dependencies | Security and trust responsibilities |
+|---|---|---|---|---|
+| **1. Experience** | Personal, professional, enterprise and institutional web experiences; dashboards; responsive/mobile-ready interaction; accessible presentation; document and argument visualisation; user-facing review and approval controls | No authoritative business rules, direct database access, direct object-store access, secret-bearing provider calls, or client-only authorisation | Calls the API layer through typed contracts; renders workflow state and authorised read models; no direct dependency on internal domain tables | Presents only server-authorised data; handles session state safely; avoids leaking confidential content through browser storage, telemetry or client logs; makes AI status and human approval explicit |
+| **2. API** | Authenticated application/API entry points; request validation; identity resolution; tenant/workspace/matter scope; permission enforcement; rate limits; stable versioned API contracts | No domain ownership of evidence, legal authorities, arguments or workflow state; no trust in client-supplied tenant IDs or permission claims | Exposes application use cases to Experience and approved integrations; delegates orchestration to Workflow orchestration; uses identity, tenancy and permission contracts; does not expose private context internals | Server-side authentication and authorisation; object-level checks; input validation; abuse controls; secure response shaping; auditable sensitive actions |
+| **3. Workflow orchestration** | Coordinates case lifecycles, queues, tasks, AI-agent execution, multi-context processes, retries, idempotency, deadlines, approvals and workflow state transitions | Does not become the authoritative owner of evidence, legal knowledge, reasoning artefacts or provider data; does not bypass domain contracts | Invokes Evidence, Legal knowledge, Reasoning and Verification through explicit application contracts; emits/consumes versioned events; calls Infrastructure ports for queues and scheduling | Re-checks actor and scope at execution time; propagates least-privilege context; enforces approval gates; prevents duplicate or stale execution; records traceable run state |
+| **4. Evidence** | Manages documents, exhibits, immutable originals and versions, metadata, extraction references, chronology, provenance, evidence relationships and custody events | Does not own legal authority records, final legal interpretations, AI provider configuration or workflow orchestration | Supplies authorised evidence and provenance references to Workflow orchestration, Reasoning and Verification; uses Infrastructure storage/database/OCR ports; receives processing results through controlled contracts | Private-by-default assets; matter/tenant scope; immutable original/version history; hashes and custody records; secure upload/download; minimised event payloads; derived data inherits source access scope |
+| **5. Legal knowledge** | Manages legislation, cases, regulations, treaties, legal authorities, jurisdiction/source metadata, historical versions, effective dates, source status and legal-source provenance | Does not own user matter files, evidence originals, legal argument conclusions or generic AI-generated knowledge | Supplies versioned authority/source/passage references to Workflow orchestration, Reasoning and Verification; uses Infrastructure persistence, retrieval and ingestion ports; source updates enter through controlled ingestion contracts | Records source identity, licence/rights, retrieval time, authority status, jurisdiction and effective dates; preserves historical versions; filters retrieval by permitted source and jurisdiction; never treats public access as reuse permission |
+| **6. Reasoning** | Identifies legal issues and questions; structures rules, facts, claims, arguments, counterarguments, exceptions, defences, procedural requirements and remedies; builds argument graphs; performs analysis and research synthesis | Does not make autonomous legal decisions, approve submissions, mutate source authorities or evidence originals, or assert unsupported certainty | Consumes authorised Evidence and Legal knowledge references; produces structured reasoning artefacts for Workflow orchestration and Verification; provider/model calls are mediated by approved orchestration/infrastructure contracts | Every material proposition retains source/evidence links and uncertainty; scope is matter-authorised; distinguishes facts, allegations, inferences and legal interpretation; human judgement remains central |
+| **7. Verification** | Checks citations, quotations, source identity, source validity, authority currency, historical applicability, conflicts, support for claims and human-review decisions | Does not silently rewrite original authorities, substitute current law for historical law, or grant legal approval without an authorised human | Reads outputs from Reasoning and source references from Evidence/Legal knowledge; returns structured verification results to Workflow orchestration and Experience; human decisions are recorded through authorised API workflows | Fails closed on material unverified citations where required; records exact source/version/passage; surfaces conflicts and uncertainty; approval is attributable to an authorised human; verification cannot be bypassed by an AI agent |
+| **8. Infrastructure** | Provides database, object storage, AI-provider adapters, security primitives, monitoring, deployment, queues, backups and operational runtime capabilities | Is not a business-domain owner and must not embed legal rules, matter lifecycle or product policy in vendor-specific infrastructure code | Implements ports used by all other layers; offers managed capabilities through adapters; infrastructure dependencies point inward through interfaces, not from domain logic to vendor SDKs | Secrets management; encryption; network and provider-egress controls; tenant-aware storage policies; observability without confidential payload leakage; backup/restore, incident response and environment separation |
+
+### 6.2 Dependency and interaction rules
+
+The canonical layer order is preserved, but dependencies are responsibility-based rather than a simplistic rule that every layer may call only the immediately adjacent layer.
+
+The approved high-level dependency model is:
+
+- Experience → API.
+- API → Workflow orchestration and the relevant application/security contracts.
+- Workflow orchestration → Evidence, Legal knowledge, Reasoning and Verification through declared contracts.
+- Reasoning → authorised Evidence and Legal knowledge read contracts.
+- Verification → Reasoning outputs and authorised Evidence/Legal knowledge source references; it returns verification findings rather than mutating their source records.
+- Infrastructure implements persistence, storage, queue, provider, security and monitoring ports consumed by the other layers. It is a supporting layer, not a domain service called to make legal decisions.
+
+Workflow orchestration coordinates the end-to-end process: it requests evidence processing and legal research, supplies authorised references to reasoning, submits material outputs for verification, and then presents review/approval tasks through the API and Experience layers. This avoids a compile-time Reasoning ↔ Verification cycle: Reasoning does not import Verification; Workflow orchestration coordinates the sequence. Verification reads reasoning outputs through a contract and returns findings to the orchestrator.
+
+### 6.3 Cross-layer invariants
+
+1. No layer bypasses API/server-side authorisation to access tenant or matter data.
+2. Evidence originals and legal-source versions remain owned by their respective layers and are referenced, not silently copied as authoritative records.
+3. Reasoning outputs preserve links to exact evidence, authority versions and passages.
+4. Verification is independent of the model that generated the proposition being checked.
+5. Human approval is a distinct, permission-controlled action; AI generation or verification is not approval.
+6. Infrastructure credentials and provider access are never exposed to Experience clients.
+7. Events carry stable references and minimal metadata, not confidential document contents or secrets.
+8. All cross-layer calls use explicit, testable contracts; cross-layer table writes are prohibited.
+9. Layer boundaries do not imply eight microservices; implementation remains a modular monolith unless a later ADR approves a justified extraction.
+10. The twenty original product/workstream sections and A–M module names remain binding. Task 0.7 will produce the detailed module-to-layer/context mapping.
+
+### 6.4 Consistency review
+
+The dependency model is acyclic at the compile-time contract level: Experience depends on API; API delegates to Workflow orchestration; Workflow orchestration coordinates domain capabilities; Reasoning and Verification consume read contracts from Evidence and Legal knowledge; Infrastructure implements ports without becoming an upstream business dependency. The runtime workflow may return verification findings to the orchestrator, but this is a directed result/contract, not a code dependency cycle.
+
+The layer definitions are consistent with the original product architecture: Experience/API/Workflow provide controlled interaction and execution; Evidence and Legal knowledge provide distinct factual and authoritative source foundations; Reasoning structures legal analysis; Verification tests provenance and correctness; Infrastructure supports all layers. Detailed mapping of every A–M module and all twenty outline sections remains task 0.7 and is not claimed complete here.
 
 ## 7. Consequences
 
