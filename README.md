@@ -32,9 +32,9 @@ bash scripts/bootstrap-legal-sources.sh
 These projects are not merged into the Njumeni application. Review each project's licence and architecture before adopting code.
 
 
-## Product boundaries
+## Product direction and boundaries
 
-The existing Njumeni site remains the CMP product. The legal AI platform is a separate product and must be developed in a separate GitHub repository. See [the product-boundary decision](docs/PRODUCT_BOUNDARIES.md) and [the legal AI architecture assessment](docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md).
+Njumeni is the legal AI platform. The original CMP website and its history must be preserved in a clearly separated legacy archive within this repository. No separate `njumeni-legal` repository will be created. See [the product-boundary decision](docs/PRODUCT_BOUNDARIES.md).
 
 ## Legal AI platform direction
 
