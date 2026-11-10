@@ -1,6 +1,6 @@
 # Phase 1.5 — Organisation, workspace and tenant ownership design
 
-- **Status:** Implementation in progress
+- **Status:** GREEN — implementation and local acceptance complete
 - **Date:** 10 November 2026
 - **Architecture authority:** ADR-0001, ADR-0002, Phase 1 security invariants
 - **Depends on:** Task 1.4 principal/profile model (GREEN)
@@ -69,7 +69,9 @@
 
 ## 6. Acceptance and tests
 
-- [ ] Clean local replay of all migrations.
+Acceptance evidence: local database workflow `42846849437` passed clean replay of all four migrations, generated database types, database lint and all 38 pgTAP assertions. Application CI `42848567330` passed formatting, lint, strict TypeScript, 26 web tests, production build, content policy and Gitleaks. Hosted schema remains unchanged.
+
+- [x] Clean local replay of all migrations.
 - [ ] CLI-generated TypeScript types committed and used by server clients.
 - [ ] Personal organisation and workspace automatically provisioned for new principals.
 - [ ] Existing active principals receive exactly one personal organisation/workspace on backfill.
