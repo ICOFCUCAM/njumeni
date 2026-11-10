@@ -28,7 +28,9 @@ test('organisation and workspace actions resolve the authenticated principal ser
   assert.ok(!actions.includes("formData.get('created_by_principal_id')"));
   assert.ok(!actions.includes("formData.get('user_id')"));
   assert.ok(!actions.includes("formData.get('role')"));
-  assert.ok(!actions.includes("formData.get('status')"));
+  assert.ok(actions.includes("formData.get('status')"));
+  assert.ok(actions.includes("status !== 'suspended' && status !== 'revoked'"));
+  assert.ok(!actions.includes("formData.get('role')"));
   assert.ok(!actions.includes('service_role'));
 });
 
