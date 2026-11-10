@@ -1,6 +1,6 @@
 # Phase 1 task 1.3 — Supabase identity integration and secure session lifecycle
 
-- **Status:** IN PROGRESS — production email/password sign-in has been owner-tested successfully and reached the protected dashboard; refresh, sign-out, revocation and automated lifecycle tests remain.
+- **Status:** IN PROGRESS — production email/password sign-in and authenticated dashboard persistence after browser refresh have been owner-tested successfully; sign-out, revocation and automated lifecycle tests remain.
 - **Date opened:** 10 November 2026
 - **Repository:** `ICOFCUCAM/njumeni`
 - **Dedicated Supabase project:** `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`
@@ -103,10 +103,11 @@ No floating dependency ranges, hand-written integrity hashes or lockfile bypasse
 - [ ] Automated session and security tests pass in full repository CI; current source-contract tests and production build pass, but provider-backed lifecycle tests are not yet implemented/executed.
 - [x] Dedicated test identity provisioned through the Supabase Dashboard; `auth.users` count is 1 and the account is email-confirmed.
 - [x] Owner-reported production sign-in completed successfully and reached the protected dashboard.
-- [ ] Verify session persistence after browser refresh, token refresh behaviour, sign-out and revoked-session rejection; do not claim these lifecycle checks passed yet.
+- [x] Owner verified that refreshing the production dashboard preserves the authenticated session without requesting sign-in again.
+- [ ] Verify token refresh/rotation under expiry, sign-out and revoked-session rejection; do not claim these lifecycle checks passed yet.
 - [x] Full repository CI/security workflow succeeds on commit `8b27fec6b1a1a74109b8f73f865d9b7ef50be2e0`; run `42777330545` SUCCESS, including format, lint, strict TypeScript baseline, foundation/migration tests, app build, secret scan and repository content policy.
 - [x] Dedicated Supabase project and Vercel environment variables re-verified; no Supabase security or health advisor notices.
 - [x] Production deployment rebuilt successfully from recovery commit `438f0f99a5910cb653d1b4b2740c2b9143ea2e38`; Vercel state READY and application build, TypeScript validation and route generation passed.
 - [x] Owner-confirmed Supabase Site URL and production redirect allow-list recorded; direct dashboard read-back is not available through the connected interface.
 
-**Task state:** 🟡 IN PROGRESS. The production application is READY and the owner has successfully reached the protected dashboard using a confirmed test identity. This establishes a successful real sign-in, but does not yet prove refresh-token rotation, persistence across reloads, sign-out, revocation handling or the full session security matrix. Automated provider-backed lifecycle tests remain outstanding. Supabase's security advisor also reports Leaked Password Protection disabled; enable it and review the remaining Auth provider controls. Keep public self-registration disabled and do not accept confidential legal content until tenant isolation, RLS, storage, audit and provider-egress controls are implemented and verified.
+**Task state:** 🟡 IN PROGRESS. The production application is READY; the owner has successfully signed in with a confirmed test identity, reached the protected dashboard, and refreshed the dashboard without being asked to sign in again. This verifies a real login and session persistence across a browser refresh. It does not yet prove refresh-token rotation after expiry, sign-out, revocation handling or the full session security matrix. Automated provider-backed lifecycle tests remain outstanding. Supabase's security advisor also reports Leaked Password Protection disabled; enable it and review the remaining Auth provider controls. Keep public self-registration disabled and do not accept confidential legal content until tenant isolation, RLS, storage, audit and provider-egress controls are implemented and verified.
