@@ -42,13 +42,29 @@ export async function signIn(formData: FormData): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
-  if (isSupabaseConfigured()) {
-    try {
-      const supabase = await createClient();
-      await supabase.auth.signOut({ scope: 'local' });
-    } catch {
-      // Never expose provider errors or session material to the browser.
-    }
+  if (!isSupabaseConfigured()) {
+    redirect('/sign-in?error=unavailable');
   }
+
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+
+    // Supabase clears this local session before its best-effort server revocation
+    // request. A returned error therefore means local logout occurred, but the
+    // server may retain the refresh token until it expires.
+    if (error) {
+      redirect('/sign-in?message=signed-out&warning=revocation-unconfirmed');
+    }
+  } catch (error) {
+    // Re-throw Next.js redirect control flow. Unexpected failures must not be
+    // presented as a successful sign-out.
+    if (
+      error && typeof error === 'object' && 'digest' in error &&
+      typeof error.digest === 'string' && error.digest.startsWith('NEXT_REDIRECT')
+    ) throw error;
+    redirect('/sign-in?error=signout');
+  }
+
   redirect('/sign-in?message=signed-out');
 }
