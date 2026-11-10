@@ -42,8 +42,8 @@ test('invitation creation generates a high-entropy token and stores only its has
   assert.ok(actions.includes("createHash('sha256').update(token).digest('hex')"));
   assert.ok(actions.includes('token_hash: tokenHash'));
   assert.ok(actions.includes('email_normalized: email'));
-  assert.ok(actions.includes('expiryDays < 1'));
-  assert.ok(actions.includes('expiryDays > 30'));
+  assert.ok(actions.includes('parseInvitationExpiryDays(expiryValue)'));
+  assert.ok(actions.includes('normalizeInvitationEmail(emailValue)'));
   assert.ok(actions.includes('supabase.auth.getUser()'));
   assert.ok(!actions.includes('service_role'));
   assert.ok(!actions.includes('user_metadata'));
