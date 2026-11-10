@@ -46,7 +46,7 @@ A task does not turn green because code was written. It turns green only after i
 |---|---|---|---|
 | 0.1 | Restore and freeze the original 20 numbered outline sections and canonical A–M modules | 🟢 GREEN | Restored in [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md); commit `0c2b9d5` |
 | 0.2 | Audit complete repository tree, branch, commits, scripts, workflows and upstream material | 🟢 GREEN | [Phase 0 audit](PHASE_0_AUDIT.md); audit commit `a3b5d32`; repository security workflow passed |
-| 0.3 | Inventory and preserve existing Njumeni/JurisAI components; archive legacy CMP separately and verify preservation before removal | 🟡 IN PROGRESS | Inventory recorded; CMP archive repository and verified transfer still outstanding |
+| 0.3 | Inventory and preserve existing Njumeni/JurisAI components; archive legacy CMP separately and verify preservation before removal | 🔴 BLOCKED | Exact six-file source inventory and blob IDs committed in [CMP archive manifest](CMP_ARCHIVE_MANIFEST.md). Waiting for owner to create `ICOFCUCAM/njumeni-cmp-archive`; no CMP files deleted. |
 | 0.4 | Finalise repository boundaries: Njumeni app, marketing website, CMP archive and isolated upstream research | ⚪ NOT STARTED | Marketing website is already separate; execute this task after 0.3 completes the CMP preservation/archive work |
 | 0.5 | Produce complete product specification: users, priority journeys, launch scope, jurisdiction, requirements and non-goals | ⚪ NOT STARTED | Must be reviewed and committed |
 | 0.6 | Approve modular-monolith architecture, bounded contexts, eight platform layers and dependency rules | ⚪ NOT STARTED | Architecture decision record and contracts required |
