@@ -25,7 +25,7 @@
 | /compliance | L — Legal Compliance and Risk Intelligence | Route entry only |
 | /knowledge | M — Legal Knowledge Management | Route entry only |
 | /sign-in | Supabase Auth email/password sign-in | Implemented; registration remains disabled pending controlled onboarding |
-| /api/health | Process health and connection-state metadata | Active; reports auth/database disconnected |
+| /api/health | Process health and integration-state metadata | Active; reports Supabase Auth integrated and whether the database connection is configured (boolean only) |
 
 ## 2. Layout and component boundaries
 - Root app layout owns metadata, global CSS and document language.

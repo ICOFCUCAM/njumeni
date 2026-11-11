@@ -11,7 +11,7 @@
 | Hosted database | Supabase project `Njumeni` (`eu-north-1`). **No migrations applied. Deployment deferred until all phases are complete (Phase 13)** |
 | Active phases | **Phase 1: Identity, tenancy and security (OPEN; implemented, verification failing)** · **Phase 2: Legal knowledge infrastructure (IN PROGRESS, parallel)** |
 | Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
-| Next action | Check failures B-1 to B-7 **resolved locally** on 2026-11-11 (§2.3). Next: close Phase 1 (Task 1.12, §4.1) |
+| Next action | **Phase 1 ready for closeout:** run `repository-security.yml` and `supabase-local.yml` manually from the Actions tab, then tag `phase-1-closed`. Development continues with Phase 2 Task 2.8 |
 | CI mode | ⏸️ **Automatic CI paused** (owner decision, 2026-11-11). All main workflows are manual-only; only `secret-scan.yml` runs on push. Before each commit, run `scripts/ci/local-checks.sh` |
 
 ## 1. Status legend (Master Plan v2.0 §21.2)
@@ -127,7 +127,7 @@ The Phase 0 record below is preserved as verified history. Two Phase 0 positions
 |---|---|---|---|
 | 1.1 | Identity, authentication, tenant and workspace security contracts | 🟢 GREEN | [ADR-0002](architecture/ADR-0002-identity-tenancy-security.md); ADR commit `f8a2ee06588cc985970ce8a0b8a6828d25afef96`; CI run `42769220793`. *Closeout action:* move the ADR from "Proposed" to "Accepted" and resolve or defer its §12 open decisions |
 | 1.2 | Dedicated Njumeni identity/database environment readiness | 🟢 GREEN | Project `Njumeni` (`vvjpsejeeffykaozfbik`, `eu-north-1`, PostgreSQL 17.11); commit `4fdc1e8bb70d888d0869f75e76d0726d57901e6a`; CI run `42772065771`. The hosted schema stays empty until Phase 13 (U-27) |
-| 1.3 | Identity provider integration and secure session lifecycle | 🔵 IMPLEMENTED | Supabase SSR, Proxy refresh, server-side `getUser()` guard, sign-in/out; owner-confirmed manual checks; CI run `42839971018` (mocked lifecycle suite). **Remaining:** live provider test (`scripts/auth-provider.integration.test.mjs`, which needs test secrets); leaked-password protection is an accepted Stage 0 risk (ADR-0003) |
+| 1.3 | Identity provider integration and secure session lifecycle | 🔵 IMPLEMENTED: **live lifecycle test passed** (local Auth, 2026-11-11) | Supabase SSR, Proxy refresh, server-side `getUser()` guard, sign-in/out; owner-confirmed manual checks; CI run `42839971018` (mocked lifecycle suite). **Remaining:** live provider test (`scripts/auth-provider.integration.test.mjs`, which needs test secrets); leaked-password protection is an accepted Stage 0 risk (ADR-0003) |
 | 1.4 | User profile and principal model | 🟢 GREEN | 16/16 pgTAP; local run `42845114187`; CI `42846043378`. [Acceptance](PHASE_1_TASK_1_4_ACCEPTANCE.md) |
 | 1.5 | Organisations, workspaces and tenant ownership | 🟢 GREEN | 38/38 pgTAP; run `42846849437`; CI `42848567330`. [Acceptance](PHASE_1_TASK_1_5_ACCEPTANCE.md) |
 | 1.6 | Membership and invitation lifecycle | 🟢 GREEN | 85/85 pgTAP; run `42855740183`; CI `42855740121`. [Acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md) |
@@ -136,9 +136,12 @@ The Phase 0 record below is preserved as verified history. Two Phase 0 positions
 | 1.9 | Security audit logging | 🔵 IMPLEMENTED: verified locally | Append-only stream, triggers, allow-listed metadata, read RPC. `security_audit.test.sql` **12/12** after the fixture fix (B-3). **v2.0 scope note:** sign-in/sign-out and denied-access events are added at Phase 1 closeout; hash-chaining (U-12) is delivered with evidence custody in Phase 3 |
 | 1.10 | Subscription identity and entitlement boundary | 🔵 IMPLEMENTED | Billing identity, entitlements, usage ledger, provider-event idempotency; `subscription_entitlements.test.sql` passes. **Review at closeout:** whether `record_usage_event` should be server-only |
 | 1.11 | Tenant-isolation and security verification suite | 🔵 IMPLEMENTED: verified locally | All Phase 1 pgTAP files pass on a local stack (2026-11-11). Remaining: the manual CI run at closeout |
-| 1.12 | Phase 1 acceptance and closeout | 🔒 LOCKED | Requires §4.1 |
+| 1.12 | Phase 1 acceptance and closeout | 🟡 READY: one manual CI run outstanding | [Acceptance report](PHASE_1_ACCEPTANCE_REPORT.md): all conditions met except the manual run of the CI workflows. Accepted conditionally on that run |
 
 ### 4.1 Phase 1 closeout checklist
+
+**Progress, 2026-11-11:** items 1 (locally), 2, 3, 4 (deferred to Phase 3 with rationale), 5, 6 and 7 are done. The remaining item is the manual CI run in item 1, followed by item 8. See the [acceptance report](PHASE_1_ACCEPTANCE_REPORT.md).
+
 
 1. Fix blockers B-1 to B-7 and get one fully green CI run, including the local database job.
 2. Run the live Auth lifecycle test with a dedicated synthetic identity, then delete the identity.

@@ -6,6 +6,13 @@
 - **Architecture:** private modular monolith; see ADR-0001
 - **Important:** this document distinguishes confirmed repository facts from recommended environment design. It does not claim that cloud projects, domains, services, regions, credentials or deployments already exist.
 
+> **Current state, 11 November 2026.** The environment model below is now staged by the [Master Plan v2.0 §14](NJUMENI_MASTER_PLAN.md) and [ADR-0003](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md):
+> - **Stage 0 (now):** zero cost, synthetic data only, public repository.
+> - **Stage 1:** pilot.
+> - **Stage 2:** production.
+>
+> The dedicated Supabase project `Njumeni` (`eu-north-1`) is the future hosted environment. It receives no migrations until all phases are complete. Local development and testing use the Supabase CLI stack (`supabase start`, `supabase db reset`, `supabase test db`). "Private modular monolith" now reads "modular monolith with public source and private data".
+
 ## 1. Verified current state
 
 | Item | Verified status |

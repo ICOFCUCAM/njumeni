@@ -1780,8 +1780,8 @@ These documents describe the actual implementation and are not marketing documen
 | AI_ARCHITECTURE.md | Models, agents and orchestration | §5 of this plan | Create (Phase 5 entry) |
 | LEGAL_KNOWLEDGE_ARCHITECTURE.md | Authority and source management | `PHASE_2_TASK_2_*` documents | Consolidate (Phase 2 closeout) |
 | EVIDENCE_ARCHITECTURE.md | Evidence provenance and relationships | §7 of this plan | Create (Phase 3 entry) |
-| SECURITY_ARCHITECTURE.md | AuthN, AuthZ, privacy | ADR-0002, `SECURITY.md` | Consolidate (Phase 1 closeout) |
-| MULTITENANCY.md | Organisation/workspace isolation | ADR-0002, Task 1.5 design | Consolidate (Phase 1 closeout) |
+| SECURITY_ARCHITECTURE.md | AuthN, AuthZ, privacy | [`docs/SECURITY_ARCHITECTURE.md`](SECURITY_ARCHITECTURE.md) | ✅ Created (Phase 1 closeout) |
+| MULTITENANCY.md | Organisation/workspace isolation | [`docs/MULTITENANCY.md`](MULTITENANCY.md) | ✅ Created (Phase 1 closeout) |
 | API_SPECIFICATION.md | API contracts | — | Generate from OpenAPI (Phase 4) |
 | DEPLOYMENT_ARCHITECTURE.md | Hosting and infrastructure | `ENVIRONMENT_STRATEGY.md`, `INFRASTRUCTURE_AUDIT.md`, ADR-0003 | Refresh |
 | TESTING_STRATEGY.md | Quality and evaluation | `CI_PIPELINE.md`, §18 | Create (Phase 4 entry) |

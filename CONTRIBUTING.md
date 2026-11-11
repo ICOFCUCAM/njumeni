@@ -25,9 +25,21 @@ Use explicit contracts between bounded contexts. Never write directly to another
 
 ## 3. Local quality checks
 
-The root formatter settings are in .editorconfig and .prettierrc.json. The repository has a foundation CI baseline documented in [CI Pipeline](docs/CI_PIPELINE.md): Prettier, ESLint, strict TypeScript probe, Node foundation tests, architecture integrity checks, repository content policy and Gitleaks. There is still no application package manifest or runnable app; application lint/type/test/build gates expand when the workspace is introduced in task 0.12. Do not describe foundation checks as application tests.
+The root formatter settings are in .editorconfig and .prettierrc.json. CI is documented in [CI Pipeline](docs/CI_PIPELINE.md).
 
-When the toolchain is available, run the exact repository scripts for formatting, lint, type-check, unit/integration tests, build and security checks. Record the results in the pull request.
+**Automatic CI is currently paused** (owner decision, 11 November 2026). Before every commit, run:
+
+```bash
+scripts/ci/local-checks.sh
+```
+
+It runs the content policy, foundation integrity, migration guard, root tests, the web type check and the web and legal-knowledge tests. Database (pgTAP) tests need a local Supabase stack:
+
+```bash
+supabase start && supabase db reset && supabase test db
+```
+
+Never apply migrations to the hosted project: deployment is deferred until all phases are complete. Record the checks you ran in the commit message or pull request.
 
 ## 4. Pull request review
 

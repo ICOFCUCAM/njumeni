@@ -52,7 +52,7 @@ Every later phase depends on this boundary:
 |---|---|---|---|---|
 | 1.1 | Security contracts | ADR-0002: principals, sessions, tenants, workspaces, memberships, permissions, trust boundaries, threat model | Reviewed against the master plan and ADR-0001; CI green | 🟢 GREEN (`f8a2ee0`, CI `42769220793`) |
 | 1.2 | Environment readiness | Dedicated Supabase project; local CLI stack | Project healthy; empty baseline; no shared credentials | 🟢 GREEN (`4fdc1e8`, CI `42772065771`) |
-| 1.3 | Identity provider and session lifecycle | Supabase SSR client, Proxy refresh, server `getUser()` guard, sign-in/out actions, cookie handling | Mocked lifecycle tests pass; live provider test passes; manual owner check | 🔵 IMPLEMENTED (live test pending) |
+| 1.3 | Identity provider and session lifecycle | Supabase SSR client, Proxy refresh, server `getUser()` guard, sign-in/out actions, cookie handling | Mocked lifecycle tests pass; live provider test passes; manual owner check | 🔵 IMPLEMENTED (live test passed locally) |
 | 1.4 | Principal and profile model | Principals, provider mapping, profiles, safe update rules | pgTAP 16/16; types generated | 🟢 GREEN |
 | 1.5 | Organisations and workspaces | Owner-scoped tenancy, personal tenant provisioning, lifecycle triggers, settings UI | pgTAP 38/38; web tests; build | 🟢 GREEN |
 | 1.6 | Memberships and invitations | Membership states, 256-bit hash-only invitation tokens, verified-email acceptance, expiry, revocation and replay protection | pgTAP 85/85; web tests 35/35 | 🟢 GREEN |
@@ -61,7 +61,7 @@ Every later phase depends on this boundary:
 | 1.9 | Security audit logging | Append-only stream, lifecycle/role/membership capture, allow-listed metadata, scoped read RPC; ▲ sign-in, sign-out and denied-access events | `security_audit.test.sql` fully passing | 🔵 IMPLEMENTED: 12/12 locally |
 | 1.10 | Subscription identity and entitlements | Billing customers, subscriptions, versioned entitlements, provider-event idempotency, usage ledger | `subscription_entitlements.test.sql` passing; `record_usage_event` exposure reviewed | 🔵 IMPLEMENTED |
 | 1.11 | Isolation and security verification suite | Consolidated pgTAP contract suite and negative tests | Every Phase 1 pgTAP file passes in one CI run | 🔵 IMPLEMENTED: all pass locally; manual CI run at closeout |
-| 1.12 | Acceptance and closeout | Acceptance report, closeout commit, tag | §6 checklist complete; CI green | 🔒 LOCKED |
+| 1.12 | Acceptance and closeout | Acceptance report, closeout commit, tag | §6 checklist complete; CI green | 🟡 READY: manual CI run outstanding |
 
 ## 5. Verification approach
 
@@ -78,15 +78,15 @@ Every later phase depends on this boundary:
 | # | Item | Done |
 |---|---|---|
 | 1 | Blockers B-1 to B-7 fixed ([register §2.3](PHASE_REGISTER.md)): ✅ done and verified locally 2026-11-11. One fully green **manual** CI run, including the local database job | ◐ |
-| 2 | Live Auth lifecycle test executed with a dedicated synthetic identity; identity deleted afterwards | ☐ |
-| 3 | Leaked-password protection: Stage 0 risk acceptance recorded (ADR-0003 §2.6, decision D-6) | ☐ |
-| 4 | Sign-in, sign-out and denied-access audit events implemented, or deferral recorded | ☐ |
-| 5 | `record_usage_event` exposure reviewed (server-only or justified) | ☐ |
+| 2 | Live Auth lifecycle test executed with a dedicated synthetic identity; identity deleted afterwards | ✅ Local Auth service, 2026-11-11 |
+| 3 | Leaked-password protection: Stage 0 risk acceptance recorded (ADR-0003 §2.6, decision D-6) | ✅ |
+| 4 | Sign-in, sign-out and denied-access audit events implemented, or deferral recorded | ✅ Sign-in, sign-out, refresh and revocation are recorded by the provider; failed-sign-in and denied-access events deferred to Phase 3 |
+| 5 | `record_usage_event` exposure reviewed (server-only or justified) | ✅ Finding F-1: no current exposure; make server-only in Phase 11 |
 | 6 | Database types regenerated; CI drift check added | ✅ |
-| 7 | ADR-0002 status set to Accepted; its §12 open decisions resolved or deferred with owners | ☐ |
-| 8 | Stale documents refreshed: README, health endpoint, `APP_SHELL.md`, infrastructure/environment/migration/CI documents, `CONTRIBUTING.md` (and the tests pinning their wording) | ☐ |
-| 9 | `SECURITY_ARCHITECTURE.md` and `MULTITENANCY.md` consolidated from ADR-0002 and the task designs (master plan §19.3) | ☐ |
-| 10 | `PHASE_1_ACCEPTANCE_REPORT.md` completed with commit and run IDs | ☐ |
+| 7 | ADR-0002 status set to Accepted; its §12 open decisions resolved or deferred with owners | ✅ |
+| 8 | Stale documents refreshed: README, health endpoint, `APP_SHELL.md`, infrastructure/environment/migration/CI documents, `CONTRIBUTING.md` (and the tests pinning their wording) | ✅ |
+| 9 | `SECURITY_ARCHITECTURE.md` and `MULTITENANCY.md` consolidated from ADR-0002 and the task designs (master plan §19.3) | ✅ |
+| 10 | `PHASE_1_ACCEPTANCE_REPORT.md` completed with commit and run IDs | ✅ (manual CI run IDs to be added) |
 | 11 | Closeout commit, green CI, tag `phase-1-closed`, register updated | ☐ |
 
 **Not part of the closeout:** applying migrations to hosted Supabase. That happens once, in Phase 13 (U-27).
