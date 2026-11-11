@@ -124,6 +124,13 @@ jobs:
           cat "$RUNNER_TEMP/njumeni-database.types.ts"
           echo "END_NJUMENI_DATABASE_TYPES"
 
+      - name: Fail if committed database types have drifted from the schema
+        run: |
+          if ! diff -u apps/web/src/lib/supabase/database.types.ts "$RUNNER_TEMP/njumeni-database.types.ts"; then
+            echo "::error::apps/web/src/lib/supabase/database.types.ts is stale. Regenerate it with: supabase gen types typescript --local --schema public"
+            exit 1
+          fi
+
       - name: Lint the local database schema
         run: supabase db lint --level error
       - name: Run PostgreSQL RLS and profile lifecycle tests

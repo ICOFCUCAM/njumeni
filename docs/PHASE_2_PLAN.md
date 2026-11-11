@@ -44,11 +44,11 @@ Legal authorities are not generic uploaded documents. Their identity, issuing bo
 
 | No. | Task | Deliverable | Acceptance criteria | Status |
 |---|---|---|---|---|
-| 2.1 | Jurisdiction and legal-source registry | Jurisdictions, sources, rights evidence, activation/coverage audits, RLS, revoked grants, seeds | pgTAP green; direct grants denied to browser roles | 🟠 VERIFICATION FAILING (B-4) |
+| 2.1 | Jurisdiction and legal-source registry | Jurisdictions, sources, rights evidence, activation/coverage audits, RLS, revoked grants, seeds | pgTAP green; direct grants denied to browser roles | 🔵 IMPLEMENTED: 69/69 locally |
 | 2.2 | Authority identity and version model | Stable identities, append-only versions, effective periods, hashes; ▲ as-of query over valid time and system time (U-07) | Immutability and as-of pgTAP tests pass | 🔵 IMPLEMENTED (as-of query pending) |
 | 2.3 | Normalisation and provenance contract | Adapter manifest, rights matrix (ingest, display, quote, redistribute), HTTPS allow-list, Unicode normalisation, source and normalised SHA-256, passage anchors | Unit tests pass | 🔵 IMPLEMENTED |
 | 2.4 | Full-text and vector retrieval substrate | GIN and HNSW indexes, lexical/semantic RPCs, hybrid ranking, citation bundles, rights-aware trusted search | Unit tests pass; RPCs covered by pgTAP | 🔵 IMPLEMENTED |
-| 2.5 | Source ingestion lifecycle | Deterministic batches, idempotency, durable leased queue, checkpoints, retries, dead letters, worker runtime, exact-version adapter registry | Worker starts; queue pgTAP passes; runtime tests pass | 🔵 IMPLEMENTED (B-5: missing `server-only`) |
+| 2.5 | Source ingestion lifecycle | Deterministic batches, idempotency, durable leased queue, checkpoints, retries, dead letters, worker runtime, exact-version adapter registry | Worker starts; queue pgTAP passes; runtime tests pass | 🔵 IMPLEMENTED (B-5 fixed: the worker starts and refuses to run with no approved adapters, as designed) |
 | 2.6 | Authority relationship graph | Typed directional edges with provenance; bounded traversal; lease-bound relationship ingestion; ▲ database graph query RPC | Graph RPC tested with cycles and as-of filters | 🔵 IMPLEMENTED (database query pending) |
 | 2.7 | Coverage governance | Source and jurisdiction coverage reviews, snapshots, audits; ▲ aligned to the coverage levels in master plan §6.7 | Coverage never exceeds evidence; pgTAP passes | 🔵 IMPLEMENTED |
 | 2.8 | **Pilot source and first adapter** | Rights review of Norwegian legislation (candidate: Lovdata public data, master plan §6.3); adapter with an exact version pin; audited activation; bounded ingestion into the local stack | Rights evidence recorded; an authority with versions, passages and relationships ingested idempotently; re-run produces no duplicates | ⚪ NOT STARTED |
@@ -110,7 +110,7 @@ Tests: 21 files, 114 tests passing locally (`npm run test:legal-knowledge`). The
 | No database-backed graph query | Task 2.6 |
 | No as-of query function | Task 2.2 |
 | Not reachable from the app (no routes, UI or types) | Types at 2.11; UI in Phase 4 |
-| `server-only` missing; tests not in CI; stale types | Blockers B-5, B-6, B-7 |
+| ~~`server-only` missing; tests not in CI; stale types~~ | Resolved 2026-11-11 (B-5, B-6, B-7) |
 
 ## 7. Changes from the previous plan
 

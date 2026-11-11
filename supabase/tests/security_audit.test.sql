@@ -36,10 +36,12 @@ select
   (select id from public.organizations where slug='audit-tenant-a'),
   (select id from public.organizations where slug='audit-tenant-b');
 
-insert into audit_test_ids(workspace_a)
-select workspace.id from public.workspaces workspace
-join public.organizations organization on organization.id=workspace.organization_id
-where organization.slug='audit-tenant-a' and workspace.slug='general';
+update audit_test_ids
+set workspace_a = (
+  select workspace.id from public.workspaces workspace
+  join public.organizations organization on organization.id=workspace.organization_id
+  where organization.slug='audit-tenant-a' and workspace.slug='general'
+);
 
 select is(
   (select count(*)::integer from private.security_audit_events where organization_id=(select org_a from audit_test_ids) and event_key='organizations.insert'),

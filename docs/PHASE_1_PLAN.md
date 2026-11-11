@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Phase state | 🟡 **OPEN**: implementation complete; verification failing (see [register §4](PHASE_REGISTER.md)) |
+| Phase state | 🟡 **OPEN**: implementation complete; all database tests pass locally (2026-11-11); closeout items remain (see [register §4](PHASE_REGISTER.md)) |
 | Governing plan | [Njumeni Master Plan v2.0](NJUMENI_MASTER_PLAN.md), §11 (security), §10 (data), §21 (completion) |
 | Architecture records | [ADR-0001](architecture/ADR-0001-modular-monolith-and-bounded-contexts.md), [ADR-0002](architecture/ADR-0002-identity-tenancy-security.md), [ADR-0003](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md) |
 | Entry condition | Phase 0 closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`, CI run `42768822407` SUCCESS |
@@ -56,11 +56,11 @@ Every later phase depends on this boundary:
 | 1.4 | Principal and profile model | Principals, provider mapping, profiles, safe update rules | pgTAP 16/16; types generated | 🟢 GREEN |
 | 1.5 | Organisations and workspaces | Owner-scoped tenancy, personal tenant provisioning, lifecycle triggers, settings UI | pgTAP 38/38; web tests; build | 🟢 GREEN |
 | 1.6 | Memberships and invitations | Membership states, 256-bit hash-only invitation tokens, verified-email acceptance, expiry, revocation and replay protection | pgTAP 85/85; web tests 35/35 | 🟢 GREEN |
-| 1.7 | Roles, permissions, server authorisation | Permission catalogue, role catalogue, scoped bindings, evaluator, assignment/revocation RPCs, guards, UI | `role_permission.test.sql` fully passing, including privilege-escalation negatives | 🟠 VERIFICATION FAILING (B-2) |
+| 1.7 | Roles, permissions, server authorisation | Permission catalogue, role catalogue, scoped bindings, evaluator, assignment/revocation RPCs, guards, UI | `role_permission.test.sql` fully passing, including privilege-escalation negatives | 🔵 IMPLEMENTED: 60/60 locally |
 | 1.8 | RLS and storage policies | Private workspace bucket; tenant/workspace object-key enforcement; server helpers | `storage_isolation.test.sql` passing with two synthetic tenants | 🔵 IMPLEMENTED (passing; closes with the phase) |
-| 1.9 | Security audit logging | Append-only stream, lifecycle/role/membership capture, allow-listed metadata, scoped read RPC; ▲ sign-in, sign-out and denied-access events | `security_audit.test.sql` fully passing | 🟠 VERIFICATION FAILING (B-3) |
+| 1.9 | Security audit logging | Append-only stream, lifecycle/role/membership capture, allow-listed metadata, scoped read RPC; ▲ sign-in, sign-out and denied-access events | `security_audit.test.sql` fully passing | 🔵 IMPLEMENTED: 12/12 locally |
 | 1.10 | Subscription identity and entitlements | Billing customers, subscriptions, versioned entitlements, provider-event idempotency, usage ledger | `subscription_entitlements.test.sql` passing; `record_usage_event` exposure reviewed | 🔵 IMPLEMENTED |
-| 1.11 | Isolation and security verification suite | Consolidated pgTAP contract suite and negative tests | Every Phase 1 pgTAP file passes in one CI run | 🟠 VERIFICATION FAILING |
+| 1.11 | Isolation and security verification suite | Consolidated pgTAP contract suite and negative tests | Every Phase 1 pgTAP file passes in one CI run | 🔵 IMPLEMENTED: all pass locally; manual CI run at closeout |
 | 1.12 | Acceptance and closeout | Acceptance report, closeout commit, tag | §6 checklist complete; CI green | 🔒 LOCKED |
 
 ## 5. Verification approach
@@ -77,12 +77,12 @@ Every later phase depends on this boundary:
 
 | # | Item | Done |
 |---|---|---|
-| 1 | Blockers B-1 to B-7 fixed ([register §2.3](PHASE_REGISTER.md)); one fully green CI run including the local database job | ☐ |
+| 1 | Blockers B-1 to B-7 fixed ([register §2.3](PHASE_REGISTER.md)): ✅ done and verified locally 2026-11-11. One fully green **manual** CI run, including the local database job | ◐ |
 | 2 | Live Auth lifecycle test executed with a dedicated synthetic identity; identity deleted afterwards | ☐ |
 | 3 | Leaked-password protection: Stage 0 risk acceptance recorded (ADR-0003 §2.6, decision D-6) | ☐ |
 | 4 | Sign-in, sign-out and denied-access audit events implemented, or deferral recorded | ☐ |
 | 5 | `record_usage_event` exposure reviewed (server-only or justified) | ☐ |
-| 6 | Database types regenerated; CI drift check added | ☐ |
+| 6 | Database types regenerated; CI drift check added | ✅ |
 | 7 | ADR-0002 status set to Accepted; its §12 open decisions resolved or deferred with owners | ☐ |
 | 8 | Stale documents refreshed: README, health endpoint, `APP_SHELL.md`, infrastructure/environment/migration/CI documents, `CONTRIBUTING.md` (and the tests pinning their wording) | ☐ |
 | 9 | `SECURITY_ARCHITECTURE.md` and `MULTITENANCY.md` consolidated from ADR-0002 and the task designs (master plan §19.3) | ☐ |

@@ -96,17 +96,14 @@ export default async function WorkspacesSettingsPage({
             supabase.rpc('has_permission', {
               p_permission_key: 'organization.manage_members',
               p_organization_id: organisation.id,
-              p_workspace_id: null,
             }),
             supabase.rpc('has_permission', {
               p_permission_key: 'organization.manage_roles',
               p_organization_id: organisation.id,
-              p_workspace_id: null,
             }),
             supabase.rpc('has_permission', {
               p_permission_key: 'workspace.create',
               p_organization_id: organisation.id,
-              p_workspace_id: null,
             }),
           ]);
           return {
@@ -143,11 +140,9 @@ export default async function WorkspacesSettingsPage({
       const [rolesResult, bindingsResult] = await Promise.all([
         supabase.rpc('list_assignable_roles', {
           p_organization_id: organisation.id,
-          p_workspace_id: null,
         }),
         supabase.rpc('list_role_bindings', {
           p_organization_id: organisation.id,
-          p_workspace_id: null,
         }),
       ]);
       return {

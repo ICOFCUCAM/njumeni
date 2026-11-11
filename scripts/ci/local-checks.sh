@@ -23,7 +23,7 @@ if [ -d apps/web/node_modules ]; then
   step "Web type check"
   (cd apps/web && npm run --silent typecheck)
   step "Web and legal-knowledge tests"
-  (cd apps/web && npm run --silent test:auth)
+  (cd apps/web && npm test)
 else
   printf '\nSkipping web checks: run "cd apps/web && npm ci" first.\n'
 fi

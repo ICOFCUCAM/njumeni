@@ -11,7 +11,7 @@
 | Hosted database | Supabase project `Njumeni` (`eu-north-1`). **No migrations applied. Deployment deferred until all phases are complete (Phase 13)** |
 | Active phases | **Phase 1: Identity, tenancy and security (OPEN; implemented, verification failing)** · **Phase 2: Legal knowledge infrastructure (IN PROGRESS, parallel)** |
 | Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
-| Next action | **Fix the check failures** (§2.3), then close Phase 1 (Task 1.12) |
+| Next action | Check failures B-1 to B-7 **resolved locally** on 2026-11-11 (§2.3). Next: close Phase 1 (Task 1.12, §4.1) |
 | CI mode | ⏸️ **Automatic CI paused** (owner decision, 2026-11-11). All main workflows are manual-only; only `secret-scan.yml` runs on push. Before each commit, run `scripts/ci/local-checks.sh` |
 
 ## 1. Status legend (Master Plan v2.0 §21.2)
@@ -36,10 +36,10 @@ A task does not turn green because code was written. It turns green only when it
 | Area | State |
 |---|---|
 | Phase 0 | 🟢 Closed and verified |
-| Phase 1 | Implementation complete for 1.1–1.10. Database verification **fails** in two pgTAP files. Live Auth checks not yet run |
-| Phase 2 | Schema, ingestion framework, durable queue, worker, retrieval, citation bundles and rights/coverage governance implemented. **No legal content, no source adapters, no embeddings, no UI**. pgTAP fails in one file |
+| Phase 1 | Implementation complete; **all database tests pass locally** (2026-11-11). Remaining: live Auth check, closeout items |
+| Phase 2 | Schema, ingestion framework, durable queue, worker, retrieval, citation bundles and rights/coverage governance implemented; pgTAP passing locally. **No legal content, no source adapters, no embeddings, no UI** |
 | Phases 3–13 | 🔒 Locked |
-| Local checks (2026-11-11) | `apps/web` typecheck ✅ · web tests 161/161 ✅ · legal-knowledge tests 114/114 ✅ · root tests 19/19 ✅ |
+| Local checks (2026-11-11) | pgTAP 272/272 ✅ · db lint ✅ · typecheck ✅ · web tests 161/161 ✅ (includes 114 legal-knowledge) · build ✅ · root tests 19/19 ✅ |
 | CI | ⏸️ Paused. The last automatic runs (on `2b60d5f`) were 🟠 red for the reasons in §2.3 |
 
 ### 2.2 Owner decisions in force
@@ -54,15 +54,26 @@ A task does not turn green because code was written. It turns green only when it
 
 ### 2.3 Check failures (fix before any new feature work, U-18)
 
+**Resolution, 2026-11-11.** All seven blockers are fixed. They were verified locally because automatic CI is paused:
+- A local Supabase stack (CLI 3.1.0) replayed all 23 migrations from empty.
+- **pgTAP: 272/272 passing across 9 files.**
+- `db lint`: no errors.
+- Migration guard (against base `b7123a0`): passes, and fails without the new entry.
+- Web type check passes, web tests pass 161/161, production build succeeds.
+- Root tests pass 19/19, and the Prettier check passes.
+
+A manual run of the CI workflows is still required at phase closeout.
+
+
 | # | Blocker | Location | Cause | Fix |
 |---|---|---|---|---|
-| B-1 | Migration-policy guard fails | `scripts/ci/check-migrations.mjs` | `20261110290000_legal_source_coverage_review.sql` was corrected in `2b60d5f` without a hash-pinned entry | Add the entry to `scripts/ci/migration-predeployment-corrections.json` |
-| B-2 | RBAC pgTAP fails (tests 10, 11, 37; file aborts near line 497) | `supabase/tests/role_permission.test.sql` | Fixture creates a workspace as a member before `org_admin` is bound; reads `private.role_audit_events` while still `authenticated` | Reorder the fixture; `reset role` before the private read |
-| B-3 | Audit pgTAP: 0 of 12 run | `supabase/tests/security_audit.test.sql` | Fixture inserts two rows into `audit_test_ids`, so a scalar subquery returns more than one row | Use a single keyed row, or keyed lookups |
-| B-4 | Legal-knowledge pgTAP fails | `supabase/tests/legal_knowledge_foundation.test.sql` | Line 66 `$`-delimiter corruption; test 22 expects `USER-DEFINED` (Postgres reports `tsvector`); test 39 checks a superseded 7-argument signature | Repair the delimiter; update both assertions |
-| B-5 | Worker cannot start | `apps/web/package.json` | `server-only` is imported but not a dependency | Add the pinned dependency and update the lockfile |
-| B-6 | Legal-knowledge unit tests not in CI | `.github/workflows/repository-security.yml` | No job runs `test:legal-knowledge` | Add the step |
-| B-7 | Generated DB types stale | `apps/web/src/lib/supabase/database.types.ts` | Not regenerated since the Phase 1 audit and billing work, and the Phase 2 work | Regenerate; add a drift check in CI |
+| B-1 ✅ | Migration-policy guard fails | `scripts/ci/check-migrations.mjs` | `20261110290000_legal_source_coverage_review.sql` was corrected in `2b60d5f` without a hash-pinned entry | Add the entry to `scripts/ci/migration-predeployment-corrections.json` |
+| B-2 ✅ | RBAC pgTAP fails (tests 10, 11, 37; file aborts near line 497) | `supabase/tests/role_permission.test.sql` | Fixture creates a workspace as a member before `org_admin` is bound; reads `private.role_audit_events` while still `authenticated` | Reorder the fixture; `reset role` before the private read |
+| B-3 ✅ | Audit pgTAP: 0 of 12 run | `supabase/tests/security_audit.test.sql` | Fixture inserts two rows into `audit_test_ids`, so a scalar subquery returns more than one row | Use a single keyed row, or keyed lookups |
+| B-4 ✅ | Legal-knowledge pgTAP fails | `supabase/tests/legal_knowledge_foundation.test.sql` | Line 66 `$`-delimiter corruption; test 22 expects `USER-DEFINED` (Postgres reports `tsvector`); test 39 checks a superseded 7-argument signature | Repair the delimiter; update both assertions |
+| B-5 ✅ | Worker cannot start | `apps/web/package.json` | `server-only` is imported but not a dependency | Add the pinned dependency and update the lockfile |
+| B-6 ✅ | Legal-knowledge unit tests not in CI (*finding withdrawn: `test:auth` already ran every `tests/*.test.mjs`, including legal-knowledge; a clearer `npm test` script was added*) | `.github/workflows/repository-security.yml` | No job runs `test:legal-knowledge` | Add the step |
+| B-7 ✅ | Generated DB types stale (*regenerated with CLI 3.1.0; three callers stopped passing `null` for optional `p_workspace_id`; CI now fails on type drift*) | `apps/web/src/lib/supabase/database.types.ts` | Not regenerated since the Phase 1 audit and billing work, and the Phase 2 work | Regenerate; add a drift check in CI |
 
 
 ## 3. Phase 0: Architecture and project foundation (🟢 CLOSED)
@@ -120,11 +131,11 @@ The Phase 0 record below is preserved as verified history. Two Phase 0 positions
 | 1.4 | User profile and principal model | 🟢 GREEN | 16/16 pgTAP; local run `42845114187`; CI `42846043378`. [Acceptance](PHASE_1_TASK_1_4_ACCEPTANCE.md) |
 | 1.5 | Organisations, workspaces and tenant ownership | 🟢 GREEN | 38/38 pgTAP; run `42846849437`; CI `42848567330`. [Acceptance](PHASE_1_TASK_1_5_ACCEPTANCE.md) |
 | 1.6 | Membership and invitation lifecycle | 🟢 GREEN | 85/85 pgTAP; run `42855740183`; CI `42855740121`. [Acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md) |
-| 1.7 | Roles, permissions and server-side authorisation | 🟠 VERIFICATION FAILING | Catalogue, scoped bindings, evaluator, assignment/revocation RPCs, guards and UI are implemented. `role_permission.test.sql` fails (blocker B-2); the cause is the fixture, not the policies |
+| 1.7 | Roles, permissions and server-side authorisation | 🔵 IMPLEMENTED: verified locally | `role_permission.test.sql` **60/60** after the fixture fix (B-2). Admin creation now runs under the admin identity; a new negative test proves a plain member cannot create workspaces. Turns GREEN with the closeout CI run |
 | 1.8 | PostgreSQL RLS and storage access policies | 🔵 IMPLEMENTED | Private workspace bucket and path-scoped policies; `storage_isolation.test.sql` passes in CI. The server storage helper is not yet called by any UI; the upload path is delivered in Phase 3. Acceptance for 1.8 is at database-policy level |
-| 1.9 | Security audit logging | 🟠 VERIFICATION FAILING | Append-only stream, triggers, allow-listed metadata, read RPC. `security_audit.test.sql` does not execute (B-3). **v2.0 scope note:** sign-in/sign-out and denied-access events are added at Phase 1 closeout; hash-chaining (U-12) is delivered with evidence custody in Phase 3 |
+| 1.9 | Security audit logging | 🔵 IMPLEMENTED: verified locally | Append-only stream, triggers, allow-listed metadata, read RPC. `security_audit.test.sql` **12/12** after the fixture fix (B-3). **v2.0 scope note:** sign-in/sign-out and denied-access events are added at Phase 1 closeout; hash-chaining (U-12) is delivered with evidence custody in Phase 3 |
 | 1.10 | Subscription identity and entitlement boundary | 🔵 IMPLEMENTED | Billing identity, entitlements, usage ledger, provider-event idempotency; `subscription_entitlements.test.sql` passes. **Review at closeout:** whether `record_usage_event` should be server-only |
-| 1.11 | Tenant-isolation and security verification suite | 🟠 VERIFICATION FAILING | The consolidated suite has run in CI (latest run `42900717384`). Passing files: membership, organisation/workspace, Phase 1 security contract, profile, storage, subscriptions. Failing: B-2 and B-3 |
+| 1.11 | Tenant-isolation and security verification suite | 🔵 IMPLEMENTED: verified locally | All Phase 1 pgTAP files pass on a local stack (2026-11-11). Remaining: the manual CI run at closeout |
 | 1.12 | Phase 1 acceptance and closeout | 🔒 LOCKED | Requires §4.1 |
 
 ### 4.1 Phase 1 closeout checklist
@@ -157,7 +168,7 @@ No hosted migration is part of the Phase 1 closeout (U-27).
 
 | No. | Task | Status | Evidence / remaining work |
 |---|---|---|---|
-| 2.1 | Jurisdiction and legal-source registry | 🟠 VERIFICATION FAILING | Schema, seeds (6 jurisdictions, 6 catalogue sources: all `review_required`, ingestion disabled), RLS and revokes. `legal_knowledge_foundation.test.sql` fails (B-4) |
+| 2.1 | Jurisdiction and legal-source registry | 🔵 IMPLEMENTED: verified locally | Schema, seeds (6 jurisdictions, 6 catalogue sources: all `review_required`, ingestion disabled), RLS and revokes. `legal_knowledge_foundation.test.sql` **69/69** after B-4. The test now asserts that *no unleased* append RPC exists |
 | 2.2 | Authority identity and version model (bitemporal, U-07) | 🔵 IMPLEMENTED | Stable identities, append-only versions, effective periods, SHA-256 hashes. **Remaining:** an as-of query function over valid time and system time, with tests |
 | 2.3 | Normalisation and provenance contract | 🔵 IMPLEMENTED | Manifest/rights validation, Unicode normalisation, hashes, passage anchors; unit tests pass |
 | 2.4 | Full-text and vector retrieval substrate | 🔵 IMPLEMENTED | GIN/HNSW indexes, lexical/semantic RPCs, hybrid ranking, citation bundles, trusted search. Language-aware FTS and the embedding profile are moved to Task 2.9 |

@@ -1,3 +1,4 @@
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
@@ -124,44 +125,114 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "assign_organization_role": {
-              Args: { "p_organization_id": string, "p_principal_id": string, "p_role_key": string }
-              Returns: string
-            },
-            "assign_workspace_role": {
-              Args: { "p_organization_id": string, "p_workspace_id": string, "p_principal_id": string, "p_role_key": string }
-              Returns: string
-            },
-            "has_permission": {
-              Args: { "p_permission_key": string, "p_organization_id": string, "p_workspace_id"?: string | null }
-              Returns: boolean
-            },
-            "list_assignable_roles": {
-              Args: { "p_organization_id": string, "p_workspace_id"?: string | null }
-              Returns: { "role_key": string, "scope": string, "display_name": string, "description": string }[]
-            },
-            "list_role_bindings": {
-              Args: { "p_organization_id": string, "p_workspace_id"?: string | null }
-              Returns: { "binding_id": string, "principal_id": string, "role_key": string, "role_name": string, "assigned_at": string }[]
-            },
-            "revoke_organization_role": {
-              Args: { "p_binding_id": string }
-              Returns: boolean
-            },
-            "revoke_workspace_role": {
-              Args: { "p_binding_id": string }
-              Returns: boolean
-            },
             "accept_organization_invitation":
 { Args: { "p_token_hash": string }; Returns: {
               "organization_id": string,"organization_membership_id": string,"workspace_id": string,"workspace_membership_id": string
             }[]
                            },
+"assign_organization_role":
+{ Args: { "p_organization_id": string,"p_principal_id": string,"p_role_key": string }; Returns: string
+                           },
+"assign_workspace_role":
+{ Args: { "p_organization_id": string,"p_principal_id": string,"p_role_key": string,"p_workspace_id": string }; Returns: string
+                           },
+"get_organization_entitlements":
+{ Args: { "p_organization_id": string }; Returns: {
+              "effective_from": string,"effective_until": string,"enabled": boolean,"entitlement_key": string,"limit_value": number,"plan_key": string,"subscription_status": string
+            }[]
+                           },
+"has_permission":
+{ Args: { "p_organization_id": string,"p_permission_key": string,"p_workspace_id"?: string }; Returns: boolean
+                           },
 "is_organization_owner":
 { Args: { "p_organization_id": string }; Returns: boolean
                            },
+"legal_citation_source_metadata":
+{ Args: { "p_source_keys": (string)[] }; Returns: Json
+                           },
+"legal_ingestion_append_authority":
+{ Args: { "p_authority": Json,"p_job_id": string,"p_jurisdiction_code": string,"p_lease_token": string,"p_normalisation_profile": string,"p_passages": Json,"p_retrieved_at": string,"p_source_key": string,"p_source_uri": string }; Returns: string
+                           },
+"legal_ingestion_append_relationship":
+{ Args: { "p_effective_from": string,"p_from_external_id": string,"p_job_id": string,"p_lease_token": string,"p_provenance_uri": string,"p_relationship_type": string,"p_source_key": string,"p_source_note": string,"p_to_external_id": string }; Returns: boolean
+                           },
+"legal_ingestion_begin_run":
+{ Args: { "p_adapter_key": string,"p_adapter_version": string,"p_batch_key": string,"p_cursor": string,"p_source_key": string }; Returns: string
+                           },
+"legal_ingestion_claim_job":
+{ Args: { "p_lease_seconds"?: number,"p_worker_id": string }; Returns: {
+              "adapter_key": string,"adapter_version": string,"attempt_count": number,"checkpoint": Json,"cursor_reference": string,"job_id": string,"lease_token": string,"source_id": string
+            }[]
+                           },
+"legal_ingestion_enqueue_job":
+{ Args: { "p_adapter_key": string,"p_adapter_version": string,"p_idempotency_key": string,"p_max_attempts"?: number,"p_source_id": string }; Returns: string
+                           },
+"legal_ingestion_finish_job":
+{ Args: { "p_failure_code"?: string,"p_job_id": string,"p_lease_token": string,"p_retry_delay_seconds"?: number,"p_status": string }; Returns: string
+                           },
+"legal_ingestion_heartbeat":
+{ Args: { "p_job_id": string,"p_lease_seconds"?: number,"p_lease_token": string }; Returns: boolean
+                           },
+"legal_ingestion_persist_run_result":
+{ Args: { "p_created": number,"p_discovered": number,"p_failure_codes": (string)[],"p_next_cursor": string,"p_run_id": string,"p_skipped": number,"p_status": string,"p_unchanged": number }; Returns: boolean
+                           },
+"legal_ingestion_save_checkpoint":
+{ Args: { "p_completed_external_ids": (string)[],"p_created": number,"p_cursor": string,"p_discovered": number,"p_failures": number,"p_job_id": string,"p_lease_token": string,"p_skipped": number,"p_unchanged": number }; Returns: boolean
+                           },
+"legal_jurisdiction_coverage_snapshot":
+{ Args: { "p_jurisdiction_code": string }; Returns: Json
+                           },
+"legal_jurisdiction_record_coverage_scope":
+{ Args: { "p_authority_types": (string)[],"p_jurisdiction_code": string,"p_reason": string,"p_review_interval_days": number,"p_reviewer": string }; Returns: Json
+                           },
+"legal_search_passages_lexical":
+{ Args: { "p_as_of_date": string,"p_authority_types"?: (string)[],"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limit"?: number,"p_query": string }; Returns: {
+              "authority_id": string,"authority_title": string,"authority_type": string,"authority_version_id": string,"citation": string,"jurisdiction_code": string,"language_code": string,"legal_status": string,"lexical_score": number,"page_number": number,"passage_content": string,"passage_id": string,"section_path": (string)[],"source_content_hash": string,"source_key": string,"source_uri": string,"valid_from": string,"valid_until": string
+            }[]
+                           },
+"legal_search_passages_semantic":
+{ Args: { "p_as_of_date": string,"p_authority_types"?: (string)[],"p_embedding": string,"p_embedding_model_key": string,"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limit"?: number }; Returns: {
+              "authority_id": string,"authority_title": string,"authority_type": string,"authority_version_id": string,"citation": string,"jurisdiction_code": string,"language_code": string,"legal_status": string,"page_number": number,"passage_content": string,"passage_id": string,"section_path": (string)[],"semantic_score": number,"source_content_hash": string,"source_key": string,"source_uri": string,"valid_from": string,"valid_until": string
+            }[]
+                           },
+"legal_source_record_coverage_review":
+{ Args: { "p_authority_types": (string)[],"p_coverage_from": string,"p_coverage_until": string,"p_known_gaps"?: (string)[],"p_languages": (string)[],"p_last_verified_at": string,"p_reason": string,"p_reviewer": string,"p_source_id": string }; Returns: Json
+                           },
+"legal_source_record_rights_review":
+{ Args: { "p_attribution_text": string,"p_licence_identifier": string,"p_licence_version": string,"p_permissions": Json,"p_restrictions"?: (string)[],"p_review_expires_at": string,"p_reviewed_at": string,"p_reviewer": string,"p_source_id": string,"p_terms_uri": string }; Returns: Json
+                           },
+"legal_source_set_activation":
+{ Args: { "p_adapter_key": string,"p_adapter_version": string,"p_ingestion_enabled": boolean,"p_operator": string,"p_reason": string,"p_source_id": string,"p_status": string }; Returns: Json
+                           },
+"legal_worker_source_config":
+{ Args: { "p_source_id": string }; Returns: Json
+                           },
+"list_assignable_roles":
+{ Args: { "p_organization_id": string,"p_workspace_id"?: string }; Returns: {
+              "description": string,"display_name": string,"role_key": string,"scope": string
+            }[]
+                           },
+"list_role_bindings":
+{ Args: { "p_organization_id": string,"p_workspace_id"?: string }; Returns: {
+              "assigned_at": string,"binding_id": string,"principal_id": string,"role_key": string,"role_name": string
+            }[]
+                           },
+"list_security_audit_events":
+{ Args: { "p_before_sequence"?: number,"p_limit"?: number,"p_organization_id": string,"p_workspace_id"?: string }; Returns: {
+              "actor_principal_id": string,"correlation_id": string,"event_id": string,"event_key": string,"metadata": Json,"occurred_at": string,"organization_id": string,"outcome": string,"resource_id": string,"resource_type": string,"sequence_id": number,"workspace_id": string
+            }[]
+                           },
+"record_usage_event":
+{ Args: { "p_idempotency_key": string,"p_metadata"?: Json,"p_organization_id": string,"p_quantity": number,"p_unit": string,"p_usage_key": string,"p_workspace_id": string }; Returns: string
+                           },
 "revoke_organization_invitation":
 { Args: { "p_invitation_id": string }; Returns: boolean
+                           },
+"revoke_organization_role":
+{ Args: { "p_binding_id": string }; Returns: boolean
+                           },
+"revoke_workspace_role":
+{ Args: { "p_binding_id": string }; Returns: boolean
                            },
 "set_organization_membership_status":
 { Args: { "p_membership_id": string,"p_status": string }; Returns: boolean

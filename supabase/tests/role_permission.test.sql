@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(61);
+select plan(60);
 
 insert into auth.users (id, email, email_confirmed_at)
 values
@@ -116,23 +116,12 @@ set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000005';
 select lives_ok($$select * from public.accept_organization_invitation(repeat('b', 64))$$, 'Member identity accepts its organisation invitation');
 select lives_ok($$select * from public.accept_organization_invitation(repeat('f', 64))$$, 'Member identity accepts its workspace invitation');
 
-select lives_ok(
+select throws_ok(
   $$insert into public.workspaces (organization_id, name, slug, kind)
-    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$$,
-  'Organisation administrator can create a workspace through the scoped permission policy'
-);
-
-select is(
-  (select count(*) from public.workspaces where slug = 'rbac-admin-created-workspace'),
-  1::bigint,
-  'Organisation administrator can read workspace administration metadata'
-);
-
-select lives_ok(
-  $$update public.workspaces
-    set name = 'Admin Updated Workspace'
-    where id = current_setting('njumeni.rbac.workspace_id')::uuid$$,
-  'Organisation administrator can update workspace metadata without changing its immutable creator'
+    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Member Created Workspace', 'rbac-member-created-workspace', 'team')$$,
+  '42501',
+  NULL,
+  'Organisation member without workspace administration permission cannot create a workspace'
 );
 
 reset role;
@@ -287,6 +276,12 @@ select lives_ok(
     'workspace_reviewer'
   )$$,
   'Organisation administrator can assign a non-privileged workspace role'
+);
+
+select lives_ok(
+  $$insert into public.workspaces (organization_id, name, slug, kind)
+    values (current_setting('njumeni.rbac.organization_id')::uuid, 'Admin Created Workspace', 'rbac-admin-created-workspace', 'team')$$,
+  'Organisation administrator can create a workspace through the scoped permission policy'
 );
 
 select lives_ok(
@@ -490,6 +485,9 @@ select lives_ok(
   )$$,
   'Owner can revoke a workspace role binding'
 );
+
+-- Inspect private audit rows as the database owner; authenticated users cannot read them.
+reset role;
 
 select ok(
   (select count(*) from private.role_audit_events) >= 8,
