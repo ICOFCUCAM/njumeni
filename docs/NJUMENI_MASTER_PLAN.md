@@ -1784,9 +1784,9 @@ These documents describe the actual implementation and are not marketing documen
 | EVIDENCE_ARCHITECTURE.md | Evidence provenance and relationships | [`docs/EVIDENCE_ARCHITECTURE.md`](EVIDENCE_ARCHITECTURE.md) | ✅ Created (Phase 3) |
 | SECURITY_ARCHITECTURE.md | AuthN, AuthZ, privacy | [`docs/SECURITY_ARCHITECTURE.md`](SECURITY_ARCHITECTURE.md) | ✅ Created (Phase 1 closeout) |
 | MULTITENANCY.md | Organisation/workspace isolation | [`docs/MULTITENANCY.md`](MULTITENANCY.md) | ✅ Created (Phase 1 closeout) |
-| API_SPECIFICATION.md | API contracts | — | Generate from OpenAPI (Phase 4) |
+| API_SPECIFICATION.md | API contracts | `GET /api/v1/openapi.json` (OpenAPI 3.1, contract-tested) | ✅ Served from Phase 4 |
 | DEPLOYMENT_ARCHITECTURE.md | Hosting and infrastructure | `ENVIRONMENT_STRATEGY.md`, `INFRASTRUCTURE_AUDIT.md`, ADR-0003 | Refresh |
-| TESTING_STRATEGY.md | Quality and evaluation | `CI_PIPELINE.md`, §18 | Create (Phase 4 entry) |
+| TESTING_STRATEGY.md | Quality and evaluation | [`docs/TESTING_STRATEGY.md`](TESTING_STRATEGY.md) | ✅ Created (Phase 4) |
 | COMMERCIAL_MODEL.md | Pricing, entitlements, billing | Task 1.10 design, §17 | Create (Phase 11 entry) |
 | IMPLEMENTATION_ROADMAP.md | Development phases | §20 of this plan and `PHASE_REGISTER.md` | This plan |
 | THIRD_PARTY_SOFTWARE.md | Open-source and licence register | `THIRD_PARTY_NOTICES.md` | Rename and extend with an SBOM |
@@ -1819,7 +1819,7 @@ Each phase must produce working, tested functionality before the dependent phase
 | 1 | Identity, tenancy and security | Security foundation | Authentication, user profiles, organisations, workspaces, invitations, roles and permissions, RLS, audit logging, subscription identity, tenant-isolation tests | All pgTAP and app tests green; live Auth checks; isolation suite passing | 🟢 **CLOSED** (11 November 2026) |
 | 2 | Legal knowledge infrastructure | Knowledge foundation | Jurisdiction registry, source registry, authority models, versioning, source ingestion, normalisation, full-text search, pgvector, provenance; ▲ first pilot adapter and embedding profile | Clean replay; pgTAP green; one rights-approved pilot source ingested end-to-end | 🟡 **IN PROGRESS** (parallel) |
 | 3 | Evidence intelligence | Evidence engine | Document upload, object storage, OCR, extraction, classification, entity extraction, chronology, contradiction analysis, evidence relationships, chain of custody; ▲ content addressing, hash-chained custody and audit | Journey 15.4 passes end-to-end on synthetic data | 🔵 **IMPLEMENTED** (verified locally; closeout pending Phase 1 and OCR/AV items) |
-| 4 | Legal research engine | Research engine | Jurisdiction-aware retrieval, legal RAG, authority discovery, case-law search, legislation search, source comparison, citation retrieval, historical version selection; ▲ verification core (U-10), evaluation harness (U-15) | Journey 15.3 passes; evaluation gates met for the pilot jurisdiction | 🔒 LOCKED |
+| 4 | Legal research engine | Research engine | Jurisdiction-aware retrieval, legal RAG, authority discovery, case-law search, legislation search, source comparison, citation retrieval, historical version selection; ▲ verification core (U-10), evaluation harness (U-15) | Journey 15.3 passes; evaluation gates met for the pilot jurisdiction | 🔵 **IMPLEMENTED** (verified locally; extractive; real content pending Task 2.8) |
 | — | ▲ **Milestone M1** | Public demo | Grounded research over public Norwegian law, with verification, on a public demo | M1 criteria (§20.2) | — |
 | 5 | AI reasoning and agent framework | Intelligence engine | AI provider adapters, agent registry, workflow orchestration, issue identification, argument graphs, counterargument generation, evidence-to-law mapping, reasoning evaluation | Agents operate only within scope; reasoning evaluation passing | 🔒 LOCKED |
 | 6 | Verification and legal quality | Trust layer | Citation validation, source validation, authority currency, conflict detection, legal uncertainty, confidence and limitation reporting, human review, quality gates | Release gates §18.3 automated | 🔒 LOCKED |

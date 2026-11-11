@@ -47,15 +47,39 @@ function mapRows(data: unknown, scoreKey: 'lexical_score' | 'semantic_score'): R
   });
 }
 function rpcFailure(code: string): Error { return new Error(code); }
+
+/**
+ * Which RPCs to call. The default is the trusted worker (service-role) wrappers; the research
+ * engine uses the workspace-scoped wrappers, which re-check research.create for the caller.
+ */
+export interface LegalSearchRouting {
+  lexicalRpc: string;
+  semanticRpc: string;
+  scopeArgs: Record<string, string>;
+}
+const SERVICE_ROUTING: LegalSearchRouting = {
+  lexicalRpc: 'legal_search_passages_lexical',
+  semanticRpc: 'legal_search_passages_semantic',
+  scopeArgs: {},
+};
+export function workspaceResearchRouting(organizationId: string, workspaceId: string): LegalSearchRouting {
+  return {
+    lexicalRpc: 'research_search_lexical',
+    semanticRpc: 'research_search_semantic',
+    scopeArgs: { p_organization_id: organizationId, p_workspace_id: workspaceId },
+  };
+}
+
 export function createSupabaseLegalPassageSearchProvider(
   client: RpcClient,
   embedQuery?: LegalQueryEmbedder,
   profile: LegalEmbeddingProfile = ACTIVE_LEGAL_EMBEDDING_PROFILE,
+  routing: LegalSearchRouting = SERVICE_ROUTING,
 ): LegalPassageSearchProvider {
   return {
     async searchLexical(plan: RetrievalPlan) {
-      const { data, error } = await client.rpc('legal_search_passages_lexical', {
-        p_query: plan.queryText, p_jurisdiction_code: plan.jurisdictionCode,
+      const { data, error } = await client.rpc(routing.lexicalRpc, {
+        ...routing.scopeArgs, p_query: plan.queryText, p_jurisdiction_code: plan.jurisdictionCode,
         p_as_of_date: plan.asOfDate, p_language_codes: plan.languageCodes,
         p_authority_types: plan.authorityTypes, p_limit: plan.limit,
       });
@@ -74,8 +98,8 @@ export function createSupabaseLegalPassageSearchProvider(
         throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID');
       }
       const vector = '[' + embedding.values.join(',') + ']';
-      const { data, error } = await client.rpc('legal_search_passages_semantic', {
-        p_embedding: vector, p_embedding_model_key: embedding.modelKey,
+      const { data, error } = await client.rpc(routing.semanticRpc, {
+        ...routing.scopeArgs, p_embedding: vector, p_embedding_model_key: embedding.modelKey,
         p_jurisdiction_code: plan.jurisdictionCode, p_as_of_date: plan.asOfDate,
         p_language_codes: plan.languageCodes, p_authority_types: plan.authorityTypes,
         p_limit: plan.limit,

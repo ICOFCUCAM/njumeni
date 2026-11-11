@@ -9,9 +9,9 @@
 | Reviewed head | `2b60d5f` |
 | Infrastructure stage | **Stage 0: zero cost, synthetic data only** |
 | Hosted database | Supabase project `Njumeni` (`eu-north-1`). **No migrations applied. Deployment deferred until all phases are complete (Phase 13)** |
-| Active phases | **Phase 2 (IN PROGRESS; 2.8 needs network)** · **Phase 3 (IMPLEMENTED; CI green; closeout pending OCR and an anti-malware engine)** · **Phase 4 (next)** |
+| Active phases | **Phase 2 (IN PROGRESS; 2.8 needs network)** · **Phase 3 (IMPLEMENTED; CI green)** · **Phase 4 (IMPLEMENTED; verified locally)** · Phase 5 next |
 | Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
-| Next action | Phase 4: legal research engine with the verification core |
+| Next action | Confirm CI on the Phase 4 commit, then Phase 5 (AI reasoning and agent framework) |
 | CI mode | ▶️ **Automatic CI re-enabled** (owner decision, 2026-11-11; free on the public repository). **Execution mode: continuous autonomous, one commit and push per completed phase** |
 
 ## 1. Status legend (Master Plan v2.0 §21.2)
@@ -201,6 +201,19 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Verification:** pgTAP 372/372 (`evidence_intelligence` 34/34); app tests 202/202; build passes; the end-to-end run on the local stack passed (quarantine, EICAR infected, disguised file rejected, extraction, chronology, custody and audit chains valid, outsider denied).
 - **Outstanding for closeout:** Phase 1 closed; CI green on the phase commit; OCR (network); a full anti-malware engine (Stage 1); a physical purge job (Phase 13); failed sign-in audit (Phase 10).
 
+## 5b. Phase 4: Legal research engine (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_4_PLAN.md](PHASE_4_PLAN.md) · **Testing:** [TESTING_STRATEGY.md](TESTING_STRATEGY.md)
+
+- **Workspace-scoped research.** Migration `20261111300000`: retrieval and authority context that never needs the service-role key in the web app.
+- **Claim ledger and database verification (U-09, U-10).** Six-category claim ledger. `research_record_run` checks existence, resolution, currency, source rights and quotation, then answers or abstains.
+- **Extractive composition** with verbatim quotes and citations. Later-amendment limitations. Conflict versus interpretation claims.
+- **API and interface.** `/api/v1/research` with OpenAPI 3.1 and a contract test. Pages `/research` and `/research/[id]`.
+- **Verification.** pgTAP 399/399 (research 27/27); app 214/214; build passes. Service and API end-to-end runs passed, including law applied as of 2015 versus 2024, abstention, 401/403 and forged claims withheld.
+- **Outstanding.** CI on the phase commit; real content and the Norway evaluation set (Task 2.8); the semantic model (network); API keys (Phase 10).
+
+**Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
+
 ## 6. Phase lock register
 
 | Phase | Name | Register state | Unlock condition |
@@ -209,7 +222,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | 1 | Identity, tenancy and security foundation | 🟢 CLOSED | Unlocked after Phase 0 closeout verified. All 1.1–1.12 green; CI `43120316404` (CI and security, on `91a6544`) and `43120020368` (database verification, on `b11bf30`) |
 | 2 | Legal knowledge foundation | 🟡 IN PROGRESS — PARALLEL | Owner authorised parallel implementation on 2026-11-10; Phase 1 acceptance remains a prerequisite for customer data |
 | 3 | Evidence intelligence | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Closeout needs Phase 1 closed, CI green on the Phase 3 commit, OCR and a full anti-malware engine ([Phase 3 plan](PHASE_3_PLAN.md) §5) |
-| 4 | Legal research engine (with verification core) | 🔒 LOCKED | Phase 2 closed |
+| 4 | Legal research engine (with verification core) | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in parallel (owner autonomous mode). Formal closeout needs Phase 2 content (Task 2.8) and CI on the phase commit ([Phase 4 plan](PHASE_4_PLAN.md) §5) |
 | — | Milestone M1: grounded-research demo (local stack) | — | Phase 4 exit criteria met for Norway |
 | 5 | AI reasoning and agent framework | 🔒 LOCKED | Phases 3 and 4 closed |
 | 6 | Verification and legal quality | 🔒 LOCKED | Phase 5 closed |

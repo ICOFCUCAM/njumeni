@@ -312,6 +312,42 @@ isOneToOne: false
 "record_usage_event":
 { Args: { "p_idempotency_key": string,"p_metadata"?: Json,"p_organization_id": string,"p_quantity": number,"p_unit": string,"p_usage_key": string,"p_workspace_id": string }; Returns: string
                            },
+"research_authority_context":
+{ Args: { "p_as_of_date": string,"p_authority_ids": (string)[],"p_organization_id": string,"p_workspace_id": string }; Returns: {
+              "after_as_of": boolean,"effective_from": string,"from_authority_id": string,"relationship_type": string,"to_authority_id": string,"to_citation": string,"to_title": string
+            }[]
+                           },
+"research_get_run":
+{ Args: { "p_run_id": string }; Returns: Json
+                           },
+"research_list_jurisdictions":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "code": string,"coverage_level": string,"name": string,"official_languages": (string)[]
+            }[]
+                           },
+"research_list_runs":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: {
+              "as_of_date": string,"created_at": string,"failed_claims": number,"jurisdiction_code": string,"question": string,"run_id": string,"status": string,"verified_claims": number
+            }[]
+                           },
+"research_record_run":
+{ Args: { "p_as_of_date": string,"p_claims": Json,"p_engine_version": string,"p_findings": Json,"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limitations": Json,"p_organization_id": string,"p_question": string,"p_retrieval_mode": string,"p_workspace_id": string }; Returns: string
+                           },
+"research_search_lexical":
+{ Args: { "p_as_of_date": string,"p_authority_types"?: (string)[],"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limit"?: number,"p_organization_id": string,"p_query": string,"p_workspace_id": string }; Returns: {
+              "authority_id": string,"authority_title": string,"authority_type": string,"authority_version_id": string,"citation": string,"jurisdiction_code": string,"language_code": string,"legal_status": string,"lexical_score": number,"page_number": number,"passage_content": string,"passage_id": string,"section_path": (string)[],"source_content_hash": string,"source_key": string,"source_uri": string,"valid_from": string,"valid_until": string
+            }[]
+                           },
+"research_search_semantic":
+{ Args: { "p_as_of_date": string,"p_authority_types"?: (string)[],"p_embedding": string,"p_embedding_model_key": string,"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limit"?: number,"p_organization_id": string,"p_workspace_id": string }; Returns: {
+              "authority_id": string,"authority_title": string,"authority_type": string,"authority_version_id": string,"citation": string,"jurisdiction_code": string,"language_code": string,"legal_status": string,"page_number": number,"passage_content": string,"passage_id": string,"section_path": (string)[],"semantic_score": number,"source_content_hash": string,"source_key": string,"source_uri": string,"valid_from": string,"valid_until": string
+            }[]
+                           },
+"research_source_permissions":
+{ Args: { "p_organization_id": string,"p_source_keys": (string)[],"p_workspace_id": string }; Returns: {
+              "attribution_text": string,"display_permitted": boolean,"licence_identifier": string,"quote_permitted": boolean,"source_key": string
+            }[]
+                           },
 "revoke_organization_invitation":
 { Args: { "p_invitation_id": string }; Returns: boolean
                            },
