@@ -147,6 +147,14 @@ isOneToOne: false
 "is_organization_owner":
 { Args: { "p_organization_id": string }; Returns: boolean
                            },
+"legal_authority_graph":
+{ Args: { "p_as_of"?: string,"p_max_depth"?: number,"p_max_nodes"?: number,"p_relationship_types"?: (string)[],"p_root_authority_id": string }; Returns: Json
+                           },
+"legal_authority_version_as_of":
+{ Args: { "p_authority_id": string,"p_known_at"?: string,"p_valid_on": string }; Returns: {
+              "authority_version_id": string,"normalised_content_hash": string,"recorded_at": string,"source_content_hash": string,"source_uri": string,"valid_from": string,"valid_until": string,"version_number": number
+            }[]
+                           },
 "legal_citation_source_metadata":
 { Args: { "p_source_keys": (string)[] }; Returns: Json
                            },

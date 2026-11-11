@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { LegalAuthorityRelationshipType } from './relationships.ts';
+import { LEGAL_AUTHORITY_RELATIONSHIP_TYPES, type LegalAuthorityRelationshipType } from './relationships.ts';
 
 export type LegalSourceType = 'legislation'|'case_law'|'regulation'|'treaty'|'official_guidance'|'court_portal'|'gazette'|'other';
 export interface LegalSourceManifest {
@@ -99,10 +99,7 @@ export function normaliseAuthority(input:LegalAuthorityInput,sourceText:string,a
   if(serialisedMetadata===undefined||Buffer.byteLength(serialisedMetadata,'utf8')>MAX_METADATA_BYTES)throw new Error('LEGAL_AUTHORITY_METADATA_TOO_LARGE');
   const normalisedText=normaliseLegalText(sourceText);
   if(!normalisedText)throw new Error('LEGAL_AUTHORITY_SOURCE_TEXT_EMPTY');
-  const relationshipTypes:readonly LegalAuthorityRelationshipType[]=[
-    'amends','amended_by','repeals','repealed_by','implements','implemented_by',
-    'interprets','applies','distinguishes','overrules','overruled_by','cites','related',
-  ];
+  const relationshipTypes=LEGAL_AUTHORITY_RELATIONSHIP_TYPES;
   const relationships=input.relationships??[];
   if(!Array.isArray(relationships)||relationships.length>100)throw new Error('LEGAL_AUTHORITY_RELATIONSHIPS_INVALID');
   const normalisedRelationships=relationships.map(relationship=>{
