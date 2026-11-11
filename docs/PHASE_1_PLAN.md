@@ -1,66 +1,120 @@
 # Phase 1 — Identity, tenancy and security foundation
 
-**Phase objective:** establish the identity, organisation/workspace tenancy, authorisation, audit and isolation foundation required before Njumeni handles confidential legal matters or documents.
+| Field | Value |
+|---|---|
+| Phase state | 🟡 **OPEN**: implementation complete; verification failing (see [register §4](PHASE_REGISTER.md)) |
+| Governing plan | [Njumeni Master Plan v2.0](NJUMENI_MASTER_PLAN.md), §11 (security), §10 (data), §21 (completion) |
+| Architecture records | [ADR-0001](architecture/ADR-0001-modular-monolith-and-bounded-contexts.md), [ADR-0002](architecture/ADR-0002-identity-tenancy-security.md), [ADR-0003](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md) |
+| Entry condition | Phase 0 closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`, CI run `42768822407` SUCCESS |
+| Plan revision | 2026-11-11: rewritten for v2.0 (build in public, staged infrastructure, deferred hosted migrations, small-commit cadence) |
 
-**Entry condition:** Phase 0 closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` verified by CI run `42768822407` SUCCESS.
+## 1. Objective
 
-**Architecture constraint:** follow the original Njumeni master plan and ADR-0001 modular-monolith boundaries. The original plan identifies Supabase Auth, PostgreSQL, RBAC and PostgreSQL RLS as the intended baseline. Validate implementation details against the actual dedicated Njumeni environment before provisioning. Never reuse another product's database or credentials.
+Establish the identity, organisation/workspace tenancy, authorisation, audit and isolation foundation required before Njumeni handles confidential legal matters or documents.
 
-## Phase 1 security invariants
+Every later phase depends on this boundary:
+- **Evidence (Phase 3)** needs private storage and RLS.
+- **Research (Phase 4)** needs a server-side trust boundary.
+- **Commercial (Phase 11)** needs a billing identity that is separate from authorisation.
 
-1. Every authenticated principal has a stable identity; no client-supplied user, tenant, role or matter identifier is trusted without server-side authorisation.
-2. Every protected resource has an explicit owner/tenant/workspace boundary.
+## 2. Scope
+
+| In scope | Out of scope (later phase) |
+|---|---|
+| Supabase Auth integration and session lifecycle | MFA/passkeys UI, OAuth, SSO (Phase 10; MFA before R1) |
+| Principals, profiles and immutable provider mapping | Matters and matter-level permissions (Phase 8) |
+| Organisations, workspaces, personal tenants | Teams and offices (Phase 10) |
+| Memberships and invitations | Conflict checks and information barriers (Phase 9, U-16) |
+| Role and permission catalogue, scoped bindings, server guards | Enterprise admin console (Phase 10) |
+| RLS on tenant tables; private workspace storage policies | Upload UI, malware scanning, evidence intake (Phase 3) |
+| Append-only security audit stream | Hash-chained audit (Phase 3, with custody, U-12) |
+| Provider-neutral billing identity, entitlements, usage ledger | Payment provider, invoices (Phase 11) |
+| Tenant-isolation verification suite | Penetration testing (Phase 13) |
+
+## 3. Security invariants
+
+1. Every authenticated principal has a stable identity. No client-supplied user, tenant, role or matter identifier is trusted without server-side authorisation.
+2. Every protected resource has an explicit owner, tenant and workspace boundary.
 3. Membership and role changes are authorised, audited and take effect consistently.
-4. Deny by default. A missing policy, membership or context never grants access.
-5. Database RLS is defence in depth and is tested using separate principals; application checks alone are insufficient.
-6. Cross-tenant and cross-workspace access must fail for reads, writes, updates, deletes, storage operations and background jobs.
-7. Service-role credentials never reach browsers or untrusted workers; privileged operations use narrow server-side interfaces.
-8. Audit events record security-relevant actor, action, target, tenant, timestamp, outcome and correlation context without copying confidential document content into logs.
-9. Invitations are single-use, expiring, revocable and bound to the intended organisation and email/identity.
-10. No confidential legal content is accepted until the identity, tenancy, RLS, storage and audit controls have passed the phase gates.
+4. **Deny by default.** A missing policy, membership or context never grants access.
+5. Database RLS is defence in depth and is tested with separate principals. Application checks alone are insufficient.
+6. Cross-tenant and cross-workspace access fails for reads, writes, updates, deletes, storage operations and background jobs.
+7. Service-role credentials never reach browsers or untrusted workers. Privileged operations use narrow server-side interfaces.
+8. Audit events record actor, action, target, tenant, timestamp, outcome and correlation context, and never copy confidential document content.
+9. Invitations are single-use, expiring, revocable and bound to the intended organisation and email address.
+10. Billing entitlements never grant data access.
+11. **▲ Build in public (ADR-0003):** security never depends on secrecy of code. No secret, token, production configuration or non-public data is committed or printed in CI logs.
+12. **▲ Deferred deployment (U-27):** Phase 1 migrations are verified on local and CI stacks only. The hosted project stays empty until Phase 13.
 
-## Ordered task register
+## 4. Task register
 
-| No. | Task | Required deliverable and acceptance criteria | Status |
-|---|---|---|---|
-| 1.1 | Define identity, authentication, tenant and workspace security contracts | Security architecture/ADR; threat model; principal, session, organisation, workspace, membership and permission concepts; trust boundaries; deny-by-default rules; explicit decisions and open dependencies. Reviewed against original plan and ADR-0001; verified by CI run `42769220793` on commit `2f22fddc14881c18a96a0cd6bcee12ad709943f8`. | 🟢 GREEN |
-| 1.2 | Verify dedicated Njumeni identity/database environment readiness | Dedicated project `Njumeni` (`vvjpsejeeffykaozfbik`) provisioned in `eu-north-1`; project-level status `ACTIVE_HEALTHY`; PostgreSQL 17.11 connectivity, built-in Auth/Storage schemas, empty application schema and migration baseline verified; publishable key availability confirmed without committing key material; Supabase security/performance/health advisors returned no findings at initial readiness. Per-service Auth health/configuration is a deferred release-verification item assigned to Task 1.11/Phase 1.12. | 🟢 GREEN — commit `4fdc1e8bb70d888d0869f75e76d0726d57901e6a`; CI run `42772065771` SUCCESS |
-| 1.3 | Implement identity provider integration and secure session lifecycle | Official Supabase SSR integration for Next.js 16; request-scoped server client; HttpOnly/SameSite cookie handling; Proxy refresh; sign-in/sign-out server actions; server-side protected workspace boundary; invalid, expired, revoked and tampered-session tests. See [PHASE_1_TASK_1_3_AUTH_IMPLEMENTATION.md](PHASE_1_TASK_1_3_AUTH_IMPLEMENTATION.md). | 🟡 DEVELOPMENT IMPLEMENTATION COMPLETE — owner-confirmed production sign-in, dashboard refresh persistence, sign-out, direct `/dashboard` denial after logout and cookie removal. CI run `42839971018` passed the three jobs and the mocked Auth lifecycle suite. The live provider refresh/revocation test and leaked-password protection configuration are external release-verification items; they are explicitly deferred to Task 1.11/Phase 1 closeout under the owner-directed autonomous build continuation. Task 1.4 is unlocked for development only. No confidential legal data or production customer onboarding is permitted until the Phase 1 safety gate passes. |
-| 1.4 | Implement user profile and principal model | User profile schema and server-side identity mapping; immutable provider subject mapping; safe profile update rules; migrations and database integration tests. | 🟢 GREEN — profile/principal schema, immutable provider mapping, active-principal RLS resolution, safe profile updates, HTTPS/IANA validation, CLI-generated migrations, generated TypeScript database types, clean local replay, database lint and all 16 pgTAP assertions. Local run `42845114187`; application CI `42846043378`. See [Task 1.4 acceptance](PHASE_1_TASK_1_4_ACCEPTANCE.md). Hosted schema remains unchanged. |
-| 1.5 | Implement organisations, workspaces and tenant ownership | Tenant/workspace schema, ownership rules, lifecycle and isolation invariants; migrations and server-side domain/application contracts. | 🟢 GREEN — owner-scoped organisation/workspace tables, personal tenant provisioning and idempotent backfill, owner-only RLS, immutable ownership, lifecycle triggers, server actions and settings UI. Local clean replay, type generation, database lint and 38/38 pgTAP assertions passed in run `42846849437`; application CI `42848567330` passed all three jobs, including 26 web tests and production build. See [Task 1.5 acceptance](PHASE_1_TASK_1_5_ACCEPTANCE.md). Hosted schema remains unchanged. |
-| 1.6 | Implement membership and invitation lifecycle | Membership states, invitation creation/acceptance/revocation/expiry, identity binding, replay protection and audit events. | 🟢 GREEN — organisation/workspace memberships, email-bound single-use invitations, 256-bit token generation with hash-only persistence, verified-email acceptance, expiry/revocation/replay protection, private lifecycle events, RLS, Server Actions and UI. Clean local replay, generated types, database lint and 85/85 pgTAP assertions passed in local run `42855740183`; application CI `42855740121` passed all three jobs, including 35/35 web tests and production build. Hosted schema remains unchanged. See [Task 1.6 acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md). |
-| 1.7 | Implement roles, permissions and server-side authorisation | Explicit permission catalogue, role bindings, policy evaluation and route/use-case guards; deny-by-default and privilege-escalation tests. | 🟡 IMPLEMENTATION WRITTEN — RBAC catalogue, scoped bindings, deny-by-default evaluator, assignment/revocation RPCs, server guards, UI and pgTAP/contract tests are prepared; combined batch verification deferred to owner-approved commit. |
-| 1.8 | Implement PostgreSQL RLS and storage access policies | Tenant/workspace-scoped RLS policies, secure helper functions, private storage policies and tests executed as realistic non-owner principals. | 🟡 IMPLEMENTATION WRITTEN — private workspace bucket, tenant/workspace object-key enforcement, permission-checked server upload/download/delete helpers and synthetic two-tenant pgTAP/contract tests; verification deferred to approved batch. |
-| 1.9 | Implement security audit logging | Append-only/tamper-evident event contract and persistence; actor/action/target/outcome/correlation metadata; redaction and access controls. | 🟡 IMPLEMENTATION WRITTEN — central append-only audit stream, lifecycle/role/membership event mirroring, allow-listed metadata, immutable trigger and permission-checked paginated read RPC; synthetic pgTAP coverage prepared, verification deferred to approved batch. |
-| 1.10 | Implement subscription identity and entitlement boundary | Link billing customer/subscription identities to organisation/workspace without allowing billing state to grant data access; entitlements remain separate from authorisation. | 🟡 IMPLEMENTATION WRITTEN — provider-neutral billing customer and subscription identities, tenant-bound subscription snapshots, versioned entitlements, webhook event idempotency, usage ledger, authenticated billing read/usage RPCs and service-role-only provider snapshot ingestion prepared; verification deferred to approved batch. |
+| No. | Task | Deliverable | Acceptance criteria | Status |
+|---|---|---|---|---|
+| 1.1 | Security contracts | ADR-0002: principals, sessions, tenants, workspaces, memberships, permissions, trust boundaries, threat model | Reviewed against the master plan and ADR-0001; CI green | 🟢 GREEN (`f8a2ee0`, CI `42769220793`) |
+| 1.2 | Environment readiness | Dedicated Supabase project; local CLI stack | Project healthy; empty baseline; no shared credentials | 🟢 GREEN (`4fdc1e8`, CI `42772065771`) |
+| 1.3 | Identity provider and session lifecycle | Supabase SSR client, Proxy refresh, server `getUser()` guard, sign-in/out actions, cookie handling | Mocked lifecycle tests pass; live provider test passes; manual owner check | 🔵 IMPLEMENTED (live test pending) |
+| 1.4 | Principal and profile model | Principals, provider mapping, profiles, safe update rules | pgTAP 16/16; types generated | 🟢 GREEN |
+| 1.5 | Organisations and workspaces | Owner-scoped tenancy, personal tenant provisioning, lifecycle triggers, settings UI | pgTAP 38/38; web tests; build | 🟢 GREEN |
+| 1.6 | Memberships and invitations | Membership states, 256-bit hash-only invitation tokens, verified-email acceptance, expiry, revocation and replay protection | pgTAP 85/85; web tests 35/35 | 🟢 GREEN |
+| 1.7 | Roles, permissions, server authorisation | Permission catalogue, role catalogue, scoped bindings, evaluator, assignment/revocation RPCs, guards, UI | `role_permission.test.sql` fully passing, including privilege-escalation negatives | 🟠 VERIFICATION FAILING (B-2) |
+| 1.8 | RLS and storage policies | Private workspace bucket; tenant/workspace object-key enforcement; server helpers | `storage_isolation.test.sql` passing with two synthetic tenants | 🔵 IMPLEMENTED (passing; closes with the phase) |
+| 1.9 | Security audit logging | Append-only stream, lifecycle/role/membership capture, allow-listed metadata, scoped read RPC; ▲ sign-in, sign-out and denied-access events | `security_audit.test.sql` fully passing | 🟠 VERIFICATION FAILING (B-3) |
+| 1.10 | Subscription identity and entitlements | Billing customers, subscriptions, versioned entitlements, provider-event idempotency, usage ledger | `subscription_entitlements.test.sql` passing; `record_usage_event` exposure reviewed | 🔵 IMPLEMENTED |
+| 1.11 | Isolation and security verification suite | Consolidated pgTAP contract suite and negative tests | Every Phase 1 pgTAP file passes in one CI run | 🟠 VERIFICATION FAILING |
+| 1.12 | Acceptance and closeout | Acceptance report, closeout commit, tag | §6 checklist complete; CI green | 🔒 LOCKED |
 
-| 1.11 | Execute tenant-isolation and security verification suite | Consolidated pgTAP contract suite and task-specific negative tests across identity, tenancy, RBAC, storage, audit and billing; live Auth and release residuals documented. | 🟡 SUITE AUTHORED — consolidated database contract tests and closeout matrix prepared; execution intentionally deferred until Phase 1 batch closeout under the owner’s instruction. See [Task 1.11 verification design](PHASE_1_TASK_1_11_SECURITY_VERIFICATION.md). |
-| 1.12 | Phase 1 acceptance and closeout | All 1.1–1.11 green, migration replay and CI pass, security review and acceptance report, dedicated closeout commit with successful CI. Only then unlock Phase 2. | 🔒 LOCKED |
+## 5. Verification approach
 
-## Owner-directed autonomous build continuation — 10 November 2026
+| Layer | Method | Where it runs |
+|---|---|---|
+| Database policies | pgTAP as separate synthetic principals (owner, member, outsider, anonymous) | `supabase-local.yml`: ephemeral local stack, `supabase db reset` from zero |
+| Server boundaries | Contract tests over source and server actions | `apps/web` `npm run test:auth` |
+| Auth lifecycle | Mocked suite on every push; live provider test on manual dispatch with a dedicated test identity | `repository-security.yml` |
+| Migrations | Format, ordering, immutability guard with hash-pinned pre-deployment corrections | `scripts/ci/check-migrations.mjs` |
+| Secrets and content | Gitleaks; repository content policy | Every push |
 
-The owner has instructed that implementation must continue sequentially through the product phases, with commits deferred until the end of Phase 1 and no repeated checks after each small change. Therefore, functional build tasks may proceed while live provider verification, plan-dependent Auth settings and final release security checks remain explicitly outstanding. These are carried into Task 1.11 and Phase 1.12 rather than used to halt implementation. This is a development sequencing decision, not a security waiver: use synthetic data only, do not onboard customers or accept confidential legal material, and do not mark the phase closed until the outstanding controls are resolved or formally accepted through the appropriate owner decision.
+## 6. Closeout checklist (Task 1.12)
 
-## Owner/environment gates
+| # | Item | Done |
+|---|---|---|
+| 1 | Blockers B-1 to B-7 fixed ([register §2.3](PHASE_REGISTER.md)); one fully green CI run including the local database job | ☐ |
+| 2 | Live Auth lifecycle test executed with a dedicated synthetic identity; identity deleted afterwards | ☐ |
+| 3 | Leaked-password protection: Stage 0 risk acceptance recorded (ADR-0003 §2.6, decision D-6) | ☐ |
+| 4 | Sign-in, sign-out and denied-access audit events implemented, or deferral recorded | ☐ |
+| 5 | `record_usage_event` exposure reviewed (server-only or justified) | ☐ |
+| 6 | Database types regenerated; CI drift check added | ☐ |
+| 7 | ADR-0002 status set to Accepted; its §12 open decisions resolved or deferred with owners | ☐ |
+| 8 | Stale documents refreshed: README, health endpoint, `APP_SHELL.md`, infrastructure/environment/migration/CI documents, `CONTRIBUTING.md` (and the tests pinning their wording) | ☐ |
+| 9 | `SECURITY_ARCHITECTURE.md` and `MULTITENANCY.md` consolidated from ADR-0002 and the task designs (master plan §19.3) | ☐ |
+| 10 | `PHASE_1_ACCEPTANCE_REPORT.md` completed with commit and run IDs | ☐ |
+| 11 | Closeout commit, green CI, tag `phase-1-closed`, register updated | ☐ |
 
-- The repository is currently public although the original plan specifies private. This remains an owner-level risk; do not place confidential deployment configuration or data in Git.
-- Dedicated Njumeni Supabase project `vvjpsejeeffykaozfbik` is provisioned in `eu-north-1`. Task 1.2 records project/database readiness. Auth service-specific health and security configuration is a deferred release-verification item assigned to Task 1.11/Phase 1.12 under the owner-directed autonomous build sequence.
-- Region/data residency and classification approval remain unresolved. Do not select a region based on another product's configuration.
-- No real legal documents or customer matters may be used for tests; use synthetic fixtures.
-- Supabase Auth is the planned identity provider from the original architecture. Any change requires a documented ADR and owner decision.
-- RLS policies must be tested against the actual database semantics; static SQL inspection alone is not acceptance.
+**Not part of the closeout:** applying migrations to hosted Supabase. That happens once, in Phase 13 (U-27).
 
-## Phase-wide completion rule
+## 7. Changes from the previous plan
 
-A task is GREEN only when its implementation or decision artifact is complete, reviewed, tested, documented, committed and the relevant CI checks pass. A scaffold, placeholder, unverified migration or mocked access-control test is not completion. A live-environment dependency may be marked BLOCKED with exact evidence and a safe next action; it must not be called complete.
+| Previous | v2.0 | Why |
+|---|---|---|
+| Repository privacy flagged as an owner risk | Resolved: build in public (ADR-0003) | Owner decision, zero cost |
+| Keep Tasks 1.7–1.11 uncommitted; one batch; verify once at the end | Small commits; CI green on every commit (U-18) | The batch approach produced corrupted SQL and long-red CI |
+| "Execution deferred" for Task 1.11 | The suite has run and fails; status is VERIFICATION FAILING | Register accuracy |
+| Hosted migration deployment by separate authorisation | **No hosted deployment until all phases are complete** | Owner decision (U-27) |
+| Tamper-evident audit in Phase 1 | Append-only in Phase 1; hash chain in Phase 3 together with evidence custody | One mechanism, delivered once (U-12) |
+| Leaked-password protection as a release check | Accepted Stage 0 risk; enabled at Stage 1 | Requires a paid plan |
 
-Phase 1 does not authorise confidential production use until all phase acceptance criteria and required production controls are verified.
+## 8. Task records
 
+Detailed designs and acceptance evidence remain authoritative for their tasks:
 
-## Task 1.6 closeout — 10 November 2026
+- [Task 1.3: Auth implementation](PHASE_1_TASK_1_3_AUTH_IMPLEMENTATION.md)
+- [Task 1.4: Profile draft review](PHASE_1_TASK_1_4_PROFILE_DRAFT_REVIEW.md) · [Acceptance](PHASE_1_TASK_1_4_ACCEPTANCE.md)
+- [Task 1.5: Organisation/workspace design](PHASE_1_TASK_1_5_ORGANISATION_WORKSPACE_DESIGN.md) · [Acceptance](PHASE_1_TASK_1_5_ACCEPTANCE.md)
+- [Task 1.6: Membership/invitation design](PHASE_1_TASK_1_6_MEMBERSHIP_INVITATION_DESIGN.md) · [Acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md)
+- [Task 1.7: RBAC design](PHASE_1_TASK_1_7_RBAC_DESIGN.md)
+- [Task 1.8: RLS/storage design](PHASE_1_TASK_1_8_RLS_STORAGE_DESIGN.md)
+- [Task 1.9: Security audit design](PHASE_1_TASK_1_9_SECURITY_AUDIT_DESIGN.md)
+- [Task 1.10: Billing/entitlements design](PHASE_1_TASK_1_10_BILLING_ENTITLEMENTS_DESIGN.md)
+- [Task 1.11: Security verification](PHASE_1_TASK_1_11_SECURITY_VERIFICATION.md)
+- [Environment readiness](PHASE_1_ENVIRONMENT_READINESS.md) · [Acceptance report (draft)](PHASE_1_ACCEPTANCE_REPORT.md)
 
-Task 1.6 is accepted GREEN. The implementation and evidence are recorded in [Task 1.6 acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md). Local clean migration replay, schema lint, 85 pgTAP assertions, 35 application tests, production build, repository content policy and secret scanning passed. Hosted schema remains unchanged. Tasks 1.7–1.9 implementation batches are written; combined verification is deferred until the owner approves the prepared commit batch. Task 1.10 implementation is written. Task 1.11 is the next verification gate and remains deferred until the owner approves the combined batch.
-
-## Owner execution cadence update — 10 November 2026
-
-The owner has directed that related implementation work continue without intermediate commits. The prepared Phase 1 implementation batch (Tasks 1.7–1.10) and the Task 1.11 verification suite are to remain uncommitted until Phase 1 is ready for its single closeout commit. Do not run intermediate test/CI checks or deploy hosted migrations. At Phase 1 closeout, run the combined verification once, resolve failures, prepare the acceptance report and present the complete phase commit. This cadence does not waive acceptance criteria or permit confidential production data before the phase gate passes.
+Where a task record conflicts with this plan or the register on *status*, the register governs. Where a task record says "uncommitted", "deferred until batch" or "tests not run", it describes the superseded cadence.

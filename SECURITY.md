@@ -18,6 +18,19 @@ Confidential and classified legal material must be handled by the running Njumen
 
 For officially classified information, the hosting environment and service providers must be expressly authorised for the relevant classification. A private GitHub repository, ordinary cloud storage or encryption alone does not establish that authorisation.
 
+## Building in public
+
+This repository is public by decision ([ADR-0003](docs/architecture/ADR-0003-build-in-public-and-staged-infrastructure.md)): **open code, closed data.**
+
+- Security MUST NOT depend on secrecy of the source code. Isolation is enforced by authentication, PostgreSQL RLS, server-side authorisation and secret management, and is verified with negative pgTAP tests.
+- CI logs on a public repository are public. Workflows must never print secrets, tokens or non-public data.
+- At Stage 0 only synthetic data is used anywhere. No migration is applied to the hosted database until all phases are complete.
+- Public visibility does not grant a licence to reuse the code. All rights are reserved unless a licence is published.
+
+## Reporting a vulnerability
+
+Do **not** open a public issue for a suspected vulnerability. Report it privately through GitHub's "Report a vulnerability" feature (private vulnerability reporting) on this repository, or by contacting the repository owner directly. Include steps to reproduce and the affected commit. Never include real personal or legal data in a report.
+
 ## Source-control hygiene
 - Keep this repository dedicated to Njumeni; maintain unrelated products in separate repositories.
 - Never commit live customer documents, case files, evidence, production database dumps, backups, credentials, API keys, private keys, access tokens or production configuration.

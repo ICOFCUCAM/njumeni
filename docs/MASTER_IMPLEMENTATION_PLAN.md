@@ -3435,60 +3435,36 @@ One important instruction: If the earlier jurisai repository already contains wo
 The first milestone is therefore an actual repository and infrastructure audit, followed by the implementation of Phase 0. No later phases should be declared completed merely because their directories or documentation have been created.
 
 My recommendation: Njumeni should be developed as one integrated legal intelligence ecosystem, with its own proprietary legal knowledge, evidence, reasoning and verification engines. That is the foundation on which we can build a serious international legal technology company.
-
 ---
 
-# Live implementation overlay — 10 November 2026
+# Live implementation overlay — 11 November 2026
 
-This overlay is execution metadata added after the original source. It does not replace, shorten, rewrite or silently reconcile any of the twenty original sections or their tables above.
+## Governing plan
 
-## Source preservation and authority
+Everything above this line is the **exact, immutable original master source**, preserved byte for byte. It is identical to [ORIGINAL_MASTER_PLAN_SOURCE.md](ORIGINAL_MASTER_PLAN_SOURCE.md) and checksum-enforced by `tests/original-plan.test.mjs`.
 
-- The complete uploaded source is preserved in [ORIGINAL_MASTER_PLAN_SOURCE.md](ORIGINAL_MASTER_PLAN_SOURCE.md).
-- The twenty-section content above remains the product's original requirements baseline. Historical status statements and original estimates remain as authored.
-- [PHASE_REGISTER.md](PHASE_REGISTER.md) is the live operational status record. Its current 16-task Phase 0 register supplements the source's original checklist; it does not delete or redefine the source requirements.
-- Any change to original requirements must be recorded as an explicit, reviewed architectural or product decision. A deferred requirement must retain its original detail and record the reason, dependency and planned phase.
+From 11 November 2026 the governing plan is **[Njumeni Master Plan v2.0](NJUMENI_MASTER_PLAN.md)**. It:
 
-## Current Phase 0 execution status
+- restates all twenty original sections in structured, professional form, with every original table and list;
+- preserves the eight canonical layers (Experience, API, Workflow orchestration, Evidence, Legal knowledge, Reasoning, Verification, Infrastructure) and the thirteen A–M modules;
+- marks each extension or change as an upgrade (U-01–U-27), with a rationale and a traceability table back to this source;
+- keeps the original Phase 0–13 roadmap, through Phase 13 — Production hardening and launch, with the original order of Phases 3–8 restored.
 
-- Phase 0 remains the only open phase.
-- Tasks 0.1–0.14 are recorded green in the live register, except task 0.13 was closed after its infrastructure audit was completed.
-- Task 0.6 is green: the exact original eight layer names and definitions are recovered and recorded in ADR-0001.
-- Task 0.7 is green: the A–M modules are mapped to the approved layers, bounded contexts, ownership, contracts, permissions and phase delivery in MODULE_LAYER_MAP.md and MODULE_REQUIREMENTS_TRACEABILITY.md.
-- Task 0.12 is green: the application shell, A–M routes, route-contract tests, package lock, TypeScript check and production build passed final CI run `42744161490`.
-- Tasks 0.1–0.15 are recorded GREEN in the live register. Task 0.16 Phase 0 acceptance/closeout is IN PROGRESS; Phase 1 remains locked until the dedicated closeout commit and its CI verification pass.
-- The phase register is the live status authority. Do not rely on historical task counts or status notes in this plan overlay.
+Where the original text and v2.0 differ, v2.0 governs, and the difference is recorded in its Appendix B. The original text is never edited.
 
-## Recovered original eight platform layers
+## Owner decisions recorded on 11 November 2026
 
-The uploaded source identifies these exact layer names and order:
+| Decision | Effect | Record |
+|---|---|---|
+| Build in public, at zero cost for now | Repository stays public; open code, closed data; staged infrastructure (Stage 0 → 1 → 2) | [ADR-0003](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md) |
+| Keep all migrations; deploy only when all phases are complete | All migrations stay in `supabase/migrations/`. They run only on local and CI stacks until Phase 13, when the cumulative set is applied to hosted Supabase once | ADR-0003 §2.5, master plan U-27 |
 
-1. Experience
-2. API
-3. Workflow orchestration
-4. Evidence
-5. Legal knowledge
-6. Reasoning
-7. Verification
-8. Infrastructure
+## Earlier overlay decisions (still in force)
 
-These names are the preserved baseline for ADR-0001 and the A–M module-layer map. Do not substitute another taxonomy without an explicit change decision.
-
-## Upstream project inventory
-
-The original source explicitly identifies five public repositories for architectural research: OpenContracts, CaseCite, Lawgent, Lovspor and Mike. The product owner confirmed on 10 November 2026 that these five are the selected upstream reference projects to be assessed as inputs to Njumeni's wider architecture. They are **not** an exclusive technology or component list, and they do not limit the platform's architecture or future sourcing. Njumeni will also incorporate other suitable open-source and commercial technologies, independently developed components and additional capabilities as requirements demand. Each named repository must receive an individual capability, architecture, exact-version licence, security and compatibility assessment. Capabilities may be adopted, adapted, reimplemented in Njumeni-owned code, isolated behind adapters, replaced or discarded. The platform's requirements and approved architecture govern every decision; wholesale copying and licence circumvention are not implied or authorised. The owner decision closes only the question of whether a sixth repository is required to complete this initial five-project assessment set; it does not prohibit evaluating further technologies or projects later.
-
-## Decisions and differences requiring traceability
-
-- The original source's brand line is “Research. Evidence. Reasoning. Confidence.” The later product specification uses “Law. Evidence. Intelligence.” Both are preserved pending a final brand decision.
-- The original source's architecture and implementation detail remain intact. Subsequent ADRs may refine them only through explicit decision records; the live register records delivery status, not permission to erase requirements.
-- The application shell currently establishes routes and presentation boundaries only. Authentication, tenancy, database access, RLS, private storage, AI providers and operational legal workflows remain unconnected until their planned phases.
+- **Brand lines.** The original brand line, "Research. Evidence. Reasoning. Confidence.", is the default. "Law. Evidence. Intelligence." (product specification) remains under consideration.
+- **Upstream projects.** The five named upstream projects (OpenContracts, CaseCite, Lawgent, Lovspor, Mike) are the initial reference set, not an exclusive list. Each capability is adopted, adapted, reimplemented, isolated, replaced or discarded after licence and security review. Wholesale copying is not authorised.
+- **Phase register.** [PHASE_REGISTER.md](PHASE_REGISTER.md) remains the live operational status record.
 
 ## Preservation checksum
 
-The uploaded source was 60,927 bytes, 60,008 decoded characters, 3,437 lines and approximately 6,381 words. SHA-256 of the uploaded source bytes: `4dce95748a34c529caa74fce5f2dfd3486fc9d2fa5c88ac54cc3f14f71992fe0`.
-
-
-## Owner decision — initial upstream architectural references (10 November 2026)
-
-The product owner selected the five repositories named in the original source—OpenContracts, CaseCite, Lawgent, Lovspor and Mike—as the initial upstream reference projects for architectural assessment. They are not the exclusive technologies, components or sources Njumeni may use. The platform may also incorporate other suitable open-source and commercial technologies, independently developed components and additional capabilities as requirements demand. Each of the five named projects requires an individual capability, exact-version licence, security, data/dependency and architecture assessment. A capability may be adopted, adapted, reimplemented, isolated, replaced or discarded. Njumeni's product requirements and approved architecture govern selection; wholesale copying and licence circumvention are not authorised. The decision closes only the question of whether a sixth project is required to complete this initial five-project assessment set; it does not prohibit future technology or project evaluation.
+Original source: 60,927 bytes, 3,437 lines. SHA-256 `4dce95748a34c529caa74fce5f2dfd3486fc9d2fa5c88ac54cc3f14f71992fe0`.

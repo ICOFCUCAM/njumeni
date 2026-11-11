@@ -6,6 +6,12 @@
 
 This is a point-in-time summary. The [Live Phase Register](PHASE_REGISTER.md) remains the operational source of truth; where this snapshot shows that the register is out of date, it says so explicitly.
 
+> **Update, 2026-11-11.** After this snapshot, the owner adopted the [Njumeni Master Plan v2.0](NJUMENI_MASTER_PLAN.md) as the governing plan. The owner also decided:
+> - to **build in public at zero cost** ([ADR-0003](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md)), which resolves the "repository is PUBLIC" risk below;
+> - to **keep all migrations in the repository and apply them to hosted Supabase only when all phases are complete**.
+>
+> The phase register has been rewritten to match.
+
 ---
 
 ## 1. The vision
@@ -163,7 +169,7 @@ A secure, responsive web workspace with one verifiable **research + document** v
 ### Owner decisions and risks
 | Priority | Item |
 |---|---|
-| **P0** | **The repository is PUBLIC.** The plan requires a private repository, and the security, RLS and migration design is currently public. |
+| ~~P0~~ Resolved | The repository is public. **Resolved 2026-11-11 by owner decision to build in public (ADR-0003).** |
 | **P0** | No production trust boundary exists. No confidential legal data may be used until Phase 1 is accepted. |
 | P1 | The default branch is a Claude working branch, and branch protection is off or unverified. |
 | P1 | CI actions use version tags instead of pinned SHAs; installs use `--no-audit`; two workflows auto-commit to the branch. |
@@ -186,7 +192,7 @@ A secure, responsive web workspace with one verifiable **research + document** v
    - Decide on leaked-password protection: upgrade the plan or formally accept the risk.
    - Regenerate the database types.
    - Write the acceptance report with run IDs, then make the closeout commit.
-3. **Resolve the P0 owner items.** Make the repository private, and confirm data residency and classification.
+3. **Owner items.** *Repository visibility is resolved (build in public).* Confirm data residency and classification, the licence posture (D-1), and the domain/trademark knock-out search (D-2).
 4. **Update the stale docs.** Correct the register, README, health endpoint and infrastructure/CI docs to match reality.
 5. **Make Phase 2 real.**
    - Complete the rights review for one pilot source (Lovdata / Norway).

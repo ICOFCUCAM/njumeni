@@ -1,45 +1,76 @@
-# NJUMENI — LIVE PHASE EXECUTION REGISTER
+# NJUMENI — LIVE PHASE REGISTER
 
-**This is the operational register.** The [Master Implementation Plan](MASTER_IMPLEMENTATION_PLAN.md) defines the scope and architecture; this register controls the actual work and phase locks.
+**This is the operational register.** The governing plan is the [Njumeni Master Plan v2.0](NJUMENI_MASTER_PLAN.md). The original source is preserved unchanged in [MASTER_IMPLEMENTATION_PLAN.md](MASTER_IMPLEMENTATION_PLAN.md) and [ORIGINAL_MASTER_PLAN_SOURCE.md](ORIGINAL_MASTER_PLAN_SOURCE.md). This register controls actual work, task status, evidence and phase locks.
 
-- Repository: `ICOFCUCAM/njumeni`
-- Active phases: **Phase 1 — Identity, tenancy and security foundation (acceptance pending)**; **Phase 2 — Legal knowledge infrastructure (parallel implementation authorised)**
-- Phase 1 state: **🟡 OPEN — IN PROGRESS**
-- Phase 2 state: **🟡 IN PROGRESS — PARALLEL DEVELOPMENT**
-- Phase 1 next action: **Run the consolidated Phase 1 acceptance verification and resolve any failures.** The implementation batch was committed as b08605486b6782f5fda030aa4fe27a8b86c9989a; a formatting follow-up is present at 90d9a5f619b29fd5a49f5b0cfe9d35d3b9aa4368. Phase 1 remains OPEN and acceptance evidence is still pending.
-- Phase 0 closeout commit: `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` — CI run `42768822407` completed SUCCESS.
-- Phase 2 exception: the owner has expressly authorised Phase 2 implementation to proceed in parallel with Phase 1 verification. This is a development scheduling exception only; it does not waive Phase 1 acceptance, customer-data restrictions, source-rights approval or production release gates. Phases 3–13 remain locked.
+| Field | Value |
+|---|---|
+| Repository | `ICOFCUCAM/njumeni`: **public, built in public** ([ADR-0003](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md)) |
+| Register revision | 2026-11-11: rewritten to align with Master Plan v2.0 and to correct status against the actual code and CI |
+| Reviewed head | `2b60d5f` |
+| Infrastructure stage | **Stage 0: zero cost, synthetic data only** |
+| Hosted database | Supabase project `Njumeni` (`eu-north-1`). **No migrations applied. Deployment deferred until all phases are complete (Phase 13)** |
+| Active phases | **Phase 1: Identity, tenancy and security (OPEN; implemented, verification failing)** · **Phase 2: Legal knowledge infrastructure (IN PROGRESS, parallel)** |
+| Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
+| Next action | **Restore green CI** (§2.3), then close Phase 1 (Task 1.12) |
 
-## 1. Register legend
+## 1. Status legend (Master Plan v2.0 §21.2)
 
 | Indicator | Meaning |
 |---|---|
-| 🟢 GREEN / COMPLETE | Deliverable implemented or completed, reviewed, checks passed, documentation updated and commit SHA recorded |
-| 🟡 IN PROGRESS | Work has started; acceptance is not yet satisfied |
-| 🔴 BLOCKED | Cannot proceed until a named dependency or decision is resolved |
-| ⚪ NOT STARTED | Work has not begun |
-| 🔒 LOCKED | Belongs to a future phase; no implementation may start |
+| ⚪ NOT STARTED | No work begun |
+| 🟡 IN PROGRESS / OPEN | Work under way; not yet complete |
+| 🔵 IMPLEMENTED | Code and tests committed; verification not yet run or not yet passing everywhere |
+| 🟠 VERIFICATION FAILING | Verification ran and failed; fixing it is the next action |
+| 🟢 GREEN / CLOSED | Acceptance met, CI green, evidence (commit and run IDs) recorded |
+| 🔴 BLOCKED | Named external dependency or owner decision required |
+| 🔒 LOCKED | Future phase; no implementation may start |
+| ⚠️ REGRESSION | Was green; a later change broke it |
 
-A task does not turn green because code was written. It turns green only after its acceptance conditions are met and its commit is verified. If a later change breaks it, change its state to REGRESSION and resolve it.
+A task does not turn green because code was written. It turns green only when its acceptance conditions are met and its commit is verified by CI.
 
-## 2. Active phase — Phase 0
+## 2. Current position
 
-**Phase objective:** establish the complete, verified product, repository, architecture, engineering and infrastructure foundation required to begin application implementation safely.
+### 2.1 Summary
 
-**Phase-wide closeout requirements:**
-- All numbered tasks 0.1–0.16 are green.
-- Exact original 20-point outline and A–M module map are preserved and mapped.
-- CMP material is safely archived and verified outside Njumeni before its removal from this repository.
-- Product scope and first-release specification are approved and documented.
-- Modular-monolith architecture, eight layers, bounded contexts and module contracts are recorded.
-- Development standards and local/test/staging/production environment strategy are documented and reproducible.
-- CI quality, build, test, security and repository-policy checks pass.
-- Database migration and hosted-database reconciliation policy is defined and verified against the actual environment before schema work begins.
-- Hosting, domains, database, storage, queue, provider, secrets and deployment facts are inventoried; unknowns are explicitly recorded.
-- Application shell and navigation architecture are specified without prematurely implementing downstream features.
-- Repository hygiene and all Phase 0 risks are reviewed.
-- Phase-wide acceptance report is committed.
-- Dedicated Phase 0 closeout commit exists and is verified.
+| Area | State |
+|---|---|
+| Phase 0 | 🟢 Closed and verified |
+| Phase 1 | Implementation complete for 1.1–1.10. Database verification **fails** in two pgTAP files. Live Auth checks not yet run |
+| Phase 2 | Schema, ingestion framework, durable queue, worker, retrieval, citation bundles and rights/coverage governance implemented. **No legal content, no source adapters, no embeddings, no UI**. pgTAP fails in one file |
+| Phases 3–13 | 🔒 Locked |
+| Local checks (2026-11-11) | `apps/web` typecheck ✅ · web tests 161/161 ✅ · legal-knowledge tests 114/114 ✅ · root tests 19/19 ✅ |
+| CI | 🟠 **Red** |
+
+### 2.2 Owner decisions in force
+
+| Date | Decision | Record |
+|---|---|---|
+| 2026-11-10 | Phase 2 may proceed in parallel with Phase 1 verification; no customer data before Phase 1 acceptance | This register |
+| 2026-11-10 | Five upstream reference projects (OpenContracts, CaseCite, Lawgent, Lovspor, Mike) form the initial assessment set; not exclusive | Master plan §12.1 |
+| 2026-11-11 | **Build in public at zero cost** (Stage 0) | ADR-0003 |
+| 2026-11-11 | **Keep all migrations in the repository; apply them to hosted Supabase only when all phases are complete** | ADR-0003 §2.5; master plan U-27 |
+| 2026-11-11 | Master Plan v2.0 adopted as the governing plan; roadmap order of Phases 3–8 restored to the original | Master plan §20 |
+
+### 2.3 CI blockers (fix before any new feature work, U-18)
+
+| # | Blocker | Location | Cause | Fix |
+|---|---|---|---|---|
+| B-1 | Migration-policy guard fails | `scripts/ci/check-migrations.mjs` | `20261110290000_legal_source_coverage_review.sql` was corrected in `2b60d5f` without a hash-pinned entry | Add the entry to `scripts/ci/migration-predeployment-corrections.json` |
+| B-2 | RBAC pgTAP fails (tests 10, 11, 37; file aborts near line 497) | `supabase/tests/role_permission.test.sql` | Fixture creates a workspace as a member before `org_admin` is bound; reads `private.role_audit_events` while still `authenticated` | Reorder the fixture; `reset role` before the private read |
+| B-3 | Audit pgTAP: 0 of 12 run | `supabase/tests/security_audit.test.sql` | Fixture inserts two rows into `audit_test_ids`, so a scalar subquery returns more than one row | Use a single keyed row, or keyed lookups |
+| B-4 | Legal-knowledge pgTAP fails | `supabase/tests/legal_knowledge_foundation.test.sql` | Line 66 `$`-delimiter corruption; test 22 expects `USER-DEFINED` (Postgres reports `tsvector`); test 39 checks a superseded 7-argument signature | Repair the delimiter; update both assertions |
+| B-5 | Worker cannot start | `apps/web/package.json` | `server-only` is imported but not a dependency | Add the pinned dependency and update the lockfile |
+| B-6 | Legal-knowledge unit tests not in CI | `.github/workflows/repository-security.yml` | No job runs `test:legal-knowledge` | Add the step |
+| B-7 | Generated DB types stale | `apps/web/src/lib/supabase/database.types.ts` | Not regenerated since the Phase 1 audit and billing work, and the Phase 2 work | Regenerate; add a drift check in CI |
+
+
+## 3. Phase 0: Architecture and project foundation (🟢 CLOSED)
+
+**Objective:** establish the verified product, repository, architecture, engineering and infrastructure foundation required to begin application implementation safely.
+
+The Phase 0 record below is preserved as verified history. Two Phase 0 positions have since been changed by owner decision and recorded in v2.0, without reopening the phase:
+- **Repository visibility.** The 0.9 and 0.15 risk "repository is PUBLIC" is resolved by ADR-0003 (build in public).
+- **Monorepo.** The original "establish monorepo" is delivered incrementally (master plan §9.4, U-06).
 
 ### Phase 0 task register
 
@@ -71,100 +102,135 @@ A task does not turn green because code was written. It turns green only after i
 |---|---|
 | Phase 0 repository audit | `a3b5d32c602f96baf9ac3daaf51f49633e9e2e3e` |
 | Original 20-point outline and A–M register restored; phase-lock rules added | `0c2b9d5c970a8de8670cc5823374dd246aa7483b` |
-| Master phase backlog initial commit | `b05755824b97f7f937cb4679f73cdadf4e45e471` |
+| Master phase backlog, initial commit | `b05755824b97f7f937cb4679f73cdadf4e45e471` |
+| Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1` (CI run `42768822407` SUCCESS) |
 
-The security workflow passed for commits `a3b5d32`, `0c2b9d5`, `9427e26` and `c046790`. Workflow runs for the latest audit/README/master-plan corrections are still running or queued and must be checked before their commits are treated as CI-verified.
+## 4. Phase 1: Identity, tenancy and security (🟡 OPEN)
 
-## Active phase — Phase 1
+**Objective:** establish identity, tenant/workspace isolation, authorisation, audit and security foundations before Njumeni handles confidential legal matters or documents.
+**Plan:** [PHASE_1_PLAN.md](PHASE_1_PLAN.md) (rewritten for v2.0).
+**Implementation batch:** `b08605486b6782f5fda030aa4fe27a8b86c9989a`, plus a formatting follow-up `90d9a5f` and later corrections.
 
-**Phase objective:** establish identity, tenant/workspace isolation, authorisation, audit and security foundations before Njumeni handles confidential legal matters or documents.
-
-**Phase plan:** [Phase 1 — Identity, tenancy and security foundation](PHASE_1_PLAN.md).
-
-| No. | Task / required outcome | Status | Acceptance evidence |
+| No. | Task | Status | Evidence / remaining work |
 |---|---|---|---|
-| 1.1 | Define identity, authentication, tenant and workspace security contracts | 🟢 GREEN | [ADR-0002 — Identity, Tenancy and Security Architecture](architecture/ADR-0002-identity-tenancy-security.md) defines principal/session/tenant/workspace/membership/permission concepts, trust boundaries, deny-by-default rules, RLS, audit, threat model and open decisions. ADR commit `f8a2ee06588cc985970ce8a0b8a6828d25afef96`; verified by CI run `42769220793` on follow-up integrity commit `2f22fddc14881c18a96a0cd6bcee12ad709943f8`. |
-| 1.2 | Verify dedicated Njumeni identity/database environment readiness | 🟢 GREEN | Dedicated project `Njumeni` (`vvjpsejeeffykaozfbik`) created in `eu-north-1`; project status `ACTIVE_HEALTHY`; PostgreSQL 17.11 and built-in Auth/Storage schemas verified; empty app schema/migration baseline confirmed; publishable key availability verified; security/performance/health advisors clear. Documentation commit `4fdc1e8bb70d888d0869f75e76d0726d57901e6a`; CI run `42772065771` SUCCESS (all 3 jobs passed). See [Environment Readiness Assessment](PHASE_1_ENVIRONMENT_READINESS.md). |
-| 1.3 | Implement identity provider integration and secure session lifecycle | 🟡 DEVELOPMENT IMPLEMENTATION COMPLETE — RELEASE CHECKS DEFERRED | Official Supabase SSR/Auth integration, request-scoped client, Next.js 16 Proxy refresh, server-side `getUser()` guard, sign-in/sign-out and cookie handling are implemented. Owner confirmed sign-in, refresh persistence, logout, protected-route denial and cookie removal. CI run `42839971018` passed all three jobs and the mocked Auth lifecycle suite. Live provider refresh/revocation verification and leaked-password protection remain release checks assigned to Task 1.11/Phase 1.12. Functional development proceeds under the owner’s autonomous-build instruction; no confidential data or customer onboarding before Phase 1 closeout. See [Task 1.3 implementation contract](PHASE_1_TASK_1_3_AUTH_IMPLEMENTATION.md). |
-| 1.4 | Implement user profile and principal model | 🟢 GREEN | Principal/profile schema, immutable provider mapping, active-principal RLS resolution, safe profile updates, HTTPS/IANA validation, CLI-generated migrations, generated types, clean local replay, database lint and 16/16 pgTAP assertions. Local run `42845114187`; application CI `42846043378`. See [Task 1.4 acceptance](PHASE_1_TASK_1_4_ACCEPTANCE.md). Hosted schema remains unchanged. |
-| 1.5 | Implement organisations, workspaces and tenant ownership | 🟢 GREEN | Owner-scoped organisation/workspace schema, personal tenant provisioning and backfill, owner-only RLS, immutable ownership, lifecycle triggers, server actions and settings UI. Local clean replay, type generation, database lint and 38/38 pgTAP assertions passed in run `42846849437`; application CI `42848567330` passed all three jobs, including 26 web tests and production build. See [Task 1.5 acceptance](PHASE_1_TASK_1_5_ACCEPTANCE.md). Hosted schema remains unchanged. |
-| 1.6 | Implement membership and invitation lifecycle | 🟢 GREEN | Organisation/workspace membership states, 256-bit single-use email-bound invitations, hash-only token persistence, confirmed-email acceptance, expiry/revocation/replay protection, private lifecycle events, RLS, Server Actions and UI. Local clean replay, generated types, database lint and 85/85 pgTAP assertions passed in run `42855740183`; application CI `42855740121` passed all three jobs, including 35/35 web tests and production build. See [Task 1.6 acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md). Hosted schema unchanged. |
-| 1.7 | Implement roles, permissions and server-side authorisation | 🟡 IMPLEMENTATION WRITTEN | RBAC catalogue, scoped bindings, evaluator, assignment/revocation RPCs, server guards, UI and tests prepared; combined verification pending. |
-| 1.8 | Implement PostgreSQL RLS and storage access policies | 🟡 IMPLEMENTATION WRITTEN | Private workspace storage, scoped object paths, server upload/download/delete helpers and synthetic isolation tests prepared; verification pending. |
-| 1.9 | Implement security audit logging | 🟡 IMPLEMENTATION WRITTEN | Central append-only audit stream, lifecycle/role/membership capture, metadata minimisation and scoped read RPC prepared; verification pending. |
-| 1.10 | Implement subscription identity and entitlement boundary | 🟡 IMPLEMENTATION WRITTEN | Provider-neutral billing identity, tenant-bound subscription snapshots, versioned entitlements, idempotent provider events, usage ledger and separate billing read/usage RPCs prepared; verification pending. |
-| 1.11 | Execute tenant-isolation and security verification suite | 🟡 SUITE AUTHORED — EXECUTION DEFERRED | Consolidated pgTAP contract suite and task-specific negative tests prepared; live Auth, cross-tenant and release checks remain pending the single Phase 1 closeout verification. See [Task 1.11 verification design](PHASE_1_TASK_1_11_SECURITY_VERIFICATION.md). |
-| 1.12 | Phase 1 acceptance and closeout | 🔒 LOCKED | All 1.1–1.11 green, phase-wide security/CI acceptance and verified closeout commit. |
+| 1.1 | Identity, authentication, tenant and workspace security contracts | 🟢 GREEN | [ADR-0002](architecture/ADR-0002-identity-tenancy-security.md); ADR commit `f8a2ee06588cc985970ce8a0b8a6828d25afef96`; CI run `42769220793`. *Closeout action:* move the ADR from "Proposed" to "Accepted" and resolve or defer its §12 open decisions |
+| 1.2 | Dedicated Njumeni identity/database environment readiness | 🟢 GREEN | Project `Njumeni` (`vvjpsejeeffykaozfbik`, `eu-north-1`, PostgreSQL 17.11); commit `4fdc1e8bb70d888d0869f75e76d0726d57901e6a`; CI run `42772065771`. The hosted schema stays empty until Phase 13 (U-27) |
+| 1.3 | Identity provider integration and secure session lifecycle | 🔵 IMPLEMENTED | Supabase SSR, Proxy refresh, server-side `getUser()` guard, sign-in/out; owner-confirmed manual checks; CI run `42839971018` (mocked lifecycle suite). **Remaining:** live provider test (`scripts/auth-provider.integration.test.mjs`, which needs test secrets); leaked-password protection is an accepted Stage 0 risk (ADR-0003) |
+| 1.4 | User profile and principal model | 🟢 GREEN | 16/16 pgTAP; local run `42845114187`; CI `42846043378`. [Acceptance](PHASE_1_TASK_1_4_ACCEPTANCE.md) |
+| 1.5 | Organisations, workspaces and tenant ownership | 🟢 GREEN | 38/38 pgTAP; run `42846849437`; CI `42848567330`. [Acceptance](PHASE_1_TASK_1_5_ACCEPTANCE.md) |
+| 1.6 | Membership and invitation lifecycle | 🟢 GREEN | 85/85 pgTAP; run `42855740183`; CI `42855740121`. [Acceptance](PHASE_1_TASK_1_6_ACCEPTANCE.md) |
+| 1.7 | Roles, permissions and server-side authorisation | 🟠 VERIFICATION FAILING | Catalogue, scoped bindings, evaluator, assignment/revocation RPCs, guards and UI are implemented. `role_permission.test.sql` fails (blocker B-2); the cause is the fixture, not the policies |
+| 1.8 | PostgreSQL RLS and storage access policies | 🔵 IMPLEMENTED | Private workspace bucket and path-scoped policies; `storage_isolation.test.sql` passes in CI. The server storage helper is not yet called by any UI; the upload path is delivered in Phase 3. Acceptance for 1.8 is at database-policy level |
+| 1.9 | Security audit logging | 🟠 VERIFICATION FAILING | Append-only stream, triggers, allow-listed metadata, read RPC. `security_audit.test.sql` does not execute (B-3). **v2.0 scope note:** sign-in/sign-out and denied-access events are added at Phase 1 closeout; hash-chaining (U-12) is delivered with evidence custody in Phase 3 |
+| 1.10 | Subscription identity and entitlement boundary | 🔵 IMPLEMENTED | Billing identity, entitlements, usage ledger, provider-event idempotency; `subscription_entitlements.test.sql` passes. **Review at closeout:** whether `record_usage_event` should be server-only |
+| 1.11 | Tenant-isolation and security verification suite | 🟠 VERIFICATION FAILING | The consolidated suite has run in CI (latest run `42900717384`). Passing files: membership, organisation/workspace, Phase 1 security contract, profile, storage, subscriptions. Failing: B-2 and B-3 |
+| 1.12 | Phase 1 acceptance and closeout | 🔒 LOCKED | Requires §4.1 |
 
-**Phase 1 safety gate:** no real customer legal documents or confidential matters may be accepted until identity, tenancy, RLS, private storage, audit and provider-egress controls have been implemented and verified.
+### 4.1 Phase 1 closeout checklist
 
-## 3. Phase lock register
+1. Fix blockers B-1 to B-7 and get one fully green CI run, including the local database job.
+2. Run the live Auth lifecycle test with a dedicated synthetic identity, then delete the identity.
+3. Record the D-6 leaked-password risk acceptance (ADR-0003 §2.6).
+4. Add sign-in, sign-out and denied-access audit events, or record their deferral with an owner decision.
+5. Move ADR-0002 to Accepted.
+6. Refresh the stale documents:
+   - `README.md`
+   - `apps/web/src/app/api/health/route.ts` and `docs/APP_SHELL.md`
+   - `INFRASTRUCTURE_AUDIT.md`, `ENVIRONMENT_STRATEGY.md`, `DATABASE_MIGRATION_POLICY.md`, `CI_PIPELINE.md` and `CONTRIBUTING.md`
 
-Phase 0 is CLOSED. Phase 1 is now OPEN after successful verification of the dedicated Phase 0 closeout commit and its CI run. Phases 2–13 remain locked until their respective phase acceptance and closeout conditions pass.
+   Update the tests that pin outdated wording.
+7. Write `PHASE_1_ACCEPTANCE_REPORT.md` with run IDs.
+8. Make the closeout commit, get a green CI run and tag it `phase-1-closed`.
+
+No hosted migration is part of the Phase 1 closeout (U-27).
+
+**Phase 1 safety gate:** no real customer legal documents or confidential matters may be accepted until identity, tenancy, RLS, private storage, audit and provider-egress controls are verified **and** the hosted deployment of Phase 13 has taken place.
+
+## 5. Phase 2: Legal knowledge infrastructure (🟡 IN PROGRESS, parallel)
+
+**Objective:** a governed, jurisdiction-aware, bitemporal legal-authority registry and retrieval substrate, proven end-to-end with one rights-approved pilot source.
+**Plan:** [PHASE_2_PLAN.md](PHASE_2_PLAN.md) (rewritten for v2.0).
+**Implementation:** `b7123a0` plus repair commits `00b7eb8`, `e2d52b4`, `01d459f` and `2b60d5f` (migration `$`-delimiter corruption repaired; clean replay of all 23 migrations confirmed in CI run `42900717384`).
+
+> **Renumbering note (v2.0):** the former Task 2.8 "Phase 2 verification and closeout" is now **Task 2.11**. New Tasks 2.8–2.10 make Phase 2 deliver real, evaluated content rather than empty infrastructure.
+
+| No. | Task | Status | Evidence / remaining work |
+|---|---|---|---|
+| 2.1 | Jurisdiction and legal-source registry | 🟠 VERIFICATION FAILING | Schema, seeds (6 jurisdictions, 6 catalogue sources: all `review_required`, ingestion disabled), RLS and revokes. `legal_knowledge_foundation.test.sql` fails (B-4) |
+| 2.2 | Authority identity and version model (bitemporal, U-07) | 🔵 IMPLEMENTED | Stable identities, append-only versions, effective periods, SHA-256 hashes. **Remaining:** an as-of query function over valid time and system time, with tests |
+| 2.3 | Normalisation and provenance contract | 🔵 IMPLEMENTED | Manifest/rights validation, Unicode normalisation, hashes, passage anchors; unit tests pass |
+| 2.4 | Full-text and vector retrieval substrate | 🔵 IMPLEMENTED | GIN/HNSW indexes, lexical/semantic RPCs, hybrid ranking, citation bundles, trusted search. Language-aware FTS and the embedding profile are moved to Task 2.9 |
+| 2.5 | Source ingestion lifecycle | 🔵 IMPLEMENTED | *(Register previously said "pending"; corrected.)* Durable leased queue, checkpoints, retries, dead letters, persistence RPCs, worker runtime, exact-version adapter registry. **Defect:** B-5 |
+| 2.6 | Legal authority relationship graph | 🔵 IMPLEMENTED | Relationship schema, provenance validation, in-memory bounded traversal, lease-bound relationship ingestion. **Remaining:** a database-backed graph query RPC |
+| 2.7 | Jurisdiction/source coverage governance | 🔵 IMPLEMENTED | *(Register previously said "NOT STARTED"; corrected.)* Coverage assessment, snapshot service, source and jurisdiction coverage reviews, append-only audits. **v2.0:** align the levels with master plan §6.7 (catalogued, planned, pilot, partial, supported) |
+| 2.8 | Pilot source: rights review and first adapter (Norway legislation) | ⚪ NOT STARTED | Rights review of the candidate source (master plan §6.3); adapter with an exact version pin; activation through the audited RPCs; ingestion of a bounded corpus into the **local** stack |
+| 2.9 | Embedding profile and multilingual retrieval (U-22) | 🔴 BLOCKED on D-3 | Select an open multilingual model; record the profile; forward-migrate the vector dimension; generate embeddings in the worker; language-specific FTS configurations |
+| 2.10 | Retrieval evaluation set, Norway (U-15) | ⚪ NOT STARTED | Golden questions with expected authorities and as-of dates; recall/precision report; harness runnable in CI |
+| 2.11 | Phase 2 verification and closeout | 🔒 LOCKED | All of 2.1–2.10 green; clean replay; pgTAP; regenerated types; consolidated `LEGAL_KNOWLEDGE_ARCHITECTURE.md` and `DATABASE_ARCHITECTURE.md`; acceptance report; closeout commit and tag |
+
+**Phase 2 safety gates:**
+- No source ingestion until rights, terms and attribution are approved.
+- No embeddings until the model profile is selected.
+- No customer documents.
+- No hosted migration deployment before Phase 13 (U-27).
+
+## 6. Phase lock register
 
 | Phase | Name | Register state | Unlock condition |
 |---|---|---|---|
 | 0 | Foundation and repository/infrastructure audit | 🟢 CLOSED | All 0.1–0.16 green; closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
 | 1 | Identity, tenancy and security foundation | 🟡 OPEN | Active; Phase 0 closeout verified |
-| 2 | Legal knowledge foundation | 🟡 IN PROGRESS — PARALLEL | Owner authorised parallel implementation on 2026-11-10; Phase 1 acceptance remains a prerequisite for customer-facing legal data access and production release |
-| 3 | Evidence and document foundation | 🔒 LOCKED | Phase 2 closeout verified |
-| 4 | Document intelligence | 🔒 LOCKED | Phase 3 closeout verified |
-| 5 | Legal research | 🔒 LOCKED | Phase 4 closeout verified |
-| 6 | AI reasoning and argument graph | 🔒 LOCKED | Phase 5 closeout verified |
-| 7 | Verification and quality control | 🔒 LOCKED | Phase 6 closeout verified |
-| 8 | Documents, contracts and drafting | 🔒 LOCKED | Phase 7 closeout verified |
-| 9 | Personal and case workspace | 🔒 LOCKED | Phase 8 closeout verified |
-| 10 | Professional and institutional edition | 🔒 LOCKED | Phase 9 closeout verified |
-| 11 | Commercial platform | 🔒 LOCKED | Phase 10 closeout verified |
-| 12 | Global and multi-jurisdiction expansion | 🔒 LOCKED | Phase 11 closeout verified |
-| 13 | Production hardening and launch | 🔒 LOCKED | Phase 12 closeout verified |
+| 2 | Legal knowledge foundation | 🟡 IN PROGRESS — PARALLEL | Owner authorised parallel implementation on 2026-11-10; Phase 1 acceptance remains a prerequisite for customer data |
+| 3 | Evidence intelligence | 🔒 LOCKED | Phase 1 closed (storage/RLS boundary accepted) |
+| 4 | Legal research engine (with verification core) | 🔒 LOCKED | Phase 2 closed |
+| — | Milestone M1: grounded-research demo (local stack) | — | Phase 4 exit criteria met for Norway |
+| 5 | AI reasoning and agent framework | 🔒 LOCKED | Phases 3 and 4 closed |
+| 6 | Verification and legal quality | 🔒 LOCKED | Phase 5 closed |
+| 7 | Document intelligence | 🔒 LOCKED | Phase 6 closed |
+| 8 | Case management and personal workspace | 🔒 LOCKED | Phase 7 closed |
+| — | Release R1: first release | — | Phase 8 closed, Stage 1 infrastructure, and an owner exception for hosted deployment **or** Phase 13 |
+| 9 | Professional workspace | 🔒 LOCKED | Phase 8 closed |
+| 10 | Enterprise and institutional systems | 🔒 LOCKED | Phase 9 closed |
+| 11 | Commercial infrastructure | 🔒 LOCKED | Phase 10 closed |
+| 12 | Global expansion | 🔒 LOCKED | Phase 11 closed |
+| 13 | Production hardening and launch | 🔒 LOCKED | Phase 12 closed; includes the **first hosted deployment of the cumulative migration set** |
 
-## Phase 2 — Legal knowledge infrastructure (parallel implementation)
+*The order of Phases 3–8 now follows the original source and v2.0 (U-25). The previous register had them as: Evidence and document foundation, Document intelligence, Legal research, AI reasoning, Verification, and Documents/contracts/drafting.*
 
-**Phase objective:** establish the governed, jurisdiction-aware, versioned legal-authority registry and retrieval substrate. Phase 1 remains OPEN and all Phase 1 safety restrictions continue to apply.
+## 7. Required workflow for every task (v2.0, U-18)
 
-**Phase plan:** [Phase 2 — Legal knowledge infrastructure](PHASE_2_PLAN.md).
+1. Read this register and the relevant master plan section before editing.
+2. Confirm dependencies, acceptance criteria, branch and head.
+3. Inspect existing implementation and tests before changing anything.
+4. Make **small, coherent commits**, each with its tests and documentation. *(Replaces the former "no intermediate commits / single phase batch" rule, which produced corrupted migrations and long-red CI.)*
+5. **Keep CI green.** A red build is fixed before new feature work continues.
+6. Migrations:
+   - Add new migrations with CLI-format timestamps.
+   - Correct existing migrations only while undeployed, and hash-pin every correction.
+   - **Never apply migrations to hosted Supabase before Phase 13** (U-27).
+7. Regenerate database types after any schema change.
+8. Use synthetic data only (Stage 0). Never commit secrets or non-public data. CI logs are public.
+9. At phase closeout:
+   - write the acceptance report
+   - make the closeout commit
+   - get a green CI run
+   - tag `phase-N-closed`
+   - update this register
 
-| No. | Task / required outcome | Status | Acceptance evidence |
-|---|---|---|---|
-| 2.1 | Jurisdiction and legal-source registry | 🟡 IMPLEMENTATION WRITTEN | Jurisdiction and source catalogues, rights/ingestion gates, private RLS-protected schema and initial source discovery entries; combined verification pending |
-| 2.2 | Legal authority identity and version model | 🟡 FOUNDATION WRITTEN | Stable authority identities, immutable version contract, effective periods and source/normalised hashes; application-level immutability and migration tests pending |
-| 2.3 | Normalisation and provenance contract | 🟡 IMPLEMENTATION WRITTEN | Adapter manifest, rights evidence/permission matrix with separate ingestion, display and redistribution gates, allow-listed HTTPS URI validation, Unicode normalisation, source/normalised SHA-256 hashes and passage anchors; tests authored, execution pending |
-| 2.4 | Full-text and vector retrieval substrate | 🟡 IMPLEMENTATION WRITTEN | Full-text GIN and partial HNSW indexes, private lexical/semantic SQL RPCs, hybrid retrieval orchestration, effective-date and language filters, citation bundles with source hashes/attribution, separate quote/display rights and a composed jurisdiction-scoped legal search service; embedding profile and evaluation remain pending |
-| 2.5 | Source ingestion lifecycle | 🟡 EXECUTOR WRITTEN | Deterministic batches, idempotency, rights checks, bounded concurrent fetch, live rights-registry recheck before every fetch, host allow-list, provenance persistence boundary, run counts and partial-failure reporting; trusted persistence adapter/queue/checkpoints pending |
-| 2.6 | Legal authority relationship graph | 🟡 IMPLEMENTATION WRITTEN | Directional relationship schema, provenance validation, inverse mapping and bounded breadth-first graph traversal with as-of/type filters, cycle protection and truncation reporting; database-backed graph queries pending |
-| 2.7 | Jurisdiction/source coverage governance | ⚪ NOT STARTED | Coverage evidence, supported classes, update cadence, language and omission reporting |
-| 2.8 | Phase 2 verification and closeout | 🔒 LOCKED | All 2.1–2.7 green, rights review, combined verification and verified closeout commit |
+## 8. Autonomous build instruction
 
-**Phase 2 safety gates:** no source ingestion until rights/terms/attribution are approved; no embeddings until the model profile is selected; no customer legal documents or matter data before Phase 1 acceptance; no hosted migration deployment without separate owner authorisation.
+Following the owner's instructions of 10 and 11 November 2026:
+- Implementation continues autonomously without waiting for repeated "go next" messages.
+- Phase 2 proceeds in parallel with Phase 1 verification.
+- External verification, plan-dependent Auth controls and launch reviews are release gates. They do not halt functional development.
+- None of this authorises production use, customer onboarding, confidential legal data, or hosted migration deployment before Phase 13.
+- No task or phase is reported GREEN until its evidence requirements pass.
 
-## 4. Required workflow for every task
+## 9. "Go next" instruction
 
-1. Read this register and the relevant master-plan section before editing code.
-2. Confirm dependencies, acceptance criteria and current branch/head.
-3. Inspect existing implementation and tests before making changes.
-4. Implement sequentially and write the corresponding tests and documentation.
-5. Do not repeatedly poll CI or run the full verification suite after each small change.
-6. Do not create intermediate commits during Phase 1 or Phase 2; retain each phase's related changes as one prepared phase batch. Keep phase-specific changes separately identifiable.
-7. At Phase 1 closeout, present one complete phase commit, then run the combined verification once and resolve any failures before marking tasks GREEN.
-8. Keep hosted Supabase unchanged unless the owner separately authorises migration deployment.
-9. Continue with the next implementation task while verification is pending, without representing unverified work as accepted.
-10. At phase closeout, run the full phase acceptance suite, create the acceptance report and dedicated closeout commit, then verify before unlocking the next phase.
+When the user says **"go next"**:
+1. Fix any open CI blocker (§2.3).
+2. Otherwise, continue the first incomplete task in Phase 1.
+3. Then continue the first incomplete task in Phase 2.
 
-## 5. Autonomous build instruction
-
-On the owner's instructions dated 10 November 2026, continue implementation autonomously without waiting for repeated “go next” messages. Phase 2 is expressly authorised to proceed in parallel with unfinished Phase 1 acceptance work. Keep separate task registers, change scopes and phase-end commits. External security verification, plan-dependent Auth controls and final launch reviews remain release gates; they must not repeatedly interrupt functional product development. This does not authorise production use, customer onboarding or confidential legal data before Phase 1 acceptance. Do not report a task or phase GREEN until its own implementation, tests, review, CI and evidence requirements pass.
-
-## 6. "Go next" instruction
-
-When the user says **"go next"**, continue the first incomplete task in the one active phase shown above. Do not ask the user to select a task already determined by this register. Do not start work in a locked phase. If blocked, explain the blocker and resolve the next prerequisite within the same phase.
-
-
-## Owner decision — upstream reference set (10 November 2026)
-
-The product owner has confirmed that the five repositories named in the original master source—OpenContracts, CaseCite, Lawgent, Lovspor and Mike—are the selected upstream reference projects for the initial architecture assessment. They are architectural inputs, not the exclusive set of technologies, components or sources Njumeni may use. Njumeni's wider architecture may incorporate other suitable open-source and commercial technologies, independently developed components and further capabilities as requirements demand. Each of the five named projects requires an individual capability inventory, exact-version licence review, security assessment, architecture/compatibility decision, implementation mapping and tests. For each capability, the outcome may be adopt, adapt, reimplement in Njumeni-owned code, isolate behind an adapter, replace or discard. Product requirements and Njumeni's approved architecture govern selection; wholesale copying and licence circumvention are not authorised. The earlier uncertainty is closed only as to whether a sixth project is needed to complete this initial five-project assessment set. Future technologies and projects may still be evaluated when justified, without changing this decision.
-
-
-## Owner execution cadence update — 10 November 2026
-
-The owner previously instructed that Phase 1 implementation be consolidated into one phase batch. That implementation batch is now committed at b08605486b6782f5fda030aa4fe27a8b86c9989a; the branch also contains a formatting-only follow-up. The commit is not Phase 1 acceptance. The consolidated Task 1.11 suite and all remaining acceptance gates must still be executed at closeout. Do not poll CI or run intermediate verification after each small task. Hosted Supabase remains unchanged unless separately authorised.
+Do not start work in a locked phase. If blocked, explain the blocker and resolve the next prerequisite.

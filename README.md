@@ -1,53 +1,130 @@
 # Njumeni — Global Legal Intelligence
 
-Njumeni is an independent legal technology platform under active architecture and implementation. Its intended capabilities include jurisdiction-aware legal research, secure document and evidence management, document intelligence, contract workflows, legal reasoning and institutional governance.
+**Research. Evidence. Reasoning. Confidence.**
 
-**Implementation status:** the repository contains the complete original twenty-section product plan, architecture and security controls, a tested Next.js web foundation shell and route entry points for all thirteen A–M modules. Authentication, tenancy, database/RLS, private storage, AI providers, API/worker services and operational legal workflows are not connected yet.
+Njumeni is an international legal technology platform under active construction. It is designed to be a complete legal intelligence ecosystem, not an AI chatbot or document generator:
+- jurisdiction-aware legal research over versioned law
+- provenance-preserving evidence intelligence
+- structured legal reasoning
+- citation verification
+- secure matter workspaces for individuals, professionals, firms and institutions
 
-## Canonical repositories and product boundaries
+> **Founding principle:** AI assists with legal research, analysis, evidence and reasoning. It does not pretend to be a lawyer, independently exercise legal authority or replace qualified human judgement.
 
-- **Njumeni application:** this repository, `ICOFCUCAM/njumeni`.
-- **Public marketing website:** [ICOFCUCAM/marketing-website](https://github.com/ICOFCUCAM/marketing-website). It is an independent public-facing repository and contains no legal application data or authenticated matter workflows. Its separate implementation and deployment lifecycle must remain decoupled from the legal application.
-- **Legacy CMP archive:** [ICOFCUCAM/njumeni-cmp-archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive). The six original CMP files were transferred and verified against their source Git blob IDs before the CMP-only files were removed from this repository.
-- **Upstream legal projects:** remain independent research sources or candidates for isolated adapters. Do not vendor entire projects or import code without technical, security and licence approval.
+## Built in public
 
-Njumeni is intended to securely handle confidential legal documents, case files and evidence through protected application storage. Live customer data must never be committed to Git or stored in build artefacts, issue trackers or CI logs. Officially classified material requires hosting and service providers authorised for the applicable classification.
+This repository is **public by decision** ([ADR-0003](docs/architecture/ADR-0003-build-in-public-and-staged-infrastructure.md)): open code, closed data.
 
-## Binding implementation plan and live phase register
+- Source code, schema, security policies, tests and plans are visible.
+- Customer data, documents, evidence, secrets and production configuration are **never** committed.
+- **Visibility is not a licence.** Unless and until a licence is published, all rights are reserved.
+- External contributions are not accepted until a licence and contributor terms are chosen.
 
-The [Master Implementation Plan](docs/MASTER_IMPLEMENTATION_PLAN.md) preserves the original twenty numbered sections and canonical A–M modules, and defines Phases 0–13. The [Live Phase Register](docs/PHASE_REGISTER.md) is the operational source of truth for the active phase, numbered tasks, green completion indicators, commit SHAs and phase locks. The [Phase 0 Audit](docs/PHASE_0_AUDIT.md) records repository findings, and the [Product Specification](docs/PRODUCT_SPECIFICATION.md) defines target users, priority journeys, initial jurisdiction priorities, first-release scope, requirements and non-goals.
+## Where the project stands
 
-**Execution rule:** only one phase is open at a time. Every "go next" resumes the first incomplete task in that phase. A task turns green only after its acceptance checks pass and its commit is verified. The entire phase—including the final numbered task, phase-wide checks, acceptance report and dedicated closeout commit—must be complete before the next phase is unlocked. A proposal, folder, scaffold or unverified code does not count as completion.
+| Phase | Name | State |
+|---|---|---|
+| 0 | Architecture and project foundation | 🟢 Closed |
+| 1 | Identity, tenancy and security | 🟡 Open: implemented; database verification being fixed |
+| 2 | Legal knowledge infrastructure | 🟡 In progress: framework built; first source, embeddings and evaluation next |
+| 3–13 | Evidence → research → reasoning → verification → documents → workspaces → enterprise → commercial → global → launch | 🔒 Locked |
 
-## Architecture and security
+**What exists:**
+- A Next.js 16 application with Supabase authentication, organisations, workspaces, invitations and role management.
+- 23 database migrations: identity, RBAC, RLS, private storage policies, audit, entitlements, and the legal-knowledge registry, ingestion queue and retrieval. They replay cleanly on a local stack.
+- About 180 automated application tests, plus pgTAP database tests.
 
-- [Engineering Standards](docs/ENGINEERING_STANDARDS.md) — coding, naming, formatting, validation, errors, logging, security and review conventions.
-- [Contributing Guide](CONTRIBUTING.md) — task discipline, change requirements and pull-request review.
-- [ADR-0001 — Modular monolith and bounded contexts](docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md) — approved architecture decision, canonical eight layers, dependency rules and security boundaries.
-- [A–M Module Layer Map](docs/architecture/MODULE_LAYER_MAP.md) — module ownership, layer assignment, contracts, dependencies, permissions and phase delivery.
-- [A–M Capability Traceability](docs/architecture/MODULE_REQUIREMENTS_TRACEABILITY.md) — original module capabilities mapped to their implementation layers.
-- [Legal AI Platform Architecture](docs/LEGAL_AI_PLATFORM_ARCHITECTURE.md) — bounded domains, topology, retrieval, evidence provenance, source assessments and licensing.
-- [Product Boundaries](docs/PRODUCT_BOUNDARIES.md) — canonical product and repository separation.
-- [Security Policy](SECURITY.md) — application-data protection and source-control hygiene.
-- [Third-Party Notices](THIRD_PARTY_NOTICES.md) — legal-source project notices and licensing notes.
+**What does not exist yet:**
+- Legal content and source adapters.
+- AI models and embeddings.
+- Evidence upload, matters and research answers.
+- Any deployment.
 
-## Current engineering controls
+The hosted database is intentionally empty. **All migrations stay in this repository and are applied to the hosted project only when every phase is complete** (Phase 13).
 
-The repository includes a GitHub Actions [CI pipeline](docs/CI_PIPELINE.md) for formatting, lint, strict TypeScript baseline, foundation tests, architecture integrity, repository content policy and Gitleaks secret scanning. The application build and application-level test gates activate as the app shell and workspace are introduced; database/RLS/legal-intelligence tests are added in their dependent phases. These controls do not yet constitute a production application pipeline.
+The live status, with evidence and blockers, is in the **[Phase Register](docs/PHASE_REGISTER.md)**.
+
+## Key documents
+
+| Document | Purpose |
+|---|---|
+| [Master Plan v2.0](docs/NJUMENI_MASTER_PLAN.md) | **Governing plan:** the complete product, architecture, security, AI, legal knowledge, commercial and roadmap specification, with all upgrades (U-01–U-27) |
+| [Phase Register](docs/PHASE_REGISTER.md) | Live task and phase status, CI blockers, owner decisions |
+| [Original master source](docs/ORIGINAL_MASTER_PLAN_SOURCE.md) | The immutable original 20-section plan (checksum-enforced) |
+| [Product Specification](docs/PRODUCT_SPECIFICATION.md) | Users, journeys, first-release scope, acceptance criteria |
+| [Phase 1 plan](docs/PHASE_1_PLAN.md) · [Phase 2 plan](docs/PHASE_2_PLAN.md) | Active phase plans |
+| [ADR-0001](docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md) · [ADR-0002](docs/architecture/ADR-0002-identity-tenancy-security.md) · [ADR-0003](docs/architecture/ADR-0003-build-in-public-and-staged-infrastructure.md) | Architecture decisions |
+| [Module Layer Map](docs/architecture/MODULE_LAYER_MAP.md) · [Capability Traceability](docs/architecture/MODULE_REQUIREMENTS_TRACEABILITY.md) | Modules A–M mapped to the eight layers |
+| [Engineering Standards](docs/ENGINEERING_STANDARDS.md) · [Contributing](CONTRIBUTING.md) | How work is done |
+| [Database Migration Policy](docs/DATABASE_MIGRATION_POLICY.md) · [CI Pipeline](docs/CI_PIPELINE.md) · [Environment Strategy](docs/ENVIRONMENT_STRATEGY.md) | Engineering controls |
+| [Security Policy](SECURITY.md) · [Third-Party Notices](THIRD_PARTY_NOTICES.md) | Security and licensing |
+
+## Architecture at a glance
+
+- **Four workspaces on one engine:** Personal, Professional, Enterprise and Institutional, all on a shared legal intelligence engine (research, evidence, knowledge, reasoning, verification, drafting).
+- **Eight layers:** Experience · API · Workflow orchestration · Evidence · Legal knowledge · Reasoning · Verification · Infrastructure.
+- **Thirteen modules (A–M):** Legal Intelligence, Research Engine, Evidence Intelligence, Case Management, Document Intelligence, Argument and Reasoning, Jurisdictions, Personal Assistant, Professional, Enterprise, Institutional, Compliance, and Knowledge Management.
+- **Stack:**
+  - Next.js, React, TypeScript, Tailwind
+  - a Node/TypeScript modular monolith
+  - Supabase: PostgreSQL, Auth, RLS, pgvector and Storage
+  - a Postgres-backed job queue
+  - provider-independent AI
+- **Priority jurisdictions:** Norway → EU → UK → US → international law → Cameroon.
 
 ## Local development
 
-- [Environment Strategy](docs/ENVIRONMENT_STRATEGY.md) — separation of local, test/CI, staging and production, service topology, secret boundaries and deployment promotion.
-- [Database Migration Policy](docs/DATABASE_MIGRATION_POLICY.md) — immutable migrations, local replay, hosted history reconciliation, drift, backup and forward-fix controls.
-- [CI Pipeline](docs/CI_PIPELINE.md) — formatting, lint, type, tests, security, repository policy and migration checks.
-- [Infrastructure Audit](docs/INFRASTRUCTURE_AUDIT.md) — verified hosting, database, domain, storage, queue and provider state.
-- [Application Shell](docs/APP_SHELL.md) — route boundaries, A–M module entry points and current preview limitations.
-- [.env.example](.env.example) — placeholder-only configuration template; it contains no real credentials.
+Requirements: Node 22 (`>=22.13 <23`), npm 10, and the Supabase CLI with Docker for the local database.
 
-The web foundation shell is runnable with the pinned `apps/web` package. The full legal application stack is not yet established: authentication, tenancy, database/RLS, private storage, AI providers, API/worker services and production deployment remain unconnected. Follow the live Phase Register and the [Infrastructure Audit](docs/INFRASTRUCTURE_AUDIT.md) before provisioning or accepting real legal data.
+Install dependencies:
 
-## Legal-technology research sources
+```bash
+cd apps/web && npm ci
+```
 
-Selected upstream projects are tracked as engineering research. See [the source register](third-party/legal-open-source/README.md). Run `bash scripts/bootstrap-legal-sources.sh` only when the local environment is ready and the pinned source/licence review is understood.
+Start the web app:
 
-Public availability is not a licence. Re-check exact upstream commits, dependencies, bundled templates, datasets, model licences and API terms before any reuse.
+```bash
+cd apps/web && npm run dev
+```
+
+Run the type check:
+
+```bash
+cd apps/web && npm run typecheck
+```
+
+Run the application tests:
+
+```bash
+cd apps/web && npm run test:auth
+```
+
+Run the root documentation and policy tests:
+
+```bash
+node --test tests/*.mjs
+```
+
+Replay all migrations locally:
+
+```bash
+supabase start && supabase db reset
+```
+
+Run the database tests:
+
+```bash
+supabase test db
+```
+
+Copy `.env.example` for local configuration. It contains placeholders only, and the AI provider defaults to `mock`. Use synthetic data only.
+
+## Upstream research
+
+Five open-source legal projects are tracked as architectural references: OpenContracts, CaseCite, Lawgent, Lovspor and Mike. See [the source register](third-party/legal-open-source/README.md). Nothing is vendored. Public availability is not a licence; review exact versions and licences before any reuse.
+
+## Related repositories
+
+- **Marketing website:** [ICOFCUCAM/marketing-website](https://github.com/ICOFCUCAM/marketing-website). Separate and decoupled; it contains no application data.
+- **Legacy CMP archive:** [ICOFCUCAM/njumeni-cmp-archive](https://github.com/ICOFCUCAM/njumeni-cmp-archive).

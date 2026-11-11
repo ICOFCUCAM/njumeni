@@ -184,3 +184,16 @@ The pipeline does not connect to a hosted database or deploy migrations. Hosted 
 - [ ] Review and approve the Task 1.4 SQL/RLS/security-definer design; drafts remain unapplied and Task 1.4 remains locked until Task 1.3 closes.
 - [x] CI migration filename/order/immutability guard implemented and passed in workflow run 42741685025.
 - [x] Local replay/reset procedure documented; actual execution is deferred until the CLI/runtime and Njumeni-specific database configuration are provisioned. No placeholder migration SQL was invented.
+
+## Addendum — Deferred hosted deployment (owner decision, 11 November 2026)
+
+This addendum governs where it conflicts with earlier sections. See [ADR-0003 §2.5](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md) and [Master Plan v2.0](NJUMENI_MASTER_PLAN.md) U-27.
+
+1. **All migrations are kept** in `supabase/migrations/` as one cumulative, ordered history. None is deleted or squashed.
+2. **No migration is applied to the hosted Supabase project until all phases are complete.** The cumulative set is deployed once, in Phase 13, after a final clean replay, a full pgTAP run and owner sign-off.
+3. Until then, migrations run only on **ephemeral local and CI stacks** (`supabase db reset`). This is verification, not deployment.
+4. While undeployed, an existing migration MAY be corrected. Every correction MUST be hash-pinned in `scripts/ci/migration-predeployment-corrections.json`, or the CI guard fails. Substantive behaviour changes SHOULD still be written as new forward migrations.
+5. After the Phase 13 deployment, migrations are immutable and all changes are forward-only.
+6. Any earlier hosted deployment (for example a hosted M1 demo or a Stage 1 pilot) requires an explicit owner exception recorded in the [Phase Register](PHASE_REGISTER.md).
+
+As of 11 November 2026 there are **23 migrations** in the repository (Phase 1 identity/tenancy/security and Phase 2 legal knowledge), all replaying cleanly in CI. The hosted project has **zero** applied migrations.
