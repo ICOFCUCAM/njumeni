@@ -760,7 +760,7 @@ A model fallback MUST NOT silently weaken citation verification or privacy requi
 | 3 | Metadata extraction | Source metadata fields (Module B) | Built (contract) |
 | 4 | Versioning | Append-only authority versions, effective periods | Built (schema) |
 | 5 | Chunking | Passage anchors (section/page/offset) | Built (unit-tested) |
-| 6 | Embeddings | Versioned embedding profile (§5.7) | **Not started:** model decision open |
+| 6 | Embeddings | Versioned embedding profile (§5.7) | **Built:** profile `multilingual-e5-small-v1` (384 dimensions); local embedder and backfill; real-model run pending a host with model download access |
 | 7 | Indexing | PostgreSQL full-text (GIN) and pgvector (HNSW) | Built (schema) |
 | 8 | Retrieval | Hybrid lexical + semantic with metadata and jurisdiction filters | Built against an empty corpus |
 | 9 | Reranking | Cross-encoder or LLM reranker behind an adapter | Not started |
@@ -803,7 +803,7 @@ Records reference content by ID. They do not copy confidential text into logs.
 | Workspace AI processing consent | Each workspace sets whether, and which, external providers may process its content. The default for confidential matters is the most restrictive available option |
 | Egress classification | Content is classified before sending (public legal source, user narrative, confidential evidence). The policy decides which providers may receive each class |
 | Abstention | When grounding fails, the system answers "insufficient verified authority" rather than generating unsupported content |
-| Embedding profile | A versioned record of model key, dimensions, language coverage and licence. Embeddings from different profiles are never mixed in one index. ▲ The current `vector(1536)` column is a placeholder; the selected profile's dimension is applied by forward migration |
+| Embedding profile | A versioned record of model key, dimensions, language coverage and licence (`private.legal_embedding_profiles`). Embeddings from different profiles are never mixed. ▲ **Decided (D-3):** `multilingual-e5-small-v1`, 384 dimensions; the passage column was forward-migrated from the 1536 placeholder to `vector(384)` |
 | Cost guardrails (▲ U-23) | Per-workspace and per-plan token budgets with hard stops; no unlimited high-cost usage on low-priced plans |
 
 ---
@@ -1986,7 +1986,7 @@ The architecture carries forward the earlier decisions:
 |---|---|---|---|
 | D-1 | Code licence posture (U-02) | Keep all rights reserved for now; decide before accepting outside contributions | Before the first external contribution |
 | D-2 | Primary domain and trademark knock-out search (U-24) | Acquire `njumeni.com` (low cost); run a free knock-out search now | Before M1 |
-| D-3 | Embedding model profile | An open multilingual model with Norwegian, English and French coverage, run locally (zero cost) | Phase 2 Task 2.4 |
+| ✅ D-3 | Embedding model profile | **Decided 2026-11-11:** `intfloat/multilingual-e5-small` (MIT, 384 dimensions, about 100 languages including Norwegian, English and French), run locally on CPU at zero cost; profile key `multilingual-e5-small-v1` | — |
 | D-4 | First jurisdiction launch order | Norway first (already `pilot`), then the EU | Before M1 |
 | D-5 | LLM provider for M1 | Pay-as-you-go with a hard monthly cap, or self-hosted; mock by default | Phase 4/5 |
 | D-6 | Leaked-password protection | Accept as a Stage 0 risk; enable at Stage 1 | Phase 1 closeout |

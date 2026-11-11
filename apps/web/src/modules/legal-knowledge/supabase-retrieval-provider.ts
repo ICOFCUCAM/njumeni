@@ -1,5 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LegalPassageSearchProvider, RetrievalCandidate, RetrievalPlan } from './retrieval.ts';
+import {
+  ACTIVE_LEGAL_EMBEDDING_PROFILE,
+  assertEmbeddingMatchesProfile,
+  type LegalEmbeddingProfile,
+} from './embedding-profile.ts';
 
 type RpcClient = Pick<SupabaseClient, 'rpc'>;
 export interface LegalQueryEmbedding {
@@ -45,6 +50,7 @@ function rpcFailure(code: string): Error { return new Error(code); }
 export function createSupabaseLegalPassageSearchProvider(
   client: RpcClient,
   embedQuery?: LegalQueryEmbedder,
+  profile: LegalEmbeddingProfile = ACTIVE_LEGAL_EMBEDDING_PROFILE,
 ): LegalPassageSearchProvider {
   return {
     async searchLexical(plan: RetrievalPlan) {
@@ -59,8 +65,12 @@ export function createSupabaseLegalPassageSearchProvider(
     async searchSemantic(plan: RetrievalPlan) {
       if (!embedQuery) throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROVIDER_NOT_CONFIGURED');
       const embedding = await embedQuery(plan.queryText);
-      if (!embedding.modelKey.trim() || embedding.values.length !== 1536 ||
-          embedding.values.some(value => !Number.isFinite(value))) {
+      if (embedding.modelKey !== profile.profileKey) {
+        throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID');
+      }
+      try {
+        assertEmbeddingMatchesProfile(embedding.values, profile);
+      } catch {
         throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID');
       }
       const vector = '[' + embedding.values.join(',') + ']';

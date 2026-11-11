@@ -52,7 +52,7 @@ Legal authorities are not generic uploaded documents. Their identity, issuing bo
 | 2.6 | Authority relationship graph | Typed directional edges with provenance; bounded traversal; lease-bound relationship ingestion; ▲ database graph query RPC | Graph RPC tested with cycles and as-of filters | 🔵 IMPLEMENTED (database query pending) |
 | 2.7 | Coverage governance | Source and jurisdiction coverage reviews, snapshots, audits; ▲ aligned to the coverage levels in master plan §6.7 | Coverage never exceeds evidence; pgTAP passes | 🔵 IMPLEMENTED |
 | 2.8 | **Pilot source and first adapter** | Rights review of Norwegian legislation (candidate: Lovdata public data, master plan §6.3); adapter with an exact version pin; audited activation; bounded ingestion into the local stack | Rights evidence recorded; an authority with versions, passages and relationships ingested idempotently; re-run produces no duplicates | ⚪ NOT STARTED |
-| 2.9 | **Embedding profile and multilingual retrieval** | Profile record; forward migration of the vector dimension; embedding generation in the worker; language-specific FTS (`norwegian`, `english`, `french`) | Semantic and lexical retrieval over pilot passages; the profile is recorded on every embedding | 🔴 BLOCKED on owner decision D-3 |
+| 2.9 | **Embedding profile and multilingual retrieval** | Profile record; forward migration of the vector dimension; embedding generation in the worker; language-specific FTS | Semantic and lexical retrieval over pilot passages; the profile is recorded on every embedding | 🔵 IMPLEMENTED: verified locally with a stand-in model (D-3 decided: `multilingual-e5-small-v1`) |
 | 2.10 | **Retrieval evaluation set (Norway)** | Golden questions with expected authorities and as-of dates; evaluation harness | Recall@10 and Precision@5 reported; harness runnable in CI | ⚪ NOT STARTED |
 | 2.11 | Verification and closeout | Clean replay, all pgTAP, regenerated types, consolidated `LEGAL_KNOWLEDGE_ARCHITECTURE.md` and `DATABASE_ARCHITECTURE.md`, acceptance report | All 2.1–2.10 green; closeout commit; green CI; tag `phase-2-closed` | 🔒 LOCKED |
 
@@ -105,8 +105,8 @@ Tests: 21 files, 114 tests passing locally (`npm run test:legal-knowledge`). The
 | Gap | Resolution |
 |---|---|
 | No adapters; nothing ingests law | Task 2.8 |
-| No embedding model; the `vector(1536)` dimension is a placeholder | Task 2.9 (D-3) |
-| FTS uses the `simple` configuration (not language-aware) | Task 2.9 |
+| ~~No embedding model; the `vector(1536)` dimension is a placeholder~~ | Resolved: `multilingual-e5-small-v1`, `vector(384)` (Task 2.9) |
+| ~~FTS uses the `simple` configuration (not language-aware)~~ | Resolved: per-language stemming (Task 2.9) |
 | No database-backed graph query | Task 2.6 |
 | No as-of query function | Task 2.2 |
 | Not reachable from the app (no routes, UI or types) | Types at 2.11; UI in Phase 4 |

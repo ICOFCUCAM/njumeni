@@ -53,3 +53,19 @@ Structured logs include job identifiers and status events, not source document c
 ## Deployment remains gated
 
 This document is configuration guidance only. It does not authorise deploying Supabase migrations, registering live adapters, approving source licences, enabling source ingestion, or processing customer legal documents. Those actions require separate acceptance and explicit approval.
+
+## Embedding runtime (Task 2.9, added 11 November 2026)
+
+The worker embeds passages locally, at zero cost, with the owner-selected profile `multilingual-e5-small-v1` (`intfloat/multilingual-e5-small`, MIT licence, 384 dimensions, ONNX build `Xenova/multilingual-e5-small`).
+
+- **Runtime.** `@huggingface/transformers` is an *optional* worker-only runtime. It is loaded lazily by `local-embedder.ts` and is never bundled into the web app. Install it only on the worker host, at a pinned version:
+
+  ```bash
+  cd apps/web && npm install --no-save @huggingface/transformers@4.3.2
+  ```
+
+  Without it, the embedder fails closed with `LEGAL_EMBEDDING_RUNTIME_NOT_INSTALLED`.
+- **Model download.** The first run downloads the model (about 120 MB, quantised) from Hugging Face. The host needs outbound access to `huggingface.co`. After that, the model is cached locally.
+- **Prefixes.** e5 requires `query: ` for searches and `passage: ` for stored text. The embedder adds them; callers must not.
+- **Backfill.** `runEmbeddingBackfill` reads passages without an embedding through `legal_embedding_pending_passages`, then writes them in batches of up to 64 through `legal_embedding_store`. Both functions are service-role only, and only accept passages from rights-approved, active, ingestion-enabled sources. Legal text stays immutable; only the embedding fields can be written.
+- **Changing the model** means a new profile row and, if the dimension differs, a forward migration. Embeddings from different profiles are never mixed.

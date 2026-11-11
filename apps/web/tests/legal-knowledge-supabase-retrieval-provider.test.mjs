@@ -24,14 +24,30 @@ test('lexical provider maps trusted RPC rows and keeps score provenance', async 
   assert.equal(results[0].sourceKey, 'example');
 });
 
-test('semantic retrieval requires a 1536-dimensional embedding profile', async () => {
-  const client = { rpc: async () => ({ data:[row], error:null }) };
+test('semantic retrieval uses the active 384-dimensional multilingual profile', async () => {
+  const client = { rpc: async (name, args) => {
+    assert.equal(name, 'legal_search_passages_semantic');
+    assert.equal(args.p_embedding_model_key, 'multilingual-e5-small-v1');
+    return { data:[row], error:null };
+  } };
   const provider = createSupabaseLegalPassageSearchProvider(client, async () => ({
-    modelKey:'test-embedding-v1', values:Array(1536).fill(0.01),
+    modelKey:'multilingual-e5-small-v1', values:Array(384).fill(0.01),
   }));
   const results = await provider.searchSemantic(plan);
   assert.equal(results[0].semanticScore, 0.9);
   assert.equal(results[0].lexicalScore, null);
+});
+
+test('semantic retrieval rejects embeddings from another profile or dimension', async () => {
+  const client = { rpc: async () => { throw new Error('must not reach the database'); } };
+  const wrongDimension = createSupabaseLegalPassageSearchProvider(client, async () => ({
+    modelKey:'multilingual-e5-small-v1', values:Array(1536).fill(0.01),
+  }));
+  await assert.rejects(wrongDimension.searchSemantic(plan), /LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID/);
+  const wrongProfile = createSupabaseLegalPassageSearchProvider(client, async () => ({
+    modelKey:'other-model-v1', values:Array(384).fill(0.01),
+  }));
+  await assert.rejects(wrongProfile.searchSemantic(plan), /LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID/);
 });
 
 test('semantic retrieval fails closed without a configured embedder', async () => {

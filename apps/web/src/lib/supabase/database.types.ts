@@ -150,6 +150,14 @@ isOneToOne: false
 "legal_citation_source_metadata":
 { Args: { "p_source_keys": (string)[] }; Returns: Json
                            },
+"legal_embedding_pending_passages":
+{ Args: { "p_limit"?: number,"p_profile_key": string }; Returns: {
+              "content": string,"language_code": string,"passage_id": string
+            }[]
+                           },
+"legal_embedding_store":
+{ Args: { "p_embeddings": Json,"p_profile_key": string }; Returns: number
+                           },
 "legal_ingestion_append_authority":
 { Args: { "p_authority": Json,"p_job_id": string,"p_jurisdiction_code": string,"p_lease_token": string,"p_normalisation_profile": string,"p_passages": Json,"p_retrieved_at": string,"p_source_key": string,"p_source_uri": string }; Returns: string
                            },
