@@ -92,3 +92,10 @@ Database tests also prove:
 - **Scan and extraction results are worker-only.** The web app never holds the service-role key. A user who calls the API directly can't mark a file clean or inject extracted text.
 - **Rule-based extraction now; AI in Phase 5.** Deterministic, testable and zero-cost. Every extracted item records which extractor produced it.
 - **Unknown and unauthorised evidence are indistinguishable** (`EVIDENCE_NOT_AUTHORISED`), so item IDs can't be probed.
+
+## 7. CI record
+
+| Run | Result | Cause | Resolution |
+|---|---|---|---|
+| CI and security on `b11bf30` (Phase 3 commit) | ❌ content-policy job only. Secret scan ✅; format, lint, types, tests, migration guard and build ✅ | The repository content policy blocked every path containing an `evidence/` directory, including the evidence **source code**. The local check missed it because it only scanned tracked files, and the new files were untracked | The policy now allows application source (`.ts/.tsx/.js/.mjs/.cjs/.css` under `apps/*/src` and `apps/*/tests`). It still blocks data files in those directories (verified with a planted PDF), and also checks untracked files, so local and CI checks agree |
+| Secret scan on `76a6d85` (Task 2.10) | ❌ False positive, found during this phase | Gitleaks `generic-api-key` matched `"datasetKey": "synthetic-no-v1"` in the synthetic dataset | A narrow `.gitleaks.toml` exception for `datasetKey` slugs only. With Gitleaks 8.24.3: the old config flags the commit, the new config passes, and a full-history scan of 55 commits finds no leaks. No secret was exposed |

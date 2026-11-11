@@ -4,8 +4,9 @@ title = "Njumeni Gitleaks configuration"
 useDefault = true
 
 [allowlist]
-description = "Exact false-positive fixture from the historical Auth test commit; not a credential and no other JWT-like strings are exempted."
+description = "Exact false positives: (1) a JWT-like fixture from the historical Auth test commit; (2) evaluation dataset identifiers (datasetKey with a lowercase slug value), which the generic-api-key rule mistakes for keys. Nothing else is exempted."
 regexTarget = "match"
 regexes = [
   '''eyJhbGciOiJIUzI1NiJ9\.eyJzdWIiOiJub3QtYS11c2VyIn0\.invalid-signature''',
+  '''datasetKey"\s*:\s*"[a-z0-9][a-z0-9._-]{1,79}"''',
 ]
