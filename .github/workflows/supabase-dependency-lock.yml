@@ -1,13 +1,8 @@
 name: Resolve pinned Supabase SDK lockfile
 
+# CI is paused (owner decision, 2026-11-11): manual runs only, from the Actions tab.
+# Restore the automatic triggers from git history to re-enable.
 on:
-  push:
-    branches:
-      - claude/wonderful-franklin-lt09d7
-    paths:
-      - apps/web/package.json
-      - .github/workflows/supabase-dependency-lock.yml
-      - apps/web/tests/**
   workflow_dispatch:
 
 permissions:

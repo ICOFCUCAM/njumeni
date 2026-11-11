@@ -1797,7 +1797,7 @@ The previous cadence ("no intermediate commits; one phase batch; verify once at 
 | Rule | Requirement |
 |---|---|
 | Small commits | Each commit is one coherent change with its tests |
-| CI green on every commit | A red build is fixed before new feature work continues |
+| Checks green on every commit | A failing check is fixed before new feature work continues. ▲ **While automatic CI is paused** (owner decision 2026-11-11): run `scripts/ci/local-checks.sh` before every commit and note the result in the commit message; only the secret scan runs automatically. Database (pgTAP) tests run on a local Supabase stack or by manually dispatching `supabase-local.yml`. Before any phase closeout, the full CI workflows are run manually and must pass |
 | Migrations (▲ U-27) | **All migrations are kept in the repository and run only on local and CI stacks until every phase is complete. The hosted database receives the cumulative set once, in Phase 13** (ADR-0003 §2.5). Until then, corrections are permitted but must be hash-pinned in `scripts/ci/migration-predeployment-corrections.json`. After deployment, migrations are immutable and changes are forward-only |
 | Phase closeout | Acceptance report, then a closeout commit, then a green CI run and a Git tag `phase-N-closed` |
 | Parallel phases | Allowed when the upstream *contract* is stable; acceptance stays sequential |
@@ -1972,7 +1972,7 @@ The architecture carries forward the earlier decisions:
 
 | # | Action | Phase |
 |---|---|---|
-| 1 | Restore green CI: fix the three pgTAP files, register the migration correction, add `server-only`, add `test:legal-knowledge` to CI | 1/2 |
+| 1 | Fix the failing checks: the three pgTAP files, the migration correction entry, `server-only`, `test:legal-knowledge` in CI (verified locally while CI is paused) | 1/2 |
 | 2 | Close Phase 1: run the live Auth test, accept the leaked-password risk under ADR-0003, regenerate the database types, write the acceptance report, make the closeout commit and tag | 1 |
 | 3 | Update stale documents (README, health endpoint, infrastructure/CI documents) | 1 |
 | 4 | Rights-review the Norwegian legislation source; build the first adapter | 2 |
@@ -2044,7 +2044,7 @@ The architecture carries forward the earlier decisions:
 | U-15 | Per-jurisdiction evaluation sets as release gates | Quality is measured, not asserted | §18.2 |
 | U-16 | Conflict checks and information barriers | Professional duties in firms | §11.2, Module I |
 | U-17 | Passkeys/WebAuthn and SSO readiness | Modern phishing-resistant authentication | §11.1 |
-| U-18 | Small verified commits; CI green on every commit | Fixes the failure mode of the batch cadence | §19.4 |
+| U-18 | Small verified commits; checks green on every commit (local checks while CI is paused) | Fixes the failure mode of the batch cadence | §19.4 |
 | U-19 | Refined status vocabulary | Distinguishes "implemented" from "verified" | §21.2 |
 | U-20 | Milestones M1 (public demo) and R1 (first release) | Early proof of the thesis; build-in-public showcase | §20.2 |
 | U-21 | Jurisdiction coverage levels with evidence | Honest coverage claims | §6.7 |

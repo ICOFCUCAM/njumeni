@@ -11,7 +11,8 @@
 | Hosted database | Supabase project `Njumeni` (`eu-north-1`). **No migrations applied. Deployment deferred until all phases are complete (Phase 13)** |
 | Active phases | **Phase 1: Identity, tenancy and security (OPEN; implemented, verification failing)** · **Phase 2: Legal knowledge infrastructure (IN PROGRESS, parallel)** |
 | Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
-| Next action | **Restore green CI** (§2.3), then close Phase 1 (Task 1.12) |
+| Next action | **Fix the check failures** (§2.3), then close Phase 1 (Task 1.12) |
+| CI mode | ⏸️ **Automatic CI paused** (owner decision, 2026-11-11). All main workflows are manual-only; only `secret-scan.yml` runs on push. Before each commit, run `scripts/ci/local-checks.sh` |
 
 ## 1. Status legend (Master Plan v2.0 §21.2)
 
@@ -39,7 +40,7 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 2 | Schema, ingestion framework, durable queue, worker, retrieval, citation bundles and rights/coverage governance implemented. **No legal content, no source adapters, no embeddings, no UI**. pgTAP fails in one file |
 | Phases 3–13 | 🔒 Locked |
 | Local checks (2026-11-11) | `apps/web` typecheck ✅ · web tests 161/161 ✅ · legal-knowledge tests 114/114 ✅ · root tests 19/19 ✅ |
-| CI | 🟠 **Red** |
+| CI | ⏸️ Paused. The last automatic runs (on `2b60d5f`) were 🟠 red for the reasons in §2.3 |
 
 ### 2.2 Owner decisions in force
 
@@ -51,7 +52,7 @@ A task does not turn green because code was written. It turns green only when it
 | 2026-11-11 | **Keep all migrations in the repository; apply them to hosted Supabase only when all phases are complete** | ADR-0003 §2.5; master plan U-27 |
 | 2026-11-11 | Master Plan v2.0 adopted as the governing plan; roadmap order of Phases 3–8 restored to the original | Master plan §20 |
 
-### 2.3 CI blockers (fix before any new feature work, U-18)
+### 2.3 Check failures (fix before any new feature work, U-18)
 
 | # | Blocker | Location | Cause | Fix |
 |---|---|---|---|---|
@@ -203,7 +204,7 @@ No hosted migration is part of the Phase 1 closeout (U-27).
 2. Confirm dependencies, acceptance criteria, branch and head.
 3. Inspect existing implementation and tests before changing anything.
 4. Make **small, coherent commits**, each with its tests and documentation. *(Replaces the former "no intermediate commits / single phase batch" rule, which produced corrupted migrations and long-red CI.)*
-5. **Keep CI green.** A red build is fixed before new feature work continues.
+5. **Keep checks green.** A failing check is fixed before new feature work continues. While automatic CI is paused, run `scripts/ci/local-checks.sh` before every commit; run database tests on a local Supabase stack or through a manual dispatch of `supabase-local.yml`. **Before any phase closeout, manually run all CI workflows from the Actions tab; they must pass.**
 6. Migrations:
    - Add new migrations with CLI-format timestamps.
    - Correct existing migrations only while undeployed, and hash-pin every correction.

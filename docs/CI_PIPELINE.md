@@ -71,3 +71,21 @@ When the application workspace is introduced:
 The CI workflow now checks migration files on every push and pull request. It uses full Git history so the migration guard can compare the change with the push/PR base. Existing migration files are immutable; only new CLI-generated migration files may be added. The check does not connect to a hosted database, run DDL or deploy migrations.
 
 No Njumeni migration SQL exists yet. The current CI result is a zero-migration baseline, not proof of a local or hosted database replay. See [Database Migration Policy](DATABASE_MIGRATION_POLICY.md).
+
+## Addendum — CI paused (owner decision, 11 November 2026)
+
+To avoid spending GitHub Actions resources for now, automatic CI is paused.
+
+| Workflow | Trigger now |
+|---|---|
+| `repository-security.yml` (quality, tests, build, migration guard, Gitleaks) | Manual only (`workflow_dispatch`) |
+| `supabase-local.yml` (migration replay, lint, pgTAP) | Manual only |
+| `supabase-dependency-lock.yml` (lockfile regeneration, auto-commit) | Manual only |
+| **`secret-scan.yml`** (repository content policy and Gitleaks) | **Every push and pull request**, because a committed secret on a public repository is exposed immediately |
+
+**Working rule while paused:**
+1. Run `scripts/ci/local-checks.sh` before each commit. It runs the content policy, foundation integrity, migration guard, root tests, web type check and web/legal-knowledge tests.
+2. Run database tests on a local Supabase stack (`supabase start && supabase db reset && supabase test db`), or dispatch `supabase-local.yml` manually.
+3. Before any phase closeout, run every workflow manually from the **Actions** tab. All must pass.
+
+**To re-enable:** restore the previous `on:` blocks from Git history, or add `push`/`pull_request` triggers back to each workflow.
