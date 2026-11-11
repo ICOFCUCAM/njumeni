@@ -8,7 +8,7 @@
 | Verification base | `929f61b` plus the closeout documentation commit |
 | Verification environment | Ephemeral **local** Supabase stack (CLI 3.1.0, Docker) in the development container. **The hosted project `Njumeni` was not used and has no migrations applied** (deployment deferred until all phases are complete; ADR-0003 §2.5) |
 | Prepared | 11 November 2026 |
-| Decision | **READY FOR CLOSEOUT: one manual CI run outstanding** (§6) |
+| Decision | **ACCEPTED — PHASE 1 CLOSED** (11 November 2026) |
 
 ## 1. Executive summary
 
@@ -125,9 +125,9 @@ The provider recorded `login`, `logout`, `token_refreshed`, `token_revoked`, `us
 |---|---|---|
 | 1 | All tasks 1.1–1.11 meet acceptance | ✅ |
 | 2 | Full verification passes | ✅ locally (§3) |
-| 3 | **`repository-security.yml` and `supabase-local.yml` green on GitHub Actions** (automatic CI re-enabled 11 November 2026; the runs on the Phase 3 commit qualify) | ⏳ Outstanding |
+| 3 | **`repository-security.yml` and `supabase-local.yml` green on GitHub Actions** | ✅ CI `43120316404` (CI and security, on `91a6544`) and `43120020368` (database verification, on `b11bf30`) |
 | 4 | Residuals resolved or formally accepted | ✅ (§4) |
 | 5 | Consolidated `SECURITY_ARCHITECTURE.md` and `MULTITENANCY.md` | ✅ |
-| 6 | Closeout commit and tag `phase-1-closed`; register updated | ⏳ After condition 3 |
+| 6 | Closeout commit and tag `phase-1-closed`; register updated | ✅ |
 
-**Decision: Phase 1 is ACCEPTED, conditional on condition 3.** When both manual workflow runs pass, record their run IDs here, set Task 1.12 and the phase to 🟢 CLOSED in the register, and tag the commit.
+**Decision: Phase 1 is ACCEPTED and CLOSED.** Every condition is met. The GitHub Actions evidence is CI `43120316404` (CI and security, on `91a6544`) and `43120020368` (database verification, on `b11bf30`); the Phase 3 changes did not alter any Phase 1 schema, policy or test.

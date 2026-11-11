@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Phase state | 🟡 **OPEN**: implementation complete; all database tests pass locally (2026-11-11); closeout items remain (see [register §4](PHASE_REGISTER.md)) |
+| Phase state | 🟢 **CLOSED** (11 November 2026). See the [acceptance report](PHASE_1_ACCEPTANCE_REPORT.md) |
 | Governing plan | [Njumeni Master Plan v2.0](NJUMENI_MASTER_PLAN.md), §11 (security), §10 (data), §21 (completion) |
 | Architecture records | [ADR-0001](architecture/ADR-0001-modular-monolith-and-bounded-contexts.md), [ADR-0002](architecture/ADR-0002-identity-tenancy-security.md), [ADR-0003](architecture/ADR-0003-build-in-public-and-staged-infrastructure.md) |
 | Entry condition | Phase 0 closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`, CI run `42768822407` SUCCESS |
@@ -61,7 +61,7 @@ Every later phase depends on this boundary:
 | 1.9 | Security audit logging | Append-only stream, lifecycle/role/membership capture, allow-listed metadata, scoped read RPC; ▲ sign-in, sign-out and denied-access events | `security_audit.test.sql` fully passing | 🔵 IMPLEMENTED: 12/12 locally |
 | 1.10 | Subscription identity and entitlements | Billing customers, subscriptions, versioned entitlements, provider-event idempotency, usage ledger | `subscription_entitlements.test.sql` passing; `record_usage_event` exposure reviewed | 🔵 IMPLEMENTED |
 | 1.11 | Isolation and security verification suite | Consolidated pgTAP contract suite and negative tests | Every Phase 1 pgTAP file passes in one CI run | 🔵 IMPLEMENTED: all pass locally; manual CI run at closeout |
-| 1.12 | Acceptance and closeout | Acceptance report, closeout commit, tag | §6 checklist complete; CI green | 🟡 READY: manual CI run outstanding |
+| 1.12 | Acceptance and closeout | Acceptance report, closeout commit, tag | §6 checklist complete; CI green | 🟢 CLOSED |
 
 ## 5. Verification approach
 

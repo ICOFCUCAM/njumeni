@@ -28,7 +28,7 @@ test('the phase register records verified Phase 0 closeout and authorised parall
   const register = await readFile('docs/PHASE_REGISTER.md', 'utf8');
   assert.match(register, /\| 0 \| Foundation and repository\/infrastructure audit \| 🟢 CLOSED \|/);
   assert.match(register, /\| 0 \| Foundation and repository\/infrastructure audit \| 🟢 CLOSED \|/);
-  assert.match(register, /\| 1 \| Identity, tenancy and security foundation \| 🟡 OPEN \|/);
+  assert.match(register, /\| 1 \| Identity, tenancy and security foundation \| 🟢 CLOSED \|/);
   assert.match(register, /\| 2 \| Legal knowledge foundation \| 🟡 IN PROGRESS — PARALLEL \|/);
   assert.match(register, /\| 13 \| Production hardening and launch \| 🔒 LOCKED \|/);
   assert.match(register, /6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1/);

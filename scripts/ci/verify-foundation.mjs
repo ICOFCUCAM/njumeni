@@ -94,7 +94,7 @@ for (const [index, moduleName] of modules.entries()) {
 }
 
 assert.ok(register.includes('| 0 | Foundation and repository/infrastructure audit | 🟢 CLOSED |'));
-assert.ok(register.includes('| 1 | Identity, tenancy and security foundation | 🟡 OPEN |'));
+assert.ok(register.includes('| 1 | Identity, tenancy and security foundation | 🟢 CLOSED |'));
 assert.ok(register.includes('| 2 | Legal knowledge foundation | 🟡 IN PROGRESS — PARALLEL |'));
 assert.ok(register.includes('6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1'));
 assert.ok(masterPlan.includes('Phase 13 — Production hardening and launch'));
