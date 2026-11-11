@@ -105,3 +105,51 @@ export async function recordJurisdictionCoverageScope(
   if(!data||typeof data!=='object')throw new Error('LEGAL_JURISDICTION_COVERAGE_SCOPE_RESPONSE_INVALID');
   return data as Record<string,unknown>;
 }
+
+export interface RecordableEvaluationReport {
+  datasetKey: string;
+  datasetVersion: number;
+  caseCount: number;
+  passed: boolean;
+  metrics: object;
+  gates: readonly { metric: string; threshold: number; value: number | null; passed: boolean }[];
+}
+
+/**
+ * Records a retrieval evaluation run as append-only coverage evidence (Task 2.7). A run can only
+ * be recorded as passed when every reported gate passed; the database re-checks this.
+ */
+export async function recordRetrievalEvaluation(
+  client: RpcClient,
+  input: {
+    jurisdictionCode: string;
+    report: RecordableEvaluationReport;
+    contentLicence: string;
+    recordedBy: string;
+    codeRevision?: string | null;
+  },
+): Promise<string> {
+  if (!/^[A-Z][A-Z0-9_-]{1,15}$/.test(input.jurisdictionCode)) {
+    throw new Error('LEGAL_COVERAGE_JURISDICTION_INVALID');
+  }
+  if (!input.recordedBy.trim() || !input.contentLicence.trim()) {
+    throw new Error('LEGAL_EVALUATION_RECORD_INVALID');
+  }
+  if (input.report.passed && !input.report.gates.every((gate) => gate.passed)) {
+    throw new Error('LEGAL_EVALUATION_PASS_INCONSISTENT');
+  }
+  const { data, error } = await client.rpc('legal_record_retrieval_evaluation', {
+    p_jurisdiction_code: input.jurisdictionCode,
+    p_dataset_key: input.report.datasetKey,
+    p_dataset_version: input.report.datasetVersion,
+    p_content_licence: input.contentLicence,
+    p_case_count: input.report.caseCount,
+    p_passed: input.report.passed,
+    p_metrics: input.report.metrics,
+    p_gates: input.report.gates,
+    p_code_revision: input.codeRevision ?? null,
+    p_recorded_by: input.recordedBy,
+  });
+  if (error || typeof data !== 'string') throw new Error('LEGAL_EVALUATION_RECORD_FAILED');
+  return data;
+}

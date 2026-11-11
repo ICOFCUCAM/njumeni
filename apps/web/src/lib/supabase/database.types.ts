@@ -201,6 +201,9 @@ isOneToOne: false
 "legal_jurisdiction_record_coverage_scope":
 { Args: { "p_authority_types": (string)[],"p_jurisdiction_code": string,"p_reason": string,"p_review_interval_days": number,"p_reviewer": string }; Returns: Json
                            },
+"legal_record_retrieval_evaluation":
+{ Args: { "p_case_count": number,"p_code_revision": string,"p_content_licence": string,"p_dataset_key": string,"p_dataset_version": number,"p_gates": Json,"p_jurisdiction_code": string,"p_metrics": Json,"p_passed": boolean,"p_recorded_by": string }; Returns: string
+                           },
 "legal_search_passages_lexical":
 { Args: { "p_as_of_date": string,"p_authority_types"?: (string)[],"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limit"?: number,"p_query": string }; Returns: {
               "authority_id": string,"authority_title": string,"authority_type": string,"authority_version_id": string,"citation": string,"jurisdiction_code": string,"language_code": string,"legal_status": string,"lexical_score": number,"page_number": number,"passage_content": string,"passage_id": string,"section_path": (string)[],"source_content_hash": string,"source_key": string,"source_uri": string,"valid_from": string,"valid_until": string

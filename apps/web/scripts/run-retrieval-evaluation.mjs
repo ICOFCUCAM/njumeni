@@ -2,12 +2,14 @@
 // Usage (from apps/web; trusted environment only):
 //   NJUMENI_EVAL_SUPABASE_URL=... NJUMENI_EVAL_SERVICE_KEY=... \
 //   npm run eval:retrieval -- ../../legal-data/evaluation-datasets/synthetic-no-v1.json [lexical|semantic|hybrid]
+// Set NJUMENI_EVAL_RECORD_AS=<reviewer> to record the run as coverage evidence (Task 2.7).
 // Exit code 0 when every gate passes, 1 otherwise. Never run against data you may not process.
 import { readFile } from 'node:fs/promises';
 import { createClient } from '@supabase/supabase-js';
 import { createRetrievalPlan, executeLegalRetrieval } from '../src/modules/legal-knowledge/retrieval.ts';
 import { createSupabaseLegalPassageSearchProvider } from '../src/modules/legal-knowledge/supabase-retrieval-provider.ts';
 import { evaluateRetrieval } from '../src/modules/legal-knowledge/retrieval-evaluation.ts';
+import { recordRetrievalEvaluation } from '../src/modules/legal-knowledge/coverage-admin-core.ts';
 
 const [datasetPath, defaultMode] = process.argv.slice(2);
 const url = process.env.NJUMENI_EVAL_SUPABASE_URL;
@@ -35,4 +37,14 @@ for (const gate of report.gates) {
 }
 for (const item of report.cases.filter((c) => c.error)) console.log(`  error in ${item.id}: ${item.error}`);
 console.log(report.passed ? 'RESULT: PASS' : 'RESULT: FAIL');
+if (process.env.NJUMENI_EVAL_RECORD_AS) {
+  const id = await recordRetrievalEvaluation(client, {
+    jurisdictionCode: dataset.jurisdictionCode,
+    report,
+    contentLicence: dataset.contentLicence,
+    recordedBy: process.env.NJUMENI_EVAL_RECORD_AS,
+    codeRevision: process.env.NJUMENI_EVAL_CODE_REVISION ?? null,
+  });
+  console.log(`Recorded evaluation ${id}`);
+}
 process.exit(report.passed ? 0 : 1);

@@ -915,6 +915,8 @@ Recurring jobs detect and record each of the following as new versions or status
 | `partial` | Defined classes and periods covered | Coverage review per class, freshness SLA met, evaluation set passing | "Supported for [classes, period]" |
 | `supported` | Fully supported scope | All of the above, plus citation verification passing thresholds and an update monitoring SLA | "Supported" |
 
+**Enforcement (implemented, Task 2.7).** `private.jurisdictions.status` uses exactly these levels, plus `suspended`. A database trigger refuses any published level above its recorded evidence: `pilot` needs a live, rights-approved source; `partial` also needs the latest recorded retrieval evaluation to have passed within the review interval; `supported` is refused until citation-verification and update-monitoring evidence exist (Phases 4 and 6). Evaluation runs are stored append-only in `private.legal_retrieval_evaluations`.
+
 ### 6.8 ▲ U-08 Identifiers and document standards
 
 Where a source provides them, Njumeni stores standard identifiers alongside its own stable IDs:
