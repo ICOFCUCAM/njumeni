@@ -139,7 +139,7 @@ Escalation controls:
 
 ## 8. Secrets and build-in-public controls
 
-- Gitleaks and the repository content policy run on **every push** (`secret-scan.yml`), even while the main CI is paused.
+- Gitleaks and the repository content policy run on **every push** (`repository-security.yml`).
 - `.env.example` contains placeholders only; populated `.env.*` files are ignored.
 - CI logs are public: workflows must never print secrets.
 - Only synthetic data is used at Stage 0. No migration is applied to the hosted project until all phases are complete.

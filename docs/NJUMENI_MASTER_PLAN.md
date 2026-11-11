@@ -1777,11 +1777,11 @@ These documents describe the actual implementation and are not marketing documen
 |---|---|---|---|
 | PRODUCT_SPECIFICATION.md | Complete product requirements | `docs/PRODUCT_SPECIFICATION.md` | Maintain |
 | SYSTEM_ARCHITECTURE.md | Overall architecture | ADR-0001 and `LEGAL_AI_PLATFORM_ARCHITECTURE.md` | Consolidate in Phase 2 closeout |
-| DOMAIN_MODEL.md | Legal and business domain definitions | — | Create (Phase 3 entry) |
+| DOMAIN_MODEL.md | Legal and business domain definitions | [`docs/DOMAIN_MODEL.md`](DOMAIN_MODEL.md) | ✅ Created (Phase 3) |
 | DATABASE_ARCHITECTURE.md | Entities and relationships | §10 of this plan, plus migrations | Create (Phase 2 closeout) |
 | AI_ARCHITECTURE.md | Models, agents and orchestration | §5 of this plan | Create (Phase 5 entry) |
 | LEGAL_KNOWLEDGE_ARCHITECTURE.md | Authority and source management | `PHASE_2_TASK_2_*` documents | Consolidate (Phase 2 closeout) |
-| EVIDENCE_ARCHITECTURE.md | Evidence provenance and relationships | §7 of this plan | Create (Phase 3 entry) |
+| EVIDENCE_ARCHITECTURE.md | Evidence provenance and relationships | [`docs/EVIDENCE_ARCHITECTURE.md`](EVIDENCE_ARCHITECTURE.md) | ✅ Created (Phase 3) |
 | SECURITY_ARCHITECTURE.md | AuthN, AuthZ, privacy | [`docs/SECURITY_ARCHITECTURE.md`](SECURITY_ARCHITECTURE.md) | ✅ Created (Phase 1 closeout) |
 | MULTITENANCY.md | Organisation/workspace isolation | [`docs/MULTITENANCY.md`](MULTITENANCY.md) | ✅ Created (Phase 1 closeout) |
 | API_SPECIFICATION.md | API contracts | — | Generate from OpenAPI (Phase 4) |
@@ -1798,8 +1798,8 @@ The previous cadence ("no intermediate commits; one phase batch; verify once at 
 
 | Rule | Requirement |
 |---|---|
-| Small commits | Each commit is one coherent change with its tests |
-| Checks green on every commit | A failing check is fixed before new feature work continues. ▲ **While automatic CI is paused** (owner decision 2026-11-11): run `scripts/ci/local-checks.sh` before every commit and note the result in the commit message; only the secret scan runs automatically. Database (pgTAP) tests run on a local Supabase stack or by manually dispatching `supabase-local.yml`. Before any phase closeout, the full CI workflows are run manually and must pass |
+| Commit cadence | ▲ One commit per completed phase (owner decision, supersedes "small commits" for the autonomous build). Every phase commit must pass the full local verification first |
+| Checks green | ▲ **Owner decision (11 November 2026): continuous autonomous mode with one commit and push per completed phase.** Each phase is verified locally (`scripts/ci/local-checks.sh` plus the local Supabase pgTAP suite) before its commit; automatic CI then runs on the push (free on the public repository). A red CI run is fixed before the next phase continues |
 | Migrations (▲ U-27) | **All migrations are kept in the repository and run only on local and CI stacks until every phase is complete. The hosted database receives the cumulative set once, in Phase 13** (ADR-0003 §2.5). Until then, corrections are permitted but must be hash-pinned in `scripts/ci/migration-predeployment-corrections.json`. After deployment, migrations are immutable and changes are forward-only |
 | Phase closeout | Acceptance report, then a closeout commit, then a green CI run and a Git tag `phase-N-closed` |
 | Parallel phases | Allowed when the upstream *contract* is stable; acceptance stays sequential |
@@ -1818,7 +1818,7 @@ Each phase must produce working, tested functionality before the dependent phase
 | 0 | Architecture and project foundation | Foundation | Product specification, coding standards, domain boundaries, architecture documents, environment strategy, CI, migration discipline, app shell | All Phase 0 tasks green and a verified closeout | 🟢 **CLOSED** (`6cbcf03`) |
 | 1 | Identity, tenancy and security | Security foundation | Authentication, user profiles, organisations, workspaces, invitations, roles and permissions, RLS, audit logging, subscription identity, tenant-isolation tests | All pgTAP and app tests green; live Auth checks; isolation suite passing | 🟡 **OPEN**: implemented; verification failing |
 | 2 | Legal knowledge infrastructure | Knowledge foundation | Jurisdiction registry, source registry, authority models, versioning, source ingestion, normalisation, full-text search, pgvector, provenance; ▲ first pilot adapter and embedding profile | Clean replay; pgTAP green; one rights-approved pilot source ingested end-to-end | 🟡 **IN PROGRESS** (parallel) |
-| 3 | Evidence intelligence | Evidence engine | Document upload, object storage, OCR, extraction, classification, entity extraction, chronology, contradiction analysis, evidence relationships, chain of custody; ▲ content addressing, hash-chained custody and audit | Journey 15.4 passes end-to-end on synthetic data | 🔒 LOCKED |
+| 3 | Evidence intelligence | Evidence engine | Document upload, object storage, OCR, extraction, classification, entity extraction, chronology, contradiction analysis, evidence relationships, chain of custody; ▲ content addressing, hash-chained custody and audit | Journey 15.4 passes end-to-end on synthetic data | 🔵 **IMPLEMENTED** (verified locally; closeout pending Phase 1 and OCR/AV items) |
 | 4 | Legal research engine | Research engine | Jurisdiction-aware retrieval, legal RAG, authority discovery, case-law search, legislation search, source comparison, citation retrieval, historical version selection; ▲ verification core (U-10), evaluation harness (U-15) | Journey 15.3 passes; evaluation gates met for the pilot jurisdiction | 🔒 LOCKED |
 | — | ▲ **Milestone M1** | Public demo | Grounded research over public Norwegian law, with verification, on a public demo | M1 criteria (§20.2) | — |
 | 5 | AI reasoning and agent framework | Intelligence engine | AI provider adapters, agent registry, workflow orchestration, issue identification, argument graphs, counterargument generation, evidence-to-law mapping, reasoning evaluation | Agents operate only within scope; reasoning evaluation passing | 🔒 LOCKED |
@@ -2046,7 +2046,7 @@ The architecture carries forward the earlier decisions:
 | U-15 | Per-jurisdiction evaluation sets as release gates | Quality is measured, not asserted | §18.2 |
 | U-16 | Conflict checks and information barriers | Professional duties in firms | §11.2, Module I |
 | U-17 | Passkeys/WebAuthn and SSO readiness | Modern phishing-resistant authentication | §11.1 |
-| U-18 | Small verified commits; checks green on every commit (local checks while CI is paused) | Fixes the failure mode of the batch cadence | §19.4 |
+| U-18 | Verified commits with green checks; since 11 November 2026, one commit per completed phase in autonomous mode, always after full local verification | Avoids the unverified-batch failure mode while honouring the owner's cadence | §19.4 |
 | U-19 | Refined status vocabulary | Distinguishes "implemented" from "verified" | §21.2 |
 | U-20 | Milestones M1 (public demo) and R1 (first release) | Early proof of the thesis; build-in-public showcase | §20.2 |
 | U-21 | Jurisdiction coverage levels with evidence | Honest coverage claims | §6.7 |

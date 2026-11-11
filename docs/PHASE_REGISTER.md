@@ -9,10 +9,10 @@
 | Reviewed head | `2b60d5f` |
 | Infrastructure stage | **Stage 0: zero cost, synthetic data only** |
 | Hosted database | Supabase project `Njumeni` (`eu-north-1`). **No migrations applied. Deployment deferred until all phases are complete (Phase 13)** |
-| Active phases | **Phase 1: Identity, tenancy and security (OPEN; implemented, verification failing)** · **Phase 2: Legal knowledge infrastructure (IN PROGRESS, parallel)** |
+| Active phases | **Phase 1 (OPEN; ready for closeout)** · **Phase 2 (IN PROGRESS; 2.8 needs network)** · **Phase 3 (IMPLEMENTED; verified locally)** |
 | Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
-| Next action | **Phase 1 ready for closeout:** run `repository-security.yml` and `supabase-local.yml` manually from the Actions tab, then tag `phase-1-closed`. Development continues with Phase 2 Task 2.8 |
-| CI mode | ⏸️ **Automatic CI paused** (owner decision, 2026-11-11). All main workflows are manual-only; only `secret-scan.yml` runs on push. Before each commit, run `scripts/ci/local-checks.sh` |
+| Next action | Check the CI runs on the Phase 3 commit. If green, close Phase 1 (Task 1.12). Then Phase 4 (legal research engine with the verification core) |
+| CI mode | ▶️ **Automatic CI re-enabled** (owner decision, 2026-11-11; free on the public repository). **Execution mode: continuous autonomous, one commit and push per completed phase** |
 
 ## 1. Status legend (Master Plan v2.0 §21.2)
 
@@ -40,7 +40,7 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 2 | Schema, ingestion framework, durable queue, worker, retrieval, citation bundles and rights/coverage governance implemented; pgTAP passing locally. **No legal content, no source adapters, no embeddings, no UI** |
 | Phases 3–13 | 🔒 Locked |
 | Local checks (2026-11-11) | pgTAP 272/272 ✅ · db lint ✅ · typecheck ✅ · web tests 161/161 ✅ (includes 114 legal-knowledge) · build ✅ · root tests 19/19 ✅ |
-| CI | ⏸️ Paused. The last automatic runs (on `2b60d5f`) were 🟠 red for the reasons in §2.3 |
+| CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
 
@@ -189,6 +189,18 @@ No hosted migration is part of the Phase 1 closeout (U-27).
 - No customer documents.
 - No hosted migration deployment before Phase 13 (U-27).
 
+## 5a. Phase 3: Evidence intelligence (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_3_PLAN.md](PHASE_3_PLAN.md) · **Architecture:** [EVIDENCE_ARCHITECTURE.md](EVIDENCE_ARCHITECTURE.md) · **Domain model:** [DOMAIN_MODEL.md](DOMAIN_MODEL.md)
+
+Built in parallel with Phase 1 closeout, under the owner's continuous autonomous mode (11 November 2026):
+- **Evidence engine:** migration `20261111200000` adds items, file versions identified by SHA-256, quarantine until a worker-only scan, and extraction of PDF, DOCX, XLSX, email and text into anchored passages. It also detects dates, amounts, references and organisations, and builds the chronology.
+- **Analysis and safeguards:** propositions with supports/contradicts/qualifies links and a contradiction report; redaction; legal hold; soft deletion.
+- **Tamper evidence:** a hash-chained custody log per item, and a hash-chained security audit (U-12) with request correlation IDs. This closes Phase 1 deferrals D-AUD-2 and D-AUD-4.
+- **Interface and worker:** pages at `/evidence` and `/evidence/[id]`; `npm run worker:evidence`.
+- **Verification:** pgTAP 372/372 (`evidence_intelligence` 34/34); app tests 202/202; build passes; the end-to-end run on the local stack passed (quarantine, EICAR infected, disguised file rejected, extraction, chronology, custody and audit chains valid, outsider denied).
+- **Outstanding for closeout:** Phase 1 closed; CI green on the phase commit; OCR (network); a full anti-malware engine (Stage 1); a physical purge job (Phase 13); failed sign-in audit (Phase 10).
+
 ## 6. Phase lock register
 
 | Phase | Name | Register state | Unlock condition |
@@ -196,7 +208,7 @@ No hosted migration is part of the Phase 1 closeout (U-27).
 | 0 | Foundation and repository/infrastructure audit | 🟢 CLOSED | All 0.1–0.16 green; closeout `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
 | 1 | Identity, tenancy and security foundation | 🟡 OPEN | Active; Phase 0 closeout verified |
 | 2 | Legal knowledge foundation | 🟡 IN PROGRESS — PARALLEL | Owner authorised parallel implementation on 2026-11-10; Phase 1 acceptance remains a prerequisite for customer data |
-| 3 | Evidence intelligence | 🔒 LOCKED | Phase 1 closed (storage/RLS boundary accepted) |
+| 3 | Evidence intelligence | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Closeout needs Phase 1 closed, CI green on the Phase 3 commit, OCR and a full anti-malware engine ([Phase 3 plan](PHASE_3_PLAN.md) §5) |
 | 4 | Legal research engine (with verification core) | 🔒 LOCKED | Phase 2 closed |
 | — | Milestone M1: grounded-research demo (local stack) | — | Phase 4 exit criteria met for Norway |
 | 5 | AI reasoning and agent framework | 🔒 LOCKED | Phases 3 and 4 closed |
@@ -218,7 +230,7 @@ No hosted migration is part of the Phase 1 closeout (U-27).
 2. Confirm dependencies, acceptance criteria, branch and head.
 3. Inspect existing implementation and tests before changing anything.
 4. Make **small, coherent commits**, each with its tests and documentation. *(Replaces the former "no intermediate commits / single phase batch" rule, which produced corrupted migrations and long-red CI.)*
-5. **Keep checks green.** A failing check is fixed before new feature work continues. While automatic CI is paused, run `scripts/ci/local-checks.sh` before every commit; run database tests on a local Supabase stack or through a manual dispatch of `supabase-local.yml`. **Before any phase closeout, manually run all CI workflows from the Actions tab; they must pass.**
+5. **Keep checks green.** In continuous autonomous mode (owner decision, 2026-11-11), each phase is committed and pushed once, after full local verification (`scripts/ci/local-checks.sh` plus the local Supabase pgTAP suite). Automatic CI then runs on the push, and a red run is fixed before the next phase proceeds.
 6. Migrations:
    - Add new migrations with CLI-format timestamps.
    - Correct existing migrations only while undeployed, and hash-pin every correction.

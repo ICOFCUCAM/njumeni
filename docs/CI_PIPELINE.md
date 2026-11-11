@@ -89,3 +89,15 @@ To avoid spending GitHub Actions resources for now, automatic CI is paused.
 3. Before any phase closeout, run every workflow manually from the **Actions** tab. All must pass.
 
 **To re-enable:** restore the previous `on:` blocks from Git history, or add `push`/`pull_request` triggers back to each workflow.
+
+## Addendum — CI re-enabled (owner decision, 11 November 2026, later the same day)
+
+Because the repository is public, GitHub Actions minutes are free, so automatic CI is **re-enabled**. This supersedes the "CI paused" addendum above.
+
+| Workflow | Trigger |
+|---|---|
+| `repository-security.yml` (quality, tests, build, migration guard, content policy, Gitleaks) | Every push and pull request; manual |
+| `supabase-local.yml` (migration replay, lint, pgTAP, type-drift check) | Pushes and pull requests touching `supabase/**`, `scripts/db/**` or the generated database types; manual |
+| `supabase-dependency-lock.yml` | **Manual only.** It commits regenerated lockfiles by itself, which would conflict with the one-commit-per-phase cadence |
+
+The stand-alone `secret-scan.yml` was removed: Gitleaks and the content policy already run on every push inside `repository-security.yml`. `scripts/ci/local-checks.sh` remains the recommended pre-commit check.

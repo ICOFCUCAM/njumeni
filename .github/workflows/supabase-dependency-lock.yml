@@ -1,7 +1,7 @@
 name: Resolve pinned Supabase SDK lockfile
 
-# CI is paused (owner decision, 2026-11-11): manual runs only, from the Actions tab.
-# Restore the automatic triggers from git history to re-enable.
+# Manual only: this workflow commits regenerated lockfiles itself, which would conflict with
+# the owner's one-commit-per-phase cadence.
 on:
   workflow_dispatch:
 

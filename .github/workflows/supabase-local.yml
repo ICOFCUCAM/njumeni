@@ -1,8 +1,20 @@
 name: Njumeni local database verification
 
-# CI is paused (owner decision, 2026-11-11): manual runs only, from the Actions tab.
-# Restore the automatic triggers from git history to re-enable.
+# Automatic CI re-enabled (owner decision, 2026-11-11): free on the public repository.
 on:
+  push:
+    branches: ["**"]
+    paths:
+      - "supabase/**"
+      - "scripts/db/**"
+      - "apps/web/src/lib/supabase/database.types.ts"
+      - ".github/workflows/supabase-local.yml"
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "scripts/db/**"
+      - "apps/web/src/lib/supabase/database.types.ts"
+      - ".github/workflows/supabase-local.yml"
   workflow_dispatch:
 
 concurrency:

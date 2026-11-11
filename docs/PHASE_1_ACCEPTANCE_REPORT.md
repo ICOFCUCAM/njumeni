@@ -114,9 +114,9 @@ The provider recorded `login`, `logout`, `token_refreshed`, `token_revoked`, `us
 |---|---|---|
 | F-1 | `record_usage_event` is callable by `org_admin` with any positive quantity. There is no current exposure (no consumers, positive-only), but metering must originate from trusted server code | Phase 11: make server-only |
 | D-AUD-1 | Failed sign-in and denied-access audit events | Phase 3 |
-| D-AUD-2 | Hash-chained tamper evidence for audit (U-12) | Phase 3, with evidence custody |
+| D-AUD-2 | Hash-chained tamper evidence for audit (U-12) | ✅ Done in Phase 3 (`verify_security_audit_chain`) |
 | D-AUD-3 | Audit retention, legal hold, export | Phase 3 |
-| D-AUD-4 | The app sets `x-correlation-id` | Phase 3 |
+| D-AUD-4 | The app sets `x-correlation-id` | ✅ Done in Phase 3 (server client header) |
 | D-STO-1 | Upload UI, malware scanning, content addressing | Phase 3 |
 
 ## 6. Closeout conditions
@@ -125,7 +125,7 @@ The provider recorded `login`, `logout`, `token_refreshed`, `token_revoked`, `us
 |---|---|---|
 | 1 | All tasks 1.1–1.11 meet acceptance | ✅ |
 | 2 | Full verification passes | ✅ locally (§3) |
-| 3 | **Manual run of `repository-security.yml` and `supabase-local.yml` from the GitHub Actions tab, both green** (rule while CI is paused; CI_PIPELINE.md addendum) | ⏳ Outstanding |
+| 3 | **`repository-security.yml` and `supabase-local.yml` green on GitHub Actions** (automatic CI re-enabled 11 November 2026; the runs on the Phase 3 commit qualify) | ⏳ Outstanding |
 | 4 | Residuals resolved or formally accepted | ✅ (§4) |
 | 5 | Consolidated `SECURITY_ARCHITECTURE.md` and `MULTITENANCY.md` | ✅ |
 | 6 | Closeout commit and tag `phase-1-closed`; register updated | ⏳ After condition 3 |

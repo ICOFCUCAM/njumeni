@@ -27,7 +27,7 @@ Use explicit contracts between bounded contexts. Never write directly to another
 
 The root formatter settings are in .editorconfig and .prettierrc.json. CI is documented in [CI Pipeline](docs/CI_PIPELINE.md).
 
-**Automatic CI is currently paused** (owner decision, 11 November 2026). Before every commit, run:
+Automatic CI runs on every push. Before every commit, run the same checks locally:
 
 ```bash
 scripts/ci/local-checks.sh

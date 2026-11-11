@@ -1,6 +1,7 @@
 import 'server-only';
 import type { Database } from './database.types';
 
+import { randomUUID } from 'node:crypto';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
@@ -21,6 +22,8 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient<Database>(supabaseUrl, supabasePublishableKey, {
+    // Each request carries a correlation id that the database copies into audit records.
+    global: { headers: { 'x-correlation-id': randomUUID() } },
     cookies: {
       getAll() {
         return cookieStore.getAll();

@@ -27,7 +27,8 @@ This repository is **public by decision** ([ADR-0003](docs/architecture/ADR-0003
 | 0 | Architecture and project foundation | 🟢 Closed |
 | 1 | Identity, tenancy and security | 🟡 Open: implemented; database verification being fixed |
 | 2 | Legal knowledge infrastructure | 🟡 In progress: framework built; first source, embeddings and evaluation next |
-| 3–13 | Evidence → research → reasoning → verification → documents → workspaces → enterprise → commercial → global → launch | 🔒 Locked |
+| 3 | Evidence intelligence | 🔵 Implemented and verified locally: upload, quarantine and scan, extraction, chronology, contradictions, hash-chained custody and audit |
+| 4–13 | Research → reasoning → verification → documents → workspaces → enterprise → commercial → global → launch | 🔒 Not started |
 
 **What exists:**
 - A Next.js 16 application with Supabase authentication, organisations, workspaces, invitations and role management.

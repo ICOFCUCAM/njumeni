@@ -13,7 +13,7 @@
 > - Supabase Auth is integrated in the web app.
 > - The repository is public by decision (ADR-0003, build in public).
 > - Infrastructure follows the zero-cost Stage 0 plan (Master Plan v2.0 §14.1).
-> - Automatic CI is paused; only the secret scan runs on push.
+> - Automatic CI runs on every push (GitHub Actions is free on the public repository).
 >
 > Object storage, queues (beyond the Postgres queue), workers, domains, monitoring and backups remain unprovisioned.
 

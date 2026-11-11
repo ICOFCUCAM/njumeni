@@ -136,6 +136,74 @@ isOneToOne: false
 "assign_workspace_role":
 { Args: { "p_organization_id": string,"p_principal_id": string,"p_role_key": string,"p_workspace_id": string }; Returns: string
                            },
+"evidence_add_event":
+{ Args: { "p_date_precision": string,"p_description": string,"p_event_date": string,"p_evidence_item_id": string,"p_passage_id"?: string }; Returns: string
+                           },
+"evidence_add_redaction":
+{ Args: { "p_end_offset": number,"p_passage_id": string,"p_reason": string,"p_start_offset": number }; Returns: string
+                           },
+"evidence_chronology":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: {
+              "date_precision": string,"description": string,"event_date": string,"event_id": string,"evidence_item_id": string,"evidence_title": string,"origin": string,"passage_id": string
+            }[]
+                           },
+"evidence_create_item":
+{ Args: { "p_evidence_type"?: string,"p_organization_id": string,"p_privilege"?: string,"p_sensitivity"?: string,"p_title": string,"p_workspace_id": string }; Returns: string
+                           },
+"evidence_create_proposition":
+{ Args: { "p_organization_id": string,"p_statement": string,"p_workspace_id": string }; Returns: string
+                           },
+"evidence_custody_log":
+{ Args: { "p_evidence_item_id": string }; Returns: {
+              "actor_kind": string,"event_type": string,"item_sequence": number,"occurred_at": string,"record_hash": string
+            }[]
+                           },
+"evidence_link_proposition":
+{ Args: { "p_evidence_item_id": string,"p_note"?: string,"p_passage_id"?: string,"p_proposition_id": string,"p_relation": string }; Returns: string
+                           },
+"evidence_list_entities":
+{ Args: { "p_evidence_item_id": string }; Returns: {
+              "entity_type": string,"normalised_value": string,"passage_id": string,"raw_value": string
+            }[]
+                           },
+"evidence_list_items":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: {
+              "created_at": string,"event_count": number,"evidence_item_id": string,"evidence_type": string,"latest_filename": string,"latest_scan_status": string,"latest_version": number,"legal_hold": boolean,"passage_count": number,"privilege": string,"sensitivity": string,"status": string,"title": string
+            }[]
+                           },
+"evidence_proposition_conflicts":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: {
+              "contradicting_items": number,"proposition_id": string,"qualifying_items": number,"statement": string,"status": string,"supporting_items": number
+            }[]
+                           },
+"evidence_read_passages":
+{ Args: { "p_evidence_item_id": string }; Returns: {
+              "content": string,"ordinal": number,"page_number": number,"passage_id": string,"redaction_count": number
+            }[]
+                           },
+"evidence_register_file":
+{ Args: { "p_byte_size": number,"p_content_sha256": string,"p_evidence_item_id": string,"p_mime_type": string,"p_original_filename": string,"p_storage_object_key": string }; Returns: string
+                           },
+"evidence_request_deletion":
+{ Args: { "p_evidence_item_id": string,"p_reason": string }; Returns: undefined
+                           },
+"evidence_set_legal_hold":
+{ Args: { "p_evidence_item_id": string,"p_hold": boolean,"p_reason": string }; Returns: undefined
+                           },
+"evidence_verify_custody":
+{ Args: { "p_evidence_item_id": string }; Returns: Json
+                           },
+"evidence_worker_pending_files":
+{ Args: { "p_limit"?: number }; Returns: {
+              "byte_size": number,"content_sha256": string,"evidence_file_id": string,"evidence_item_id": string,"mime_type": string,"needs_extraction": boolean,"organization_id": string,"original_filename": string,"scan_status": string,"storage_object_key": string,"workspace_id": string
+            }[]
+                           },
+"evidence_worker_record_extraction":
+{ Args: { "p_entities": Json,"p_events": Json,"p_evidence_file_id": string,"p_extractor": string,"p_extractor_version": string,"p_failure_code": string,"p_page_count": number,"p_passages": Json,"p_status": string,"p_text_sha256": string }; Returns: string
+                           },
+"evidence_worker_record_scan":
+{ Args: { "p_detail": string,"p_evidence_file_id": string,"p_observed_sha256": string,"p_verdict": string }; Returns: undefined
+                           },
 "get_organization_entitlements":
 { Args: { "p_organization_id": string }; Returns: {
               "effective_from": string,"effective_until": string,"enabled": boolean,"entitlement_key": string,"limit_value": number,"plan_key": string,"subscription_status": string
@@ -258,6 +326,9 @@ isOneToOne: false
                            },
 "set_workspace_membership_status":
 { Args: { "p_membership_id": string,"p_status": string }; Returns: boolean
+                           },
+"verify_security_audit_chain":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            }
           }
           Enums: {
