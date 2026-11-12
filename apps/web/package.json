@@ -18,7 +18,8 @@
     "worker:legal-knowledge": "node --conditions=react-server --experimental-strip-types src/modules/legal-knowledge/worker-main.ts",
     "worker:evidence": "node --conditions=react-server --experimental-strip-types src/modules/evidence/worker-main.ts",
     "eval:retrieval": "node --experimental-strip-types scripts/run-retrieval-evaluation.mjs",
-    "test:e2e": "node --experimental-strip-types --test --test-concurrency=1 e2e/journeys.e2e.mjs"
+    "test:e2e": "node --experimental-strip-types --test --test-concurrency=1 e2e/journeys.e2e.mjs",
+    "worker:glci-monitor": "node --experimental-strip-types src/modules/glci/monitor-main.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

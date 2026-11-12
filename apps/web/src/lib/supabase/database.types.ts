@@ -334,14 +334,31 @@ isOneToOne: false
               "effective_from": string,"effective_until": string,"enabled": boolean,"entitlement_key": string,"limit_value": number,"plan_key": string,"subscription_status": string
             }[]
                            },
+"glci_monitor_claim":
+{ Args: { "p_lease_seconds"?: number,"p_limit"?: number,"p_worker_id": string }; Returns: {
+              "config": Json,"jurisdiction_code": string,"lease_token": string,"monitor_adapter_key": string,"official_uri": string,"previous_fingerprint": string,"source_key": string,"target_key": string
+            }[]
+                           },
+"glci_monitor_record":
+{ Args: { "p_duration_ms": number,"p_failure_class": string,"p_failure_code": string,"p_fingerprint": string,"p_lease_token": string,"p_observed": Json,"p_target_key": string }; Returns: string
+                           },
+"glci_monitoring_status":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "glci_register_target":
 { Args: { "p_config"?: Json,"p_jurisdiction_code": string,"p_monitor_adapter_key": string,"p_name": string,"p_notes"?: string,"p_official_uri": string,"p_source_key": string,"p_target_key": string,"p_target_type": string }; Returns: string
                            },
 "glci_registry":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"glci_request_check":
+{ Args: { "p_target_key": string }; Returns: undefined
+                           },
 "glci_set_target_status":
 { Args: { "p_reason": string,"p_status": string,"p_target_key": string }; Returns: string
+                           },
+"glci_target_observations":
+{ Args: { "p_limit"?: number,"p_target_key": string }; Returns: Json
                            },
 "glci_upsert_jurisdiction_profile":
 { Args: { "p_jurisdiction_code": string,"p_profile": Json }; Returns: undefined
