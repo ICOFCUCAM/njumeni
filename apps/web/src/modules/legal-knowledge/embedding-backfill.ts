@@ -10,6 +10,7 @@ export interface EmbeddingBackfillResult {
   readonly batches: number;
   readonly passagesEmbedded: number;
   readonly drained: boolean;
+  readonly centroidsRefreshed?: number;
 }
 
 interface PendingPassageRow {
@@ -45,6 +46,12 @@ export async function runEmbeddingBackfill(options: {
     throw new Error('LEGAL_EMBEDDING_MAX_BATCHES_INVALID');
   }
   const profileKey = embedder.profile.profileKey;
+  // Authority routing reads one centroid per act version: recompute them once the queue drains.
+  const refresh = async () => {
+    const centroids = await client.rpc('legal_refresh_authority_centroids', { p_profile_key: profileKey });
+    if (centroids.error || typeof centroids.data !== 'number') throw new Error('LEGAL_EMBEDDING_CENTROIDS_FAILED');
+    return { centroidsRefreshed: centroids.data };
+  };
   let batches = 0;
   let passagesEmbedded = 0;
 
@@ -55,7 +62,7 @@ export async function runEmbeddingBackfill(options: {
     });
     if (pending.error) throw new Error('LEGAL_EMBEDDING_PENDING_FAILED');
     const rows = parsePending(pending.data);
-    if (rows.length === 0) return { profileKey, batches, passagesEmbedded, drained: true };
+    if (rows.length === 0) return { profileKey, batches, passagesEmbedded, drained: true, ...(await refresh()) };
 
     const vectors = await embedder.embedPassages(rows.map((row) => row.content));
     const stored = await client.rpc('legal_embedding_store', {
@@ -70,7 +77,7 @@ export async function runEmbeddingBackfill(options: {
     }
     batches += 1;
     passagesEmbedded += rows.length;
-    if (rows.length < batchSize) return { profileKey, batches, passagesEmbedded, drained: true };
+    if (rows.length < batchSize) return { profileKey, batches, passagesEmbedded, drained: true, ...(await refresh()) };
   }
   return { profileKey, batches, passagesEmbedded, drained: false };
 }

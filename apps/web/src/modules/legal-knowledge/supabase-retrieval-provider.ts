@@ -55,17 +55,23 @@ function rpcFailure(code: string): Error { return new Error(code); }
 export interface LegalSearchRouting {
   lexicalRpc: string;
   semanticRpc: string;
+  routeRpc: string;
+  semanticWithinRpc: string;
   scopeArgs: Record<string, string>;
 }
 const SERVICE_ROUTING: LegalSearchRouting = {
   lexicalRpc: 'legal_search_passages_lexical',
   semanticRpc: 'legal_search_passages_semantic',
+  routeRpc: 'legal_route_authorities',
+  semanticWithinRpc: 'legal_search_passages_semantic_within',
   scopeArgs: {},
 };
 export function workspaceResearchRouting(organizationId: string, workspaceId: string): LegalSearchRouting {
   return {
     lexicalRpc: 'research_search_lexical',
     semanticRpc: 'research_search_semantic',
+    routeRpc: 'research_route_authorities',
+    semanticWithinRpc: 'research_search_semantic_within',
     scopeArgs: { p_organization_id: organizationId, p_workspace_id: workspaceId },
   };
 }
@@ -76,6 +82,28 @@ export function createSupabaseLegalPassageSearchProvider(
   profile: LegalEmbeddingProfile = ACTIVE_LEGAL_EMBEDDING_PROFILE,
   routing: LegalSearchRouting = SERVICE_ROUTING,
 ): LegalPassageSearchProvider {
+  // One embedding per question text: routing, routed search and passage search share it.
+  const cache = new Map<string, Promise<{ vector: string; modelKey: string }>>();
+  const embed = (text: string) => {
+    let pending = cache.get(text);
+    if (!pending) {
+      pending = (async () => {
+        if (!embedQuery) throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROVIDER_NOT_CONFIGURED');
+        const embedding = await embedQuery(text);
+        if (embedding.modelKey !== profile.profileKey) throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID');
+        try {
+          assertEmbeddingMatchesProfile(embedding.values, profile);
+        } catch {
+          throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID');
+        }
+        return { vector: '[' + embedding.values.join(',') + ']', modelKey: embedding.modelKey };
+      })();
+      pending.catch(() => cache.delete(text));
+      if (cache.size > 32) cache.clear();
+      cache.set(text, pending);
+    }
+    return pending;
+  };
   return {
     async searchLexical(plan: RetrievalPlan) {
       const { data, error } = await client.rpc(routing.lexicalRpc, {
@@ -87,22 +115,37 @@ export function createSupabaseLegalPassageSearchProvider(
       return mapRows(data, 'lexical_score');
     },
     async searchSemantic(plan: RetrievalPlan) {
-      if (!embedQuery) throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROVIDER_NOT_CONFIGURED');
-      const embedding = await embedQuery(plan.queryText);
-      if (embedding.modelKey !== profile.profileKey) {
-        throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID');
-      }
-      try {
-        assertEmbeddingMatchesProfile(embedding.values, profile);
-      } catch {
-        throw new Error('LEGAL_RETRIEVAL_EMBEDDING_PROFILE_INVALID');
-      }
-      const vector = '[' + embedding.values.join(',') + ']';
+      const embedding = await embed(plan.queryText);
       const { data, error } = await client.rpc(routing.semanticRpc, {
-        ...routing.scopeArgs, p_embedding: vector, p_embedding_model_key: embedding.modelKey,
+        ...routing.scopeArgs, p_embedding: embedding.vector, p_embedding_model_key: embedding.modelKey,
         p_jurisdiction_code: plan.jurisdictionCode, p_as_of_date: plan.asOfDate,
         p_language_codes: plan.languageCodes, p_authority_types: plan.authorityTypes,
         p_limit: plan.limit,
+      });
+      if (error) throw rpcFailure('LEGAL_RETRIEVAL_SEMANTIC_PROVIDER_FAILED');
+      return mapRows(data, 'semantic_score');
+    },
+    async routeAuthorities(plan: RetrievalPlan, limit: number) {
+      const embedding = await embed(plan.queryText);
+      const { data, error } = await client.rpc(routing.routeRpc, {
+        ...routing.scopeArgs, p_embedding: embedding.vector, p_embedding_model_key: embedding.modelKey,
+        p_jurisdiction_code: plan.jurisdictionCode, p_as_of_date: plan.asOfDate,
+        p_language_codes: plan.languageCodes, p_authority_types: plan.authorityTypes, p_limit: limit,
+      });
+      if (error || !Array.isArray(data)) throw rpcFailure('LEGAL_RETRIEVAL_ROUTING_PROVIDER_FAILED');
+      return (data as { authority_id: unknown; route_score: unknown }[]).map((row) => {
+        if (typeof row.authority_id !== 'string' || typeof row.route_score !== 'number') {
+          throw new Error('LEGAL_RETRIEVAL_RESPONSE_INVALID');
+        }
+        return { authorityId: row.authority_id, routeScore: row.route_score };
+      });
+    },
+    async searchSemanticWithin(plan: RetrievalPlan, authorityIds: readonly string[]) {
+      const embedding = await embed(plan.queryText);
+      const { data, error } = await client.rpc(routing.semanticWithinRpc, {
+        ...routing.scopeArgs, p_embedding: embedding.vector, p_embedding_model_key: embedding.modelKey,
+        p_jurisdiction_code: plan.jurisdictionCode, p_as_of_date: plan.asOfDate,
+        p_language_codes: plan.languageCodes, p_authority_ids: authorityIds, p_limit: plan.limit,
       });
       if (error) throw rpcFailure('LEGAL_RETRIEVAL_SEMANTIC_PROVIDER_FAILED');
       return mapRows(data, 'semantic_score');

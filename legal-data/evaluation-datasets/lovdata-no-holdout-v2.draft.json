@@ -1,0 +1,540 @@
+{
+  "datasetKey": "lovdata-no-holdout-v2",
+  "version": 1,
+  "jurisdictionCode": "NO",
+  "description": "Second HELD-OUT Norwegian retrieval set (2026-11-12). Written before authority routing (legal-route-1.0.0) was measured on any data. Mostly plain-language questions. Never used for tuning: it only confirms settings chosen on the development sets (lovdata-no-v1 and lovdata-no-holdout-v1, the latter spent for decisions). Expected acts and sections checked against the Lovdata text only. Corpus: Lovdata's free dataset gjeldende-lover.tar.bz2.",
+  "contentLicence": "Questions: authored for Njumeni (no third-party content). Referenced legislation: Lovdata, NLOD-2.0.",
+  "status": "DRAFT: expectations to be verified against the act text; 2 temporal abstention cases to be added",
+  "cases": [
+    {
+      "id": "h2-sick-pay-employer",
+      "question": "Hvor lenge betaler arbeidsgiveren lønn når jeg er syk?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1997-02-28-19"
+        }
+      ],
+      "expectedSections": [
+        "§ 8-19"
+      ]
+    },
+    {
+      "id": "h2-neighbour-tree",
+      "question": "Kan jeg kreve at naboen feller et tre som skygger for huset mitt?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1961-06-16-15"
+        }
+      ],
+      "expectedSections": [
+        "§ 3"
+      ]
+    },
+    {
+      "id": "h2-home-sale-tax",
+      "question": "Må jeg betale skatt når jeg selger boligen jeg bor i?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-14"
+        }
+      ],
+      "expectedSections": [
+        "§ 9-3"
+      ]
+    },
+    {
+      "id": "h2-doorstep-sale",
+      "question": "Kan jeg angre et kjøp jeg gjorde da en selger kom på døren?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2014-06-20-27"
+        }
+      ],
+      "expectedSections": [
+        "§ 20"
+      ]
+    },
+    {
+      "id": "h2-dog-bite",
+      "question": "Hvem må betale når hunden min biter noen?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2003-07-04-74"
+        }
+      ],
+      "expectedSections": [
+        "§ 4"
+      ]
+    },
+    {
+      "id": "h2-dog-leash",
+      "question": "Må hunden gå i bånd om sommeren?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2003-07-04-74"
+        }
+      ],
+      "expectedSections": [
+        "§ 6"
+      ]
+    },
+    {
+      "id": "h2-house-defect-deadline",
+      "question": "Hvor lenge kan jeg klage på feil ved en bolig jeg har kjøpt?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1992-07-03-93"
+        }
+      ],
+      "expectedSections": [
+        "§ 4-19"
+      ]
+    },
+    {
+      "id": "h2-sunday-work",
+      "question": "Kan arbeidsgiveren kreve at jeg jobber på søndager?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 10-10"
+      ]
+    },
+    {
+      "id": "h2-spouse-witness",
+      "question": "Kan jeg nekte å vitne mot ektefellen min i en straffesak?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-05-22-25"
+        }
+      ],
+      "expectedSections": [
+        "§ 122"
+      ]
+    },
+    {
+      "id": "h2-tenancy-sale",
+      "question": "Hva skjer med leieavtalen min hvis utleieren selger huset?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-17"
+        }
+      ]
+    },
+    {
+      "id": "h2-work-injury",
+      "question": "Får jeg erstatning hvis jeg blir skadet på jobben?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1989-06-16-65"
+        }
+      ],
+      "expectedSections": [
+        "§ 3"
+      ]
+    },
+    {
+      "id": "h2-child-say",
+      "question": "Får barnet si sin mening om hvilken forelder det skal bo hos?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-04-08-7"
+        }
+      ],
+      "expectedSections": [
+        "§ 31"
+      ]
+    },
+    {
+      "id": "h2-child-support",
+      "question": "Hvem må betale barnebidrag?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-04-08-7"
+        }
+      ],
+      "expectedSections": [
+        "§ 67"
+      ]
+    },
+    {
+      "id": "h2-drug-test",
+      "question": "Kan arbeidsgiveren kreve at jeg tar en rustest?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 9-4"
+      ]
+    },
+    {
+      "id": "h2-case-documents",
+      "question": "Har jeg rett til å se dokumentene i saken min hos kommunen?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1967-02-10"
+        }
+      ],
+      "expectedSections": [
+        "§ 18"
+      ]
+    },
+    {
+      "id": "h2-police-seize-phone",
+      "question": "Kan politiet ta mobilen min?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-05-22-25"
+        }
+      ],
+      "expectedSections": [
+        "§ 203"
+      ]
+    },
+    {
+      "id": "h2-old-bill",
+      "question": "Kan noen kreve at jeg betaler en regning som er mange år gammel?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1979-05-18-18"
+        }
+      ],
+      "expectedSections": [
+        "§ 2",
+        "§ 3"
+      ]
+    },
+    {
+      "id": "h2-terrace-permit",
+      "question": "Kan jeg bygge en terrasse uten å søke kommunen?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2008-06-27-71"
+        }
+      ],
+      "expectedSections": [
+        "§ 20-5"
+      ]
+    },
+    {
+      "id": "h2-arrest-48h",
+      "question": "Hvor raskt må en som er pågrepet føres for retten?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-05-22-25"
+        }
+      ],
+      "expectedSections": [
+        "§ 183"
+      ]
+    },
+    {
+      "id": "h2-child-abroad",
+      "question": "Kan jeg ta barnet med til utlandet uten at den andre forelderen sier ja?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-04-08-7"
+        }
+      ],
+      "expectedSections": [
+        "§ 40",
+        "§ 41"
+      ]
+    },
+    {
+      "id": "h2-child-money",
+      "question": "Hvem bestemmer over pengene til et barn under 18 år?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2010-03-26-9"
+        }
+      ],
+      "expectedSections": [
+        "§ 16"
+      ]
+    },
+    {
+      "id": "h2-rent-unpaid-nn",
+      "question": "Kva skjer om eg ikkje betaler husleiga?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 9-9"
+      ]
+    },
+    {
+      "id": "h2-sick-child-nn",
+      "question": "Har eg rett på fri frå jobben når barnet mitt er sjukt?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 12-9"
+      ]
+    },
+    {
+      "id": "h2-no-licence",
+      "question": "Er det straffbart å kjøre bil uten førerkort?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1965-06-18-4"
+        }
+      ],
+      "expectedSections": [
+        "§ 24",
+        "§ 31"
+      ]
+    },
+    {
+      "id": "h2-pets-ban",
+      "question": "Kan utleieren nekte meg å ha katt i leiligheten?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 5-8"
+      ]
+    },
+    {
+      "id": "h2-oos-unicorn",
+      "question": "Hva er reglene for å adoptere en enhjørning?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "h2-oos-japan-visa",
+      "question": "Hvordan søker jeg om visum til Japan?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "h2-oos-swiss-tax",
+      "question": "Hva er skattesatsen i Sveits?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "h2-oos-vote",
+      "question": "Hvilket parti bør jeg stemme på ved stortingsvalget?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "h2-oos-sourdough",
+      "question": "Hvordan baker man surdeigsbrød?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    }
+  ]
+}

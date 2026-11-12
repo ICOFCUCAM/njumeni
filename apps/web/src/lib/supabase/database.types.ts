@@ -1129,6 +1129,23 @@ export type Database = {
         };
         Returns: string;
       };
+      legal_refresh_authority_centroids: { Args: { p_profile_key: string }; Returns: number };
+      legal_route_authorities: {
+        Args: {
+          p_as_of_date: string;
+          p_authority_types?: string[];
+          p_embedding: string;
+          p_embedding_model_key: string;
+          p_jurisdiction_code: string;
+          p_language_codes: string[];
+          p_limit?: number;
+        };
+        Returns: {
+          authority_id: string;
+          authority_version_id: string;
+          route_score: number;
+        }[];
+      };
       legal_search_passages_lexical: {
         Args: {
           p_as_of_date: string;
@@ -1163,6 +1180,37 @@ export type Database = {
         Args: {
           p_as_of_date: string;
           p_authority_types?: string[];
+          p_embedding: string;
+          p_embedding_model_key: string;
+          p_jurisdiction_code: string;
+          p_language_codes: string[];
+          p_limit?: number;
+        };
+        Returns: {
+          authority_id: string;
+          authority_title: string;
+          authority_type: string;
+          authority_version_id: string;
+          citation: string;
+          jurisdiction_code: string;
+          language_code: string;
+          legal_status: string;
+          page_number: number;
+          passage_content: string;
+          passage_id: string;
+          section_path: string[];
+          semantic_score: number;
+          source_content_hash: string;
+          source_key: string;
+          source_uri: string;
+          valid_from: string;
+          valid_until: string;
+        }[];
+      };
+      legal_search_passages_semantic_within: {
+        Args: {
+          p_as_of_date: string;
+          p_authority_ids: string[];
           p_embedding: string;
           p_embedding_model_key: string;
           p_jurisdiction_code: string;
@@ -1503,6 +1551,24 @@ export type Database = {
         };
         Returns: string;
       };
+      research_route_authorities: {
+        Args: {
+          p_as_of_date: string;
+          p_authority_types?: string[];
+          p_embedding: string;
+          p_embedding_model_key: string;
+          p_jurisdiction_code: string;
+          p_language_codes: string[];
+          p_limit?: number;
+          p_organization_id: string;
+          p_workspace_id: string;
+        };
+        Returns: {
+          authority_id: string;
+          authority_version_id: string;
+          route_score: number;
+        }[];
+      };
       research_run_currency_notices: { Args: { p_run_id: string }; Returns: Json };
       research_search_lexical: {
         Args: {
@@ -1540,6 +1606,39 @@ export type Database = {
         Args: {
           p_as_of_date: string;
           p_authority_types?: string[];
+          p_embedding: string;
+          p_embedding_model_key: string;
+          p_jurisdiction_code: string;
+          p_language_codes: string[];
+          p_limit?: number;
+          p_organization_id: string;
+          p_workspace_id: string;
+        };
+        Returns: {
+          authority_id: string;
+          authority_title: string;
+          authority_type: string;
+          authority_version_id: string;
+          citation: string;
+          jurisdiction_code: string;
+          language_code: string;
+          legal_status: string;
+          page_number: number;
+          passage_content: string;
+          passage_id: string;
+          section_path: string[];
+          semantic_score: number;
+          source_content_hash: string;
+          source_key: string;
+          source_uri: string;
+          valid_from: string;
+          valid_until: string;
+        }[];
+      };
+      research_search_semantic_within: {
+        Args: {
+          p_as_of_date: string;
+          p_authority_ids: string[];
           p_embedding: string;
           p_embedding_model_key: string;
           p_jurisdiction_code: string;

@@ -9,7 +9,8 @@
 import { readFile } from 'node:fs/promises';
 import { createClient } from '@supabase/supabase-js';
 import {
-  abstentionOptions, CALIBRATED_ABSTENTION, createRetrievalPlan, executeLegalRetrieval, LEGAL_ABSTENTION_VERSION,
+  abstentionOptions, CALIBRATED_ABSTENTION, CALIBRATED_ROUTING, createRetrievalPlan, executeLegalRetrieval,
+  LEGAL_ABSTENTION_VERSION, LEGAL_ROUTING_VERSION,
 } from '../src/modules/legal-knowledge/retrieval.ts';
 import { createSupabaseLegalPassageSearchProvider } from '../src/modules/legal-knowledge/supabase-retrieval-provider.ts';
 import { evaluateRetrieval } from '../src/modules/legal-knowledge/retrieval-evaluation.ts';
@@ -45,6 +46,15 @@ const rerankOptions = process.env.NJUMENI_EVAL_RERANK_OPTIONS ? JSON.parse(proce
 const abstentionPolicy = process.env.NJUMENI_EVAL_ABSTENTION
   ? { temporalCoverage: false, minSemanticScore: null, ...JSON.parse(process.env.NJUMENI_EVAL_ABSTENTION) }
   : { ...CALIBRATED_ABSTENTION };
+// Routing for sweeps, e.g. NJUMENI_EVAL_ROUTING='{"authorities":5,"passagesPerAuthority":3,"minRouteScore":0.8}'.
+// Default: the calibrated production routing (none while CALIBRATED_ROUTING is null).
+const routingPolicy = process.env.NJUMENI_EVAL_ROUTING ? JSON.parse(process.env.NJUMENI_EVAL_ROUTING) : CALIBRATED_ROUTING;
+const routingOptions = routingPolicy
+  ? {
+      routing: { authorities: routingPolicy.authorities, passagesPerAuthority: routingPolicy.passagesPerAuthority ?? 3 },
+      ...(routingPolicy.minRouteScore == null ? {} : { minRouteScore: routingPolicy.minRouteScore }),
+    }
+  : {};
 const abstention = abstentionOptions(abstentionPolicy, process.env.NJUMENI_EVAL_CURRENT_DATE || undefined);
 const observations = new Map();
 const report = await evaluateRetrieval({
@@ -57,12 +67,13 @@ const report = await evaluateRetrieval({
           reranker: createLegalReranker({ ...rerankOptions, preferredLanguage: query.languageCodes[0] ?? null }),
           question: query.query,
           ...abstention,
+          ...routingOptions,
           observe: (observation) => observations.set(query.query + '|' + query.asOfDate, observation),
         }),
 });
 
 console.log(`Dataset ${report.datasetKey} v${report.datasetVersion}: ${report.caseCount} cases`);
-console.log(`  pipeline: ${firstStageOnly ? 'first stage only' : 'first stage + ' + LEGAL_RERANKER_VERSION + ' ' + JSON.stringify(rerankOptions) + ' + ' + LEGAL_ABSTENTION_VERSION + ' ' + JSON.stringify(abstentionPolicy)}`);
+console.log(`  pipeline: ${firstStageOnly ? 'first stage only' : 'first stage + ' + LEGAL_RERANKER_VERSION + ' ' + JSON.stringify(rerankOptions) + ' + ' + LEGAL_ABSTENTION_VERSION + ' ' + JSON.stringify(abstentionPolicy) + ' + ' + LEGAL_ROUTING_VERSION + ' ' + JSON.stringify(routingPolicy)}`);
 for (const [metric, value] of Object.entries(report.metrics)) {
   console.log(`  ${metric.padEnd(20)} ${value === null ? 'n/a' : value.toFixed(3)}`);
 }
@@ -79,6 +90,7 @@ if (process.env.NJUMENI_EVAL_DIAGNOSTICS === '1') {
       id: item.id, abstentionCase: item.abstentionCase, returned: item.retrievedAuthorities.length,
       abstainedCorrectly: item.abstainedCorrectly, recallAt10: item.recallAt10, precisionAt5: item.precisionAt5,
       bestSemantic: seen.bestSemanticScore ?? null, bestLexical: seen.bestLexicalScore ?? null, abstention: seen.abstention ?? null,
+      topRouteScore: seen.routed?.[0]?.routeScore ?? null,
     }));
   }
 }

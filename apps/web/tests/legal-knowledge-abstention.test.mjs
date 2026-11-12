@@ -89,3 +89,45 @@ test('abstention options need the reranker and valid settings', async () => {
   await assert.rejects(executeLegalRetrieval(plan('2026-11-12'), provider(corpus), { reranker: createLegalReranker(), minSemanticScore: 2 }),
     /OPTIONS_INVALID/);
 });
+
+// ------------------------------------------------------------------ authority routing (legal-route-1.0.0)
+function routedProvider(rows, routes) {
+  const base = provider(rows.filter((r) => !r.hiddenFromPassageSearch));
+  return {
+    ...base,
+    routeAuthorities: async (_plan, limit) => routes.slice(0, limit),
+    searchSemanticWithin: async (plan, ids) =>
+      rows.filter((r) => ids.includes(r.authorityId) && (!r.validFrom || r.validFrom <= plan.asOfDate))
+        .map(({ hiddenFromPassageSearch, ...r }) => ({ ...r, lexicalScore: null })),
+  };
+}
+const craftsman = row('craft-1', 'craftsman', '2000-01-01', { lexicalScore: null, semanticScore: 0.86, hiddenFromPassageSearch: true });
+const noise = [row('noise-1', 'noise', '2000-01-01', { lexicalScore: 0.3, semanticScore: 0.84 })];
+
+test('routing brings in the act the passage search missed', async () => {
+  const without = await executeLegalRetrieval(plan('2026-11-12'), routedProvider([...noise, craftsman], [{ authorityId: 'craftsman', routeScore: 0.9 }]),
+    { reranker: createLegalReranker() });
+  assert.ok(!without.some((p) => p.authorityId === 'craftsman'));
+  let seen;
+  const withRouting = await executeLegalRetrieval(plan('2026-11-12'), routedProvider([...noise, craftsman], [{ authorityId: 'craftsman', routeScore: 0.9 }]),
+    { reranker: createLegalReranker(), routing: { authorities: 3 }, observe: (o) => { seen = o; } });
+  assert.ok(withRouting.some((p) => p.authorityId === 'craftsman'));
+  assert.deepEqual(seen.routed, [{ authorityId: 'craftsman', routeScore: 0.9 }]);
+});
+
+test('a route-score floor abstains when no act is close to the question', async () => {
+  let seen;
+  const result = await executeLegalRetrieval(plan('2026-11-12'), routedProvider(noise, [{ authorityId: 'noise', routeScore: 0.7 }]),
+    { reranker: createLegalReranker(), routing: { authorities: 3 }, minRouteScore: 0.8, observe: (o) => { seen = o; } });
+  assert.deepEqual(result, []);
+  assert.equal(seen.abstention, 'out_of_scope');
+  await assert.rejects(executeLegalRetrieval(plan('2026-11-12'), routedProvider(noise, []), { reranker: createLegalReranker(), minRouteScore: 0.8 }),
+    /OPTIONS_INVALID/, 'a route floor needs routing');
+  await assert.rejects(executeLegalRetrieval(plan('2026-11-12'), provider(noise), { reranker: createLegalReranker(), routing: { authorities: 3 } }),
+    /ROUTING_NOT_SUPPORTED/);
+});
+
+test('routing is off in production until a fresh held-out set confirms it', async () => {
+  const { CALIBRATED_ROUTING } = await import('../src/modules/legal-knowledge/retrieval.ts');
+  assert.equal(CALIBRATED_ROUTING, null);
+});

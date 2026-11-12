@@ -5,6 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   abstentionOptions,
   CALIBRATED_ABSTENTION,
+  CALIBRATED_ROUTING,
   createRetrievalPlan,
   executeLegalRetrieval,
   type RetrievalAbstentionReason,
@@ -122,6 +123,17 @@ export async function runLegalResearch(
   const retrieve = (retrievalPlan: typeof plan) =>
     executeLegalRetrieval(retrievalPlan, provider, {
       ...abstentionOptions(CALIBRATED_ABSTENTION),
+      ...(CALIBRATED_ROUTING
+        ? {
+            routing: {
+              authorities: CALIBRATED_ROUTING.authorities,
+              passagesPerAuthority: CALIBRATED_ROUTING.passagesPerAuthority,
+            },
+            ...(CALIBRATED_ROUTING.minRouteScore === null
+              ? {}
+              : { minRouteScore: CALIBRATED_ROUTING.minRouteScore }),
+          }
+        : {}),
       observe: (observation) => {
         seen.abstention = observation.abstention;
       },

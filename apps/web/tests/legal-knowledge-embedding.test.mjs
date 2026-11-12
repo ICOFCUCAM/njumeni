@@ -79,6 +79,10 @@ test('backfill embeds pending passages in batches until drained', async () => {
         const remaining = pending.filter((row) => !stored.includes(row.passage_id));
         return { data: remaining.slice(0, args.p_limit), error: null };
       }
+      if (name === 'legal_refresh_authority_centroids') {
+        assert.equal(args.p_profile_key, 'multilingual-e5-small-v1');
+        return { data: 3, error: null };
+      }
       assert.equal(name, 'legal_embedding_store');
       for (const item of args.p_embeddings) {
         assert.equal(item.embedding.length, DIMS);
@@ -90,7 +94,7 @@ test('backfill embeds pending passages in batches until drained', async () => {
   const embedder = createLocalLegalEmbedder({ loadExtractor: fakeLoader({ loads: [], inputs: [] }) });
   const result = await runEmbeddingBackfill({ client, embedder, batchSize: 2 });
   assert.deepEqual(result, {
-    profileKey: 'multilingual-e5-small-v1', batches: 3, passagesEmbedded: 5, drained: true,
+    profileKey: 'multilingual-e5-small-v1', batches: 3, passagesEmbedded: 5, drained: true, centroidsRefreshed: 3,
   });
   assert.deepEqual(stored, ['p0', 'p1', 'p2', 'p3', 'p4']);
 });

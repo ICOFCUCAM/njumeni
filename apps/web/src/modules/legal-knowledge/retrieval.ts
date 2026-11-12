@@ -149,9 +149,14 @@ export function assessLegalAnswerEvidence(input:LegalAnswerEvidence):LegalAnswer
   return {canPresentAsGrounded,citedSources,uncitedPassageIds,unsupportedCitations,warnings};
 }
 
+export interface RoutedAuthority { authorityId:string; routeScore:number }
 export interface LegalPassageSearchProvider {
   searchLexical(plan:RetrievalPlan):Promise<readonly RetrievalCandidate[]>;
   searchSemantic(plan:RetrievalPlan):Promise<readonly RetrievalCandidate[]>;
+  /** Authority routing (legal-route-1.0.0): the acts closest to the question, by centroid. */
+  routeAuthorities?(plan:RetrievalPlan,limit:number):Promise<readonly RoutedAuthority[]>;
+  /** Semantic search restricted to the given authorities. */
+  searchSemanticWithin?(plan:RetrievalPlan,authorityIds:readonly string[]):Promise<readonly RetrievalCandidate[]>;
 }
 function mergeRetrievalCandidates(
   lexical:readonly RetrievalCandidate[],
@@ -182,6 +187,8 @@ export interface RetrievalObservation {
   bestLexicalScore:number|null;
   bestSemanticScore:number|null;
   abstention:RetrievalAbstentionReason|null;
+  /** With routing: the routed acts and their centroid similarity, best first. */
+  routed:readonly RoutedAuthority[];
   /** With the temporal check: the authority that answers the question under current law. */
   currentTopAuthorityId:string|null;
 }
@@ -204,6 +211,12 @@ export const CALIBRATED_ABSTENTION:Readonly<LegalAbstentionPolicy>=Object.freeze
   temporalCoverage:true,
   minSemanticScore:null,
 });
+/**
+ * Production routing policy (legal-route-1.0.0). Off until measured: enabled only if the
+ * development sets improve and a fresh held-out set confirms it.
+ */
+export const LEGAL_ROUTING_VERSION='legal-route-1.0.0';
+export const CALIBRATED_ROUTING:Readonly<{authorities:number;passagesPerAuthority:number;minRouteScore:number|null}>|null=null;
 /** Retrieval options for an abstention policy; currentDate is today (UTC) unless given. */
 export function abstentionOptions(policy:Readonly<LegalAbstentionPolicy>,currentDate=new Date().toISOString().slice(0,10)):
   Pick<LegalRetrievalOptions,'temporalCoverage'|'minSemanticScore'> {
@@ -225,8 +238,31 @@ export interface LegalRetrievalOptions {
   temporalCoverage?:{currentDate:string};
   /** Abstain (out_of_scope) when no candidate's semantic score reaches this. Semantic/hybrid only. */
   minSemanticScore?:number;
+  /**
+   * Authority routing (semantic and hybrid only): also search within the `authorities` acts whose
+   * passage centroid is closest to the question, taking up to `passagesPerAuthority` passages
+   * from each into the first-stage pool.
+   */
+  routing?:{authorities:number;passagesPerAuthority?:number};
+  /** Abstain (out_of_scope) when no act's centroid similarity reaches this. Needs routing. */
+  minRouteScore?:number;
   /** Receives what retrieval saw and why it abstained (for limitations and evaluation diagnostics). */
   observe?:(observation:RetrievalObservation)=>void;
+}
+// Routed passages join the pool; a passage found both ways keeps its lexical score and gets the
+// semantic score. At most perAuthority routed passages per act.
+function mergeRoutedCandidates(pool:readonly RetrievalCandidate[],within:readonly RetrievalCandidate[],perAuthority:number):RetrievalCandidate[] {
+  const merged=new Map(pool.map(c=>[c.passageId,c]));
+  const count=new Map<string,number>();
+  for(const candidate of within){
+    const n=count.get(candidate.authorityId)??0;
+    if(n>=perAuthority)continue;
+    count.set(candidate.authorityId,n+1);
+    const existing=merged.get(candidate.passageId);
+    if(existing)merged.set(candidate.passageId,{...existing,semanticScore:existing.semanticScore??candidate.semanticScore});
+    else merged.set(candidate.passageId,{...candidate,lexicalScore:null});
+  }
+  return [...merged.values()];
 }
 async function searchCandidates(plan:RetrievalPlan,provider:LegalPassageSearchProvider):Promise<readonly RetrievalCandidate[]> {
   if(plan.mode==='lexical')return provider.searchLexical(plan);
@@ -261,21 +297,43 @@ export async function executeLegalRetrieval(
   }
   const reranker=options.reranker;
   const question=options.question??plan.queryText;
+  const routing=options.routing;
+  if(routing&&(!Number.isInteger(routing.authorities)||routing.authorities<1||routing.authorities>20||
+    (routing.passagesPerAuthority!==undefined&&(!Number.isInteger(routing.passagesPerAuthority)||routing.passagesPerAuthority<1||routing.passagesPerAuthority>10))))
+    throw new Error('LEGAL_RETRIEVAL_OPTIONS_INVALID');
+  if(options.minRouteScore!==undefined&&(!routing||!(options.minRouteScore>=0&&options.minRouteScore<1)))
+    throw new Error('LEGAL_RETRIEVAL_OPTIONS_INVALID');
   const rerankAt=async(target:RetrievalPlan)=>{
     const poolPlan:RetrievalPlan={...target,limit:Math.min(50,Math.max(target.limit*3,30))};
-    const pool=rankLegalPassages(poolPlan,await searchCandidates(poolPlan,provider));
-    return {pool,result:reranker.rerank(target,question,pool)};
+    let candidates=await searchCandidates(poolPlan,provider);
+    let routed:readonly RoutedAuthority[]=[];
+    if(routing&&target.mode!=='lexical'){
+      if(!provider.routeAuthorities||!provider.searchSemanticWithin)throw new Error('LEGAL_RETRIEVAL_ROUTING_NOT_SUPPORTED');
+      routed=await provider.routeAuthorities(target,routing.authorities);
+      if(routed.length){
+        const within=await provider.searchSemanticWithin(
+          {...target,limit:Math.min(50,routed.length*(routing.passagesPerAuthority??3))},routed.map(r=>r.authorityId));
+        candidates=mergeRoutedCandidates(candidates,within,routing.passagesPerAuthority??3);
+      }
+    }
+    const pool=rankLegalPassages(poolPlan,candidates);
+    return {pool,routed,result:reranker.rerank(target,question,pool)};
   };
-  const {pool,result:reranked}=await rerankAt(plan);
+  const {pool,routed,result:reranked}=await rerankAt(plan);
   let result=reranked;
   const best=(key:'lexicalScore'|'semanticScore')=>pool.reduce<number|null>(
     (max,p)=>p[key]===null?max:max===null?p[key]:Math.max(max,p[key]),null);
   let abstention:RetrievalAbstentionReason|null=null;
   let currentTopAuthorityId:string|null=null;
+  if(options.minRouteScore!==undefined&&plan.mode!=='lexical'&&result.length&&
+    (routed[0]?.routeScore??0)<options.minRouteScore){
+    abstention='out_of_scope';
+    result=[];
+  }
   if(options.minSemanticScore!==undefined){
     if(!(options.minSemanticScore>=0&&options.minSemanticScore<1))throw new Error('LEGAL_RETRIEVAL_OPTIONS_INVALID');
     const semantic=best('semanticScore');
-    if(plan.mode!=='lexical'&&result.length&&(semantic===null||semantic<options.minSemanticScore)){
+    if(!abstention&&plan.mode!=='lexical'&&result.length&&(semantic===null||semantic<options.minSemanticScore)){
       abstention='out_of_scope';
       result=[];
     }
@@ -293,6 +351,6 @@ export async function executeLegalRetrieval(
     }
   }
   options.observe?.({poolSize:pool.length,bestLexicalScore:best('lexicalScore'),bestSemanticScore:best('semanticScore'),
-    abstention,currentTopAuthorityId});
+    abstention,currentTopAuthorityId,routed});
   return result;
 }
