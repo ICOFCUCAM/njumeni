@@ -14,7 +14,7 @@ Status: ⚪ PLANNED · 🟡 IN PROGRESS · 🔵 IMPLEMENTED (verified locally) �
 | Phase | Deliverable | Acceptance criteria | Status | Evidence |
 |---|---|---|---|---|
 | GLCI-00 | Specification, journey register | Owner document recorded verbatim; register opened; reconciled with ADR-0003 and D-5 | 🟢 DONE | [Specification](GLCI_SPECIFICATION.md) |
-| GLCI-01 | Global jurisdiction and authority registry | Per-jurisdiction monitoring profile: languages, hierarchy, publication schedule, effective-date rules, review procedure. Monitoring targets per country (spec §4), adding a country needs no code change, sources inactive until rights review | ⚪ PLANNED | |
+| GLCI-01 | Global jurisdiction and authority registry | Per-jurisdiction monitoring profile: languages, hierarchy, publication schedule, effective-date rules, review procedure. Monitoring targets per country (spec §4), adding a country needs no code change, sources inactive until rights review | 🔵 IMPLEMENTED | Migration `20261113200000`; `glci_registry.test.sql` (22); `glci-registry.test.mjs`. 9 profiles, 22 targets (all inactive), SE/DK/FI/UG catalogued; activation gated by rights review or licence policy; hash-chained GLCI audit |
 | GLCI-02 | Automated legal source monitoring | Monitor adapters, durable monitoring checks, append-only observations. "Unchanged" is distinct from "not checked" or "check failed"; a format change is detected as an integration failure | ⚪ PLANNED | |
 | GLCI-03 | Legislation version comparison | Section-level comparison of successive versions (added, amended, removed, renumbered), new and withdrawn authorities. Publication, enactment, effective, repeal dates and transitional provisions kept apart | ⚪ PLANNED | |
 | GLCI-04 | Legal change impact analysis | For each change: affected research findings and claims, relationship edges, matters and documents, with dependency paths | ⚪ PLANNED | |
@@ -66,4 +66,5 @@ A law published today with a later effective date is recorded as published and p
 
 | Date | Phase | Commit | Note |
 |---|---|---|---|
-| 2026-11-12 | GLCI-00 | (this commit) | Specification and register opened |
+| 2026-11-12 | GLCI-00 | `3ab5642` | Specification and register opened |
+| 2026-11-12 | GLCI-01 | (this commit) | Jurisdiction and authority registry |
