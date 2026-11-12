@@ -367,3 +367,45 @@ test('localisation and accessibility basics', async () => {
   }
   await context.close();
 });
+
+test('journey GLCI: the Global Legal Observatory and its command centre (operators only)', async () => {
+  const customer = await createUser('glci-customer');
+  const operator = await createUser('glci-operator');
+  sql(`insert into private.platform_operators (principal_id, operator_role)
+    select principal_id, 'knowledge_admin' from private.principal_identities where auth_user_id = '${operator.id}' on conflict do nothing;`);
+
+  // A customer never reaches the observatory.
+  const outsider = await signedIn(customer);
+  const refused = await outsider.page.goto(`${BASE}/admin/observatory`);
+  assert.equal(refused?.status(), 404, 'customers get a 404 for the observatory');
+  await outsider.context.close();
+
+  const { page, errors, context } = await signedIn(operator);
+  await page.goto(`${BASE}/admin`);
+  await Promise.all([page.waitForURL(/\/admin\/observatory/), page.getByRole('link', { name: 'Global Legal Observatory' }).click()]);
+  assert.equal(await page.locator('h1').innerText(), 'Global Legal Observatory');
+  assert.ok(await page.getByText('Verified current').isVisible(), 'headline figures are shown');
+  assert.ok(await page.getByRole('heading', { name: 'Source availability and health' }).isVisible());
+  assert.ok((await page.getByText('awaiting rights review').count()) > 0, 'sources without a lawful basis say so');
+
+  // Spec §5 example 4: coverage report from live data.
+  await page.getByLabel('Question').fill('Check whether our European legal coverage is current.');
+  await Promise.all([page.waitForURL(/conversation=/), page.getByRole('button', { name: 'Ask' }).click()]);
+  await page.getByText(/Coverage report \(\d+ jurisdiction/).waitFor();
+  assert.ok(await page.getByText(/NO: not monitored/).first().isVisible(), 'Norway is reported as not monitored, never as current');
+
+  // Spec §5 example 3: a connector change becomes an engineering request awaiting a second operator.
+  await page.getByLabel('Question').fill('Update the Norwegian legal ingestion connector to support the latest official source format.');
+  await Promise.all([page.waitForLoadState('networkidle'), page.getByRole('button', { name: 'Ask' }).click()]);
+  await page.getByText(/opened an engineering request for NO/).waitFor();
+  assert.ok((await page.getByText(/engineering task · proposed by operator · proposed/).count()) > 0, 'the request waits in the approval queue');
+  assert.equal(await page.getByText('You', { exact: true }).count(), 2, 'the conversation keeps both questions');
+
+  // The requester cannot approve their own task (four eyes).
+  const queueItem = page.locator('li', { hasText: 'engineering task · proposed by operator' }).first();
+  await queueItem.getByPlaceholder('Decision note').fill('Approving my own request');
+  await Promise.all([page.waitForURL(/error=/), queueItem.getByRole('button', { name: 'Approve' }).click()]);
+  assert.ok(await page.getByText(/glci four eyes required/).isVisible(), 'self-approval is refused');
+  assert.deepEqual(errors, [], 'no client-side errors');
+  await context.close();
+});

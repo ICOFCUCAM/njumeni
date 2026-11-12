@@ -62,6 +62,10 @@ export default async function AdminPage({
           be requested and is granted, time-limited and read-only, by the customer.
         </p>
       </header>
+      <p className="module-panel">
+        <a href="/admin/observatory">Global Legal Observatory</a>: legal source monitoring, legal
+        change detection and impact, Njumeni&apos;s legal currency, and the AI command centre.
+      </p>
       {params.error ? (
         <p role="alert" className="module-panel">
           Refused ({params.error.replace(/-/g, ' ')}).

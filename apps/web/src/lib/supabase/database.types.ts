@@ -334,6 +334,9 @@ isOneToOne: false
               "effective_from": string,"effective_until": string,"enabled": boolean,"entitlement_key": string,"limit_value": number,"plan_key": string,"subscription_status": string
             }[]
                            },
+"glci_audit_feed":
+{ Args: { "p_limit"?: number }; Returns: Json
+                           },
 "glci_change_event_sections":
 { Args: { "p_event_id": string }; Returns: Json
                            },
@@ -342,6 +345,12 @@ isOneToOne: false
                            },
 "glci_change_impacts":
 { Args: { "p_event_id": string }; Returns: Json
+                           },
+"glci_command_conversation":
+{ Args: { "p_conversation_id": string }; Returns: Json
+                           },
+"glci_command_record":
+{ Args: { "p_author_kind": string,"p_content": string,"p_conversation_id": string,"p_data": Json,"p_engine": string,"p_intent": string }; Returns: number
                            },
 "glci_currency":
 { Args: { "p_jurisdiction_code": string }; Returns: Json
@@ -354,6 +363,9 @@ isOneToOne: false
                            },
 "glci_dismiss_issue":
 { Args: { "p_issue_id": string,"p_reason": string }; Returns: undefined
+                           },
+"glci_examine_authorities":
+{ Args: { "p_jurisdiction_code": string,"p_limit"?: number,"p_terms": (string)[] }; Returns: Json
                            },
 "glci_execute_proposal":
 { Args: { "p_proposal_id": string }; Returns: Json
@@ -372,6 +384,9 @@ isOneToOne: false
 "glci_monitoring_status":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"glci_observatory":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "glci_reanalyse_change":
 { Args: { "p_event_id": string }; Returns: number
                            },
@@ -387,6 +402,9 @@ isOneToOne: false
 "glci_request_check":
 { Args: { "p_target_key": string }; Returns: undefined
                            },
+"glci_request_engineering_task":
+{ Args: { "p_conversation_id"?: string,"p_instruction": string,"p_jurisdiction_code": string,"p_target_key": string }; Returns: Json
+                           },
 "glci_run_currency_verification":
 { Args: { "p_jurisdiction_code"?: string }; Returns: Json
                            },
@@ -398,6 +416,9 @@ isOneToOne: false
                            },
 "glci_upsert_jurisdiction_profile":
 { Args: { "p_jurisdiction_code": string,"p_profile": Json }; Returns: undefined
+                           },
+"glci_verify_audit_chain":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "has_permission":
 { Args: { "p_organization_id": string,"p_permission_key": string,"p_workspace_id"?: string }; Returns: boolean
