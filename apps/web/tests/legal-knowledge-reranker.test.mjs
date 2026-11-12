@@ -172,3 +172,19 @@ test('research findings carry the reranking trace for the run record', () => {
   assert.equal(composed.findings[0].trace.rerankerVersion, LEGAL_RERANKER_VERSION);
   assert.equal(composed.findings[0].trace.features.provision, 1);
 });
+
+test('the authority-level cut keeps only authorities close to the best one', () => {
+  const pool = ranked([
+    passage({ passageId: 'a1', authorityId: 'A', score: 0.9, lexicalScore: 0.9, semanticScore: 0.9, authorityTitle: 'Lov om ferie (ferieloven)' }),
+    passage({ passageId: 'a2', authorityId: 'A', score: 0.8, lexicalScore: 0.8, semanticScore: 0.8 }),
+    passage({ passageId: 'b1', authorityId: 'B', score: 0.6, lexicalScore: 0.6, semanticScore: 0.6 }),
+    passage({ passageId: 'c1', authorityId: 'C', score: 0.55, lexicalScore: 0.55, semanticScore: 0.55 }),
+  ]);
+  const loose = createLegalReranker().rerank(plan, 'ferieloven', pool);
+  assert.ok(new Set(loose.map(p => p.authorityId)).size > 1, 'default: no authority cut');
+  const strict = createLegalReranker({ authorityMargin: 0.85 }).rerank(plan, 'ferieloven', pool);
+  assert.deepEqual([...new Set(strict.map(p => p.authorityId))], ['A'], 'only the clearly best authority remains');
+  const capped = createLegalReranker({ maxAuthorities: 2, relativeCutoff: 0 }).rerank(plan, 'ferieloven', pool);
+  assert.equal(new Set(capped.map(p => p.authorityId)).size, 2);
+  assert.throws(() => createLegalReranker({ authorityMargin: 1 }), /OPTIONS_INVALID/);
+});

@@ -53,6 +53,13 @@ export interface LegalRerankerOptions {
   abstainBelow?: number;
   /** Maximum passages kept per authority (the rest are redundant evidence). */
   maxPassagesPerAuthority?: number;
+  /**
+   * Authority-level confidence cut: keep only authorities whose best passage scores at least this
+   * share of the best authority's score. 0 keeps every authority (passage-level cut only).
+   */
+  authorityMargin?: number;
+  /** At most this many distinct authorities are returned. */
+  maxAuthorities?: number;
 }
 export interface LegalReranker {
   readonly version: string;
@@ -186,13 +193,16 @@ function validateOptions(options: LegalRerankerOptions): Required<Omit<LegalRera
   const relativeCutoff = options.relativeCutoff ?? 0.6;
   const abstainBelow = options.abstainBelow ?? 0.2;
   const maxPassagesPerAuthority = options.maxPassagesPerAuthority ?? 3;
+  const authorityMargin = options.authorityMargin ?? 0;
+  const maxAuthorities = options.maxAuthorities ?? 10;
   if (!(relativeCutoff >= 0 && relativeCutoff < 1) || !(abstainBelow >= 0 && abstainBelow < 1) ||
+      !(authorityMargin >= 0 && authorityMargin < 1) || !Number.isInteger(maxAuthorities) || maxAuthorities < 1 || maxAuthorities > 50 ||
       !Number.isInteger(maxPassagesPerAuthority) || maxPassagesPerAuthority < 1 || maxPassagesPerAuthority > 20) {
     throw new Error('LEGAL_RERANK_OPTIONS_INVALID');
   }
   const relatedJurisdictions = options.relatedJurisdictions ?? {};
   if (Object.values(relatedJurisdictions).some(w => !(w >= 0 && w <= 1))) throw new Error('LEGAL_RERANK_OPTIONS_INVALID');
-  return { weights, relatedJurisdictions, preferredLanguage: options.preferredLanguage ?? null, relativeCutoff, abstainBelow, maxPassagesPerAuthority };
+  return { weights, relatedJurisdictions, preferredLanguage: options.preferredLanguage ?? null, relativeCutoff, abstainBelow, maxPassagesPerAuthority, authorityMargin, maxAuthorities };
 }
 
 export function createLegalReranker(options: LegalRerankerOptions = {}): LegalReranker {
@@ -245,9 +255,16 @@ export function createLegalReranker(options: LegalRerankerOptions = {}): LegalRe
 
       const best = ranked[0]!.score;
       if (best < config.abstainBelow) return [];
+      // Authority-level cut: authorities ranked by their best passage; keep those within the margin.
+      const authorityBest = new Map<string, number>();
+      for (const item of ranked) if (!authorityBest.has(item.passage.authorityId)) authorityBest.set(item.passage.authorityId, item.score);
+      const keptAuthorities = new Set([...authorityBest.entries()]
+        .filter(([, score]) => score >= config.authorityMargin * best)
+        .slice(0, config.maxAuthorities).map(([id]) => id));
       const perAuthority = new Map<string, number>();
       const kept = ranked.filter(item => {
         if (item.score < config.relativeCutoff * best || item.score < config.abstainBelow) return false;
+        if (!keptAuthorities.has(item.passage.authorityId)) return false;
         const count = perAuthority.get(item.passage.authorityId) ?? 0;
         if (count >= config.maxPassagesPerAuthority) return false;
         perAuthority.set(item.passage.authorityId, count + 1);

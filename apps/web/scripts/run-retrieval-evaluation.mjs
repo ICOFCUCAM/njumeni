@@ -34,6 +34,8 @@ const provider = createSupabaseLegalPassageSearchProvider(
   needsEmbeddings ? createLocalLegalEmbedder().embedQuery : undefined,
 );
 const firstStageOnly = process.env.NJUMENI_EVAL_FIRST_STAGE_ONLY === '1';
+// Reranker settings for calibration sweeps, e.g. NJUMENI_EVAL_RERANK_OPTIONS='{"authorityMargin":0.85,"maxAuthorities":2}'.
+const rerankOptions = process.env.NJUMENI_EVAL_RERANK_OPTIONS ? JSON.parse(process.env.NJUMENI_EVAL_RERANK_OPTIONS) : {};
 const report = await evaluateRetrieval({
   dataset,
   defaultMode: defaultMode ?? 'hybrid',
@@ -41,13 +43,13 @@ const report = await evaluateRetrieval({
     firstStageOnly
       ? executeLegalRetrieval(createRetrievalPlan(query), provider)
       : executeLegalRetrieval(createRetrievalPlan(query), provider, {
-          reranker: createLegalReranker({ preferredLanguage: query.languageCodes[0] ?? null }),
+          reranker: createLegalReranker({ ...rerankOptions, preferredLanguage: query.languageCodes[0] ?? null }),
           question: query.query,
         }),
 });
 
 console.log(`Dataset ${report.datasetKey} v${report.datasetVersion}: ${report.caseCount} cases`);
-console.log(`  pipeline: ${firstStageOnly ? 'first stage only' : 'first stage + ' + LEGAL_RERANKER_VERSION}`);
+console.log(`  pipeline: ${firstStageOnly ? 'first stage only' : 'first stage + ' + LEGAL_RERANKER_VERSION + ' ' + JSON.stringify(rerankOptions)}`);
 for (const [metric, value] of Object.entries(report.metrics)) {
   console.log(`  ${metric.padEnd(20)} ${value === null ? 'n/a' : value.toFixed(3)}`);
 }

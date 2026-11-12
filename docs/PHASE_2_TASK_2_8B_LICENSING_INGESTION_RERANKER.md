@@ -114,6 +114,30 @@ Every passage carries a trace: version, first-stage rank and score, every signal
 
 The evaluation runner measures the full pipeline by default (`NJUMENI_EVAL_FIRST_STAGE_ONLY=1` for the first stage alone). The Precision@5 gate stays at 0.6.
 
+## 4a. Evaluation on the real corpus (lovdata-no-v1, 41 cases, 2026-11-12)
+
+Run by the Lovdata session on a fresh stack: 753 acts and 31 007 passages ingested with adapter 1.1.0 and embedded with multilingual-e5-small-v1. Hybrid mode. Thresholds unchanged.
+
+| Metric | Gate | First stage only | With `legal-rerank-1.0.0` (defaults) |
+|---|---|---|---|
+| Recall@10 | ≥ 0.80 | 1.000 ✅ | 1.000 ✅ |
+| Precision@5 | ≥ 0.60 | 0.316 ❌ | 0.210 ❌ |
+| MRR | — | 0.718 | **0.903** |
+| Currency accuracy | ≥ 0.95 | 1.000 ✅ | 1.000 ✅ |
+| Section hit@10 | — | 0.923 | 0.846 |
+| Abstention | — | 0/2 | 0/2 |
+
+**Reading.**
+- The reranker ranks the correct act first in 33 of 39 answerable cases.
+- Its defaults still return 4–5 distinct acts, so Precision@5 (relevant distinct authorities among those returned) stays near 1/5.
+- Abstention fails in both cases. The out-of-scope question returns 4 acts.
+
+**Response.**
+- Authority-level confidence options were added: `authorityMargin` and `maxAuthorities`. Their defaults leave behaviour unchanged.
+- The runner accepts `NJUMENI_EVAL_RERANK_OPTIONS` for calibration sweeps.
+- Settings are adopted only if every gate passes. The gate is not lowered.
+- Because the settings are calibrated on this set, a held-out set is required before `partial` coverage is claimed.
+
 ## 5. Migration history reconciliation
 
 The repository files were compared with hosted `supabase_migrations.schema_migrations`, comparing the MD5 of each file with the stored statement.
