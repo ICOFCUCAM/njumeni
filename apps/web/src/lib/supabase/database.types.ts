@@ -343,6 +343,12 @@ isOneToOne: false
 "glci_change_impacts":
 { Args: { "p_event_id": string }; Returns: Json
                            },
+"glci_currency":
+{ Args: { "p_jurisdiction_code": string }; Returns: Json
+                           },
+"glci_currency_overview":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "glci_monitor_claim":
 { Args: { "p_lease_seconds"?: number,"p_limit"?: number,"p_worker_id": string }; Returns: {
               "config": Json,"jurisdiction_code": string,"lease_token": string,"monitor_adapter_key": string,"official_uri": string,"previous_fingerprint": string,"source_key": string,"target_key": string
@@ -365,6 +371,9 @@ isOneToOne: false
                            },
 "glci_request_check":
 { Args: { "p_target_key": string }; Returns: undefined
+                           },
+"glci_run_currency_verification":
+{ Args: { "p_jurisdiction_code"?: string }; Returns: Json
                            },
 "glci_set_target_status":
 { Args: { "p_reason": string,"p_status": string,"p_target_key": string }; Returns: string
