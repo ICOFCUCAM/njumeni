@@ -45,6 +45,10 @@
         {
           "file": "supabase/tests/enterprise_institutional.test.sql",
           "contains": "support access is read-only"
+        },
+        {
+          "file": "supabase/tests/security_hardening.test.sql",
+          "contains": "no private table is granted to browser roles"
         }
       ]
     },
@@ -71,6 +75,10 @@
         {
           "file": "supabase/tests/document_intelligence.test.sql",
           "contains": "a fabricated citation is rejected"
+        },
+        {
+          "file": "apps/web/tests/ai-evaluation.test.mjs",
+          "contains": "no fabricated citation in any draft"
         }
       ]
     },
@@ -111,6 +119,10 @@
         {
           "file": "supabase/tests/case_management.test.sql",
           "contains": "matters are retained"
+        },
+        {
+          "file": "scripts/ops/restore-drill.sh",
+          "contains": "custody_links_broken=0"
         }
       ]
     },
@@ -202,6 +214,10 @@
         {
           "file": "supabase/tests/security_audit.test.sql",
           "contains": "Security audit events are append-only"
+        },
+        {
+          "file": "scripts/ops/restore-drill.sh",
+          "contains": "audit_chain_valid=true"
         }
       ]
     },
@@ -244,6 +260,10 @@
         {
           "file": ".github/workflows/repository-security.yml",
           "contains": "node scripts/ci/check-release-gates.mjs"
+        },
+        {
+          "file": "apps/web/tests/ai-evaluation.test.mjs",
+          "contains": "quality/evaluation-thresholds.json"
         }
       ]
     }

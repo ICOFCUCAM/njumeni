@@ -110,3 +110,12 @@ The `quality` job in `repository-security.yml` now runs `node scripts/ci/check-r
 - a gate enforced in code is weaker than the thresholds file.
 
 `scripts/ci/local-checks.sh` runs the same check.
+
+## Addendum — Hosted database deployment (Phase 13, 12 November 2026)
+
+`.github/workflows/deploy-hosted-database.yml` deploys the cumulative migration set to the hosted Supabase project (U-27):
+- It runs **only manually**, with `confirm = DEPLOY`, in the protected `production` environment.
+- It does a dry run first, then `supabase db push`.
+- It then verifies the hosted schema with `scripts/ops/verify-hosted-schema.sql` and fails unless the hosted migration list equals the repository's and every security invariant holds.
+
+It requires the repository secret `SUPABASE_DB_URL`. See the [operations runbook](operations/RUNBOOK.md).

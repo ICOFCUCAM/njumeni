@@ -29,12 +29,12 @@
 5. **Gates with nothing to measure fail.** An evaluation without cases never passes silently.
 6. **Each phase records its evidence:** test counts, end-to-end results and CI run IDs, in the phase plan.
 
-## 3. Current totals (Phase 12)
+## 3. Current totals (Phase 13)
 
 | Suite | Count |
 |---|---|
-| pgTAP | 679 assertions in 23 files |
-| Application | 250 tests |
+| pgTAP | 693 assertions in 24 files |
+| Application | 251 tests |
 | Root policy and documentation | 24 tests |
 
 ## 4. Added by later phases
@@ -50,4 +50,4 @@
 | 11 | ✅ Quota, webhook-signature, invoice-immutability and analytics tests; billing end to end over HTTP |
 | 12 | ✅ Jurisdiction model, glossary, readiness (P8) and localisation tests; cross-language research over HTTP |
 | 13 | Browser end-to-end journeys (master plan §15) with Playwright |
-| 13 | Load, performance, penetration and restore-drill testing |
+| 13 | ✅ Security invariants (pgTAP), HTTP penetration probes, browser CSP check, load test with budgets, AI evaluation against thresholds, restore drill. Playwright journey suites to grow with real content |

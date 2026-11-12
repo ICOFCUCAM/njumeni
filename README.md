@@ -37,7 +37,7 @@ This repository is **public by decision** ([ADR-0003](docs/architecture/ADR-0003
 | 10 | Enterprise and institutional systems | 🔵 Implemented and verified locally: offices and teams, back office without content access, customer-approved break-glass support, retention, compliance register, EU AI Act gating, SSO readiness, API keys |
 | 11 | Commercial infrastructure | 🔵 Implemented and verified locally: plans and allowances, automatic metering, database-enforced quotas, AI credits, immutable invoices, signed provider webhooks, commercial analytics |
 | 12 | Global expansion | 🔵 Framework implemented: more jurisdictions (EEA, OHADA, African states), sources held for rights review, legal glossary and cross-language research, citation styles, en/nb/fr interface. The coverage gate needs real content |
-| 13 | Production hardening and launch | 🔒 Not started |
+| 13 | Production hardening and launch | 🔵 Hardening implemented and verified: security audit and invariants, headers, penetration probes, load test, AI evaluation, restore drill, monitoring, runbook, hosted deployment workflow. Launch steps are with the owner |
 
 **What exists:**
 - A Next.js 16 application with Supabase authentication, organisations, workspaces, invitations and role management.
@@ -62,7 +62,8 @@ The live status, with evidence and blockers, is in the **[Phase Register](docs/P
 | [Phase Register](docs/PHASE_REGISTER.md) | Live task and phase status, CI blockers, owner decisions |
 | [Original master source](docs/ORIGINAL_MASTER_PLAN_SOURCE.md) | The immutable original 20-section plan (checksum-enforced) |
 | [Product Specification](docs/PRODUCT_SPECIFICATION.md) | Users, journeys, first-release scope, acceptance criteria |
-| [Phase 1 plan](docs/PHASE_1_PLAN.md) · [Phase 2](docs/PHASE_2_PLAN.md) · [Phase 3](docs/PHASE_3_PLAN.md) · [Phase 4](docs/PHASE_4_PLAN.md) · [Phase 5](docs/PHASE_5_PLAN.md) · [Phase 6](docs/PHASE_6_PLAN.md) · [Phase 7](docs/PHASE_7_PLAN.md) · [Phase 8](docs/PHASE_8_PLAN.md) · [Phase 9](docs/PHASE_9_PLAN.md) · [Phase 10](docs/PHASE_10_PLAN.md) · [Phase 11](docs/PHASE_11_PLAN.md) · [Phase 12](docs/PHASE_12_PLAN.md) | Phase plans |
+| [Phase 1 plan](docs/PHASE_1_PLAN.md) · [Phase 2](docs/PHASE_2_PLAN.md) · [Phase 3](docs/PHASE_3_PLAN.md) · [Phase 4](docs/PHASE_4_PLAN.md) · [Phase 5](docs/PHASE_5_PLAN.md) · [Phase 6](docs/PHASE_6_PLAN.md) · [Phase 7](docs/PHASE_7_PLAN.md) · [Phase 8](docs/PHASE_8_PLAN.md) · [Phase 9](docs/PHASE_9_PLAN.md) · [Phase 10](docs/PHASE_10_PLAN.md) · [Phase 11](docs/PHASE_11_PLAN.md) · [Phase 12](docs/PHASE_12_PLAN.md) · [Phase 13](docs/PHASE_13_PLAN.md) | Phase plans |
+| [Operations runbook](docs/operations/RUNBOOK.md) · [Security audit](docs/SECURITY_AUDIT_REPORT.md) | Deployment, monitoring, backups, incidents; pre-launch audit |
 | [AI Architecture](docs/AI_ARCHITECTURE.md) | Providers, agents, AI governance and the argument graph |
 | [ADR-0001](docs/architecture/ADR-0001-modular-monolith-and-bounded-contexts.md) · [ADR-0002](docs/architecture/ADR-0002-identity-tenancy-security.md) · [ADR-0003](docs/architecture/ADR-0003-build-in-public-and-staged-infrastructure.md) | Architecture decisions |
 | [Module Layer Map](docs/architecture/MODULE_LAYER_MAP.md) · [Capability Traceability](docs/architecture/MODULE_REQUIREMENTS_TRACEABILITY.md) | Modules A–M mapped to the eight layers |

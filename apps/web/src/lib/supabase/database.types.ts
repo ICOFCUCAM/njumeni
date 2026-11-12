@@ -535,8 +535,14 @@ isOneToOne: false
 "platform_commercial_analytics":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"platform_health":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "platform_is_operator":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"platform_operations_status":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "platform_overview":
 { Args: Record<PropertyKey, never>; Returns: Json
@@ -614,6 +620,9 @@ isOneToOne: false
                            },
 "revoke_workspace_role":
 { Args: { "p_binding_id": string }; Returns: boolean
+                           },
+"schema_fingerprint":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "set_organization_membership_status":
 { Args: { "p_membership_id": string,"p_status": string }; Returns: boolean

@@ -73,7 +73,7 @@ End to end on the built app:
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 12 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 12 commit~~ ✅ `c866ebd`: runs `43138014579` (CI and security) and `43138014534` (database verification), both successful | Done |
 | 2 | **Each jurisdiction at `partial` or better** (master-plan gate) | Per jurisdiction: rights review → adapter → ingestion → coverage review → evaluation set passing. Starts with Norway (Task 2.8) in a network-enabled environment |
 | 3 | Glossary reviewed by qualified lawyers per language | Legal review |
 | 4 | Phases 3–11 closed | Their own closeout items |

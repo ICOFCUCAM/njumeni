@@ -1,0 +1,64 @@
+name: Deploy database to hosted Supabase
+
+# Master Plan v2.0 U-27: the cumulative migration set is deployed to the hosted project only when
+# the owner decides, by running this workflow manually. It never runs on push.
+# Required repository secret (Settings → Secrets and variables → Actions):
+#   SUPABASE_DB_URL  postgres connection string of the hosted project (session pooler), with password
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type DEPLOY to apply every repository migration to the hosted project
+        required: true
+      dry_run:
+        description: Only list what would be applied
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-database
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: inputs.confirm == 'DEPLOY'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify the migration set before deployment
+        run: node scripts/ci/check-migrations.mjs
+
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 3.1.0
+
+      - name: Show what would be applied
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: supabase db push --db-url "$SUPABASE_DB_URL" --dry-run
+
+      - name: Apply migrations
+        if: ${{ !inputs.dry_run }}
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: supabase db push --db-url "$SUPABASE_DB_URL"
+
+      - name: Prove the hosted schema equals the repository (U-27)
+        if: ${{ !inputs.dry_run }}
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          sudo apt-get install -y -qq postgresql-client >/dev/null
+          output=$(psql "$SUPABASE_DB_URL" -q -t -A -f scripts/ops/verify-hosted-schema.sql)
+          echo "$output"
+          expected="migrations=$(ls supabase/migrations/*.sql | sed -E 's#.*/([0-9]{14})_.*#\1#' | sort | paste -sd, -)"
+          echo "$output" | grep -q '^FAIL' && { echo "::error::Hosted schema verification failed"; exit 1; }
+          echo "$output" | grep -qx "$expected" || { echo "::error::Hosted migrations differ from the repository"; exit 1; }
+          echo "Hosted schema equals the repository migrations."

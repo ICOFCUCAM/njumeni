@@ -38,9 +38,9 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 0 | 🟢 Closed and verified |
 | Phase 1 | 🟢 Closed (11 November 2026) |
 | Phase 2 | 🟡 In progress: framework, embeddings profile, as-of and graph queries, coverage levels and evaluation harness built. Task 2.8 (first live source) blocked by network |
-| Phases 3–12 | 🔵 Implemented and verified locally (evidence; research; AI reasoning; verification; documents; case management; professional; enterprise and institutional; commercial; global framework) |
-| Phase 13 | 🔒 Locked |
-| Local checks (2026-11-12) | pgTAP 679/679 ✅ · db lint ✅ · typecheck ✅ · web tests 250/250 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
+| Phases 3–13 | 🔵 Implemented and verified locally (evidence; research; AI reasoning; verification; documents; case management; professional; enterprise and institutional; commercial; global framework; production hardening) |
+| Launch | Owner steps: hosted database deployment (workflow ready; hosted project verified empty), web hosting, independent penetration test, D-5 and payment provider, real content ([Phase 13 plan](PHASE_13_PLAN.md) §5) |
+| Local checks (2026-11-12) | pgTAP 693/693 ✅ · db lint ✅ · typecheck ✅ · web tests 251/251 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
 | CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
@@ -333,7 +333,18 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Language support.** A 50-concept legal glossary (nb/en/fr); cross-language research with a disclosed concept rewrite; jurisdiction citation formatting; interface localisation (en/nb/fr).
 - **Readiness report** and `/jurisdictions`, honest by construction (P8).
 - **Verification:** pgTAP 679/679 (global 18/18); app 250/250; build passes. An English question answered from Norwegian sources over HTTP with the rewrite disclosed; French navigation.
-- **Gate not met:** every jurisdiction ≥ `partial` needs real content (network, rights review, Task 2.8 first).
+- **Gate not met:** every jurisdiction ≥ `partial` needs real content (network, rights review, Task 2.8 first). CI green on the phase commit `c866ebd`: runs `43138014579` (CI and security) and `43138014534` (database verification).
+
+## 5k. Phase 13: Production hardening and launch (🔵 IMPLEMENTED, hardening verified locally)
+
+**Plan and acceptance:** [PHASE_13_PLAN.md](PHASE_13_PLAN.md) · **Runbook:** [operations/RUNBOOK.md](operations/RUNBOOK.md) · **Audit:** [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md)
+
+- **Security audit and remediation.** Migration `20261112800000`: RLS everywhere, every foreign key indexed, private functions closed. 14 security invariants enforced as tests.
+- **HTTP and penetration.** HTTP security headers (browser-verified); penetration probes 37/37; load test (p95 ≤ 346 ms, 0 errors).
+- **AI evaluation:** grounding, citation accuracy and limitation disclosure all 1.0; restore drill passed (audit and custody chains intact).
+- **Monitoring:** health with schema version; operator operations status.
+- **Hosted deployment workflow (U-27).** Manual, dry run first, then proves the hosted schema equals the repository. The hosted project **Njumeni** (`vvjpsejeeffykaozfbik`) was inspected and is empty.
+- **Outstanding (owner):** run the deployment workflow; web hosting; independent penetration test; D-5 and payment provider; real content; pilots and launch.
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
 
@@ -356,7 +367,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | 10 | Enterprise and institutional systems | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs SSO against a real identity provider (Stage 2), Phases 3–9 closed and CI on the phase commit ([Phase 10 plan](PHASE_10_PLAN.md) §5) |
 | 11 | Commercial infrastructure | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs a payment provider in staging (owner decision), Phases 3–10 closed and CI on the phase commit ([Phase 11 plan](PHASE_11_PLAN.md) §5) |
 | 12 | Global expansion | 🔵 IMPLEMENTED — VERIFIED LOCALLY (gate not met) | Framework built. **The gate (every jurisdiction ≥ `partial`) needs real content per jurisdiction** (network and rights review; Task 2.8 first) ([Phase 12 plan](PHASE_12_PLAN.md) §5) |
-| 13 | Production hardening and launch | 🔒 LOCKED | Phase 12 closed; includes the **first hosted deployment of the cumulative migration set** |
+| 13 | Production hardening and launch | 🔵 IMPLEMENTED — HARDENING VERIFIED LOCALLY | Phase 12 closed; includes the **first hosted deployment of the cumulative migration set** |
 
 *The order of Phases 3–8 now follows the original source and v2.0 (U-25). The previous register had them as: Evidence and document foundation, Document intelligence, Legal research, AI reasoning, Verification, and Documents/contracts/drafting.*
 
