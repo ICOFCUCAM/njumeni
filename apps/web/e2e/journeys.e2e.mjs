@@ -414,4 +414,23 @@ test('journey GLCI: the Global Legal Observatory and its command centre (operato
   assert.ok(await page.getByText(/glci four eyes required/).isVisible(), 'self-approval is refused');
   assert.deepEqual(errors, [], 'no client-side errors');
   await context.close();
+
+  // GLCI-09: a second operator approves and executes; the task is handed to an executor. None is
+  // configured here, so the hand-off is recorded as failed with its reason and can be retried.
+  const second = await createUser('glci-approver');
+  sql(`insert into private.platform_operators (principal_id, operator_role)
+    select principal_id, 'knowledge_admin' from private.principal_identities where auth_user_id = '${second.id}' on conflict do nothing;`);
+  const approver = await signedIn(second);
+  await approver.page.goto(`${BASE}/admin/observatory`);
+  const item = approver.page.locator('li', { hasText: 'engineering task · proposed by operator' }).first();
+  await item.getByPlaceholder('Decision note').fill('Second operator approves the connector change');
+  await Promise.all([approver.page.waitForURL(/done=approve/), item.getByRole('button', { name: 'Approve' }).click()]);
+  const approved = approver.page.locator('li', { hasText: 'engineering task · proposed by operator · approved' }).first();
+  await Promise.all([approver.page.waitForURL(/done=execute/), approved.getByRole('button', { name: 'Execute approved action' }).click()]);
+  const history = approver.page.locator('section[aria-label="Claude Code execution history"]');
+  await history.getByText(/glci\/task-[0-9a-f]{8}/).waitFor();
+  assert.ok(await history.getByText(/no executor configured/).isVisible(), 'the failed hand-off says why');
+  assert.ok(await history.getByRole('button', { name: 'Send to Claude Code again' }).isVisible(), 'and can be retried');
+  assert.deepEqual(approver.errors, [], 'no client-side errors');
+  await approver.context.close();
 });

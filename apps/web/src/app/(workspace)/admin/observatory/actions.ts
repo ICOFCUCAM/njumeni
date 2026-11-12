@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { dispatchEngineeringTask, engineeringEnvironmentFrom } from '@/modules/glci/engineering-runner';
 import { aiEnvironmentFrom, GLCI_ENGINES, runCommandWithEngines, type GlciAiSettings, type GlciEngine } from '@/modules/glci/ai-engines';
 
 const PATH = '/admin/observatory';
@@ -14,6 +15,16 @@ function code(error: unknown): string {
   const message = error instanceof Error ? error.message : String((error as { message?: unknown })?.message ?? '');
   const match = /[A-Z][A-Z0-9_]{3,80}/.exec(message);
   return (match?.[0] ?? 'GLCI_ACTION_FAILED').toLowerCase().replace(/_/g, '-');
+}
+
+async function dispatchTask(supabase: Awaited<ReturnType<typeof createClient>>, taskId: string): Promise<void> {
+  const rpc = (fn: string, args?: Record<string, unknown>) =>
+    supabase.rpc(fn as never, args as never) as unknown as Promise<{ data: unknown; error: unknown }>;
+  try {
+    await dispatchEngineeringTask({ rpc, taskId, environment: engineeringEnvironmentFrom(process.env) });
+  } catch {
+    // The task stays queued or failed; the observatory shows it with a retry button.
+  }
 }
 
 /** Operator actions on the observatory. Every RPC re-checks the operator role and audits. */
@@ -29,8 +40,18 @@ export async function observatoryAction(form: FormData): Promise<void> {
     case 'reject':
       result = await supabase.rpc('glci_decide_proposal', { p_proposal_id: id, p_decision: action === 'approve' ? 'approved' : 'rejected', p_note: note });
       break;
-    case 'execute':
-      result = await supabase.rpc('glci_execute_proposal', { p_proposal_id: id });
+    case 'execute': {
+      const executed = await supabase.rpc('glci_execute_proposal', { p_proposal_id: id });
+      result = executed;
+      // An approved engineering task is handed to an executor at once (Claude Code, else the
+      // GitHub workflow). A failed hand-off is recorded on the task and can be retried.
+      const taskId = (executed.data as { engineeringTaskId?: string } | null)?.engineeringTaskId;
+      if (!executed.error && taskId) await dispatchTask(supabase, taskId);
+      break;
+    }
+    case 'dispatch-task':
+      result = { error: null };
+      await dispatchTask(supabase, id);
       break;
     case 'dismiss':
       result = await supabase.rpc('glci_dismiss_issue', { p_issue_id: id, p_reason: note });

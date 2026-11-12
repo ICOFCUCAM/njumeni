@@ -91,6 +91,21 @@ interface AiSettings {
   monthlyBudgetUsd: number;
   spentThisMonthUsd: number;
 }
+interface EngineeringTask {
+  id: string;
+  status: string;
+  executor: string | null;
+  branch: string;
+  jurisdictionCode: string | null;
+  targetKey: string | null;
+  instruction: string;
+  attempts: number;
+  sessionUrl: string | null;
+  pullRequestUrl: string | null;
+  lastError: string | null;
+  summary: string | null;
+  createdAt: string;
+}
 interface Dispatch {
   id: string;
   questionSequence: number;
@@ -167,6 +182,8 @@ export default async function ObservatoryPage({
       ).data ?? []) as unknown as Dispatch[])
     : [];
   const pending = dispatches.filter((d) => d.status === 'dispatched');
+  const engineeringTasks = ((await supabase.rpc('glci_engineering_tasks_list' as never)).data ??
+    []) as unknown as EngineeringTask[];
   const queue = o.issues.flatMap((issue) =>
     issue.proposals
       .filter((p) => p.status === 'proposed' || p.status === 'approved')
@@ -509,10 +526,45 @@ export default async function ObservatoryPage({
       <section className="module-panel" aria-label="Claude Code execution history">
         <h2 className="section-heading">Claude Code execution history</h2>
         <p>
-          {o.engineeringTasks.length === 0
-            ? 'No engineering task has run. Approved engineering tasks run through the controlled Claude Code integration (GLCI-09).'
-            : `${o.engineeringTasks.length} task(s).`}
+          <small>
+            Approved engineering tasks run in your Claude Code (else the GitHub workflow) on their
+            own branch and end in a pull request for review. Nothing is merged or deployed from
+            here.
+          </small>
         </p>
+        {engineeringTasks.length === 0 ? <p>No engineering task yet.</p> : null}
+        <ul className="membership-list">
+          {engineeringTasks.map((t) => (
+            <li key={t.id} className="membership-row">
+              <span className="workspace-status">{t.status.replace(/_/g, ' ')}</span>{' '}
+              <strong>{t.instruction.slice(0, 140)}</strong>{' '}
+              <small>
+                {t.jurisdictionCode ?? 'global'} · {t.branch} ·{' '}
+                {t.executor ? t.executor.replace(/_/g, ' ') : 'not yet dispatched'} · {t.attempts}{' '}
+                attempt(s) · {time(t.createdAt)}
+                {t.lastError ? ` · ${t.lastError.toLowerCase().replace(/_/g, ' ')}` : ''}
+              </small>
+              {t.summary ? <p style={{ margin: '4px 0' }}>{t.summary}</p> : null}
+              {t.pullRequestUrl ? (
+                <a href={t.pullRequestUrl} target="_blank" rel="noreferrer">
+                  Review the pull request
+                </a>
+              ) : null}{' '}
+              {t.sessionUrl ? (
+                <a href={t.sessionUrl} target="_blank" rel="noreferrer">
+                  Watch the Claude Code session
+                </a>
+              ) : null}
+              {t.status === 'queued' || t.status === 'failed' ? (
+                <form action={observatoryAction} className="profile-actions">
+                  <input type="hidden" name="action" value="dispatch-task" />
+                  <input type="hidden" name="id" value={t.id} />
+                  <button type="submit">Send to Claude Code again</button>
+                </form>
+              ) : null}
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="module-panel" aria-label="Audit history">

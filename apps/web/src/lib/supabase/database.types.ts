@@ -382,6 +382,21 @@ isOneToOne: false
 "glci_dismiss_issue":
 { Args: { "p_issue_id": string,"p_reason": string }; Returns: undefined
                            },
+"glci_engineering_task_brief":
+{ Args: { "p_task_id": string }; Returns: Json
+                           },
+"glci_engineering_task_dispatch_failed":
+{ Args: { "p_error": string,"p_task_id": string }; Returns: undefined
+                           },
+"glci_engineering_task_dispatched":
+{ Args: { "p_executor": string,"p_session_url": string,"p_task_id": string }; Returns: undefined
+                           },
+"glci_engineering_task_report":
+{ Args: { "p_error"?: string,"p_pull_request_url": string,"p_status": string,"p_summary": string,"p_task_id": string }; Returns: string
+                           },
+"glci_engineering_tasks_list":
+{ Args: { "p_limit"?: number }; Returns: Json
+                           },
 "glci_examine_authorities":
 { Args: { "p_jurisdiction_code": string,"p_limit"?: number,"p_terms": (string)[] }; Returns: Json
                            },
