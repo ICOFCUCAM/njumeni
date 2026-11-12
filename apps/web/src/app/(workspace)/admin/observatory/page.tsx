@@ -91,6 +91,17 @@ interface AiSettings {
   monthlyBudgetUsd: number;
   spentThisMonthUsd: number;
 }
+interface ContinuousStatus {
+  scheduler: { lastTickAt: string | null; ticks: number; lastSummary: Record<string, unknown> };
+  databaseSchedule: boolean;
+  workers: { workerId: string; kind: string; lastSeenAt: string; cycles: number }[];
+  overdueTargets: string[];
+  drills: {
+    startedAt: string;
+    passed: boolean;
+    scenarios: { scenario: string; passed: boolean; detail: string }[];
+  }[];
+}
 interface Governance {
   policy: { requireTwoPerson: boolean; reason: string | null };
   audit: {
@@ -236,6 +247,9 @@ export default async function ObservatoryPage({
   const pending = dispatches.filter((d) => d.status === 'dispatched');
   const governance = (await supabase.rpc('glci_governance_report' as never))
     .data as unknown as Governance | null;
+  const continuous = (await supabase.rpc('glci_continuous_status' as never))
+    .data as unknown as ContinuousStatus | null;
+  const lastDrill = continuous?.drills[0];
   const onboarding = (await supabase.rpc('glci_onboarding_register' as never))
     .data as unknown as OnboardingRegister | null;
   // Platform activation: only whether each server secret is present, never its value.
@@ -249,7 +263,7 @@ export default async function ObservatoryPage({
       'Claude Code routine (GLCI_CLAUDE_CODE_ROUTINE_URL and _TOKEN)',
       Boolean(
         process.env.GLCI_CLAUDE_CODE_ROUTINE_URL?.trim() &&
-          process.env.GLCI_CLAUDE_CODE_ROUTINE_TOKEN?.trim(),
+        process.env.GLCI_CLAUDE_CODE_ROUTINE_TOKEN?.trim(),
       ),
       'Primary engine and engineering tasks',
     ],
@@ -707,6 +721,65 @@ export default async function ObservatoryPage({
           ))}
         </ul>
       </section>
+
+      {continuous ? (
+        <section className="module-panel" aria-label="Continuous monitoring">
+          <h2 className="section-heading">Continuous monitoring</h2>
+          <p>
+            Housekeeping{' '}
+            {continuous.databaseSchedule
+              ? 'runs hourly inside the database'
+              : 'runs only when the monitoring worker runs'}
+            ; last run{' '}
+            {continuous.scheduler.lastTickAt ? time(continuous.scheduler.lastTickAt) : 'never'} (
+            {continuous.scheduler.ticks} run(s)).
+          </p>
+          <p>
+            Workers:{' '}
+            {continuous.workers.length === 0
+              ? 'no monitoring worker has reported yet.'
+              : continuous.workers
+                  .map(
+                    (w) =>
+                      `${w.workerId} (${w.kind}) last seen ${time(w.lastSeenAt)}, ${w.cycles} cycle(s)`,
+                  )
+                  .join('; ')}
+          </p>
+          <p>
+            {continuous.overdueTargets.length === 0
+              ? 'No active source is overdue for a check.'
+              : `Overdue: ${continuous.overdueTargets.join(', ')}.`}
+          </p>
+          <div className="profile-actions">
+            <form action={observatoryAction}>
+              <input type="hidden" name="action" value="drill" />
+              <button type="submit">Run recovery drill</button>
+            </form>
+            <form action={observatoryAction}>
+              <input type="hidden" name="action" value="tick" />
+              <button type="submit">Run housekeeping now</button>
+            </form>
+          </div>
+          {!lastDrill ? (
+            <p>No recovery drill has been run.</p>
+          ) : (
+            <>
+              <p>
+                Last recovery drill {time(lastDrill.startedAt)}:{' '}
+                <strong>{lastDrill.passed ? 'passed' : 'FAILED'}</strong> (changes rolled back; only
+                the result is kept).
+              </p>
+              <ul className="module-list">
+                {lastDrill.scenarios.map((d) => (
+                  <li key={d.scenario}>
+                    {d.passed ? '✓' : '✗'} {d.scenario.replaceAll('_', ' ')} — {d.detail}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      ) : null}
 
       {governance ? (
         <section className="module-panel" aria-label="Governance">

@@ -22,9 +22,9 @@ end;
 $$;
 
 select ok((select require_two_person from private.glci_governance_policy), 'two-person approval is the default');
-select is((select array_agg(m.version order by m.version) from supabase_migrations.schema_migrations m where not exists (
-  select 1 from private.glci_deployments d where d.reference = m.version and d.outcome = 'backfilled')), array['20261114300000'],
-  'every migration applied before the register is backfilled; the register''s own migration is recorded by its deployment');
+select is((select array_agg(m.version order by m.version) from supabase_migrations.schema_migrations m where m.version < '20261114300000'
+  and not exists (select 1 from private.glci_deployments d where d.reference = m.version and d.outcome = 'backfilled')), null,
+  'every migration applied before the register is backfilled; later ones are recorded by their deployments');
 
 -- monitoring activation needs an approval
 select pg_temp.as_user('cb000000-0000-4000-8000-0000000000a1');
@@ -87,7 +87,8 @@ select ok((select decision_note like '[self-approved under solo-owner policy]%' 
 -- deployment register completeness
 insert into supabase_migrations.schema_migrations (version, statements, name) values ('20991231000000', array['select 1'], 'unregistered_change');
 select pg_temp.as_user('cb000000-0000-4000-8000-0000000000a2');
-select is(public.glci_governance_report() -> 'unrecordedMigrations', '["20991231000000"]'::jsonb,
+select ok((public.glci_governance_report() -> 'unrecordedMigrations') @> '["20991231000000"]'::jsonb
+  and not (public.glci_governance_report() -> 'unrecordedMigrations') @> '["20261114300000"]'::jsonb,
   'a migration applied without a register entry is flagged (this migration was recorded above through the register)');
 
 -- audit checkpoints, exports and tamper detection

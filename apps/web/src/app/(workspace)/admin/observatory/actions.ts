@@ -52,6 +52,12 @@ export async function observatoryAction(form: FormData): Promise<void> {
     case 'checkpoint':
       result = await supabase.rpc('glci_audit_checkpoint' as never);
       break;
+    case 'drill':
+      result = await supabase.rpc('glci_run_recovery_drill' as never);
+      break;
+    case 'tick':
+      result = await supabase.rpc('glci_tick' as never);
+      break;
     case 'request-activation':
       result = await supabase.rpc('glci_request_action' as never, {
         p_action_type: 'activate_target', p_subject: id, p_payload: {}, p_reason: note,

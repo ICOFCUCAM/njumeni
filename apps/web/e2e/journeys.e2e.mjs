@@ -456,6 +456,11 @@ test('journey GLCI: the Global Legal Observatory and its command centre (operato
   assert.equal(exported.format, 'njumeni-glci-audit-export-1');
   assert.equal(exported.integrity.chainValid, true, 'the exported audit chain verifies');
   assert.ok(exported.events.some((e) => e.eventType === 'governance.approved'), 'the approval is in the audit export');
+  // GLCI-12: a recovery drill runs against production functions and rolls back.
+  const continuous = approver.page.locator('section[aria-label="Continuous monitoring"]');
+  await Promise.all([approver.page.waitForURL(/done=drill/), continuous.getByRole('button', { name: 'Run recovery drill' }).click()]);
+  assert.ok(await continuous.getByText('passed', { exact: true }).isVisible(), 'the recovery drill passes');
+  assert.ok(await continuous.getByText(/source outage — /).isVisible(), 'and lists its scenarios');
   assert.deepEqual(approver.errors, [], 'no client-side errors');
   await approver.context.close();
 });
