@@ -349,6 +349,12 @@ isOneToOne: false
 "glci_ai_settings_set":
 { Args: { "p_anthropic_model": string,"p_fallback_enabled": boolean,"p_monthly_budget_usd": number,"p_primary_engine": string,"p_reason": string }; Returns: Json
                            },
+"glci_audit_checkpoint":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"glci_audit_export":
+{ Args: { "p_from"?: number,"p_to"?: number }; Returns: Json
+                           },
 "glci_audit_feed":
 { Args: { "p_limit"?: number }; Returns: Json
                            },
@@ -375,6 +381,9 @@ isOneToOne: false
                            },
 "glci_currency_overview":
 { Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"glci_decide_action":
+{ Args: { "p_decision": string,"p_note": string,"p_request_id": string }; Returns: Json
                            },
 "glci_decide_proposal":
 { Args: { "p_decision": string,"p_note": string,"p_proposal_id": string }; Returns: string
@@ -403,6 +412,9 @@ isOneToOne: false
 "glci_execute_proposal":
 { Args: { "p_proposal_id": string }; Returns: Json
                            },
+"glci_governance_report":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "glci_issues_list":
 { Args: { "p_status"?: string }; Returns: Json
                            },
@@ -429,11 +441,17 @@ isOneToOne: false
 "glci_reconcile_issues":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"glci_record_deployment":
+{ Args: { "p_checksum": string,"p_description": string,"p_kind": string,"p_outcome": string,"p_reference": string,"p_request_id": string,"p_verification": Json }; Returns: string
+                           },
 "glci_register_target":
 { Args: { "p_config"?: Json,"p_jurisdiction_code": string,"p_monitor_adapter_key": string,"p_name": string,"p_notes"?: string,"p_official_uri": string,"p_source_key": string,"p_target_key": string,"p_target_type": string }; Returns: string
                            },
 "glci_registry":
 { Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"glci_request_action":
+{ Args: { "p_action_type": string,"p_payload": Json,"p_reason": string,"p_subject": string }; Returns: string
                            },
 "glci_request_check":
 { Args: { "p_target_key": string }; Returns: undefined
@@ -443,6 +461,9 @@ isOneToOne: false
                            },
 "glci_run_currency_verification":
 { Args: { "p_jurisdiction_code"?: string }; Returns: Json
+                           },
+"glci_set_governance_policy":
+{ Args: { "p_reason": string,"p_require_two_person": boolean }; Returns: undefined
                            },
 "glci_set_target_monitor":
 { Args: { "p_adapter_key": string,"p_config": Json,"p_reason": string,"p_target_key": string }; Returns: undefined

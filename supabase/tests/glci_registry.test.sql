@@ -46,8 +46,9 @@ set local request.jwt.claim.sub = 'c1000000-0000-4000-8000-0000000000a1';
 select ok(jsonb_array_length(public.glci_registry()) >= 17, 'the operator sees every jurisdiction');
 select is((select r -> 'targets' -> 0 ->> 'activationBasis' from jsonb_array_elements(public.glci_registry()) r where r ->> 'code' = 'NO'),
   'licence_policy_v2', 'the registry reports the activation basis per target');
-select is(public.glci_set_target_status('no-lovdata-current-laws', 'active', 'Reference jurisdiction: start monitoring the NLOD dataset'),
-  'active', 'the operator activates a lawful target');
+-- Activation needs an approval request since GLCI-11 (glci_governance.test.sql); pausing stays direct.
+select is(public.glci_set_target_status('no-lovdata-current-laws', 'paused', 'Pause until the rights review is complete'),
+  'paused', 'the operator pauses a target directly');
 select throws_ok($$select public.glci_set_target_status('no-lovdata-current-laws', 'paused', 'short')$$, 'GLCI_REASON_REQUIRED',
   'status changes need a reason');
 select lives_ok($$select public.glci_register_target('UG', 'ug-ulii', 'Uganda Legal Information Institute', 'legal_database',

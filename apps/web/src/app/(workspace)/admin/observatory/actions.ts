@@ -49,6 +49,20 @@ export async function observatoryAction(form: FormData): Promise<void> {
       if (!executed.error && taskId) await dispatchTask(supabase, taskId);
       break;
     }
+    case 'checkpoint':
+      result = await supabase.rpc('glci_audit_checkpoint' as never);
+      break;
+    case 'request-activation':
+      result = await supabase.rpc('glci_request_action' as never, {
+        p_action_type: 'activate_target', p_subject: id, p_payload: {}, p_reason: note,
+      } as never);
+      break;
+    case 'approve-action':
+    case 'reject-action':
+      result = await supabase.rpc('glci_decide_action' as never, {
+        p_request_id: id, p_decision: action === 'approve-action' ? 'approved' : 'rejected', p_note: note,
+      } as never);
+      break;
     case 'dispatch-task':
       result = { error: null };
       await dispatchTask(supabase, id);

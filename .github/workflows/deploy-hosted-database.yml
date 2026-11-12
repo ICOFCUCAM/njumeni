@@ -62,3 +62,24 @@ jobs:
           echo "$output" | grep -q '^FAIL' && { echo "::error::Hosted schema verification failed"; exit 1; }
           echo "$output" | grep -qx "$expected" || { echo "::error::Hosted migrations differ from the repository"; exit 1; }
           echo "Hosted schema equals the repository migrations."
+
+      - name: Record the deployments in the GLCI deployment register (GLCI-11)
+        if: ${{ !inputs.dry_run }}
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          COMMIT: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          # Approval for this run is the GitHub "production" environment; the register records it
+          # with the service role. Every applied migration without a register entry is recorded.
+          psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -q -v commit="$COMMIT" -v run_url="$RUN_URL" <<'SQL'
+          begin;
+          select set_config('request.jwt.claim.role', 'service_role', true);
+          select public.glci_record_deployment(null, 'database_migration', m.version, md5(coalesce(m.statements[1], '')),
+            'Applied by the deployment workflow (commit ' || :'commit' || ')', 'deployed',
+            jsonb_build_object('commit', :'commit', 'run', :'run_url', 'approval', 'GitHub environment production'))
+          from supabase_migrations.schema_migrations m
+          where not exists (select 1 from private.glci_deployments d where d.kind = 'database_migration'
+            and d.environment = 'hosted' and d.reference = m.version and d.outcome in ('deployed', 'backfilled'));
+          commit;
+          SQL

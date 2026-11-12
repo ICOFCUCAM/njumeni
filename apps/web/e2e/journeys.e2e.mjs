@@ -412,6 +412,15 @@ test('journey GLCI: the Global Legal Observatory and its command centre (operato
   assert.ok((await page.getByText(/engineering task · proposed by operator · proposed/).count()) > 0, 'the request waits in the approval queue');
   assert.equal(await page.getByText('You', { exact: true }).count(), 2, 'the conversation keeps both questions');
 
+  // GLCI-11: monitoring activation goes through an approval request.
+  const lovdata = page.locator('li', { hasText: 'Lovdata API — current laws' }).first();
+  await lovdata.getByPlaceholder('Reason to start monitoring').fill('Reference jurisdiction: monitor the NLOD dataset');
+  await Promise.all([page.waitForURL(/done=request-activation/), lovdata.getByRole('button', { name: 'Request monitoring' }).click()]);
+  const pendingApproval = page.locator('section[aria-label="Governance"] li', { hasText: 'no-lovdata-current-laws' }).first();
+  await pendingApproval.getByPlaceholder('Decision note').fill('Approving my own activation');
+  await Promise.all([page.waitForURL(/error=/), pendingApproval.getByRole('button', { name: 'Approve' }).click()]);
+  assert.ok(await page.getByText(/glci four eyes required/).isVisible(), 'the requester cannot approve their own activation');
+
   // The requester cannot approve their own task (four eyes).
   const queueItem = page.locator('li', { hasText: 'engineering task · proposed by operator' }).first();
   await queueItem.getByPlaceholder('Decision note').fill('Approving my own request');
@@ -436,6 +445,17 @@ test('journey GLCI: the Global Legal Observatory and its command centre (operato
   await history.getByText(/glci\/task-[0-9a-f]{8}/).waitFor();
   assert.ok(await history.getByText(/no executor configured/).isVisible(), 'the failed hand-off says why');
   assert.ok(await history.getByRole('button', { name: 'Send to Claude Code again' }).isVisible(), 'and can be retried');
+  // GLCI-11: the second operator approves the monitoring activation and downloads the audit export.
+  const activation = approver.page.locator('section[aria-label="Governance"] li', { hasText: 'no-lovdata-current-laws' }).first();
+  await activation.getByPlaceholder('Decision note').fill('Second operator approves Lovdata monitoring');
+  await Promise.all([approver.page.waitForURL(/done=approve-action/), activation.getByRole('button', { name: 'Approve' }).click()]);
+  const source = approver.page.locator('section[aria-label="Source availability and health"] li', { hasText: 'Lovdata API — current laws' }).first();
+  assert.ok(await source.getByText('not checked').isVisible(), 'the approved source is monitored, and reads "not checked" until a check succeeds');
+  const [download] = await Promise.all([approver.page.waitForEvent('download'), approver.page.getByRole('link', { name: 'Download the verified audit export' }).click()]);
+  const exported = JSON.parse(readFileSync(await download.path(), 'utf8'));
+  assert.equal(exported.format, 'njumeni-glci-audit-export-1');
+  assert.equal(exported.integrity.chainValid, true, 'the exported audit chain verifies');
+  assert.ok(exported.events.some((e) => e.eventType === 'governance.approved'), 'the approval is in the audit export');
   assert.deepEqual(approver.errors, [], 'no client-side errors');
   await approver.context.close();
 });

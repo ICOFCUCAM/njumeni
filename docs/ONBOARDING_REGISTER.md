@@ -18,7 +18,7 @@ This document is a snapshot. The observatory is the source of truth: its registe
 | 3 | Official sources registered | At least one official gazette, parliament or legal database is registered with its official address | Operator |
 | 4 | Rights reviewed | A source has an approved rights review, or a licence policy covering its host | **Owner** |
 | 5 | Monitor assigned | A target has a catalogued monitor (format confirmed against the live source before activation) | Operator |
-| 6 | Monitoring active | A lawful target is active | Operator |
+| 6 | Monitoring active | A lawful target is active (activation is approved, GLCI-11) | Operator + approver |
 | 7 | Source checked | A check succeeded (verified or changed) from a host that can reach the source | **Owner** (runs the worker) |
 | 8 | Legal texts ingested | Authorities exist from a source enabled for ingestion | **Owner** (activation) |
 | 9 | Evaluation passed | The jurisdiction's recorded retrieval evaluation passes every gate (held-out set before coverage claims) | Operator |
@@ -88,7 +88,7 @@ The observatory shows whether each server secret is configured (never its value)
 3. **Sources:** register the official sources with `glci_register_target`, using their official addresses.
 4. **Rights (owner):** review the terms. Record a rights review, or a source-specific licence policy if the source publishes a licence.
 5. **Monitor:** assign one with `glci_set_target_monitor`, a generic feed or a new adapter. Confirm the format against the live source.
-6. **Activate** monitoring with `glci_set_target_status`, giving a reason. Run the monitoring worker from a host that can reach the source.
+6. **Activate** monitoring: request it (`glci_request_action('activate_target', …)` or *Request monitoring* in the observatory). A second operator approves; in solo-owner mode the approval is recorded as self-approved. Then run the monitoring worker from a host that can reach the source.
 7. **Ingestion (owner):** pin the source's ingestion adapter, activate it, ingest and embed.
 8. **Evaluate:** run a jurisdiction evaluation set, then a held-out set. Record it.
 9. **Verify currency;** coverage can then rise to pilot and partial under the database's rules.

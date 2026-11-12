@@ -91,6 +91,40 @@ interface AiSettings {
   monthlyBudgetUsd: number;
   spentThisMonthUsd: number;
 }
+interface Governance {
+  policy: { requireTwoPerson: boolean; reason: string | null };
+  audit: {
+    chainValid: boolean;
+    checkpointsMatch: boolean;
+    events: number;
+    headSequence: number | null;
+    checkpoints: number;
+  };
+  lastCheckpoint: { kind: string; headSequence: number; takenAt: string } | null;
+  pendingApprovals: {
+    id: string;
+    actionType: string;
+    subject: string;
+    reason: string;
+    requestedAt: string;
+    requestedByMe: boolean;
+  }[];
+  recentDecisions: {
+    actionType: string;
+    subject: string;
+    status: string;
+    selfApproved: boolean;
+    decidedAt: string;
+  }[];
+  deployments: {
+    kind: string;
+    reference: string;
+    outcome: string;
+    selfApproved: boolean;
+    deployedAt: string;
+  }[];
+  unrecordedMigrations: string[];
+}
 interface OnboardingStep {
   key: string;
   label: string;
@@ -200,6 +234,8 @@ export default async function ObservatoryPage({
       ).data ?? []) as unknown as Dispatch[])
     : [];
   const pending = dispatches.filter((d) => d.status === 'dispatched');
+  const governance = (await supabase.rpc('glci_governance_report' as never))
+    .data as unknown as Governance | null;
   const onboarding = (await supabase.rpc('glci_onboarding_register' as never))
     .data as unknown as OnboardingRegister | null;
   // Platform activation: only whether each server secret is present, never its value.
@@ -484,6 +520,20 @@ export default async function ObservatoryPage({
                   ? ` · ${s.activationBasis ? 'may be activated (' + s.activationBasis + ')' : 'awaiting rights review'}`
                   : ''}
               </small>
+              {s.status !== 'active' && s.activationBasis ? (
+                <form action={observatoryAction} className="profile-actions">
+                  <input type="hidden" name="action" value="request-activation" />
+                  <input type="hidden" name="id" value={s.targetKey} />
+                  <input
+                    name="note"
+                    required
+                    minLength={10}
+                    maxLength={2000}
+                    placeholder="Reason to start monitoring"
+                  />
+                  <button type="submit">Request monitoring</button>
+                </form>
+              ) : null}
               {s.status === 'active' ? (
                 <form action={observatoryAction} className="profile-actions">
                   <input type="hidden" name="action" value="check" />
@@ -657,6 +707,87 @@ export default async function ObservatoryPage({
           ))}
         </ul>
       </section>
+
+      {governance ? (
+        <section className="module-panel" aria-label="Governance">
+          <h2 className="section-heading">Governance</h2>
+          <p>
+            Policy:{' '}
+            <strong>
+              {governance.policy.requireTwoPerson
+                ? 'two-person approval'
+                : 'solo-owner mode (self-approvals are recorded)'}
+            </strong>
+            {governance.policy.reason ? <small> — {governance.policy.reason}</small> : null}
+          </p>
+          <p>
+            Audit: {governance.audit.events} event(s), chain{' '}
+            {governance.audit.chainValid ? 'verifies' : 'DOES NOT VERIFY'}, checkpoints{' '}
+            {governance.audit.checkpointsMatch ? 'match' : 'DO NOT MATCH'}
+            {governance.lastCheckpoint
+              ? ` (last ${governance.lastCheckpoint.kind} at #${governance.lastCheckpoint.headSequence}, ${time(governance.lastCheckpoint.takenAt)})`
+              : ' (no checkpoint yet)'}
+            .
+          </p>
+          <form action={observatoryAction} className="profile-actions">
+            <input type="hidden" name="action" value="checkpoint" />
+            <button type="submit">Take an audit checkpoint</button>{' '}
+            <a href="/admin/observatory/audit-export">Download the verified audit export</a>
+          </form>
+          <h3 className="section-heading">Approvals</h3>
+          {governance.pendingApprovals.length === 0 ? <p>No request awaits approval.</p> : null}
+          <ul className="membership-list">
+            {governance.pendingApprovals.map((r) => (
+              <li key={r.id} className="membership-row">
+                <span className="workspace-status">{r.actionType.replace(/_/g, ' ')}</span>{' '}
+                <strong>{r.subject}</strong>{' '}
+                <small>
+                  {r.reason} · requested {time(r.requestedAt)}
+                  {r.requestedByMe ? ' by you' : ''}
+                </small>
+                <form action={observatoryAction} className="profile-actions">
+                  <input type="hidden" name="id" value={r.id} />
+                  <input
+                    name="note"
+                    required
+                    minLength={5}
+                    maxLength={2000}
+                    placeholder="Decision note"
+                  />
+                  <button type="submit" name="action" value="approve-action">
+                    Approve
+                  </button>
+                  <button type="submit" name="action" value="reject-action">
+                    Reject
+                  </button>
+                </form>
+              </li>
+            ))}
+          </ul>
+          <h3 className="section-heading">Production deployments</h3>
+          {governance.unrecordedMigrations.length ? (
+            <p role="alert">
+              Applied without a deployment record: {governance.unrecordedMigrations.join(', ')}.
+            </p>
+          ) : (
+            <p>
+              <small>Every applied migration has a deployment record.</small>
+            </p>
+          )}
+          <ul className="membership-list">
+            {governance.deployments.slice(0, 10).map((d) => (
+              <li key={`${d.kind}-${d.reference}-${d.outcome}`} className="membership-row">
+                <span className="workspace-status">{d.outcome}</span> {d.kind.replace(/_/g, ' ')}{' '}
+                {d.reference}{' '}
+                <small>
+                  {time(d.deployedAt)}
+                  {d.selfApproved ? ' · self-approved' : ''}
+                </small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="module-panel" aria-label="Audit history">
         <h2 className="section-heading">Audit history</h2>
