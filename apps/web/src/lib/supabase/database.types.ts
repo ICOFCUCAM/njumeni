@@ -420,6 +420,9 @@ isOneToOne: false
 "glci_observatory":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"glci_onboarding_register":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "glci_reanalyse_change":
 { Args: { "p_event_id": string }; Returns: number
                            },
@@ -440,6 +443,9 @@ isOneToOne: false
                            },
 "glci_run_currency_verification":
 { Args: { "p_jurisdiction_code"?: string }; Returns: Json
+                           },
+"glci_set_target_monitor":
+{ Args: { "p_adapter_key": string,"p_config": Json,"p_reason": string,"p_target_key": string }; Returns: undefined
                            },
 "glci_set_target_status":
 { Args: { "p_reason": string,"p_status": string,"p_target_key": string }; Returns: string

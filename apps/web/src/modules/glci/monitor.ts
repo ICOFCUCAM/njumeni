@@ -25,7 +25,7 @@ export interface MonitorObservation {
   observed: Record<string, unknown>;
 }
 export type MonitorFetch = (url: string, init: { headers: Record<string, string>; signal?: AbortSignal }) =>
-  Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
+  Promise<{ ok: boolean; status: number; json(): Promise<unknown>; text?(): Promise<string> }>;
 export interface MonitorAdapter {
   readonly key: string;
   check(target: MonitorTarget, fetch: MonitorFetch): Promise<MonitorObservation>;

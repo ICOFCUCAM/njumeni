@@ -384,9 +384,14 @@ test('journey GLCI: the Global Legal Observatory and its command centre (operato
   await page.goto(`${BASE}/admin`);
   await Promise.all([page.waitForURL(/\/admin\/observatory/), page.getByRole('link', { name: 'Global Legal Observatory' }).click()]);
   assert.equal(await page.locator('h1').innerText(), 'Global Legal Observatory');
-  assert.ok(await page.getByText('Verified current').isVisible(), 'headline figures are shown');
+  assert.ok(await page.getByText('Verified current', { exact: true }).isVisible(), 'headline figures are shown');
   assert.ok(await page.getByRole('heading', { name: 'Source availability and health' }).isVisible());
   assert.ok((await page.getByText('awaiting rights review').count()) > 0, 'sources without a lawful basis say so');
+  // GLCI-10: the onboarding register and the platform activation checklist.
+  const register = page.locator('section[aria-label="Onboarding register"]');
+  assert.ok(await register.getByText(/next: Activate a lawful target/).first().isVisible(), 'Norway\'s next onboarding step is shown');
+  assert.ok((await register.getByText(/next \(owner\): Review the source terms/).count()) > 0, 'owner steps are marked');
+  assert.ok(await register.getByText(/not configured.*ANTHROPIC_API_KEY/).isVisible(), 'secrets are reported as present or absent, never shown');
 
   // Spec §5 example 4: coverage report from live data.
   await page.getByLabel('Question').fill('Check whether our European legal coverage is current.');

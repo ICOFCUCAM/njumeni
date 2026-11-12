@@ -91,6 +91,24 @@ interface AiSettings {
   monthlyBudgetUsd: number;
   spentThisMonthUsd: number;
 }
+interface OnboardingStep {
+  key: string;
+  label: string;
+  done: boolean;
+  evidence?: string;
+}
+interface OnboardingRegister {
+  jurisdictions: {
+    code: string;
+    name: string;
+    coverageLevel: string;
+    completed: number;
+    total: number;
+    steps: OnboardingStep[];
+    nextStep: { key: string; action: string; owner: boolean } | null;
+  }[];
+  adapters: { adapterKey: string; kind: string; formatVerified: boolean }[];
+}
 interface EngineeringTask {
   id: string;
   status: string;
@@ -182,6 +200,29 @@ export default async function ObservatoryPage({
       ).data ?? []) as unknown as Dispatch[])
     : [];
   const pending = dispatches.filter((d) => d.status === 'dispatched');
+  const onboarding = (await supabase.rpc('glci_onboarding_register' as never))
+    .data as unknown as OnboardingRegister | null;
+  // Platform activation: only whether each server secret is present, never its value.
+  const activation: [string, boolean, string][] = [
+    [
+      'Anthropic API key (ANTHROPIC_API_KEY)',
+      Boolean(process.env.ANTHROPIC_API_KEY?.trim()),
+      'Command centre fallback engine',
+    ],
+    [
+      'Claude Code routine (GLCI_CLAUDE_CODE_ROUTINE_URL and _TOKEN)',
+      Boolean(
+        process.env.GLCI_CLAUDE_CODE_ROUTINE_URL?.trim() &&
+          process.env.GLCI_CLAUDE_CODE_ROUTINE_TOKEN?.trim(),
+      ),
+      'Primary engine and engineering tasks',
+    ],
+    [
+      'GitHub token (GLCI_GITHUB_TOKEN)',
+      Boolean(process.env.GLCI_GITHUB_TOKEN?.trim()),
+      'Engineering task fallback (GitHub workflow)',
+    ],
+  ];
   const engineeringTasks = ((await supabase.rpc('glci_engineering_tasks_list' as never)).data ??
     []) as unknown as EngineeringTask[];
   const queue = o.issues.flatMap((issue) =>
@@ -358,6 +399,56 @@ export default async function ObservatoryPage({
             </p>
           </details>
         ) : null}
+      </section>
+
+      <section className="module-panel" aria-label="Onboarding register">
+        <h2 className="section-heading">Onboarding register</h2>
+        <p>
+          <small>
+            Ten stages per jurisdiction, from catalogued to verified current, computed from live
+            data. The next step names who acts: &quot;owner&quot; steps need your decision (rights
+            review, activation, hosting).
+          </small>
+        </p>
+        <ul className="membership-list">
+          {(onboarding?.jurisdictions ?? []).map((j) => (
+            <li key={j.code} className="membership-row">
+              <strong>{j.code}</strong> {j.name}{' '}
+              <span className="workspace-status">
+                {j.completed}/{j.total}
+              </span>{' '}
+              <small>
+                {j.steps.map((step) => (step.done ? '●' : '○')).join('')} · coverage{' '}
+                {j.coverageLevel}
+                {j.nextStep
+                  ? ` · next${j.nextStep.owner ? ' (owner)' : ''}: ${j.nextStep.action}`
+                  : ' · complete'}
+              </small>
+            </li>
+          ))}
+        </ul>
+        <p>
+          <small>
+            Monitors:{' '}
+            {(onboarding?.adapters ?? [])
+              .map(
+                (a) =>
+                  `${a.adapterKey} (${a.formatVerified ? 'format verified' : 'format to confirm per source'})`,
+              )
+              .join(' · ')}
+          </small>
+        </p>
+        <h3 className="section-heading">Platform activation</h3>
+        <ul className="membership-list">
+          {activation.map(([label, configured, use]) => (
+            <li key={label} className="membership-row">
+              <span className="workspace-status">
+                {configured ? 'configured' : 'not configured'}
+              </span>{' '}
+              {label} <small>{use}</small>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="module-panel" aria-label="Jurisdiction currency">

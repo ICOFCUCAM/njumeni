@@ -360,7 +360,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 
 ## 5l. GLCI programme: Global Legal Change Intelligence (🟡 IN PROGRESS, core subsystem)
 
-Adopted by the owner on 2026-11-12 as a permanent subsystem (GLICS) that keeps Njumeni's legal knowledge aligned with current law in every supported jurisdiction. It extends the Phase 2 architecture. [Specification](GLCI_SPECIFICATION.md) · [Journey register](GLCI_JOURNEY_REGISTER.md). Phase status (GLCI-00 to GLCI-12) is kept in the journey register.
+Adopted by the owner on 2026-11-12 as a permanent subsystem (GLICS) that keeps Njumeni's legal knowledge aligned with current law in every supported jurisdiction. It extends the Phase 2 architecture. [Specification](GLCI_SPECIFICATION.md) · [Journey register](GLCI_JOURNEY_REGISTER.md) · [Onboarding register](ONBOARDING_REGISTER.md). Phase status (GLCI-00 to GLCI-12) is kept in the journey register.
 
 ## 6. Phase lock register
 
