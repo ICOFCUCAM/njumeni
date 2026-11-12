@@ -18,6 +18,8 @@ export interface RetrievalEvaluationCase {
   relevant: readonly EvaluationAuthorityRef[];
   /** When set, the top relevant hit must be the version in force from this date (currency check). */
   expectedValidFrom?: string | null;
+  /** Section labels (the last section-path element, for example "§ 15-3") that answer the question. */
+  expectedSections?: readonly string[];
 }
 
 export interface RetrievalEvaluationDataset {
@@ -41,6 +43,8 @@ export interface RetrievalEvaluationMetrics {
   meanReciprocalRank: number | null;
   currencyAccuracy: number | null;
   abstentionAccuracy: number | null;
+  /** Share of cases with expected sections where a top-10 passage of a relevant authority is one of them. */
+  sectionHitAt10: number | null;
 }
 
 export interface RetrievalEvaluationCaseResult {
@@ -52,6 +56,7 @@ export interface RetrievalEvaluationCaseResult {
   reciprocalRank: number | null;
   currencyCorrect: boolean | null;
   abstainedCorrectly: boolean | null;
+  sectionHit: boolean | null;
   error: string | null;
 }
 
@@ -125,6 +130,13 @@ export function validateRetrievalDataset(value: unknown): RetrievalEvaluationDat
     if (item.expectedValidFrom !== undefined && item.relevant.length === 0) {
       fail(item.id + ' currency check requires a relevant authority');
     }
+    if (item.expectedSections !== undefined && (
+      !Array.isArray(item.expectedSections) || item.expectedSections.length === 0 ||
+      item.relevant.length === 0 ||
+      item.expectedSections.some((label: string) => typeof label !== 'string' || !label.trim())
+    )) {
+      fail(item.id + ' expectedSections');
+    }
   }
   return dataset;
 }
@@ -187,6 +199,7 @@ export async function evaluateRetrieval(options: {
         reciprocalRank: abstentionCase ? null : 0,
         currencyCorrect: item.expectedValidFrom === undefined ? null : false,
         abstainedCorrectly: abstentionCase ? false : null,
+        sectionHit: item.expectedSections === undefined ? null : false,
         error: error instanceof Error ? error.message : 'UNKNOWN',
       });
       continue;
@@ -217,6 +230,14 @@ export async function evaluateRetrieval(options: {
           ? null
           : firstHit >= 0 && (authorities[firstHit]!.validFrom ?? null) === item.expectedValidFrom,
       abstainedCorrectly: abstentionCase ? authorities.length === 0 : null,
+      sectionHit:
+        item.expectedSections === undefined
+          ? null
+          : results.slice(0, 10).some(
+              (result) =>
+                relevant.has(refKey(result)) &&
+                item.expectedSections!.includes(result.sectionPath[result.sectionPath.length - 1] ?? ''),
+            ),
       error: null,
     });
   }
@@ -227,6 +248,7 @@ export async function evaluateRetrieval(options: {
     meanReciprocalRank: mean(cases.map((result) => result.reciprocalRank)),
     currencyAccuracy: rate(cases.map((result) => result.currencyCorrect)),
     abstentionAccuracy: rate(cases.map((result) => result.abstainedCorrectly)),
+    sectionHitAt10: rate(cases.map((result) => result.sectionHit)),
   };
   const gateResults = gates.map((gate) => {
     const value = metrics[gate.metric];

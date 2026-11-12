@@ -43,3 +43,7 @@ apps/web/.next/
 apps/web/node_modules/
 apps/web/out/
 apps/web/tsconfig.tsbuildinfo
+
+# Supabase CLI local state (contains local stack secrets)
+supabase/.branches/
+supabase/.temp/

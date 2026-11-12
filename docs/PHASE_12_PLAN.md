@@ -74,9 +74,22 @@ End to end on the built app:
 | # | Condition | Dependency |
 |---|---|---|
 | 1 | ~~CI green on the Phase 12 commit~~ ✅ `c866ebd`: runs `43138014579` (CI and security) and `43138014534` (database verification), both successful | Done |
-| 2 | **Each jurisdiction at `partial` or better** (master-plan gate) | Per jurisdiction: rights review → adapter → ingestion → coverage review → evaluation set passing. Starts with Norway (Task 2.8) in a network-enabled environment |
+| 2 | **Each jurisdiction at `partial` or better** (master-plan gate) | Per jurisdiction: rights review → adapter → ingestion → coverage review → evaluation set passing. Norway: see §5.1 |
 | 3 | Glossary reviewed by qualified lawyers per language | Legal review |
 | 4 | Phases 3–11 closed | Their own closeout items |
+
+### 5.1 Norway readiness (Task 2.8, 2026-11-12)
+
+| Requirement (§6.7) | State | Evidence |
+|---|---|---|
+| Catalogued source | ✅ | `lovdata-official` |
+| Approved rights | ⏳ **Owner** | Licence verified (NLOD 2.0, api.lovdata.no). Review prepared; the NLOD text and attribution wording still to confirm ([Task 2.8](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §6) |
+| Active adapter | ✅ code, ⏳ activation | `lovdata-public-data@1.0.0` registered; activation is the owner's |
+| Content | ✅ local only | 753 current acts, 31 007 section passages, all embedded (`multilingual-e5-small-v1`) |
+| Coverage review | ⏳ | `legal_source_record_coverage_review` after activation |
+| Evaluation set passing (`partial`) | ❌ | `lovdata-no-v1` hybrid: Recall@10 1.000, currency 1.000, Precision@5 0.312 < 0.6 |
+
+Norway stays **`planned`** in the repository and on the local stack. Once the owner approves and activates the source on the hosted project, the trigger allows `pilot` ("Preview: limited coverage"). It refuses `partial` until a recorded `lovdata-no-v1` run passes every gate. Scope: current consolidated acts only; no central regulations, historical versions or case law.
 
 ## 6. Decisions
 

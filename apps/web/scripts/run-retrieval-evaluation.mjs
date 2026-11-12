@@ -10,6 +10,7 @@ import { createRetrievalPlan, executeLegalRetrieval } from '../src/modules/legal
 import { createSupabaseLegalPassageSearchProvider } from '../src/modules/legal-knowledge/supabase-retrieval-provider.ts';
 import { evaluateRetrieval } from '../src/modules/legal-knowledge/retrieval-evaluation.ts';
 import { recordRetrievalEvaluation } from '../src/modules/legal-knowledge/coverage-admin-core.ts';
+import { createLocalLegalEmbedder } from '../src/modules/legal-knowledge/local-embedder.ts';
 
 const [datasetPath, defaultMode] = process.argv.slice(2);
 const url = process.env.NJUMENI_EVAL_SUPABASE_URL;
@@ -20,8 +21,15 @@ if (!datasetPath || !url || !key) {
 }
 
 const client = createClient(url, key, { auth: { persistSession: false } });
-const provider = createSupabaseLegalPassageSearchProvider(client);
 const dataset = JSON.parse(await readFile(datasetPath, 'utf8'));
+// Semantic and hybrid modes embed each question with the active profile's local model (worker-only
+// runtime: see docs/PHASE_2_TASK_2_5_WORKER_DEPLOYMENT.md). Lexical runs need no model.
+const needsEmbeddings = (defaultMode ?? 'hybrid') !== 'lexical' ||
+  dataset.cases?.some((item) => item.mode && item.mode !== 'lexical');
+const provider = createSupabaseLegalPassageSearchProvider(
+  client,
+  needsEmbeddings ? createLocalLegalEmbedder().embedQuery : undefined,
+);
 const report = await evaluateRetrieval({
   dataset,
   defaultMode: defaultMode ?? 'hybrid',

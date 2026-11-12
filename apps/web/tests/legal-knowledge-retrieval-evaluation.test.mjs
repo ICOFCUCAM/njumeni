@@ -102,3 +102,37 @@ test('invalid datasets are rejected', () => {
     /currency check requires/,
   );
 });
+
+test('the Lovdata dataset is valid, names real citations and records expected sections', async () => {
+  const lovdata = validateRetrievalDataset(JSON.parse(
+    await readFile(new URL('../../../legal-data/evaluation-datasets/lovdata-no-v1.json', import.meta.url), 'utf8'),
+  ));
+  assert.equal(lovdata.datasetKey, 'lovdata-no-v1');
+  assert.ok(lovdata.cases.length >= 30);
+  for (const item of lovdata.cases) {
+    for (const ref of item.relevant) {
+      assert.equal(ref.sourceKey, 'lovdata-official');
+      assert.match(ref.citation, /^LOV-\d{4}-\d{2}-\d{2}(-\d+)?$/);
+    }
+    if (item.relevant.length) assert.ok(item.expectedSections?.length, item.id + ' names its section');
+  }
+  assert.ok(lovdata.cases.filter((item) => item.expectedValidFrom).length >= 5, 'currency cases');
+  assert.ok(lovdata.cases.some((item) => item.relevant.length === 0), 'abstention cases');
+});
+
+test('section hits count only expected sections of relevant authorities', async () => {
+  const sectioned = {
+    datasetKey: 'section-check', version: 1, jurisdictionCode: 'NO', description: 'unit', contentLicence: 'synthetic',
+    cases: [
+      { id: 'hit', question: 'q', asOfDate: '2026-01-01', languageCodes: ['nb'], relevant: [{ sourceKey: 'synthetic-eval', citation: 'A' }], expectedSections: ['§ 2'] },
+      { id: 'miss', question: 'q', asOfDate: '2026-01-01', languageCodes: ['nb'], relevant: [{ sourceKey: 'synthetic-eval', citation: 'A' }], expectedSections: ['§ 9'] },
+    ],
+  };
+  const report = await evaluateRetrieval({
+    dataset: sectioned,
+    search: async () => [{ ...hit('B', null), sectionPath: ['§ 9'] }, { ...hit('A', null, 1), sectionPath: ['Kapittel 1', '§ 2'] }],
+  });
+  assert.deepEqual(report.cases.map((item) => item.sectionHit), [true, false]);
+  assert.equal(report.metrics.sectionHitAt10, 0.5);
+  assert.throws(() => validateRetrievalDataset({ ...sectioned, cases: [{ ...sectioned.cases[0], relevant: [] }] }), /expectedSections/);
+});

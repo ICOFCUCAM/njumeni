@@ -51,9 +51,9 @@ Legal authorities are not generic uploaded documents. Their identity, issuing bo
 | 2.5 | Source ingestion lifecycle | Deterministic batches, idempotency, durable leased queue, checkpoints, retries, dead letters, worker runtime, exact-version adapter registry | Worker starts; queue pgTAP passes; runtime tests pass | 🔵 IMPLEMENTED (B-5 fixed: the worker starts and refuses to run with no approved adapters, as designed) |
 | 2.6 | Authority relationship graph | Typed directional edges with provenance; bounded traversal; lease-bound relationship ingestion; ▲ database graph query RPC | Graph RPC tested with cycles and as-of filters | 🔵 IMPLEMENTED: database graph query verified locally (parity with TypeScript proven) |
 | 2.7 | Coverage governance | Source and jurisdiction coverage reviews, snapshots, audits; ▲ aligned to the coverage levels in master plan §6.7 | Coverage never exceeds evidence; pgTAP passes | 🔵 IMPLEMENTED: five levels enforced in the database; verified locally |
-| 2.8 | **Pilot source and first adapter** | Rights review of Norwegian legislation (candidate: Lovdata public data, master plan §6.3); adapter with an exact version pin; audited activation; bounded ingestion into the local stack | Rights evidence recorded; an authority with versions, passages and relationships ingested idempotently; re-run produces no duplicates | ⚪ NOT STARTED |
+| 2.8 | **Pilot source and first adapter** | Rights review of Norwegian legislation (candidate: Lovdata public data, master plan §6.3); adapter with an exact version pin; audited activation; bounded ingestion into the local stack | Rights evidence recorded; an authority with versions, passages and relationships ingested idempotently; re-run produces no duplicates | 🔵 IMPLEMENTED: verified locally ([record](PHASE_2_TASK_2_8_LOVDATA_PILOT.md)). Licence verified on api.lovdata.no (NLOD 2.0). Adapter `lovdata-public-data@1.0.0`. **753 acts, 753 versions, 31 007 section passages, 4 487 relationships** on the local stack. Re-runs: 0 created, 753 unchanged, no duplicates. **Owner:** approve rights and activate (record §6); NLOD text still to confirm |
 | 2.9 | **Embedding profile and multilingual retrieval** | Profile record; forward migration of the vector dimension; embedding generation in the worker; language-specific FTS | Semantic and lexical retrieval over pilot passages; the profile is recorded on every embedding | 🔵 IMPLEMENTED: verified locally with a stand-in model (D-3 decided: `multilingual-e5-small-v1`) |
-| 2.10 | **Retrieval evaluation set (Norway)** | Golden questions with expected authorities and as-of dates; evaluation harness | Recall@10 and Precision@5 reported; harness runnable in CI | 🟡 IN PROGRESS: harness, format, synthetic set and command done; the real Norway set waits on Task 2.8 |
+| 2.10 | **Retrieval evaluation set (Norway)** | Golden questions with expected authorities and as-of dates; evaluation harness | Recall@10 and Precision@5 reported; harness runnable in CI | 🟡 IN PROGRESS: **`lovdata-no-v1` (41 cases) built and run** with real `multilingual-e5-small` embeddings (31 007 passages). Hybrid: Recall@10 1.000 ✅, currency 1.000 ✅, **Precision@5 0.312 ❌** (gate 0.6), MRR 0.732. Lexical: 0.897 / 0.252 / 1.000. Thresholds unchanged; precision needs reranking and abstention (Phase 4) or an owner recalibration ([record](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §7) |
 | 2.11 | Verification and closeout | Clean replay, all pgTAP, regenerated types, consolidated `LEGAL_KNOWLEDGE_ARCHITECTURE.md` and `DATABASE_ARCHITECTURE.md`, acceptance report | All 2.1–2.10 green; closeout commit; green CI; tag `phase-2-closed` | 🔒 LOCKED |
 
 ## 5. Implementation inventory
@@ -73,6 +73,7 @@ Legal authorities are not generic uploaded documents. Their identity, issuing bo
 | `…280000_legal_source_activation_audit` | Separate audited operator activation |
 | `…290000_legal_source_coverage_review` | Source coverage review and audit |
 | `…300000_legal_jurisdiction_coverage_scope` | Jurisdiction coverage scope review and audit |
+| `20261112900000_legal_pilot_ingestion_support` | ▲ Task 2.8: append records `valid_from` and passage `section_path`; `legal_ingestion_enqueue_continuation` for page-by-page sources |
 
 Several of these files were corrected before deployment, to repair `$`-delimiter corruption (`00b7eb8`, `e2d52b4`, `01d459f`, `2b60d5f`). All 23 repository migrations replay cleanly (CI run `42900717384`). The correction to `…290000` still needs its hash-pinned entry (B-1).
 
@@ -81,7 +82,8 @@ Several of these files were corrected before deployment, to repair `$`-delimiter
 | Area | Files |
 |---|---|
 | Contracts and normalisation | `contracts.ts`, `ingestion.ts`, `relationships.ts`, `source-governance.ts` |
-| Queue and worker | `durable-queue.ts`, `worker.ts`, `worker-runtime.ts`, `worker-process.ts`, `worker-bootstrap.ts`, `worker-main.ts`, `worker-adapters.ts` (empty by design), `adapter-registry.ts`, `worker-source-config.ts` |
+| Queue and worker | `durable-queue.ts`, `worker.ts`, `worker-runtime.ts`, `worker-process.ts`, `worker-bootstrap.ts`, `worker-main.ts`, `worker-adapters.ts` (Lovdata registered; the database gates decide), `adapter-registry.ts`, `worker-source-config.ts` |
+| ▲ Lovdata source (Task 2.8) | `lovdata-document.ts` (parser), `lovdata-archive.ts` (tar.bz2, provenance checks), `lovdata-adapter.ts` (`lovdata-public-data@1.0.0`) |
 | Persistence | `supabase-persistence.ts` |
 | Retrieval | `retrieval.ts`, `supabase-retrieval-provider.ts`, `citation-bundle.ts`, `citation-metadata.ts`, `trusted-search.ts`, `service.ts` |
 | Graph | `authority-graph.ts` |
@@ -93,7 +95,7 @@ Tests: 21 files, 114 tests passing locally (`npm run test:legal-knowledge`). The
 
 | Jurisdiction | Status | Catalogue source | Rights | Ingestion |
 |---|---|---|---|---|
-| Norway | `pilot` | Lovdata (official) | review required | disabled |
+| Norway | `planned` | Lovdata (official) | review required: evidence prepared, **owner approval pending** ([Task 2.8](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §6) | disabled (ingested on the local stack only) |
 | European Union | `planned` | EUR-Lex | review required | disabled |
 | United Kingdom | `planned` | legislation.gov.uk | review required | disabled |
 | United States | `planned` | Congress.gov | review required | disabled |
@@ -104,7 +106,8 @@ Tests: 21 files, 114 tests passing locally (`npm run test:legal-knowledge`). The
 
 | Gap | Resolution |
 |---|---|
-| No adapters; nothing ingests law | Task 2.8 |
+| ~~No adapters; nothing ingests law~~ | Resolved locally: the Lovdata adapter ingested 753 acts (Task 2.8). Hosted ingestion waits for owner approval and the U-27 deployment |
+| Superseded versions keep an open `valid_until` (append-only) | Matters once a second consolidated version exists; select the latest version per authority at the as-of date (Task 2.11) |
 | ~~No embedding model; the `vector(1536)` dimension is a placeholder~~ | Resolved: `multilingual-e5-small-v1`, `vector(384)` (Task 2.9) |
 | ~~FTS uses the `simple` configuration (not language-aware)~~ | Resolved: per-language stemming (Task 2.9) |
 | ~~No database-backed graph query~~ | Resolved: `legal_authority_graph` (Task 2.6) |
@@ -131,6 +134,7 @@ Tests: 21 files, 114 tests passing locally (`npm run test:legal-knowledge`). The
 - [Task 2.4: Retrieval contract](PHASE_2_TASK_2_4_RETRIEVAL_CONTRACT.md) · [Citation bundle](PHASE_2_TASK_2_4_CITATION_BUNDLE.md)
 - [Task 2.5: Ingestion contract](PHASE_2_TASK_2_5_INGESTION_CONTRACT.md) · [Persistence](PHASE_2_TASK_2_5_PERSISTENCE.md) · [Durable queue](PHASE_2_TASK_2_5_DURABLE_QUEUE.md) · [Worker deployment](PHASE_2_TASK_2_5_WORKER_DEPLOYMENT.md)
 - [Task 2.6: Authority graph](PHASE_2_TASK_2_6_AUTHORITY_GRAPH.md)
+- [Task 2.8: Lovdata pilot, real embeddings, Norwegian evaluation](PHASE_2_TASK_2_8_LOVDATA_PILOT.md)
 - [Legal AI platform architecture](LEGAL_AI_PLATFORM_ARCHITECTURE.md)
 
 Where a task record conflicts with this plan or the register on status, the register governs.

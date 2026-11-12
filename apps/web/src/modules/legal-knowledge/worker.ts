@@ -2,6 +2,7 @@ import {
   assertSourceIngestionAllowed,
   normaliseAuthority,
   createPassages,
+  createSectionPassages,
   validateSourceManifest,
   validateSourceUri,
   type LegalSourceAdapter,
@@ -91,7 +92,9 @@ export async function executeLegalIngestionBatch(options:ExecuteIngestionOptions
       const result=await options.persistence.appendAuthority({
         sourceKey:batch.sourceKey,jurisdictionCode:options.adapter.manifest.jurisdictionCode,
         authority,sourceUri,retrievedAt:retrievedAt.toISOString(),normalisationProfile:options.normalisationProfile,
-        passages:createPassages(authority.normalisedText),
+        passages:fetched.sections?.length?
+          createSectionPassages(authority.normalisedText,fetched.sections):
+          createPassages(authority.normalisedText),
       });
       return {kind:result};
     }catch(error){

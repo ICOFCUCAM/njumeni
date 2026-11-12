@@ -12,7 +12,7 @@ The hosted project is empty by design until the owner decides to deploy.
 
 1. In GitHub, set the repository secret **`SUPABASE_DB_URL`**: the hosted project's session-pooler connection string, including the database password (Supabase dashboard → Connect).
 2. Create the GitHub environment **`production`** with the owner as required reviewer.
-3. Run **Actions → "Deploy database to hosted Supabase"** with `confirm = DEPLOY` and `dry_run = true`. Check the listed migrations: there should be 38, the first `20261110141433`, the last `20261112800000`.
+3. Run **Actions → "Deploy database to hosted Supabase"** with `confirm = DEPLOY` and `dry_run = true`. Check the listed migrations. The first deployment (2026-11-12) applied 38, from `20261110141433` to `20261112800000`. The repository now has 39: `20261112900000` (Task 2.8) is the next one the workflow applies.
 4. Run it again with `dry_run = false`. The workflow applies every migration, then runs `scripts/ops/verify-hosted-schema.sql`. That script checks:
    - row level security is enabled everywhere;
    - no private grants exist;
@@ -24,7 +24,7 @@ The hosted project is empty by design until the owner decides to deploy.
    It fails if anything differs.
 5. Configure the web deployment with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` of the hosted project. **Never** give the web app the service-role key.
 6. Smoke test:
-   - `GET /api/health` returns `{"status":"ok","database":"ok","schemaVersion":"20261112800000"}`;
+   - `GET /api/health` returns `{"status":"ok","database":"ok","schemaVersion":"20261112900000"}`;
    - `BASE_URL=https://<app> node scripts/security/http-probe.mjs` passes.
 
 Later migrations follow the same path: merge → CI green → run the workflow.
@@ -37,7 +37,7 @@ Later migrations follow the same path: merge → CI green → run the workflow.
 | Payment provider | Insert `private.billing_provider_settings` (provider, webhook secret ≥ 32 characters, enabled); point the provider's webhook to `/api/billing/webhooks/<provider>` | Owner (provider and account) |
 | Platform operators | Insert into `private.platform_operators` (principal, role); audited use | Owner |
 | SSO | The customer configures it; an operator verifies the DNS TXT record (`platform_verify_sso_domain`); then Supabase Auth SAML on the hosted project | Per customer |
-| Legal sources | Phase 2 rights review → activation → ingestion worker (`npm run worker:legal-knowledge`) | Per source (Task 2.8 first) |
+| Legal sources | Phase 2 rights review → activation → ingestion worker (`npm run worker:legal-knowledge`). Lovdata: exact commands in the [Task 2.8 record](../PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §6 | Per source (Lovdata prepared, awaiting the owner) |
 
 ## 3. Monitoring and alerts
 

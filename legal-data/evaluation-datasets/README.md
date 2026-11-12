@@ -23,6 +23,7 @@ Permanent evaluation sets for Njumeni's legal search (Master Plan v2.0 §18.2, u
 | `cases[].mode` | `lexical`, `semantic` or `hybrid` (default `hybrid`) |
 | `cases[].relevant` | Authorities a correct answer must retrieve. **An empty list means the system must abstain** (return nothing) |
 | `cases[].expectedValidFrom` | Optional currency check: the top relevant result must be the version in force from this date |
+| `cases[].expectedSections` | Optional section labels that answer the question (the last section-path element, for example `§ 15-3`). Reported as `sectionHitAt10`, not gated |
 
 ## Metrics and gates
 
@@ -33,6 +34,7 @@ Permanent evaluation sets for Njumeni's legal search (Master Plan v2.0 §18.2, u
 | MRR | 1 / rank of the first relevant authority | Reported |
 | Currency accuracy | Top relevant hit is the version in force on `asOfDate` | ≥ 0.95 |
 | Abstention accuracy | Out-of-scope questions return no results | Reported |
+| Section hit@10 | A top-10 passage of a relevant authority comes from an expected section | Reported |
 
 The gates are initial targets, to be recalibrated with the first real data. A gate with no measurable cases counts as **failed**, never as passed.
 
@@ -41,4 +43,4 @@ The gates are initial targets, to be recalibrated with the first real data. A ga
 | Key | Status |
 |---|---|
 | `synthetic-no-v1` | Harness and pipeline verification with fictitious authorities (local databases only) |
-| `lovdata-no-v1` | **Planned** with Task 2.8: real questions over rights-approved Norwegian legislation |
+| `lovdata-no-v1` | 41 cases over Lovdata's current acts (NLOD 2.0); questions written for Njumeni, expected acts and sections checked against the ingested text. Results: [Task 2.8 record](../../docs/PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §7 |

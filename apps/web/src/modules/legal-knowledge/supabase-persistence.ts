@@ -43,6 +43,10 @@ export function createSupabaseLegalIngestionPersistence(client:RpcClient):LegalI
           p_job_id:input.lease.jobId,
           p_lease_token:input.lease.leaseToken,
         });
+        // An edge whose target is not ingested yet (batch order, or a later page) is deferred: the
+        // authority itself is committed, and the edge is appended when the source is re-run.
+        if(relationshipError&&String((relationshipError as {message?:unknown}).message??'')
+          .includes('LEGAL_INGESTION_RELATIONSHIP_AUTHORITY_NOT_FOUND'))continue;
         if(relationshipError)throw rpcError('LEGAL_INGESTION_APPEND_RELATIONSHIP_FAILED',relationshipError);
       }
       return data;
