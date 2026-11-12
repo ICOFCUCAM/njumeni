@@ -2,18 +2,22 @@
 -- Everything is rolled back.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(37);
+select plan(39);
 
 create temporary table lov on commit drop as select id from private.legal_sources where source_key = 'lovdata-official';
 grant select on lov to authenticated, anon;
 
 -- ------------------------------------------------------------------ the policy
-select is((select count(*)::int from private.legal_source_licence_policies), 1, 'exactly one licence policy exists: Lovdata');
-select is((select licence_identifier from private.legal_source_licence_policies where source_id = (select id from lov)), 'NLOD-2.0',
+select is((select count(distinct source_id)::int from private.legal_source_licence_policies), 1, 'only Lovdata has a licence policy');
+select is((select array_agg(policy_version order by policy_version) from private.legal_source_licence_policies), array[1, 2],
+  'version 1 stays on record; version 2 (owner rights review) is current');
+select ok((private.legal_source_licence_policy((select id from lov))).attribution_text like '%Njumeni has processed and indexed the material%',
+  'the current attribution identifies the modification (NLOD 2.0 section 5)');
+select is((private.legal_source_licence_policy((select id from lov))).licence_identifier, 'NLOD-2.0',
   'Lovdata API data is licensed under NLOD 2.0');
-select is((select acquisition_hosts from private.legal_source_licence_policies where source_id = (select id from lov)), array['api.lovdata.no'],
+select is((private.legal_source_licence_policy((select id from lov))).acquisition_hosts, array['api.lovdata.no'],
   'data may be acquired only from the official API host');
-select is((select permitted_datasets from private.legal_source_licence_policies where source_id = (select id from lov)),
+select is((private.legal_source_licence_policy((select id from lov))).permitted_datasets,
   array['gjeldende-lover.tar.bz2', 'gjeldende-sentrale-forskrifter.tar.bz2'], 'only the current-laws and central-regulations datasets are licensed');
 select ok(private.legal_source_permits_use((select id from lov), 'retrieval_augmented_generation')
   and private.legal_source_permits_use((select id from lov), 'commercial_use'), 'RAG and commercial use are permitted for Lovdata API data');
@@ -21,7 +25,7 @@ select ok(not private.legal_source_permits_use((select id from lov), 'model_trai
   and not private.legal_source_permits_use((select id from lov), 'model_fine_tuning')
   and not private.legal_source_permits_use((select id from lov), 'website_scraping'),
   'training, fine-tuning and website scraping are not permitted');
-select ok((select attribution_text from private.legal_source_licence_policies where source_id = (select id from lov)) like '%NLOD%Lovdata%',
+select ok((private.legal_source_licence_policy((select id from lov))).attribution_text like '%NLOD%Lovdata%',
   'the attribution names NLOD and Lovdata');
 select is((select access_method from private.legal_sources where id = (select id from lov)), 'bulk_download',
   'the Lovdata source acquires API datasets, not the website');
@@ -39,9 +43,9 @@ select is(public.legal_source_licence_policy_get('lovdata-official') ->> 'licenc
 
 select throws_ok($$update private.legal_source_licence_policies set licence_identifier = 'X'$$, null, null, 'licence policies are append-only');
 select is(public.legal_source_record_licence_policy('lovdata-official', 'pgTAP', 'NLOD-2.0', 'https://data.norge.no/nlod/en/2.0',
-  (select attribution_text from private.legal_source_licence_policies where source_id = (select id from lov)), array['api.lovdata.no'],
-  array['gjeldende-lover.tar.bz2'], (select permitted_uses from private.legal_source_licence_policies where source_id = (select id from lov)),
-  '{}', array['https://api.lovdata.no/'], 'Synthetic narrower policy for the test'), 2, 'a new policy is a new version');
+  (private.legal_source_licence_policy((select id from lov))).attribution_text, array['api.lovdata.no'],
+  array['gjeldende-lover.tar.bz2'], (private.legal_source_licence_policy((select id from lov))).permitted_uses,
+  '{}', array['https://api.lovdata.no/'], 'Synthetic narrower policy for the test'), 3, 'a new policy is a new version');
 select is((private.legal_source_licence_policy((select id from lov))).permitted_datasets, array['gjeldende-lover.tar.bz2'],
   'the latest version applies');
 
@@ -59,7 +63,7 @@ select throws_ok($$select public.legal_source_set_activation((select id from lov
 select lives_ok(format($$select public.legal_source_record_rights_review((select id from lov), 'pgTAP reviewer', 'NLOD-2.0', '2.0',
   'https://api.lovdata.no/', %L, now() - interval '1 minute', now() + interval '1 day',
   '{"retrieve":true,"store":true,"normalise":true,"index":true,"quote":true,"display":true,"redistribute":true}'::jsonb)$$,
-  (select attribution_text from private.legal_source_licence_policies where source_id = (select id from lov) and policy_version = 1)),
+  (private.legal_source_licence_policy((select id from lov))).attribution_text),
   'the review records the policy attribution');
 select lives_ok($$select public.legal_source_set_activation((select id from lov), 'pgTAP operator', 'Activation under the NLOD 2.0 policy',
   'active', true, 'lovdata-public-data', '1.1.0')$$, 'ingestion is enabled under the policy');

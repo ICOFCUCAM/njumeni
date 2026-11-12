@@ -5,7 +5,7 @@
 | Status | 🔵 IMPLEMENTED — verified locally and on hosted (§6) |
 | Date | 2026-11-12 |
 | Builds on | [Task 2.8 Lovdata pilot](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) |
-| Migration | `20261113000000_source_licence_policy_and_sync` (new); `20261112900000_legal_pilot_ingestion_support` (Task 2.8, reviewed here) |
+| Migration | `20261113000000_source_licence_policy_and_sync`, `20261113100000_lovdata_licence_policy_v2` (new); `20261112900000_legal_pilot_ingestion_support` (Task 2.8, reviewed here) |
 | Adapter | `lovdata-public-data@1.1.0` |
 | Engine | research engine `extractive-1.1.0`, reranker `legal-rerank-1.0.0` |
 
@@ -34,18 +34,19 @@ The owner settled the open question in Task 2.8 §2. The sources are:
 | User terms §2.1 (open website services) | "Massenedlasting av innholdet er ikke tillatt." "Det er ikke tillatt å bruke innholdet til trening eller utvikling av KI-algoritmer." (No bulk download; no training or development of AI algorithms on website content.) |
 | Article 5277 (3 Nov 2025) | "Lovdata deler to datasett via API til henholdsvis lover og sentrale forskrifter, under en NLOD 2.0-lisens", free of charge; use in "KI-løsninger, chatboter, automatisert juridisk veiledning og analyseverktøy" is foreseen. It says nothing explicit on training |
 | `api.lovdata.no/v1/publicData/list` | The two NLOD datasets are `gjeldende-lover.tar.bz2` and `gjeldende-sentrale-forskrifter.tar.bz2`, exactly the policy's datasets. The four Norsk Lovtidend archives (`lovtidend-*`) are deliberately outside the policy |
-| `data.norge.no/nlod/{en,no}/2.0` | **Not readable:** HTTP 406 from every route. The attribution meets Lovdata's own condition ("oppgir Lovdata som kilde") and names NLOD 2.0. Re-check the licence's recommended wording once the page can be read; a changed wording is a new policy version |
+| NLOD 2.0 (`data.norge.no/nlod/en/2.0`) | Verified by the owner, 2026-11-12. §2 permits copying, modification, combination and redistribution for any purpose, subject to the licence conditions. §5 requires attribution to the licensor and a reference to the licence; links to the licence and the original source where practicable; and identification of modifications. This environment still receives HTTP 406 from that host |
 
 ## 2. Source-specific licence policy
 
 `private.legal_source_licence_policies` holds an **append-only, versioned** policy per source. The latest version applies to that source only.
 
-**Version 1 (Lovdata only):**
+**Current policy (Lovdata only):**
 
 | Field | Value |
 |---|---|
 | Licence | `NLOD-2.0`, `https://data.norge.no/nlod/en/2.0` |
-| Attribution | "Inneholder data under Norsk lisens for offentlige data (NLOD) 2.0 tilgjengeliggjort av Lovdata. Contains data under the Norwegian Licence for Open Government Data (NLOD) 2.0 made available by Lovdata." |
+| Attribution (current, version 2) | "Contains data made available by Lovdata under the Norwegian Licence for Open Government Data (NLOD) 2.0. Source: Lovdata. Njumeni has processed and indexed the material for legal research. The authoritative legal text remains attributable to its original source." It names the licensor, references the licence and gives the modification notice (NLOD §5). Also link to the licence and to the Lovdata source |
+| Version history | v1 (`20261113000000`): bilingual NLOD notice. v2 (`20261113100000`): the owner's attribution after verifying NLOD §2 and §5. Hosts, datasets and uses are unchanged. Both versions stay on record |
 | Acquisition hosts | `api.lovdata.no` |
 | Licensed datasets | `gjeldende-lover.tar.bz2`, `gjeldende-sentrale-forskrifter.tar.bz2` |
 | Permitted | RAG, commercial use, display, quotation, redistribution |
@@ -138,6 +139,6 @@ Nothing was renamed, deleted, re-applied or edited. Applied migrations are immut
 
 ## 7. Owner steps that remain
 
-1. Record the rights review with the **policy attribution** (the trigger refuses any other wording), then activate with adapter `1.1.0`. Commands: [Task 2.8 §6](PHASE_2_TASK_2_8_LOVDATA_PILOT.md).
+1. The authorised rights reviewer records the rights review with the **current policy attribution** (version 2; the trigger refuses any other wording). Activate adapter `1.1.0` only when the Precision@5 gate also passes. Commands: [Task 2.8 §6](PHASE_2_TASK_2_8_LOVDATA_PILOT.md).
 2. Run the worker from a host whose egress Lovdata accepts, then the embedding backfill.
 3. Run `npm run eval:retrieval -- ../../legal-data/evaluation-datasets/lovdata-no-v1.json`. It now measures the reranked pipeline. `partial` coverage stays refused until every gate passes.

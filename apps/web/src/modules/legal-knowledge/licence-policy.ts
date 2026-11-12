@@ -35,15 +35,20 @@ export interface LegalSourceLicencePolicy {
   evidenceUris: readonly string[];
 }
 
-/** Mirrors policy version 1 seeded by migration 20261113000000 (owner decision 2026-11-12). */
+/**
+ * Mirrors the current Lovdata policy: version 2, recorded by migration 20261113100000 after the
+ * owner's rights review (NLOD 2.0 sections 2 and 5 verified, 2026-11-12). Version 1
+ * (20261113000000) stays on record; policies are append-only.
+ */
 export const LOVDATA_LICENCE_POLICY: LegalSourceLicencePolicy = Object.freeze({
   sourceKey: 'lovdata-official',
-  policyVersion: 1,
+  policyVersion: 2,
   licenceIdentifier: 'NLOD-2.0',
   licenceUri: 'https://data.norge.no/nlod/en/2.0',
   attributionText:
-    'Inneholder data under Norsk lisens for offentlige data (NLOD) 2.0 tilgjengeliggjort av Lovdata. ' +
-    'Contains data under the Norwegian Licence for Open Government Data (NLOD) 2.0 made available by Lovdata.',
+    'Contains data made available by Lovdata under the Norwegian Licence for Open Government Data (NLOD) 2.0. ' +
+    'Source: Lovdata. Njumeni has processed and indexed the material for legal research. ' +
+    'The authoritative legal text remains attributable to its original source.',
   acquisitionHosts: Object.freeze(['api.lovdata.no']),
   permittedDatasets: Object.freeze(['gjeldende-lover.tar.bz2', 'gjeldende-sentrale-forskrifter.tar.bz2']),
   permittedUses: Object.freeze({
@@ -57,18 +62,20 @@ export const LOVDATA_LICENCE_POLICY: LegalSourceLicencePolicy = Object.freeze({
     website_scraping: false,
   }),
   conditions: Object.freeze([
-    'Attribution to Lovdata under NLOD 2.0 must accompany displayed or redistributed material.',
-    'Acquire data only from the official API (api.lovdata.no); ordinary website scraping is prohibited (Lovdata user terms).',
-    'Only the licensed public API datasets of current laws and central regulations are covered.',
-    'Ordinary Lovdata website content must not be used for AI training.',
+    'Attribute Lovdata as licensor and reference NLOD 2.0 wherever the material is displayed or redistributed (NLOD 2.0 section 5).',
+    'Link to the licence (https://data.norge.no/nlod/en/2.0) and to the original Lovdata source where practicable.',
+    'Identify that the material has been processed and indexed by Njumeni (modification notice, NLOD 2.0 section 5).',
+    'Acquire data only from the official API (api.lovdata.no); bulk download and systematic extraction from the website are prohibited (Lovdata user terms 2.3).',
+    'Only the licensed public API datasets of current laws and central regulations are covered; Norsk Lovtidend archives are not.',
+    'Ordinary Lovdata website content must not be used for AI training or development of AI algorithms (Lovdata user terms 2.1).',
     'No model fine-tuning on Lovdata material without separate legal confirmation.',
     'This policy does not extend to any other source.',
   ]),
   evidenceUris: Object.freeze([
+    'https://data.norge.no/nlod/en/2.0',
     'https://lovdata.no/info/brukeravtale',
     'https://lovdata.no/artikkel/lovdata_tilrettelegger_for_bruk_tilpasset_var_ki-hverdag_gjor_api_av_oppdatert_regelverk_gratis_tilgjengelig_for_alle/5277',
-    'https://api.lovdata.no/',
-    'https://data.norge.no/nlod/en/2.0',
+    'https://api.lovdata.no/v1/publicData/list',
   ]),
 });
 

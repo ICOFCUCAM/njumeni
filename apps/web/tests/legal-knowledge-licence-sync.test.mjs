@@ -29,7 +29,10 @@ test('the Lovdata policy is NLOD 2.0 for the API datasets: RAG and commercial us
     assert.equal(licencePermitsUse(LOVDATA_LICENCE_POLICY, use), false, use);
     assert.throws(() => assertUsePermitted(LOVDATA_LICENCE_POLICY, use), /LEGAL_SOURCE_USE_NOT_PERMITTED/);
   }
-  assert.match(LOVDATA_LICENCE_POLICY.attributionText, /NLOD\) 2\.0 tilgjengeliggjort av Lovdata/);
+  assert.equal(LOVDATA_LICENCE_POLICY.policyVersion, 2);
+  // NLOD 2.0 section 5: licensor, licence reference and a notice that the material was modified.
+  assert.match(LOVDATA_LICENCE_POLICY.attributionText, /made available by Lovdata under the Norwegian Licence for Open Government Data \(NLOD\) 2\.0/);
+  assert.match(LOVDATA_LICENCE_POLICY.attributionText, /Njumeni has processed and indexed the material/);
 });
 
 test('a source without a policy keeps its own rules and is never permitted for training or scraping', () => {
@@ -58,7 +61,7 @@ test('acquisition is limited to the API host and the licensed datasets', () => {
 
 test('the database policy JSON parses and malformed policies are rejected', () => {
   const json = {
-    sourceKey: 'lovdata-official', policyVersion: 1, licenceIdentifier: 'NLOD-2.0', licenceUri: LOVDATA_LICENCE_POLICY.licenceUri,
+    sourceKey: 'lovdata-official', policyVersion: 2, licenceIdentifier: 'NLOD-2.0', licenceUri: LOVDATA_LICENCE_POLICY.licenceUri,
     attributionText: LOVDATA_LICENCE_POLICY.attributionText, acquisitionHosts: ['api.lovdata.no'],
     permittedDatasets: [...LOVDATA_LICENSED_DATASETS], permittedUses: { ...LOVDATA_LICENCE_POLICY.permittedUses },
     conditions: [...LOVDATA_LICENCE_POLICY.conditions], evidenceUris: [...LOVDATA_LICENCE_POLICY.evidenceUris],
