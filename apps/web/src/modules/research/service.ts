@@ -18,6 +18,8 @@ import {
   type AuthorityContextEdge,
   type SourcePermission,
 } from './composer.ts';
+import { detectLanguage } from '../global/language.ts';
+import { translateQuery, type GlossaryTerm } from '../global/glossary.ts';
 
 type RpcClient = Pick<SupabaseClient, 'rpc'>;
 
@@ -50,8 +52,37 @@ export async function runLegalResearch(
   const mode: RetrievalMode = request.mode ?? (embedQuery ? 'hybrid' : 'lexical');
   if (mode !== 'lexical' && !embedQuery) fail('RESEARCH_SEMANTIC_NOT_CONFIGURED');
 
+  // Cross-language research (U-22): a question asked in another language than the sources is
+  // searched as the legal concepts it mentions, via the glossary, and the rewrite is disclosed.
+  let searchQuery = question;
+  let crossLanguageNote: string | null = null;
+  const asked = detectLanguage(question);
+  const target = request.languageCodes[0];
+  if (
+    asked !== 'unknown' &&
+    target &&
+    !request.languageCodes.includes(asked) &&
+    !(asked === 'nn' && request.languageCodes.includes('nb'))
+  ) {
+    const glossary = await client.rpc('legal_glossary_terms', {
+      p_languages: [asked === 'nn' ? 'nb' : asked, target],
+    });
+    const translated = glossary.error
+      ? null
+      : translateQuery(
+          question,
+          asked === 'nn' ? 'nb' : asked,
+          target,
+          (glossary.data ?? []) as GlossaryTerm[],
+        );
+    if (translated) {
+      searchQuery = translated.query;
+      crossLanguageNote = `The question was asked in ${asked} and searched in ${target} as the legal concepts “${translated.query}” (legal glossary). Check that these match your question.`;
+    }
+  }
+
   const plan = createRetrievalPlan({
-    query: question,
+    query: searchQuery,
     jurisdictionCode: request.jurisdictionCode,
     asOfDate: request.asOfDate,
     languageCodes: request.languageCodes,
@@ -93,7 +124,7 @@ export async function runLegalResearch(
   if (context.error || permissions.error) fail('RESEARCH_CONTEXT_UNAVAILABLE');
 
   const composed = composeResearchAnswer({
-    question,
+    question: searchQuery,
     asOfDate: plan.asOfDate,
     jurisdictionCode: plan.jurisdictionCode,
     coverageLevel: jurisdiction.coverage_level,
@@ -109,7 +140,9 @@ export async function runLegalResearch(
     p_as_of_date: plan.asOfDate,
     p_language_codes: plan.languageCodes,
     p_retrieval_mode: plan.mode,
-    p_limitations: composed.limitations,
+    p_limitations: crossLanguageNote
+      ? [crossLanguageNote, ...composed.limitations]
+      : composed.limitations,
     p_engine_version: RESEARCH_ENGINE_VERSION,
     p_findings: composed.findings,
     p_claims: composed.claims,

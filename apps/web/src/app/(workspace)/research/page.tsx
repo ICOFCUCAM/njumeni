@@ -116,6 +116,8 @@ export default async function ResearchPage({ searchParams }: { searchParams: Sea
                   <option value="nn">Norwegian (Nynorsk)</option>
                   <option value="en">English</option>
                   <option value="fr">French</option>
+                  <option value="pt">Portuguese</option>
+                  <option value="sw">Swahili</option>
                 </select>
               </label>
               <div className="profile-actions">

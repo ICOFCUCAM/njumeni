@@ -9,7 +9,7 @@ select has_table('private','legal_authority_passages','version-bound passages ex
 select has_table('private','legal_authority_relationships','authority relationships exist');
 select has_table('private','legal_source_ingestion_runs','source ingestion runs exist');
 select is((select count(*) from private.jurisdictions where code in ('NO','EU','GB','US','INTL','CM')),6::bigint,'initial jurisdiction priority set is seeded');
-select is((select count(*) from private.legal_sources),6::bigint,'initial legal-source discovery catalogue is seeded');
+select is((select count(*) from private.legal_sources where source_key in ('lovdata-official','eur-lex','legislation-gov-uk','congress-gov','un-treaty-collection','cameroon-official-gazette')),6::bigint,'initial legal-source discovery catalogue is seeded');
 select is((select count(*) from private.legal_sources where ingestion_enabled),0::bigint,'no source ingestion is enabled before rights approval');
 select is((select count(*) from private.jurisdictions where status='supported'),0::bigint,'no jurisdiction is represented as fully supported by seed data');
 select ok((select relrowsecurity from pg_class where oid='private.jurisdictions'::regclass),'jurisdictions have RLS enabled');

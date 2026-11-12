@@ -79,7 +79,7 @@ Billing end to end over HTTP:
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 11 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 11 commit~~ ✅ `97b8c49`: runs `43137032227` (CI and security) and `43137032000` (database verification), both successful | Done |
 | 2 | Billing end to end **in staging** with a real payment provider in test mode | Owner decision on the provider; Stage 2 staging |
 | 3 | Prices validated with customers (§17.1 hypotheses) | Pilot customers (Phase 13) |
 | 4 | VAT/MVA treatment confirmed per jurisdiction | Accounting advice before the first invoice |

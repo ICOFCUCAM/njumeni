@@ -535,7 +535,7 @@ Argument relationships are explicit data, never only unstructured AI text.
 | 4 | United States | Common law (federal and state) | English | `planned` |
 | 5 | International law | Treaty-based / customary | English, French | `planned` |
 | 6 | Cameroon | Mixed (civil and common law) | French, English | `planned` |
-| 7 | Other African jurisdictions | Various | Various | Not catalogued |
+| 7 | Other African jurisdictions | Various | Various | ▲ Catalogued in Phase 12: OHADA (supranational; Cameroon and Senegal members), Nigeria, Kenya, South Africa, Ghana |
 | 8 | Additional global jurisdictions | Various | Various | Not catalogued |
 
 The platform MUST support common-law, civil-law and mixed legal systems, supranational frameworks and international law. A jurisdiction MUST NOT be advertised as fully supported until its sources, coverage, updates, citation verification and content quality have been tested (§6.7).
@@ -1829,7 +1829,7 @@ Each phase must produce working, tested functionality before the dependent phase
 | 9 | Professional workspace | Professional product | Client management, professional research, matter collaboration, internal reviews, knowledge management, professional templates, document approval, professional reporting; ▲ conflict checks and information barriers | Journey 15.2 passes | 🔵 **IMPLEMENTED** (verified locally; journey 15.2 passed on synthetic data) |
 | 10 | Enterprise and institutional systems | Enterprise product | Organisation administration, teams and offices, advanced permissions, enterprise knowledge repositories, compliance workflows, institutional reporting, SSO readiness, enterprise APIs, custom deployment options | Enterprise isolation and SSO verified | 🔵 **IMPLEMENTED** (verified locally; live SSO awaits the hosted identity provider) |
 | 11 | Commercial infrastructure | Revenue infrastructure | Subscription plans, billing, usage metering, AI credits, entitlements, invoices, payment integration, commercial analytics | Billing end-to-end in staging | 🔵 **IMPLEMENTED** (verified locally end to end; staging with a real provider awaits the owner's choice) |
-| 12 | Global expansion | Global readiness | Norway, EU, UK, US, international law and Cameroon legal content; additional African jurisdictions; multilingual support; jurisdiction-specific testing | Each jurisdiction reaches at least `partial` (§6.7) | 🔒 LOCKED |
+| 12 | Global expansion | Global readiness | Norway, EU, UK, US, international law and Cameroon legal content; additional African jurisdictions; multilingual support; jurisdiction-specific testing | Each jurisdiction reaches at least `partial` (§6.7) | 🔵 **IMPLEMENTED: framework** (gate not met: real content per jurisdiction needed) |
 | 13 | Production hardening and launch | Production release | Security audits, penetration testing, performance testing, AI evaluation, disaster recovery, backup restoration, monitoring, operational documentation, ▲ **first deployment of the cumulative migration set to hosted Supabase (U-27)**, pilot customers, commercial launch | All release gates; Stage 2 infrastructure; hosted schema equals repository migrations | 🔒 LOCKED |
 
 The phase names above are canonical. The register uses shortened names where CI requires them.

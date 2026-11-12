@@ -67,11 +67,14 @@ export function WorkspaceShell({
   userEmail,
   organizationName,
   workspaceName,
+  labels = {},
 }: {
   children: ReactNode;
   userEmail: string;
   organizationName: string;
   workspaceName: string;
+  /** Localised navigation labels keyed by their English text (Phase 12). */
+  labels?: Record<string, string>;
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -116,7 +119,7 @@ export function WorkspaceShell({
         <nav className="nav-scroll">
           {navigationGroups.map((group) => (
             <div className="nav-group" key={group.label}>
-              <p className="nav-group-label">{group.label}</p>
+              <p className="nav-group-label">{labels[group.label] ?? group.label}</p>
               {group.items.map((item) => {
                 const active =
                   pathname === item.href ||
@@ -132,7 +135,7 @@ export function WorkspaceShell({
                     <span className="nav-icon">
                       <ModuleIcon name={item.icon} />
                     </span>
-                    <span>{item.label}</span>
+                    <span>{labels[item.label] ?? item.label}</span>
                   </Link>
                 );
               })}

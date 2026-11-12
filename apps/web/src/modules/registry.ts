@@ -94,7 +94,7 @@ export const moduleRegistry: ModuleDefinition[] = [
       'Resolve jurisdiction, legal system, court hierarchy, applicable dates and source coverage.',
     description:
       'A governed jurisdiction registry for legal-system profiles, source coverage, official languages, court hierarchies and applicable-law context.',
-    deliveryPhase: 'Phase 2; expansion in Phase 12',
+    deliveryPhase: 'Phase 12',
     icon: 'globe',
   },
   {

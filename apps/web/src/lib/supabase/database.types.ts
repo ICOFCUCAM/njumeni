@@ -343,6 +343,9 @@ isOneToOne: false
 "is_organization_owner":
 { Args: { "p_organization_id": string }; Returns: boolean
                            },
+"jurisdiction_readiness":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "knowledge_get":
 { Args: { "p_item_id": string }; Returns: Json
                            },
@@ -373,6 +376,11 @@ isOneToOne: false
                            },
 "legal_embedding_store":
 { Args: { "p_embeddings": Json,"p_profile_key": string }; Returns: number
+                           },
+"legal_glossary_terms":
+{ Args: { "p_languages": (string)[] }; Returns: {
+              "concept_key": string,"language_code": string,"preferred": boolean,"term": string
+            }[]
                            },
 "legal_ingestion_append_authority":
 { Args: { "p_authority": Json,"p_job_id": string,"p_jurisdiction_code": string,"p_lease_token": string,"p_normalisation_profile": string,"p_passages": Json,"p_retrieved_at": string,"p_source_key": string,"p_source_uri": string }; Returns: string
@@ -553,6 +561,11 @@ isOneToOne: false
 "research_list_jurisdictions":
 { Args: Record<PropertyKey, never>; Returns: {
               "code": string,"coverage_level": string,"name": string,"official_languages": (string)[]
+            }[]
+                           },
+"research_list_jurisdictions_profile":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "citation_style": string,"code": string,"coverage_level": string,"name": string,"official_languages": (string)[],"parent_code": string
             }[]
                            },
 "research_list_runs":
