@@ -44,3 +44,4 @@ The gates are initial targets, to be recalibrated with the first real data. A ga
 |---|---|
 | `synthetic-no-v1` | Harness and pipeline verification with fictitious authorities (local databases only) |
 | `lovdata-no-v1` | 41 cases over Lovdata's current acts (NLOD 2.0); questions written for Njumeni, expected acts and sections checked against the ingested text. Results: [Task 2.8 record](../../docs/PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §7 |
+| `lovdata-no-holdout-v1` | **Held-out.** 35 cases (27 answerable incl. plain-language and past-dated; 3 temporal abstention; 5 out of scope), written before any output was seen; expectations verified against the act text; frozen (md5 `69c0212e27c301669ed24faec1e38055`). Never used for tuning. 2026-11-12, each configuration run once: baseline R@10 0.778, P@5 0.506 (fails); temporal check R@10 0.741, P@5 0.494, abstention 3/8. Because its results informed the abstention decision, the next confirmation needs a fresh held-out set |

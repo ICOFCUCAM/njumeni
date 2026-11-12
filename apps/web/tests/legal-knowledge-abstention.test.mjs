@@ -30,9 +30,9 @@ const corpus = [
   row('husleie-1', 'husleie', '2000-01-01', { lexicalScore: 0.5, semanticScore: 0.8 }),
 ];
 
-test('the production abstention policy stays off until a held-out evaluation confirms it', () => {
-  assert.deepEqual({ ...CALIBRATED_ABSTENTION }, { temporalCoverage: false, minSemanticScore: null });
-  assert.deepEqual(abstentionOptions(CALIBRATED_ABSTENTION), {});
+test('production: the temporal check is on (held-out 3/3); no semantic floor (not separable)', () => {
+  assert.deepEqual({ ...CALIBRATED_ABSTENTION }, { temporalCoverage: true, minSemanticScore: null });
+  assert.deepEqual(abstentionOptions(CALIBRATED_ABSTENTION, '2026-11-12'), { temporalCoverage: { currentDate: '2026-11-12' } });
   assert.deepEqual(abstentionOptions({ temporalCoverage: true, minSemanticScore: 0.8 }, '2026-11-12'),
     { temporalCoverage: { currentDate: '2026-11-12' }, minSemanticScore: 0.8 });
 });

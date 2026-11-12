@@ -74,7 +74,9 @@ export const LEGAL_RERANKER_VERSION = 'legal-rerank-1.1.0';
  * embedded passages). 36-run sweep; the best setting passing every gate:
  * Precision@5 0.774, Recall@10 0.974, MRR 0.897, currency 1.000, section hit 0.923.
  * One or two authorities fail currency (a wrong top act cuts the right one); three is the floor.
- * Tuned on the scored set: confirm on a held-out set before any coverage claim.
+ * Tuned on the scored set. HELD-OUT RESULT (lovdata-no-holdout-v1, 35 cases, 2026-11-12, run once):
+ * Recall@10 0.778, Precision@5 0.506, MRR 0.679, section hit 0.593: below the gates. The calibration
+ * does not generalise; no coverage claim may rest on the 0.774 figure.
  */
 export const CALIBRATED_RERANK_OPTIONS: Readonly<LegalRerankerOptions> = Object.freeze({
   authorityMargin: 0.9,

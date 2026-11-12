@@ -188,15 +188,20 @@ export interface RetrievalObservation {
 // Abstention policy, applied after reranking (legal-abstain-1.0.0).
 export const LEGAL_ABSTENTION_VERSION='legal-abstain-1.0.0';
 /**
- * The production abstention policy. Off until measured: the temporal check and the semantic floor
- * are enabled only when a held-out evaluation confirms they fix abstention without losing recall.
+ * The production abstention policy (decided 2026-11-12 from pre-registered runs).
+ * - Temporal coverage ON. lovdata-no-v1: abstention 1/2 → its temporal case fixed, recall unchanged
+ *   (0.974). Held-out lovdata-no-holdout-v1: all 3 temporal cases abstain; cost: one past-dated
+ *   question whose first-stage answer is wrong today now abstains instead of answering (recall
+ *   0.778 → 0.741). Declining is preferred to answering a past-date question from other law.
+ * - Semantic floor OFF: not separable. Out-of-scope questions score 0.81–0.87, answerable ones from
+ *   0.845 (held-out) and 0.860 (v1); the lunar-mining case scores 0.870. No threshold separates them.
  */
 export interface LegalAbstentionPolicy {
   temporalCoverage:boolean;
   minSemanticScore:number|null;
 }
 export const CALIBRATED_ABSTENTION:Readonly<LegalAbstentionPolicy>=Object.freeze({
-  temporalCoverage:false,
+  temporalCoverage:true,
   minSemanticScore:null,
 });
 /** Retrieval options for an abstention policy; currentDate is today (UTC) unless given. */
