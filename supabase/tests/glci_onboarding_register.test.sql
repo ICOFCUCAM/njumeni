@@ -1,7 +1,7 @@
 -- GLCI-10: onboarding register, monitor adapter catalogue and the official-host guard.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(14);
+select plan(16);
 
 insert into auth.users (id, aud, role, email, created_at, updated_at) values
   ('ca000000-0000-4000-8000-0000000000a1', 'authenticated', 'authenticated', 'glci-onboard-operator@example.invalid', now(), now()),
@@ -25,6 +25,11 @@ select is((select monitor_adapter_key from private.glci_monitoring_targets where
 
 -- the register
 select is((private.glci_jurisdiction_onboarding('NO') ->> 'total')::integer, 10, 'ten onboarding stages');
+select is((select array_agg(target_key order by target_key) from private.glci_monitoring_targets where format_verified_at is not null),
+  array['dk-retsinformation', 'gb-legislation', 'us-federal-register'], 'three feed formats were confirmed against the live sources');
+select ok((select (s ->> 'formatVerified')::boolean from jsonb_array_elements(private.glci_jurisdiction_onboarding('DK') -> 'steps') s where s ->> 'key' = 'monitor')
+  and not (select (s ->> 'formatVerified')::boolean from jsonb_array_elements(private.glci_jurisdiction_onboarding('EU') -> 'steps') s where s ->> 'key' = 'monitor'),
+  'the register shows which jurisdictions have a confirmed monitor format');
 select ok(pg_temp.step('NO', 'rights') and pg_temp.step('NO', 'monitor') and not pg_temp.step('NO', 'monitoring'),
   'Norway: rights covered by the licence policy and a monitor assigned, monitoring not yet active');
 select is(private.glci_jurisdiction_onboarding('NO') -> 'nextStep' ->> 'key', 'monitoring', 'so Norway''s next step is to activate monitoring');
@@ -39,7 +44,7 @@ set local request.jwt.claim.sub = 'ca000000-0000-4000-8000-0000000000b1';
 select throws_ok($$select public.glci_onboarding_register()$$, 'GLCI_NOT_AUTHORISED', 'customers cannot read the onboarding register');
 set local request.jwt.claim.sub = 'ca000000-0000-4000-8000-0000000000a1';
 select lives_ok($$select public.glci_set_target_monitor('dk-retsinformation', 'json-listing',
-  '{"listUrl":"https://www.retsinformation.dk/api/document/changed","itemsPath":"","idField":"id"}', 'Prepare Denmark monitoring from its open API')$$,
+  '{"listUrl":"https://api.retsinformation.dk/v1/Documents?date={yesterday}","itemsPath":"","idField":"documentId","allowEmpty":true}', 'Prepare Denmark monitoring from its open API')$$,
   'operators prepare a new country''s monitor as data');
 reset role;
 

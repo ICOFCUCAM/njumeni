@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { classifyMonitorFailure } from '../src/modules/glci/monitor.ts';
-import { createAtomFeedMonitor, createJsonListingMonitor, createRssFeedMonitor, fingerprintItems, parseAtom, parseJsonListing, parseRss } from '../src/modules/glci/monitors/feeds.ts';
+import { createAtomFeedMonitor, createJsonListingMonitor, createRssFeedMonitor, expandDatePlaceholders, fingerprintItems, parseAtom, parseJsonListing, parseRss } from '../src/modules/glci/monitors/feeds.ts';
 import { glciMonitorAdapters } from '../src/modules/glci/monitors/registry.ts';
 
 // Synthetic samples in the standard formats (the live formats are confirmed per target before activation).
@@ -55,4 +55,27 @@ test('format changes are integration failures; off-host URLs are refused', async
   assert.deepEqual(await failure(json.check(jsonTarget, async () => ({ ok: true, status: 200, json: async () => ({ data: [] }) }))), { code: 'GLCI_FEED_ITEMS_NOT_FOUND', failureClass: 'integration_failure' });
   assert.deepEqual(await failure(json.check(jsonTarget, async () => ({ ok: true, status: 200, json: async () => { throw new SyntaxError('x'); } }))), { code: 'GLCI_FEED_NOT_JSON', failureClass: 'integration_failure' });
   assert.deepEqual(glciMonitorAdapters.map(a => a.key), ['lovdata-public-data-listing', 'atom-feed', 'rss-feed', 'json-listing']);
+});
+
+// Shapes read from the live sources on 2026-11-12 (legislation.gov.uk Atom, Retsinformation høsteservice).
+test('live formats: legislation.gov.uk links and the Danish daily change list', async () => {
+  const UK = `<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>http://www.legislation.gov.uk/id/uksi/2026/1147</id>
+<title>The Secretaries of State … Order 2026</title><link rel="self" href="http://www.legislation.gov.uk/id/uksi/2026/1147"/>
+<link href="http://www.legislation.gov.uk/uksi/2026/1147/made"/><link rel="alternate" type="application/xml" href="http://www.legislation.gov.uk/uksi/2026/1147/made/data.xml"/>
+<updated>2026-11-12T17:16:07Z</updated><published>2026-11-12T17:10:50.18916Z</published></entry></feed>`;
+  const [entry] = parseAtom(UK);
+  assert.deepEqual([entry.id, entry.date, entry.link], ['http://www.legislation.gov.uk/id/uksi/2026/1147', '2026-11-12T17:16:07Z', 'http://www.legislation.gov.uk/uksi/2026/1147/made']);
+
+  const requested = [];
+  const dk = target({ monitorAdapterKey: 'json-listing', officialUri: 'https://api.retsinformation.dk/',
+    config: { listUrl: 'https://api.retsinformation.dk/v1/Documents?date={yesterday}', itemsPath: '', idField: 'documentId', dateField: 'changeDate', linkField: 'href', allowEmpty: true } });
+  const monitor = createJsonListingMonitor({ now: () => new Date('2026-11-12T06:00:00Z') });
+  const day = [{ documentId: 'AA011542', accessionsnummer: 'A20200014529', reasonForChange: 'DocumentMetadataChanged', changeDate: '2026-11-11',
+    documentType: { shortName: 'LBK H', id: 30 }, href: 'http://retsinformation.dk/eli/accn/A20200014529/xml', images: [] }];
+  const result = await monitor.check(dk, async (url) => { requested.push(url); return { ok: true, status: 200, json: async () => day }; });
+  assert.deepEqual(requested, ['https://api.retsinformation.dk/v1/Documents?date=2026-11-11'], 'yesterday\'s change list is requested');
+  assert.equal(result.observed.newest[0].id, 'AA011542');
+  const quiet = await monitor.check(dk, async () => ({ ok: true, status: 200, json: async () => [] }));
+  assert.equal(quiet.observed.items, 0, 'an empty day is no change, not a failure');
+  assert.equal(expandDatePlaceholders('x?d={today}', new Date('2026-01-01T00:00:00Z')), 'x?d=2026-01-01');
 });

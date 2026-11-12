@@ -25,9 +25,15 @@ function hostOf(url: string): string | null {
   }
 }
 
+/** {today} and {yesterday} (UTC, YYYY-MM-DD) in a listing URL, for daily change lists. */
+export function expandDatePlaceholders(url: string, now: Date = new Date()): string {
+  const day = (offset: number) => new Date(now.getTime() - offset * 86_400_000).toISOString().slice(0, 10);
+  return url.replace(/\{today\}/g, day(0)).replace(/\{yesterday\}/g, day(1));
+}
+
 /** The configured listing URL, refused unless it is https on the target's official host. */
-export function listingUrl(target: MonitorTarget, key: 'feedUrl' | 'listUrl'): string {
-  const url = typeof target.config[key] === 'string' ? (target.config[key] as string) : '';
+export function listingUrl(target: MonitorTarget, key: 'feedUrl' | 'listUrl', now?: Date): string {
+  const url = expandDatePlaceholders(typeof target.config[key] === 'string' ? (target.config[key] as string) : '', now);
   const host = hostOf(url);
   if (!host || !target.officialUri || host !== hostOf(target.officialUri)) {
     throw new MonitorError('GLCI_FEED_URL_NOT_ON_OFFICIAL_HOST', 'failed');
@@ -53,9 +59,15 @@ function element(block: string, name: string): string | null {
   const match = new RegExp(`<(?:[a-z0-9]+:)?${name}(?:\\s[^>]*)?>([\\s\\S]*?)</(?:[a-z0-9]+:)?${name}>`, 'i').exec(block);
   return match ? decodeEntities(match[1]!) : null;
 }
+// The human-readable page: a <link> with no rel (legislation.gov.uk), else rel="alternate" with an
+// HTML type, else the first link.
 function linkHref(block: string): string | null {
-  const alternate = /<link\b[^>]*rel=["']alternate["'][^>]*href=["']([^"']+)["']/i.exec(block) ?? /<link\b[^>]*href=["']([^"']+)["']/i.exec(block);
-  return alternate ? decodeEntities(alternate[1]!) : null;
+  const links = [...block.matchAll(/<link\b([^>]*)\/?>/gi)].map(([, attrs]) => attrs!);
+  const href = (attrs: string) => /href=["']([^"']+)["']/i.exec(attrs)?.[1] ?? null;
+  const pick = links.find(a => !/\brel=/i.test(a) && href(a))
+    ?? links.find(a => /rel=["']alternate["']/i.test(a) && /type=["']text\/html["']/i.test(a))
+    ?? links.find(a => href(a));
+  return pick ? decodeEntities(href(pick)!) : null;
 }
 
 export function parseAtom(xml: string): FeedItem[] {
@@ -134,11 +146,11 @@ export function createAtomFeedMonitor(options: { timeoutMs?: number } = {}): Mon
 export function createRssFeedMonitor(options: { timeoutMs?: number } = {}): MonitorAdapter {
   return textAdapter('rss-feed', parseRss, options.timeoutMs ?? 60_000);
 }
-export function createJsonListingMonitor(options: { timeoutMs?: number } = {}): MonitorAdapter {
+export function createJsonListingMonitor(options: { timeoutMs?: number; now?: () => Date } = {}): MonitorAdapter {
   return {
     key: 'json-listing',
     async check(target, fetch) {
-      const url = listingUrl(target, 'listUrl');
+      const url = listingUrl(target, 'listUrl', options.now?.());
       const response = await fetchListing(fetch, url, 'application/json', options.timeoutMs ?? 60_000);
       let body: unknown;
       try {
@@ -147,7 +159,8 @@ export function createJsonListingMonitor(options: { timeoutMs?: number } = {}): 
         throw new MonitorError('GLCI_FEED_NOT_JSON', 'integration_failure');
       }
       const items = parseJsonListing(body, target.config);
-      if (items.length === 0) throw new MonitorError('GLCI_FEED_EMPTY', 'integration_failure');
+      // A daily change list (allowEmpty) may legitimately be empty: no change that day.
+      if (items.length === 0 && target.config.allowEmpty !== true) throw new MonitorError('GLCI_FEED_EMPTY', 'integration_failure');
       const newest = items.slice(0, maxItems(target));
       return { fingerprint: fingerprintItems(newest), observed: observed(newest, items.length) };
     },

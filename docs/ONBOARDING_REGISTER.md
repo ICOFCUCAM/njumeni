@@ -33,11 +33,12 @@ Coverage levels (catalogued, planned, pilot, partial, supported) are separate an
 | Jurisdiction | Coverage | Stages | Next step |
 |---|---|---|---|
 | Norway | planned | ●●●●●○○○○○ 5/10 | Activate monitoring of the Lovdata API listing (licence policy v2 covers it) |
-| United Kingdom | planned | ●●●○●○○○○○ 4/10 | **Owner:** rights review of legislation.gov.uk (Atom monitor prepared) |
-| United States | planned | ●●●○●○○○○○ 4/10 | **Owner:** register and review the Federal Register source (JSON monitor prepared) |
-| European Union | planned | ●●●○○○○○○○ 3/10 | **Owner:** rights review of EUR-Lex |
+| United Kingdom | planned | ●●●○●○○○○○ 4/10 | **Owner:** rights review of legislation.gov.uk. Atom monitor ready; format confirmed live; licence OGL v3.0 read |
+| United States | planned | ●●●○●○○○○○ 4/10 | **Owner:** register and review the Federal Register source. JSON monitor ready; format confirmed live; licence page not readable (bot gate) |
+| Denmark | catalogued | ●●●○●○○○○○ 4/10 | **Owner:** rights review of Retsinformation. Daily harvesting-API monitor ready; format confirmed live; terms page not readable |
+| European Union | planned | ●●●○○○○○○○ 3/10 | **Owner:** rights review of EUR-Lex (reuse terms read: Decision 2011/833/EU, CC BY 4.0). No RSS feed exists; another official interface is needed |
 | Cameroon | planned | ●●●○○○○○○○ 3/10 | **Owner:** rights review; confirm the official gazette's address |
-| Sweden, Denmark, Finland, Uganda | catalogued | ●●●○○○○○○○ 3/10 | **Owner:** rights review of the registered sources |
+| Sweden, Finland, Uganda | catalogued | ●●●○○○○○○○ 3/10 | **Owner:** rights review of the registered sources. Finland: Finlex open data needs a token; documentation and terms not found |
 | EEA, OHADA, Ghana, Kenya, Nigeria, Senegal, South Africa, International | catalogued | ●○○○○○○○○○ 1/10 | Operator: record a monitoring profile |
 
 ## 3. Monitors
@@ -45,16 +46,26 @@ Coverage levels (catalogued, planned, pilot, partial, supported) are separate an
 | Monitor | Kind | Format | Used by |
 |---|---|---|---|
 | `lovdata-public-data-listing` | Source-specific | Verified against the live listing, 2026-11-12 | Norway: Lovdata current laws, central regulations |
-| `atom-feed` | Generic Atom | Confirm per source | UK: legislation.gov.uk new legislation (prepared) |
+| `atom-feed` | Generic Atom | Confirmed per target | UK: legislation.gov.uk new legislation |
 | `rss-feed` | Generic RSS 2.0 | Confirm per source | Available (for example the EU Official Journal, once a feed URL is confirmed) |
-| `json-listing` | Generic JSON API, with field mapping in the target's configuration | Confirm per source | US: Federal Register (prepared) |
+| `json-listing` | Generic JSON API, with field mapping in the target's configuration; `{today}`/`{yesterday}` placeholders and `allowEmpty` for daily change lists | Confirmed per target | US: Federal Register; Denmark: Retsinformation |
 
 **Rules for every monitor:**
 - **Official host only.** Feed URLs must stay on the target's official host. The database refuses any other.
 - **Format changes.** A format change is an integration failure, never "no change", and it opens an engineering issue.
 - **Fixes are data.** A format detail is corrected as data (`glci_set_target_monitor`), not as code.
 
-**Not yet verified.** The live formats of the UK, US, EU, Finnish and Danish listings were requested from the Lovdata session, because this environment cannot reach those hosts. A source is not activated before its format is confirmed and its rights are reviewed.
+**Verified on 2026-11-12, about 20:15 UTC.** The Lovdata session read the live sources after the owner allowed their hosts. Migration `20261114200000` records each result on its target:
+
+| Source | Format | Licence or terms |
+|---|---|---|
+| UK legislation.gov.uk `/new/data.feed` | Atom (id, title, updated, published), confirmed | Open Government Licence v3.0 |
+| US Federal Register API | JSON `$.results` (document_number, title, html_url, publication_date), confirmed | Not readable (bot gate) |
+| Denmark Retsinformation harvesting API `GET /v1/Documents?date=YYYY-MM-DD` | Daily JSON change list, confirmed. Monitored with `{yesterday}`; an empty day means no change | Not readable without a browser |
+| EU EUR-Lex | No RSS feed (candidate URLs 404) | Decision 2011/833/EU; CC BY 4.0 for editorial content |
+| Finland opendata.finlex.fi | Token required; no public documentation | Not found |
+
+A source is still not activated before its rights are reviewed.
 
 ## 4. Platform activation (owner)
 
