@@ -340,6 +340,9 @@ isOneToOne: false
 "glci_change_events":
 { Args: { "p_include_baseline"?: boolean,"p_jurisdiction_code"?: string,"p_limit"?: number }; Returns: Json
                            },
+"glci_change_impacts":
+{ Args: { "p_event_id": string }; Returns: Json
+                           },
 "glci_monitor_claim":
 { Args: { "p_lease_seconds"?: number,"p_limit"?: number,"p_worker_id": string }; Returns: {
               "config": Json,"jurisdiction_code": string,"lease_token": string,"monitor_adapter_key": string,"official_uri": string,"previous_fingerprint": string,"source_key": string,"target_key": string
@@ -350,6 +353,9 @@ isOneToOne: false
                            },
 "glci_monitoring_status":
 { Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"glci_reanalyse_change":
+{ Args: { "p_event_id": string }; Returns: number
                            },
 "glci_register_target":
 { Args: { "p_config"?: Json,"p_jurisdiction_code": string,"p_monitor_adapter_key": string,"p_name": string,"p_notes"?: string,"p_official_uri": string,"p_source_key": string,"p_target_key": string,"p_target_type": string }; Returns: string
