@@ -334,6 +334,12 @@ isOneToOne: false
               "effective_from": string,"effective_until": string,"enabled": boolean,"entitlement_key": string,"limit_value": number,"plan_key": string,"subscription_status": string
             }[]
                            },
+"glci_change_event_sections":
+{ Args: { "p_event_id": string }; Returns: Json
+                           },
+"glci_change_events":
+{ Args: { "p_include_baseline"?: boolean,"p_jurisdiction_code"?: string,"p_limit"?: number }; Returns: Json
+                           },
 "glci_monitor_claim":
 { Args: { "p_lease_seconds"?: number,"p_limit"?: number,"p_worker_id": string }; Returns: {
               "config": Json,"jurisdiction_code": string,"lease_token": string,"monitor_adapter_key": string,"official_uri": string,"previous_fingerprint": string,"source_key": string,"target_key": string
