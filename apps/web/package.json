@@ -11,20 +11,29 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:auth": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:auth-integration": "node --test scripts/auth-provider.integration.test.mjs",
     "test:legal-knowledge": "node --experimental-strip-types --test tests/legal-knowledge-*.test.mjs",
-    "worker:legal-knowledge": "node --conditions=react-server --experimental-strip-types src/modules/legal-knowledge/worker-main.ts"
+    "worker:legal-knowledge": "node --conditions=react-server --experimental-strip-types src/modules/legal-knowledge/worker-main.ts",
+    "worker:evidence": "node --conditions=react-server --experimental-strip-types src/modules/evidence/worker-main.ts",
+    "eval:retrieval": "node --experimental-strip-types scripts/run-retrieval-evaluation.mjs",
+    "test:e2e": "node --experimental-strip-types --test --test-concurrency=1 e2e/journeys.e2e.mjs",
+    "worker:glci-monitor": "node --experimental-strip-types src/modules/glci/monitor-main.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.119.0",
     "@tailwindcss/postcss": "4.3.5",
+    "fflate": "0.8.3",
     "next": "16.4.5",
+    "pdfjs-dist": "6.4.299",
     "postcss": "8.5.6",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "tailwindcss": "4.3.5",
-    "@supabase/ssr": "0.12.7",
-    "@supabase/supabase-js": "2.119.0"
+    "server-only": "0.0.1",
+    "tailwindcss": "4.3.5"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

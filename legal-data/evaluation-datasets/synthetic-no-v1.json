@@ -1,0 +1,43 @@
+{
+  "datasetKey": "synthetic-no-v1",
+  "version": 1,
+  "jurisdictionCode": "NO",
+  "description": "Synthetic Norwegian-language retrieval cases used to verify the evaluation harness and the search pipeline. The authorities are fictitious and are seeded only into local test databases.",
+  "contentLicence": "synthetic",
+  "cases": [
+    {
+      "id": "syn-accident-notice",
+      "question": "Når må arbeidsgiver varsle om en ulykke?",
+      "asOfDate": "2023-06-01",
+      "languageCodes": ["nb"],
+      "mode": "lexical",
+      "relevant": [{ "sourceKey": "synthetic-eval", "citation": "SYN-LOV-2018-01" }],
+      "expectedValidFrom": "2022-01-01"
+    },
+    {
+      "id": "syn-accident-notice-historic",
+      "question": "Når må arbeidsgiver varsle om en ulykke?",
+      "asOfDate": "2019-06-01",
+      "languageCodes": ["nb"],
+      "mode": "lexical",
+      "relevant": [{ "sourceKey": "synthetic-eval", "citation": "SYN-LOV-2018-01" }],
+      "expectedValidFrom": "2018-01-01"
+    },
+    {
+      "id": "syn-complaint-deadline",
+      "question": "klagefrist vedtak",
+      "asOfDate": "2023-06-01",
+      "languageCodes": ["nb"],
+      "mode": "lexical",
+      "relevant": [{ "sourceKey": "synthetic-eval", "citation": "SYN-LOV-2010-07" }]
+    },
+    {
+      "id": "syn-out-of-scope",
+      "question": "romfartsavgift for asteroider",
+      "asOfDate": "2023-06-01",
+      "languageCodes": ["nb"],
+      "mode": "lexical",
+      "relevant": []
+    }
+  ]
+}

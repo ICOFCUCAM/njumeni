@@ -1,6 +1,16 @@
 export type LegalAuthorityRelationshipType =
-  | 'amends'|'amended_by'|'repeals'|'repealed_by'|'implements'|'implemented_by'
-  | 'interprets'|'applies'|'distinguishes'|'overrules'|'overruled_by'|'cites'|'related';
+  | 'amends'|'amended_by'|'repeals'|'repealed_by'|'replaces'|'replaced_by'
+  | 'implements'|'implemented_by'|'interprets'|'applies'|'distinguishes'
+  | 'overrules'|'overruled_by'|'supplements'|'supplemented_by'|'conflicts_with'
+  | 'cites'|'related';
+
+// Canonical vocabulary (Master Plan v2.0 §6.5); must match the database check constraint.
+export const LEGAL_AUTHORITY_RELATIONSHIP_TYPES:readonly LegalAuthorityRelationshipType[]=Object.freeze([
+  'amends','amended_by','repeals','repealed_by','replaces','replaced_by',
+  'implements','implemented_by','interprets','applies','distinguishes',
+  'overrules','overruled_by','supplements','supplemented_by','conflicts_with',
+  'cites','related',
+]);
 
 export interface LegalAuthorityRelationshipInput {
   fromAuthorityId:string;
@@ -28,6 +38,9 @@ export function inverseRelationshipType(type:LegalAuthorityRelationshipType):Leg
     repeals:'repealed_by',repealed_by:'repeals',
     implements:'implemented_by',implemented_by:'implements',
     overrules:'overruled_by',overruled_by:'overrules',
+    replaces:'replaced_by',replaced_by:'replaces',
+    supplements:'supplemented_by',supplemented_by:'supplements',
+    conflicts_with:'conflicts_with',
   };
   return inverse[type]??null;
 }

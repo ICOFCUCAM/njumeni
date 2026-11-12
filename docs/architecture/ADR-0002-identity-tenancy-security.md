@@ -1,6 +1,6 @@
 # ADR-0002: Identity, tenancy and security architecture
 
-- **Status:** Proposed foundation contract — Phase 1 task 1.1
+- **Status:** **Accepted** (11 November 2026, at Phase 1 closeout). Originally proposed 10 November 2026 as the Phase 1 task 1.1 foundation contract. §12 records how each open decision was resolved or deferred
 - **Date:** 10 November 2026
 - **Decision scope:** identity, sessions, principals, organisations, workspaces, memberships, authorisation, RLS and audit boundaries
 - **Depends on:** ADR-0001 modular monolith and bounded contexts; original master implementation plan sections 2, 7, 9, 10, 11, 12, 15, 16 and 19
@@ -168,6 +168,18 @@ Do not place legal document contents, full evidence text, access tokens, credent
 5. Select session duration, refresh/revocation behaviour and MFA requirements based on risk and provider capability.
 6. Define audit retention, legal hold and export requirements.
 7. Confirm production data classification, hosting authorisation and data residency before real legal data is accepted.
+
+### 12.1 Resolution at acceptance (11 November 2026)
+
+| # | Decision | Outcome | Evidence / owner phase |
+|---|---|---|---|
+| 1 | Dedicated Supabase project and region | **Resolved.** Project `Njumeni` (`vvjpsejeeffykaozfbik`), `eu-north-1`. No migrations are applied until all phases are complete (ADR-0003 §2.5) | Task 1.2 |
+| 2 | Representation of individual accounts | **Resolved.** Personal organisations, using the same isolation model | Task 1.5 (implemented and pgTAP-verified) |
+| 3 | Initial role catalogue and permission matrix | **Resolved.** Catalogue and scoped bindings implemented in `20261110164705_role_permission_foundation.sql` | Task 1.7 (`role_permission.test.sql`, 60/60) |
+| 4 | Support/break-glass access | **Implemented in Phase 10** (migration `20261112500000`). Operators have no default access. A support operator requests access with a reason and duration (15–480 minutes); only the customer's organisation administrator can approve, deny or revoke it, never the operator. An approved grant gives **read-only** access to that organisation until it expires. Every step is audited. See [Phase 10 plan](../PHASE_10_PLAN.md) | Done (Phase 10) |
+| 5 | Session duration, refresh/revocation, MFA | **Partly resolved.** Supabase defaults; refresh-token revocation on sign-out verified against a live Auth service (local stack, 11 November 2026). MFA (passkeys/TOTP) is required before R1. Leaked-password protection is an accepted Stage 0 risk (ADR-0003 §2.6) | Task 1.3; MFA before R1 |
+| 6 | Audit retention, legal hold and export | **Deferred.** Sign-in, sign-out, refresh and revocation are recorded by the provider's `auth.audit_log_entries`; application audit is append-only. Failed-sign-in and denied-access events, hash-chaining, retention and legal hold are delivered with evidence custody | Phase 3 (master plan U-11, U-12) |
+| 7 | Data classification, hosting authorisation, residency | **Deferred.** Synthetic data only at Stage 0; EU/EEA residency recommended (decision D-8) | Before Stage 1 |
 
 ## 13. Acceptance criteria for Phase 1 task 1.1
 

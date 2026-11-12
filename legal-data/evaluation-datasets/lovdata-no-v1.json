@@ -1,0 +1,778 @@
+{
+  "datasetKey": "lovdata-no-v1",
+  "version": 1,
+  "jurisdictionCode": "NO",
+  "description": "Norwegian retrieval cases over current acts from Lovdata's free dataset gjeldende-lover.tar.bz2 (lastModified 2026-11-11T02:32:00Z). Questions were written for Njumeni; each expected authority and section was checked against the ingested Lovdata text on 2026-11-12. Expected validity dates are the versions' recorded valid-time starts (Ikrafttredelse av siste endring). The free dataset holds only current consolidated texts, so a question about the law before an act's latest amendment has no correct authority to retrieve and is an abstention case.",
+  "contentLicence": "Questions: authored for Njumeni (no third-party content). Referenced legislation: Lovdata, NLOD-2.0.",
+  "cases": [
+    {
+      "id": "aml-notice-period",
+      "question": "Hvor lang oppsigelsesfrist har en arbeidstaker?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 15-3"
+      ],
+      "expectedValidFrom": "2026-07-01"
+    },
+    {
+      "id": "aml-temporary-employment",
+      "question": "Når kan en arbeidsgiver ansette noen midlertidig?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 14-9"
+      ]
+    },
+    {
+      "id": "aml-working-hours",
+      "question": "Hvor mange timer kan den alminnelige arbeidstiden være per uke?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 10-4"
+      ]
+    },
+    {
+      "id": "holiday-days",
+      "question": "Hvor mange virkedager ferie har en arbeidstaker krav på hvert år?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1988-04-29-21"
+        }
+      ],
+      "expectedSections": [
+        "§ 5"
+      ],
+      "expectedValidFrom": "2024-01-01"
+    },
+    {
+      "id": "holiday-days-2025",
+      "question": "Hvor mange virkedager ferie har en arbeidstaker krav på hvert år?",
+      "asOfDate": "2025-03-01",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1988-04-29-21"
+        }
+      ],
+      "expectedSections": [
+        "§ 5"
+      ],
+      "expectedValidFrom": "2024-01-01"
+    },
+    {
+      "id": "holiday-pay",
+      "question": "Hvordan beregnes feriepenger?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1988-04-29-21"
+        }
+      ],
+      "expectedSections": [
+        "§ 10"
+      ]
+    },
+    {
+      "id": "admin-appeal-deadline",
+      "question": "Hva er klagefristen for et enkeltvedtak?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1967-02-10"
+        }
+      ],
+      "expectedSections": [
+        "§ 29"
+      ],
+      "expectedValidFrom": "2026-01-01"
+    },
+    {
+      "id": "admin-impartiality",
+      "question": "Når er en offentlig tjenestemann ugild i en forvaltningssak?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1967-02-10"
+        }
+      ],
+      "expectedSections": [
+        "§ 6"
+      ]
+    },
+    {
+      "id": "freedom-of-information-nn",
+      "question": "Kan alle krevje innsyn i saksdokument hos offentlege organ?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2006-05-19-16"
+        }
+      ],
+      "expectedSections": [
+        "§ 3"
+      ]
+    },
+    {
+      "id": "gdpr-implementation",
+      "question": "Gjelder personvernforordningen som norsk lov?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2018-06-15-38"
+        }
+      ],
+      "expectedSections": [
+        "§ 1"
+      ]
+    },
+    {
+      "id": "tenancy-deposit",
+      "question": "Hvor stort depositum kan utleier kreve av leieren?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 3-5"
+      ],
+      "expectedValidFrom": "2026-07-01"
+    },
+    {
+      "id": "tenancy-notice",
+      "question": "Hva er oppsigelsesfristen for en husleieavtale?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 9-6"
+      ]
+    },
+    {
+      "id": "property-sale-disclosure-nn",
+      "question": "Har eigedomen ein mangel når seljaren ikkje har gitt opplysningar kjøparen hadde grunn til å rekne med?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1992-07-03-93"
+        }
+      ],
+      "expectedSections": [
+        "§ 3-7"
+      ]
+    },
+    {
+      "id": "consumer-complaint",
+      "question": "Hvor lang tid har en forbruker til å reklamere over en mangel ved en vare?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2002-06-21-34"
+        }
+      ],
+      "expectedSections": [
+        "§ 27"
+      ]
+    },
+    {
+      "id": "penal-theft",
+      "question": "Hva er straffen for tyveri?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-05-20-28"
+        }
+      ],
+      "expectedSections": [
+        "§ 321"
+      ],
+      "expectedValidFrom": "2026-07-01"
+    },
+    {
+      "id": "penal-age",
+      "question": "Fra hvilken alder er en person strafferettslig ansvarlig?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-05-20-28"
+        }
+      ],
+      "expectedSections": [
+        "§ 20"
+      ]
+    },
+    {
+      "id": "drink-driving",
+      "question": "Hva er promillegrensen for å føre motorvogn?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1965-06-18-4"
+        }
+      ],
+      "expectedSections": [
+        "§ 22"
+      ]
+    },
+    {
+      "id": "building-permit",
+      "question": "Hvilke byggetiltak omfattes av byggesaksbestemmelsene?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2008-06-27-71"
+        }
+      ],
+      "expectedSections": [
+        "§ 20-1"
+      ]
+    },
+    {
+      "id": "parental-responsibility-nn",
+      "question": "Kven har foreldreansvaret når foreldra er gifte?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-04-08-7"
+        }
+      ],
+      "expectedSections": [
+        "§ 34"
+      ]
+    },
+    {
+      "id": "marriage-age",
+      "question": "Hvor gammel må man være for å inngå ekteskap?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1991-07-04-47"
+        }
+      ],
+      "expectedSections": [
+        "§ 1 a"
+      ]
+    },
+    {
+      "id": "forced-heirship",
+      "question": "Hvor stor er pliktdelsarven til livsarvingene?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2019-06-14-21"
+        }
+      ],
+      "expectedSections": [
+        "§ 50"
+      ]
+    },
+    {
+      "id": "civil-appeal-deadline",
+      "question": "Hva er ankefristen i en sivil sak?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-90"
+        }
+      ],
+      "expectedSections": [
+        "§ 29-5"
+      ]
+    },
+    {
+      "id": "pregnancy-discrimination",
+      "question": "Er det forbudt å diskriminere på grunn av graviditet?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2017-06-16-51"
+        }
+      ],
+      "expectedSections": [
+        "§ 6"
+      ]
+    },
+    {
+      "id": "share-capital",
+      "question": "Hvor stor må aksjekapitalen minst være i et aksjeselskap?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1997-06-13-44"
+        }
+      ],
+      "expectedSections": [
+        "§ 3-1"
+      ]
+    },
+    {
+      "id": "patient-records",
+      "question": "Har en pasient rett til innsyn i journalen sin?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-07-02-63"
+        }
+      ],
+      "expectedSections": [
+        "§ 5-1"
+      ]
+    },
+    {
+      "id": "constitution-executive-power",
+      "question": "Hvem har den utøvende makt i Norge?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1814-05-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 3"
+      ]
+    },
+    {
+      "id": "constitution-free-speech",
+      "question": "Hvordan er ytringsfriheten vernet i Grunnloven?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1814-05-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 100"
+      ]
+    },
+    {
+      "id": "distance-sale-withdrawal",
+      "question": "Hvor lang er angrefristen ved kjøp på internett?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2014-06-20-27"
+        }
+      ],
+      "expectedSections": [
+        "§ 21"
+      ]
+    },
+    {
+      "id": "email-marketing-consent",
+      "question": "Er det tillatt å sende markedsføring på e-post uten mottakerens samtykke?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2009-01-09-2"
+        }
+      ],
+      "expectedSections": [
+        "§ 15"
+      ]
+    },
+    {
+      "id": "copyright-term",
+      "question": "Hvor lenge varer opphavsretten etter opphaverens død?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2018-06-15-40"
+        }
+      ],
+      "expectedSections": [
+        "§ 11"
+      ]
+    },
+    {
+      "id": "alcohol-age-limit",
+      "question": "Hva er aldersgrensen for å kjøpe alkohol?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1989-06-02-27"
+        }
+      ],
+      "expectedSections": [
+        "§ 1-5"
+      ]
+    },
+    {
+      "id": "animal-duty-to-help",
+      "question": "Hvilken plikt har man når man finner et skadet dyr?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2009-06-19-97"
+        }
+      ],
+      "expectedSections": [
+        "§ 4"
+      ]
+    },
+    {
+      "id": "limitation-period",
+      "question": "Hvor lang er den alminnelige foreldelsesfristen for en fordring?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1979-05-18-18"
+        }
+      ],
+      "expectedSections": [
+        "§ 2"
+      ]
+    },
+    {
+      "id": "employer-liability",
+      "question": "Er arbeidsgiveren ansvarlig for skade som en arbeidstaker volder i tjenesten?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1969-06-13-26"
+        }
+      ],
+      "expectedSections": [
+        "§ 2-1"
+      ]
+    },
+    {
+      "id": "unreasonable-contract",
+      "question": "Kan en urimelig avtale settes til side?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1918-05-31-4"
+        }
+      ],
+      "expectedSections": [
+        "§ 36"
+      ]
+    },
+    {
+      "id": "sickness-benefit-duration",
+      "question": "Hvor mange dager kan man få sykepenger?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1997-02-28-19"
+        }
+      ],
+      "expectedSections": [
+        "§ 8-12"
+      ]
+    },
+    {
+      "id": "permanent-residence",
+      "question": "Når kan en utlending få permanent oppholdstillatelse?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2008-05-15-35"
+        }
+      ],
+      "expectedSections": [
+        "§ 62"
+      ]
+    },
+    {
+      "id": "kindergarten-place",
+      "question": "Har barn rett til plass i barnehage?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-64"
+        }
+      ],
+      "expectedSections": [
+        "§ 16"
+      ]
+    },
+    {
+      "id": "primary-education-nn",
+      "question": "Har barn rett til grunnskoleopplæring?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2023-06-09-30"
+        }
+      ],
+      "expectedSections": [
+        "§ 2-1"
+      ]
+    },
+    {
+      "id": "aml-notice-before-current-version",
+      "question": "Hvor lang oppsigelsesfrist hadde en arbeidstaker i januar 2025?",
+      "asOfDate": "2025-01-15",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "out-of-scope-lunar-mining",
+      "question": "Hvilke konsesjonskrav gjelder for gruvedrift på månen?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    }
+  ]
+}

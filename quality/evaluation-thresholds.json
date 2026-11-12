@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "governingSection": "Master Plan v2.0 §18.2",
+  "rule": "Thresholds may be raised freely. Lowering or removing one requires a recalibration entry naming it, with a reason and the evaluation data that justify it.",
+  "thresholds": [
+    {
+      "metric": "recallAt10",
+      "evaluation": "Retrieval recall",
+      "minimum": 0.8,
+      "codeGate": "DEFAULT_RETRIEVAL_GATES"
+    },
+    {
+      "metric": "precisionAt5",
+      "evaluation": "Retrieval precision",
+      "minimum": 0.6,
+      "codeGate": "DEFAULT_RETRIEVAL_GATES"
+    },
+    { "metric": "citationAccuracy", "evaluation": "Citation accuracy", "minimum": 1.0 },
+    { "metric": "sourceGrounding", "evaluation": "Source grounding", "minimum": 0.95 },
+    {
+      "metric": "currencyAccuracy",
+      "evaluation": "Currency accuracy",
+      "minimum": 0.95,
+      "codeGate": "DEFAULT_RETRIEVAL_GATES"
+    },
+    { "metric": "jurisdictionAccuracy", "evaluation": "Jurisdiction accuracy", "minimum": 0.98 },
+    { "metric": "evidenceExtractionF1", "evaluation": "Evidence extraction", "minimum": 0.9 },
+    { "metric": "chronologyAccuracy", "evaluation": "Chronology accuracy", "minimum": 0.95 },
+    { "metric": "contradictionRecall", "evaluation": "Contradiction detection", "minimum": 0.8 },
+    { "metric": "draftCompleteness", "evaluation": "Draft completeness", "minimum": 1.0 },
+    {
+      "metric": "limitationDisclosure",
+      "evaluation": "Safety: limitations and uncertainty communicated",
+      "minimum": 1.0
+    }
+  ],
+  "recalibrations": []
+}

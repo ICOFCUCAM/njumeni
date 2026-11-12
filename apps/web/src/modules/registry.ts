@@ -57,7 +57,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Manage matter lifecycles, parties, tasks, deadlines and procedural history.',
     description:
       'The matter context coordinates case intake, lifecycle, assignments, deadlines, events and authorised links to evidence and legal work product.',
-    deliveryPhase: 'Phases 9–10',
+    deliveryPhase: 'Phase 8',
     icon: 'folder',
   },
   {
@@ -69,7 +69,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Review, compare, draft and verify legal documents with traceable source references.',
     description:
       'A controlled document lifecycle for templates, drafts, analysis, citation verification, human review, approval and export.',
-    deliveryPhase: 'Phases 4 and 8',
+    deliveryPhase: 'Phase 7',
     icon: 'file',
   },
   {
@@ -81,7 +81,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Structure legal issues, facts, rules, claims, arguments and counterarguments.',
     description:
       'A provenance-preserving argument graph and reasoning workspace that distinguishes facts, allegations, inferences, rules and legal conclusions.',
-    deliveryPhase: 'Phases 6–7',
+    deliveryPhase: 'Phase 5',
     icon: 'scale',
   },
   {
@@ -94,7 +94,7 @@ export const moduleRegistry: ModuleDefinition[] = [
       'Resolve jurisdiction, legal system, court hierarchy, applicable dates and source coverage.',
     description:
       'A governed jurisdiction registry for legal-system profiles, source coverage, official languages, court hierarchies and applicable-law context.',
-    deliveryPhase: 'Phase 2; expansion in Phase 12',
+    deliveryPhase: 'Phase 12',
     icon: 'globe',
   },
   {
@@ -118,7 +118,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Bring client matters, research, evidence, drafting and review into one workspace.',
     description:
       'A professional workspace for client and matter assignments, research, evidence, argument development, drafting, collaboration and reviewed work product.',
-    deliveryPhase: 'Phases 9–10',
+    deliveryPhase: 'Phase 9',
     icon: 'briefcase',
   },
   {
@@ -154,7 +154,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Track regulatory sources, obligations, assessments, evidence and review schedules.',
     description:
       'A source-linked compliance and risk context built around traceable obligations, regulatory change, evidence, explainable assessments and review schedules.',
-    deliveryPhase: 'Phases 10 and 12',
+    deliveryPhase: 'Phase 10',
     icon: 'shield',
   },
   {
@@ -166,7 +166,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Curate research, precedents, opinions, templates, arguments and approved knowledge.',
     description:
       'A governed knowledge context for saved research, precedents, opinions, templates, approved arguments, collections, taxonomies and access policies.',
-    deliveryPhase: 'Phases 9–10',
+    deliveryPhase: 'Phase 9',
     icon: 'book',
   },
 ];

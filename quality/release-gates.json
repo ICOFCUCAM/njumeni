@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "governingSection": "Master Plan v2.0 §18.3",
+  "gates": [
+    {
+      "id": "RG-01",
+      "blocksReleaseIf": "Cross-tenant access is possible",
+      "evidence": [
+        {
+          "file": "supabase/tests/storage_isolation.test.sql",
+          "contains": "Tenant B owner cannot read Tenant A object metadata"
+        },
+        {
+          "file": "supabase/tests/legal_research_engine.test.sql",
+          "contains": "an outsider cannot search in another tenant"
+        },
+        {
+          "file": "supabase/tests/evidence_intelligence.test.sql",
+          "contains": "an outsider cannot plant evidence in another tenant"
+        },
+        {
+          "file": "supabase/tests/ai_reasoning_framework.test.sql",
+          "contains": "an outsider cannot read another tenant"
+        },
+        {
+          "file": "supabase/tests/verification_legal_quality.test.sql",
+          "contains": "an outsider cannot read verification results"
+        },
+        {
+          "file": "supabase/tests/case_management.test.sql",
+          "contains": "an outsider cannot read another tenant''s matter"
+        },
+        {
+          "file": "supabase/tests/professional_workspace.test.sql",
+          "contains": "the barrier overrides the editor role"
+        },
+        {
+          "file": "supabase/tests/professional_workspace.test.sql",
+          "contains": "outsiders cannot run conflict checks against the firm"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "platform operators have no default access to customer matters"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "support access is read-only"
+        },
+        {
+          "file": "supabase/tests/security_hardening.test.sql",
+          "contains": "no private table is granted to browser roles"
+        }
+      ]
+    },
+    {
+      "id": "RG-02",
+      "blocksReleaseIf": "Material legal citations are fabricated",
+      "evidence": [
+        {
+          "file": "supabase/tests/legal_research_engine.test.sql",
+          "contains": "a fabricated passage fails existence"
+        },
+        {
+          "file": "supabase/tests/legal_research_engine.test.sql",
+          "contains": "a forged quotation fails"
+        },
+        {
+          "file": "supabase/tests/legal_research_engine.test.sql",
+          "contains": "a run whose only law claim is invented is recorded"
+        },
+        {
+          "file": "apps/web/tests/ai-reasoning.test.mjs",
+          "contains": "validation rejects invented citations"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "a fabricated citation is rejected"
+        },
+        {
+          "file": "apps/web/tests/ai-evaluation.test.mjs",
+          "contains": "no fabricated citation in any draft"
+        }
+      ]
+    },
+    {
+      "id": "RG-03",
+      "blocksReleaseIf": "Historical legal versions are silently substituted",
+      "evidence": [
+        {
+          "file": "supabase/tests/legal_research_engine.test.sql",
+          "contains": "no silent substitution"
+        },
+        {
+          "file": "supabase/tests/legal_authority_temporal_graph.test.sql",
+          "contains": "as-of 2021 excludes the amendment that takes effect in 2022"
+        },
+        {
+          "file": "supabase/tests/verification_legal_quality.test.sql",
+          "contains": "the change since the research date is reported"
+        }
+      ]
+    },
+    {
+      "id": "RG-04",
+      "blocksReleaseIf": "Documents are lost or corrupted",
+      "evidence": [
+        {
+          "file": "supabase/tests/evidence_intelligence.test.sql",
+          "contains": "bytes that do not match the declared SHA-256 are rejected, not trusted"
+        },
+        {
+          "file": "supabase/tests/evidence_intelligence.test.sql",
+          "contains": "passages are append-only"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "document versions are append-only"
+        },
+        {
+          "file": "supabase/tests/case_management.test.sql",
+          "contains": "matters are retained"
+        },
+        {
+          "file": "scripts/ops/restore-drill.sh",
+          "contains": "custody_links_broken=0"
+        }
+      ]
+    },
+    {
+      "id": "RG-05",
+      "blocksReleaseIf": "Evidence provenance is broken",
+      "evidence": [
+        {
+          "file": "supabase/tests/evidence_intelligence.test.sql",
+          "contains": "the custody chain verifies"
+        },
+        {
+          "file": "supabase/tests/evidence_intelligence.test.sql",
+          "contains": "a silently altered custody record is detected"
+        }
+      ]
+    },
+    {
+      "id": "RG-06",
+      "blocksReleaseIf": "AI agents can bypass authorisation",
+      "evidence": [
+        {
+          "file": "supabase/tests/ai_reasoning_framework.test.sql",
+          "contains": "an outsider cannot run agents in another tenant"
+        },
+        {
+          "file": "supabase/tests/ai_reasoning_framework.test.sql",
+          "contains": "a disabled provider is refused"
+        },
+        {
+          "file": "apps/web/tests/ai-reasoning.test.mjs",
+          "contains": "runAgent records refusals without calling the provider"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "no agent runs in a high-risk workspace without a conformity record"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "the unchecked authoriser cannot be called directly"
+        }
+      ]
+    },
+    {
+      "id": "RG-07",
+      "blocksReleaseIf": "A critical migration fails",
+      "evidence": [
+        {
+          "file": ".github/workflows/supabase-local.yml",
+          "contains": "supabase db reset"
+        },
+        {
+          "file": ".github/workflows/repository-security.yml",
+          "contains": "node scripts/ci/check-migrations.mjs"
+        }
+      ]
+    },
+    {
+      "id": "RG-08",
+      "blocksReleaseIf": "An unauthorised user can approve legal documents",
+      "evidence": [
+        {
+          "file": "supabase/tests/verification_legal_quality.test.sql",
+          "contains": "a viewer cannot decide reviews"
+        },
+        {
+          "file": "supabase/tests/verification_legal_quality.test.sql",
+          "contains": "in a team organisation the requester cannot approve their own request"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "an editor cannot approve documents"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "in a team organisation nobody approves their own version"
+        }
+      ],
+      "note": "Document approval (Phase 7) and human review gates (Phase 6) share the same controls: permission, four-eyes in teams, audit."
+    },
+    {
+      "id": "RG-09",
+      "blocksReleaseIf": "Audit records can be silently modified",
+      "evidence": [
+        {
+          "file": "supabase/tests/evidence_intelligence.test.sql",
+          "contains": "a silently altered audit record is detected"
+        },
+        {
+          "file": "supabase/tests/security_audit.test.sql",
+          "contains": "Security audit events are append-only"
+        },
+        {
+          "file": "scripts/ops/restore-drill.sh",
+          "contains": "audit_chain_valid=true"
+        }
+      ]
+    },
+    {
+      "id": "RG-10",
+      "blocksReleaseIf": "CI is not green on the release commit",
+      "evidence": [
+        {
+          "file": ".github/workflows/repository-security.yml",
+          "contains": "branches: [\"**\"]"
+        },
+        {
+          "file": ".github/workflows/supabase-local.yml",
+          "contains": "supabase test db"
+        }
+      ]
+    },
+    {
+      "id": "RG-11",
+      "blocksReleaseIf": "A secret appears in the repository or its history",
+      "evidence": [
+        {
+          "file": ".github/workflows/repository-security.yml",
+          "contains": "gitleaks/gitleaks-action"
+        },
+        {
+          "file": ".github/workflows/repository-security.yml",
+          "contains": "fetch-depth: 0"
+        }
+      ]
+    },
+    {
+      "id": "RG-12",
+      "blocksReleaseIf": "The evaluation thresholds in §18.2 regress",
+      "evidence": [
+        {
+          "file": "scripts/ci/check-release-gates.mjs",
+          "contains": "THRESHOLD_LOWERED"
+        },
+        {
+          "file": ".github/workflows/repository-security.yml",
+          "contains": "node scripts/ci/check-release-gates.mjs"
+        },
+        {
+          "file": "apps/web/tests/ai-evaluation.test.mjs",
+          "contains": "quality/evaluation-thresholds.json"
+        }
+      ]
+    }
+  ]
+}

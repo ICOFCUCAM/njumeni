@@ -41,13 +41,14 @@ test('all thirteen canonical A–M modules have registry route entries', async (
   }
 });
 
-test('health reports no database connection while sign-in uses real Supabase Auth', async () => {
+test('health reports integration state without exposing configuration values', async () => {
   const health = await readFile('apps/web/src/app/api/health/route.ts', 'utf8');
   const signIn = await readFile('apps/web/src/app/(auth)/sign-in/page.tsx', 'utf8');
   const workspace = await readFile('apps/web/src/app/(workspace)/layout.tsx', 'utf8');
 
-  assert.match(health, /authenticationConnected: false/);
-  assert.match(health, /databaseConnected: false/);
+  assert.match(health, /authenticationConnected: true/);
+  assert.match(health, /databaseConfigured: supabaseConfigured/);
+  assert.doesNotMatch(health.slice(health.indexOf('Response.json(')), /process\.env/);
   assert.match(signIn, /signIn/);
   assert.match(signIn, /password/);
   assert.match(workspace, /WorkspaceShell/);
@@ -61,7 +62,8 @@ test('application shell documents every module route and preview limitation', as
   assert.match(docs, /\/intelligence/);
   assert.match(docs, /\/knowledge/);
   assert.match(docs, /server-side Supabase Auth user check/);
-  assert.match(dashboard, /Identity is active/);
+  assert.match(dashboard, /matter_my_agenda/);
+  assert.match(dashboard, /Verify every legal deadline/);
 });
 
 test('Supabase SSR auth is server-validated through the Next.js 16 Proxy', async () => {

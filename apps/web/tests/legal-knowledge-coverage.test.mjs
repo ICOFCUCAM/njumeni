@@ -6,9 +6,36 @@ const now=new Date('2026-11-10T12:00:00.000Z');
 const source={sourceKey:'lovdata',rightsStatus:'approved',sourceStatus:'active',ingestionEnabled:true,authorityTypes:['act','regulation'],languages:['no','nn'],lastVerifiedAt:'2026-11-01T00:00:00.000Z',knownGaps:[]};
 const profile={jurisdictionCode:'NO',requestedAuthorityTypes:['act','regulation'],requestedLanguages:['no'],sources:[source],reviewIntervalDays:90};
 
-test('assesses supported status only for current rights-approved scoped coverage',()=>{
+const passingEvaluation={datasetKey:'lovdata-no-v1',datasetVersion:1,passed:true,evaluatedAt:'2026-11-05T00:00:00.000Z'};
+const evidenced={...profile,latestEvaluation:passingEvaluation};
+
+test('complete current sources without an evaluation are only pilot (coverage never exceeds evidence)',()=>{
   const result=assessJurisdictionCoverage(profile,now);
-  assert.equal(result.status,'supported');assert.deepEqual(result.unsupportedAuthorityTypes,[]);
+  assert.equal(result.status,'pilot');assert.deepEqual(result.unsupportedAuthorityTypes,[]);
+  assert.ok(result.reasons.some(reason=>reason.includes('No retrieval evaluation')));
+});
+test('a recent passing evaluation raises complete coverage to partial',()=>{
+  const result=assessJurisdictionCoverage(evidenced,now);
+  assert.equal(result.status,'partial');
+  assert.ok(result.reasons.some(reason=>reason.includes('Citation verification')));
+});
+test('supported requires citation verification and update monitoring evidence as well',()=>{
+  assert.equal(assessJurisdictionCoverage({...evidenced,citationVerificationPassed:true},now).status,'partial');
+  assert.equal(assessJurisdictionCoverage({...evidenced,citationVerificationPassed:true,updateMonitoringSlaMet:true},now).status,'supported');
+});
+test('failed or stale evaluations keep the jurisdiction at pilot',()=>{
+  const failed=assessJurisdictionCoverage({...profile,latestEvaluation:{...passingEvaluation,passed:false}},now);
+  assert.equal(failed.status,'pilot');assert.ok(failed.reasons.some(reason=>reason.includes('did not pass')));
+  const stale=assessJurisdictionCoverage({...profile,latestEvaluation:{...passingEvaluation,evaluatedAt:'2026-01-01T00:00:00.000Z'}},now);
+  assert.equal(stale.status,'pilot');assert.ok(stale.reasons.some(reason=>reason.includes('older than the review interval')));
+});
+test('evidence for higher levels never compensates for missing live sources',()=>{
+  const result=assessJurisdictionCoverage({...evidenced,citationVerificationPassed:true,updateMonitoringSlaMet:true,sources:[{...source,ingestionEnabled:false}]},now);
+  assert.equal(result.status,'planned');
+});
+test('jurisdictions off the roadmap without live sources are catalogued',()=>{
+  const result=assessJurisdictionCoverage({...profile,onRoadmap:false,sources:[]},now);
+  assert.equal(result.status,'catalogued');
 });
 test('does not claim support for missing authority classes or languages',()=>{
   const result=assessJurisdictionCoverage({...profile,requestedAuthorityTypes:['act','judgment'],requestedLanguages:['no','fr']},now);
@@ -23,8 +50,8 @@ test('downgrades stale source coverage and reports it',()=>{
   assert.equal(result.status,'pilot');assert.deepEqual(result.staleSources,['lovdata']);
 });
 test('retains known gaps for disclosure even when scoped coverage exists',()=>{
-  const result=assessJurisdictionCoverage({...profile,sources:[{...source,knownGaps:['Supreme court decisions before 1950']} ]},now);
-  assert.equal(result.status,'supported');assert.deepEqual(result.knownGaps,['Supreme court decisions before 1950']);
+  const result=assessJurisdictionCoverage({...evidenced,sources:[{...source,knownGaps:['Supreme court decisions before 1950']} ]},now);
+  assert.equal(result.status,'partial');assert.deepEqual(result.knownGaps,['Supreme court decisions before 1950']);
 });
 test('rejects invalid jurisdiction codes and review intervals',()=>{
   assert.throws(()=>assessJurisdictionCoverage({...profile,jurisdictionCode:'bad-code'},now),/JURISDICTION_CODE_INVALID/);

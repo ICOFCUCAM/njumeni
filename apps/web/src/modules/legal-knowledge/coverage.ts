@@ -10,15 +10,33 @@ export interface JurisdictionSourceCoverage {
   coverageUntil?:string|null;
   knownGaps:readonly string[];
 }
+/** Master Plan v2.0 §6.7 coverage levels, lowest to highest. */
+export type JurisdictionCoverageLevel='catalogued'|'planned'|'pilot'|'partial'|'supported';
+export const JURISDICTION_COVERAGE_LEVELS:readonly JurisdictionCoverageLevel[]=Object.freeze([
+  'catalogued','planned','pilot','partial','supported',
+]);
+export interface JurisdictionCoverageEvaluation {
+  datasetKey:string;
+  datasetVersion:number;
+  passed:boolean;
+  evaluatedAt:string;
+}
 export interface JurisdictionCoverageProfile {
   jurisdictionCode:string;
   requestedAuthorityTypes:readonly string[];
   requestedLanguages:readonly string[];
   sources:readonly JurisdictionSourceCoverage[];
   reviewIntervalDays:number;
+  /** False only for jurisdictions that are merely catalogued and not scheduled for work. */
+  onRoadmap?:boolean;
+  /** Latest recorded retrieval evaluation (required for 'partial'). */
+  latestEvaluation?:JurisdictionCoverageEvaluation|null;
+  /** Evidence required for 'supported' (Phases 4 and 6). */
+  citationVerificationPassed?:boolean;
+  updateMonitoringSlaMet?:boolean;
 }
 export interface JurisdictionCoverageAssessment {
-  status:'planned'|'pilot'|'supported';
+  status:JurisdictionCoverageLevel;
   supportedAuthorityTypes:string[];
   unsupportedAuthorityTypes:string[];
   supportedLanguages:string[];
@@ -92,8 +110,25 @@ export function assessJurisdictionCoverage(
   if(knownGaps.length)reasons.push('Known source or coverage gaps must be disclosed to users.');
   const complete=profile.requestedAuthorityTypes.length>0&&profile.requestedLanguages.length>0&&unsupportedAuthorityTypes.length===0&&
     unsupportedLanguages.length===0&&staleSources.length===0;
+  const evaluation=profile.latestEvaluation??null;
+  const evaluationPassing=evaluation!==null&&evaluation.passed&&
+    isRecent(evaluation.evaluatedAt,now,profile.reviewIntervalDays);
+  if(eligibleSources.length>0&&complete){
+    if(!evaluation)reasons.push('No retrieval evaluation has been recorded for this jurisdiction.');
+    else if(!evaluation.passed)reasons.push('The latest retrieval evaluation did not pass its gates.');
+    else if(!evaluationPassing)reasons.push('The latest retrieval evaluation is older than the review interval.');
+  }
+  const verified=profile.citationVerificationPassed===true&&profile.updateMonitoringSlaMet===true;
+  if(eligibleSources.length>0&&complete&&evaluationPassing&&!verified) {
+    reasons.push('Citation verification and update-monitoring evidence are required for full support.');
+  }
+  // Each level requires all evidence of the levels below it; coverage never exceeds evidence.
+  const status:JurisdictionCoverageLevel=
+    eligibleSources.length===0?(profile.onRoadmap===false?'catalogued':'planned'):
+    !complete||!evaluationPassing?'pilot':
+    verified?'supported':'partial';
   return {
-    status:complete?'supported':eligibleSources.length>0?'pilot':'planned',
+    status,
     supportedAuthorityTypes,unsupportedAuthorityTypes,supportedLanguages,unsupportedLanguages,
     staleSources,disabledSources,knownGaps,reasons,
   };

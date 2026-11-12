@@ -29,6 +29,11 @@
       "path": "supabase/migrations/20261110280000_legal_source_activation_audit.sql",
       "blob_sha": "704549fb8e339cf7eb83eb1b2660c23afe6e014d",
       "reason": "Correct the unshipped Phase 2 source activation migration after clean local replay exposed a truncated adapter-key validation expression and duplicated trailing PL/pgSQL block. Rebuild the function with explicit evidence-row state and complete validation. No hosted migration has been applied."
+    },
+    {
+      "path": "supabase/migrations/20261110290000_legal_source_coverage_review.sql",
+      "blob_sha": "6bb978a7fee4168605700a735003f621bc9299bf",
+      "reason": "Correct the unshipped Phase 2 source coverage review migration after clean local replay exposed a truncated regular-expression terminator and a duplicated trailing PL/pgSQL block (repaired in 2b60d5f). No hosted migration has been applied; hosted deployment is deferred until all phases are complete (ADR-0003 section 2.5)."
     }
   ]
 }

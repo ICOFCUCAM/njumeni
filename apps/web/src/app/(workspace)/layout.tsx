@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import { WorkspaceShell } from '@/components/workspace-shell';
+import { headers } from 'next/headers';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
+import { navigationLabels, resolveLocale } from '@/modules/global/i18n';
 
 // Never statically render or cache authenticated workspace responses.
 export const dynamic = 'force-dynamic';
@@ -31,8 +33,12 @@ export default async function WorkspaceLayout({ children }: { children: ReactNod
         .maybeSingle()
     : { data: null };
 
+  const { data: profile } = await supabase.from('user_profiles').select('locale').maybeSingle();
+  const locale = resolveLocale(profile?.locale ?? null, (await headers()).get('accept-language'));
+
   return (
     <WorkspaceShell
+      labels={navigationLabels(locale)}
       userEmail={user.email ?? 'Authenticated account'}
       organizationName={personalOrganisation?.name ?? 'Organisation pending'}
       workspaceName={personalWorkspace?.name ?? 'Workspace pending'}

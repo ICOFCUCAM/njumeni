@@ -47,7 +47,7 @@ async function requirePermission(
   const { data, error } = await supabase.rpc('has_permission', {
     p_permission_key: permission,
     p_organization_id: organizationId,
-    p_workspace_id: workspaceId,
+    ...(workspaceId ? { p_workspace_id: workspaceId } : {}),
   });
   if (error || data !== true) redirect('/settings/workspaces?error=not-authorized');
 }

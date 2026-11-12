@@ -124,9 +124,18 @@ async function processClaimedLease(
       failures:checkpointNumber(lease.checkpoint.failures),
     };
     const base=deps.persistence;
+    const leaseRef={jobId:lease.jobId,leaseToken:lease.leaseToken};
     const persistence:LegalIngestionPersistence={
       beginRun:input=>base.beginRun(input),
       persistRunResult:input=>base.persistRunResult(input),
+      ...(base.dueItemRetries?{dueItemRetries:(sourceKey:string)=>base.dueItemRetries!(sourceKey)}:{}),
+      ...(base.lastDatasetSync?{lastDatasetSync:(sourceKey:string,dataset:string)=>base.lastDatasetSync!(sourceKey,dataset)}:{}),
+      ...(base.recordItemOutcome?{recordItemOutcome:(input:Parameters<NonNullable<LegalIngestionPersistence['recordItemOutcome']>>[0])=>
+        base.recordItemOutcome!({...input,lease:leaseRef})}:{}),
+      ...(base.completeDatasetSync?{completeDatasetSync:(input:Parameters<NonNullable<LegalIngestionPersistence['completeDatasetSync']>>[0])=>{
+        if(leaseLost)throw new Error('LEGAL_INGESTION_LEASE_LOST');
+        return base.completeDatasetSync!({...input,lease:leaseRef});
+      }}:{}),
       appendAuthority:async input=>{
         if(leaseLost)throw new Error('LEGAL_INGESTION_LEASE_LOST');
         const outcome=await base.appendAuthority({...input,lease:{jobId:lease.jobId,leaseToken:lease.leaseToken}});

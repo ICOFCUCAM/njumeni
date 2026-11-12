@@ -48,3 +48,25 @@ test('Supabase persistence appends relationships under the same worker lease', a
   assert.equal(calls[1].args.p_lease_token, 'lease-1');
   assert.equal(calls[1].args.p_to_external_id, 'act-2');
 });
+
+function persistenceWithRelationshipError(message) {
+  const client = { rpc: async (name) => {
+    if (name === 'legal_ingestion_append_authority') return {data:'created',error:null};
+    return {data:null,error:{message}};
+  } };
+  return createSupabaseLegalIngestionPersistence(client).appendAuthority({
+    sourceKey:'source-key', jurisdictionCode:'NO', authority:makeAuthority(),
+    sourceUri:'https://laws.example.test/act-1',
+    retrievedAt:'2026-11-10T12:00:00.000Z', normalisationProfile:'normalise-v1',
+    passages:[{ordinal:0,startOffset:0,endOffset:19,content:'Example legal text',contentHash:'a'.repeat(64)}],
+    lease:{jobId:'job-1',leaseToken:'lease-1'},
+  });
+}
+
+test('an edge to an authority not yet ingested is deferred, not fatal', async () => {
+  assert.equal(await persistenceWithRelationshipError('LEGAL_INGESTION_RELATIONSHIP_AUTHORITY_NOT_FOUND'), 'created');
+});
+
+test('other relationship failures still fail the authority', async () => {
+  await assert.rejects(persistenceWithRelationshipError('LEGAL_INGESTION_LEASE_LOST'), /LEGAL_INGESTION_APPEND_RELATIONSHIP_FAILED/);
+});

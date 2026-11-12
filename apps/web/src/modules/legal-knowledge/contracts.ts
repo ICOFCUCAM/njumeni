@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { LegalAuthorityRelationshipType } from './relationships.ts';
+import { LEGAL_AUTHORITY_RELATIONSHIP_TYPES, type LegalAuthorityRelationshipType } from './relationships.ts';
 
 export type LegalSourceType = 'legislation'|'case_law'|'regulation'|'treaty'|'official_guidance'|'court_portal'|'gazette'|'other';
 export interface LegalSourceManifest {
@@ -17,22 +17,42 @@ export interface LegalAuthorityInput {
   authorityType:'constitution'|'act'|'statutory_instrument'|'regulation'|'judgment'|'decision'|'treaty'|'directive'|'regulation_eu'|'official_guidance'|'order'|'other';
   issuingBody?:string|null; languageCode?:string|null; canonicalUri?:string|null;
   publicationDate?:string|null; legalStatus?:'in_force'|'amended'|'repealed'|'expired'|'overruled'|'unknown';
+  /** Valid-time start of this version's text (U-07), when the source states it. */
+  validFrom?:string|null;
   metadata?:Record<string,unknown>;
   relationships?:readonly {targetExternalId:string;relationshipType:LegalAuthorityRelationshipType;effectiveFrom?:string|null;sourceNote?:string|null;provenanceUri?:string|null}[];
 }
 export interface NormalisedAuthority {
   externalId:string; citation:string|null; title:string; authorityType:LegalAuthorityInput['authorityType'];
   issuingBody:string|null; languageCode:string|null; canonicalUri:string|null; publicationDate:string|null;
-  legalStatus:NonNullable<LegalAuthorityInput['legalStatus']>; metadata:Record<string,unknown>; sourceContentHash:string;
+  validFrom:string|null; legalStatus:NonNullable<LegalAuthorityInput['legalStatus']>; metadata:Record<string,unknown>; sourceContentHash:string;
   normalisedText:string; normalisedContentHash:string;
   relationships:readonly {targetExternalId:string;relationshipType:LegalAuthorityRelationshipType;effectiveFrom:string|null;sourceNote:string|null;provenanceUri:string|null}[];
 }
 export interface LegalSourceAdapter {
   readonly manifest:LegalSourceManifest;
   listChangedAuthorities(cursor:string|null):Promise<{externalIds:string[];nextCursor:string|null;complete:boolean}>;
-  fetchAuthority(externalId:string):Promise<{authority:LegalAuthorityInput;sourceText:string;retrievedAt:string;sourceUri:string}>;
+  fetchAuthority(externalId:string):Promise<{
+    authority:LegalAuthorityInput;sourceText:string;retrievedAt:string;sourceUri:string;
+    /** Structural units (for example statute sections) in text order; each text must occur in sourceText. */
+    sections?:readonly LegalSourceSection[];
+  }>;
+  /**
+   * For sources published as whole datasets: the identity of the dataset this adapter reads and
+   * every authority it lists. Enables incremental synchronisation (an unchanged archive is not
+   * re-processed) and absence detection (authorities a complete dataset no longer lists).
+   */
+  datasetSnapshot?():Promise<LegalDatasetSnapshot>;
 }
-export interface PassageDraft { ordinal:number; startOffset:number; endOffset:number; content:string; contentHash:string; }
+export interface LegalDatasetSnapshot {
+  dataset:string; sha256:string; sizeBytes:number; lastModified:string|null; retrievedAt:string;
+  sourceUri:string; externalIds:readonly string[];
+}
+export interface LegalSourceSection { path:readonly string[]; text:string; }
+export interface PassageDraft {
+  ordinal:number; startOffset:number; endOffset:number; content:string; contentHash:string;
+  sectionPath?:readonly string[];
+}
 
 const MAX_METADATA_BYTES=16_384;
 const EXTERNAL_ID_PATTERN=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,511}$/;
@@ -93,16 +113,17 @@ export function normaliseAuthority(input:LegalAuthorityInput,sourceText:string,a
   if(publicationDate&&(!/^\d{4}-\d{2}-\d{2}$/.test(publicationDate)||Number.isNaN(Date.parse(publicationDate+'T00:00:00.000Z'))||new Date(publicationDate+'T00:00:00.000Z').toISOString().slice(0,10)!==publicationDate)) {
     throw new Error('LEGAL_AUTHORITY_PUBLICATION_DATE_INVALID');
   }
+  const validFrom=input.validFrom??null;
+  if(validFrom&&(!/^\d{4}-\d{2}-\d{2}$/.test(validFrom)||Number.isNaN(Date.parse(validFrom+'T00:00:00.000Z'))||new Date(validFrom+'T00:00:00.000Z').toISOString().slice(0,10)!==validFrom)) {
+    throw new Error('LEGAL_AUTHORITY_VALID_FROM_INVALID');
+  }
   const metadata=input.metadata??{};
   if(Array.isArray(metadata)||typeof metadata!=='object'||metadata===null)throw new Error('LEGAL_AUTHORITY_METADATA_INVALID');
   const serialisedMetadata=JSON.stringify(metadata);
   if(serialisedMetadata===undefined||Buffer.byteLength(serialisedMetadata,'utf8')>MAX_METADATA_BYTES)throw new Error('LEGAL_AUTHORITY_METADATA_TOO_LARGE');
   const normalisedText=normaliseLegalText(sourceText);
   if(!normalisedText)throw new Error('LEGAL_AUTHORITY_SOURCE_TEXT_EMPTY');
-  const relationshipTypes:readonly LegalAuthorityRelationshipType[]=[
-    'amends','amended_by','repeals','repealed_by','implements','implemented_by',
-    'interprets','applies','distinguishes','overrules','overruled_by','cites','related',
-  ];
+  const relationshipTypes=LEGAL_AUTHORITY_RELATIONSHIP_TYPES;
   const relationships=input.relationships??[];
   if(!Array.isArray(relationships)||relationships.length>100)throw new Error('LEGAL_AUTHORITY_RELATIONSHIPS_INVALID');
   const normalisedRelationships=relationships.map(relationship=>{
@@ -126,7 +147,7 @@ export function normaliseAuthority(input:LegalAuthorityInput,sourceText:string,a
   return {
     externalId:input.externalId,citation,title,authorityType:input.authorityType,
     issuingBody:input.issuingBody?.trim()||null,languageCode,
-    canonicalUri:validateCanonicalUri(input.canonicalUri,allowedHosts),publicationDate,
+    canonicalUri:validateCanonicalUri(input.canonicalUri,allowedHosts),publicationDate,validFrom,
     legalStatus:input.legalStatus??'unknown',metadata,sourceContentHash:sha256(sourceText),
     normalisedText,normalisedContentHash:sha256(normalisedText),relationships:normalisedRelationships,
   };
@@ -154,5 +175,41 @@ export function createPassages(text:string,maxCharacters=6000,overlap=500):Passa
     if(end>=normalised.length)break;
     start=Math.max(start+1,end-overlap);
   }
+  return passages;
+}
+
+const MAX_SECTION_PATH_DEPTH=12;
+const MAX_SECTION_LABEL=300;
+/**
+ * Section-level passages: one passage per structural unit, split only when a unit is longer than
+ * maxCharacters. Offsets point into the normalised text, so every passage stays verifiable.
+ */
+export function createSectionPassages(
+  normalisedText:string,sections:readonly LegalSourceSection[],maxCharacters=2000,overlap=200,
+):PassageDraft[] {
+  if(!Array.isArray(sections)||sections.length===0||sections.length>20000)throw new Error('LEGAL_SECTIONS_INVALID');
+  const passages:PassageDraft[]=[];
+  let cursor=0;
+  for(const section of sections){
+    if(!section||!Array.isArray(section.path)||section.path.length>MAX_SECTION_PATH_DEPTH||
+      section.path.some((part:string)=>typeof part!=='string'||!part.trim()||part.length>MAX_SECTION_LABEL)||
+      typeof section.text!=='string')throw new Error('LEGAL_SECTIONS_INVALID');
+    const text=normaliseLegalText(section.text);
+    if(!text)continue;
+    const start=normalisedText.indexOf(text,cursor);
+    if(start<0)throw new Error('LEGAL_SECTION_NOT_IN_SOURCE_TEXT');
+    cursor=start+text.length;
+    const sectionPath=section.path.map((part:string)=>part.trim().normalize('NFKC'));
+    const pieces=text.length<=maxCharacters?
+      [{startOffset:0,endOffset:text.length,content:text}]:
+      createPassages(text,maxCharacters,overlap);
+    for(const piece of pieces){
+      passages.push({
+        ordinal:passages.length,startOffset:start+piece.startOffset,endOffset:start+piece.endOffset,
+        content:piece.content,contentHash:sha256(piece.content),sectionPath,
+      });
+    }
+  }
+  if(!passages.length)throw new Error('LEGAL_SECTIONS_INVALID');
   return passages;
 }

@@ -7,6 +7,16 @@
 - **Scope:** GitHub repository and CI, Vercel deployment context, Supabase project inventory, web runtime, domains, configuration, secrets boundaries, data services, queues, AI providers and operational infrastructure
 - **Method:** Read-only inspection. No project, deployment, domain, database, secret, bucket, queue or provider configuration was created, changed or deleted.
 
+> **Current state, 11 November 2026.** This audit is a dated Phase 0 record and is kept unchanged below. Since it was written:
+> - A dedicated Supabase project `Njumeni` (`vvjpsejeeffykaozfbik`, `eu-north-1`, Free plan) exists (§8; Phase 1 Task 1.2).
+> - The repository contains 23 migrations, verified only on local and CI stacks. **None has been applied to the hosted project. Deployment is deferred until all phases are complete** (ADR-0003 §2.5).
+> - Supabase Auth is integrated in the web app.
+> - The repository is public by decision (ADR-0003, build in public).
+> - Infrastructure follows the zero-cost Stage 0 plan (Master Plan v2.0 §14.1).
+> - Automatic CI runs on every push (GitHub Actions is free on the public repository).
+>
+> Object storage, queues (beyond the Postgres queue), workers, domains, monitoring and backups remain unprovisioned.
+
 ## 1. Executive finding
 
 **Njumeni has a working web application foundation shell, but it is not yet deployed as a Njumeni application and has no Njumeni production data infrastructure.**

@@ -1,180 +1,140 @@
-# Njumeni Phase 2 — Legal knowledge infrastructure
+# Phase 2 — Legal knowledge infrastructure
 
-**Status:** IN PROGRESS — parallel development authorised by the product owner on 10 November 2026.  
-**Phase 1:** remains OPEN; Phase 2 work does not imply Phase 1 acceptance.  
-**Repository:** ICOFCUCAM/njumeni  
-**Execution branch:** claude/wonderful-franklin-lt09d7
+| Field | Value |
+|---|---|
+| Phase state | 🟡 **IN PROGRESS: parallel with Phase 1** (owner authorisation, 2026-11-10) |
+| Governing plan | [Njumeni Master Plan v2.0](NJUMENI_MASTER_PLAN.md) §6 (legal knowledge), §5.5 (RAG), §5.7 (embedding profile), §18.2 (evaluation) |
+| Strategic weight | **First strategic priority:** legal knowledge and authority infrastructure (master plan §22) |
+| Plan revision | 2026-11-11: rewritten for v2.0. Adds Tasks 2.8–2.10 (pilot source, embeddings, evaluation); closeout renumbered 2.11 |
 
-## Objective
+## 1. Objective
 
-Establish a governed, version-aware legal knowledge substrate that later evidence, research, reasoning and verification capabilities can safely consume. Legal authorities are not generic uploaded documents: their identity, issuing body, jurisdiction, source rights, effective period, historical text and provenance must remain explicit.
+Establish a governed, jurisdiction-aware, **bitemporal** legal-authority registry and retrieval substrate. Prove it **end-to-end with one rights-approved pilot source** (Norwegian legislation) and a measured retrieval evaluation.
 
-## Phase 2 task plan
+Legal authorities are not generic uploaded documents. Their identity, issuing body, jurisdiction, source rights, effective period, historical text and provenance remain explicit.
 
-| Task | Deliverable | Acceptance condition |
+**▲ v2.0 change of ambition.** The previous plan could close with an empty corpus. v2.0 requires real, evaluated content from one source, because an infrastructure that has never ingested law has not demonstrated the first strategic priority.
+
+## 2. Scope
+
+| In scope | Out of scope (later phase) |
+|---|---|
+| Jurisdiction and source registry, rights governance | Research UI and Module A answers (Phase 4) |
+| Authority identities, append-only versions, passages | Grounded generation and LLM reasoning (Phases 4–5) |
+| Normalisation, hashing, provenance, adapters | Citation verification of answers (Phase 4, U-10) |
+| Durable ingestion queue, worker, checkpoints | Scheduled monitoring at scale (Phase 12) |
+| Full-text and vector indexes; hybrid retrieval | Reranking (Phase 4) |
+| Authority relationship graph | Treatment analysis such as overruling detection (Phase 6) |
+| Coverage governance | Jurisdictions beyond the pilot (Phase 12) |
+| **One pilot source; embedding profile; evaluation set** | Customer documents (never in this phase) |
+
+## 3. Non-negotiable boundaries
+
+1. A jurisdiction marked `planned` or `pilot` is never advertised as supported (coverage levels: master plan §6.7).
+2. No ingestion until the source's licence, terms, attribution, access method and storage/redistribution rights are reviewed and approved. Approval, activation and ingestion enablement are **three separate audited operations**.
+3. Seeded catalogue entries are discovery references, not confirmation that an API exists or that bulk ingestion is permitted.
+4. No embeddings until the embedding profile (model, dimension, languages, licence) is selected and versioned. Embeddings from different profiles are never mixed.
+5. Authority versions are append-only. A correction creates a new version; historical text is never overwritten.
+6. Legal-source content is separate from customer evidence. Phase 2 accepts no confidential documents.
+7. Service-role credentials exist only inside the trusted server or worker. Adapters re-check rights before every fetch.
+8. **▲ U-27:** all Phase 2 migrations are verified on local and CI stacks only. Nothing is applied to hosted Supabase until Phase 13. Pilot ingestion runs against the **local** stack.
+9. **▲ Build in public:** public legal content MAY appear in fixtures where its licence permits. Worker logs from public CI MUST NOT contain secrets.
+
+## 4. Task register
+
+| No. | Task | Deliverable | Acceptance criteria | Status |
+|---|---|---|---|---|
+| 2.1 | Jurisdiction and legal-source registry | Jurisdictions, sources, rights evidence, activation/coverage audits, RLS, revoked grants, seeds | pgTAP green; direct grants denied to browser roles | 🔵 IMPLEMENTED: 69/69 locally |
+| 2.2 | Authority identity and version model | Stable identities, append-only versions, effective periods, hashes; ▲ as-of query over valid time and system time (U-07) | Immutability and as-of pgTAP tests pass | 🔵 IMPLEMENTED: as-of query verified locally |
+| 2.3 | Normalisation and provenance contract | Adapter manifest, rights matrix (ingest, display, quote, redistribute), HTTPS allow-list, Unicode normalisation, source and normalised SHA-256, passage anchors | Unit tests pass | 🔵 IMPLEMENTED |
+| 2.4 | Full-text and vector retrieval substrate | GIN and HNSW indexes, lexical/semantic RPCs, hybrid ranking, citation bundles, rights-aware trusted search | Unit tests pass; RPCs covered by pgTAP | 🔵 IMPLEMENTED |
+| 2.5 | Source ingestion lifecycle | Deterministic batches, idempotency, durable leased queue, checkpoints, retries, dead letters, worker runtime, exact-version adapter registry | Worker starts; queue pgTAP passes; runtime tests pass | 🔵 IMPLEMENTED (B-5 fixed: the worker starts and refuses to run with no approved adapters, as designed) |
+| 2.6 | Authority relationship graph | Typed directional edges with provenance; bounded traversal; lease-bound relationship ingestion; ▲ database graph query RPC | Graph RPC tested with cycles and as-of filters | 🔵 IMPLEMENTED: database graph query verified locally (parity with TypeScript proven) |
+| 2.7 | Coverage governance | Source and jurisdiction coverage reviews, snapshots, audits; ▲ aligned to the coverage levels in master plan §6.7 | Coverage never exceeds evidence; pgTAP passes | 🔵 IMPLEMENTED: five levels enforced in the database; verified locally |
+| 2.8 | **Pilot source and first adapter** | Rights review of Norwegian legislation (candidate: Lovdata public data, master plan §6.3); adapter with an exact version pin; audited activation; bounded ingestion into the local stack | Rights evidence recorded; an authority with versions, passages and relationships ingested idempotently; re-run produces no duplicates | 🔵 IMPLEMENTED: verified locally ([record](PHASE_2_TASK_2_8_LOVDATA_PILOT.md)). Licence verified on api.lovdata.no (NLOD 2.0). Adapter `lovdata-public-data@1.0.0`. **753 acts, 753 versions, 31 007 section passages, 4 487 relationships** on the local stack. Re-runs: 0 created, 753 unchanged, no duplicates. **Owner:** approve rights and activate (record §6); NLOD text still to confirm |
+| 2.9 | **Embedding profile and multilingual retrieval** | Profile record; forward migration of the vector dimension; embedding generation in the worker; language-specific FTS | Semantic and lexical retrieval over pilot passages; the profile is recorded on every embedding | 🔵 IMPLEMENTED: verified locally with a stand-in model (D-3 decided: `multilingual-e5-small-v1`) |
+| 2.10 | **Retrieval evaluation set (Norway)** | Golden questions with expected authorities and as-of dates; evaluation harness | Recall@10 and Precision@5 reported; harness runnable in CI | 🟡 IN PROGRESS: **`lovdata-no-v1` (41 cases) built and run** with real `multilingual-e5-small` embeddings (31 007 passages). Hybrid: Recall@10 1.000 ✅, currency 1.000 ✅, **Precision@5 0.312 ❌** (gate 0.6), MRR 0.732. Lexical: 0.897 / 0.252 / 1.000. Thresholds unchanged; precision needs reranking and abstention (Phase 4) or an owner recalibration ([record](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §7) |
+| 2.11 | Verification and closeout | Clean replay, all pgTAP, regenerated types, consolidated `LEGAL_KNOWLEDGE_ARCHITECTURE.md` and `DATABASE_ARCHITECTURE.md`, acceptance report | All 2.1–2.10 green; closeout commit; green CI; tag `phase-2-closed` | 🔒 LOCKED |
+
+## 5. Implementation inventory
+
+### 5.1 Database (migrations `20261110200000` → `20261110300000`)
+
+| Migration | Content |
+|---|---|
+| `…200000_legal_knowledge_foundation` | Jurisdictions, sources, authorities, versions, passages, relationships, ingestion runs; FTS and pgvector; lexical/semantic RPCs; seeds |
+| `…210000_legal_ingestion_durable_queue` | Leased jobs, heartbeats, checkpoints, retries, dead letters |
+| `…220000_legal_ingestion_persistence` | Lease-bound append-authority/version/passage transaction |
+| `…230000_legal_worker_trusted_source_config` | Rights evidence; worker-only source configuration RPC |
+| `…240000_legal_retrieval_and_coverage_rpc` | Service-role PostgREST wrappers; coverage snapshot |
+| `…250000_legal_source_review_and_enqueue` | Rights review audit; idempotent enqueue; adapter pins |
+| `…260000_legal_citation_source_metadata` | Citation metadata RPC with separate display and quote permissions |
+| `…270000_legal_relationship_ingestion` | Typed relationship persistence under the live lease |
+| `…280000_legal_source_activation_audit` | Separate audited operator activation |
+| `…290000_legal_source_coverage_review` | Source coverage review and audit |
+| `…300000_legal_jurisdiction_coverage_scope` | Jurisdiction coverage scope review and audit |
+| `20261112900000_legal_pilot_ingestion_support` | ▲ Task 2.8: append records `valid_from` and passage `section_path`; `legal_ingestion_enqueue_continuation` for page-by-page sources |
+
+Several of these files were corrected before deployment, to repair `$`-delimiter corruption (`00b7eb8`, `e2d52b4`, `01d459f`, `2b60d5f`). All 23 repository migrations replay cleanly (CI run `42900717384`). The correction to `…290000` still needs its hash-pinned entry (B-1).
+
+### 5.2 Application module (`apps/web/src/modules/legal-knowledge/`)
+
+| Area | Files |
+|---|---|
+| Contracts and normalisation | `contracts.ts`, `ingestion.ts`, `relationships.ts`, `source-governance.ts` |
+| Queue and worker | `durable-queue.ts`, `worker.ts`, `worker-runtime.ts`, `worker-process.ts`, `worker-bootstrap.ts`, `worker-main.ts`, `worker-adapters.ts` (Lovdata registered; the database gates decide), `adapter-registry.ts`, `worker-source-config.ts` |
+| ▲ Lovdata source (Task 2.8) | `lovdata-document.ts` (parser), `lovdata-archive.ts` (tar.bz2, provenance checks), `lovdata-adapter.ts` (`lovdata-public-data@1.0.0`) |
+| Persistence | `supabase-persistence.ts` |
+| Retrieval | `retrieval.ts`, `supabase-retrieval-provider.ts`, `citation-bundle.ts`, `citation-metadata.ts`, `trusted-search.ts`, `service.ts` |
+| Graph | `authority-graph.ts` |
+| Governance and coverage | `coverage.ts`, `coverage-admin.ts`, `coverage-admin-core.ts`, `source-admin.ts`, `source-admin-core.ts` |
+
+Tests: 21 files, 114 tests passing locally (`npm run test:legal-knowledge`). They are not yet run in CI (B-6). `worker-bootstrap.ts` and `trusted-search.ts` lack direct tests.
+
+### 5.3 Seed state
+
+| Jurisdiction | Status | Catalogue source | Rights | Ingestion |
+|---|---|---|---|---|
+| Norway | `planned` | Lovdata (official) | review required: evidence prepared, **owner approval pending** ([Task 2.8](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §6) | disabled (ingested on the local stack only) |
+| European Union | `planned` | EUR-Lex | review required | disabled |
+| United Kingdom | `planned` | legislation.gov.uk | review required | disabled |
+| United States | `planned` | Congress.gov | review required | disabled |
+| International | `planned` | UN Treaty Collection | review required | disabled |
+| Cameroon | `planned` | Official sources (URI unknown) | review required | disabled |
+
+## 6. Known gaps
+
+| Gap | Resolution |
+|---|---|
+| ~~No adapters; nothing ingests law~~ | Resolved locally: the Lovdata adapter ingested 753 acts (Task 2.8). Hosted ingestion waits for owner approval and the U-27 deployment |
+| Superseded versions keep an open `valid_until` (append-only) | Matters once a second consolidated version exists; select the latest version per authority at the as-of date (Task 2.11) |
+| ~~No embedding model; the `vector(1536)` dimension is a placeholder~~ | Resolved: `multilingual-e5-small-v1`, `vector(384)` (Task 2.9) |
+| ~~FTS uses the `simple` configuration (not language-aware)~~ | Resolved: per-language stemming (Task 2.9) |
+| ~~No database-backed graph query~~ | Resolved: `legal_authority_graph` (Task 2.6) |
+| ~~No as-of query function~~ | Resolved: `legal_authority_version_as_of` (Task 2.2) |
+| Not reachable from the app (no routes, UI or types) | Types at 2.11; UI in Phase 4 |
+| ~~`server-only` missing; tests not in CI; stale types~~ | Resolved 2026-11-11 (B-5, B-6, B-7) |
+
+## 7. Changes from the previous plan
+
+| Previous | v2.0 | Why |
 |---|---|---|
-| 2.1 | Jurisdiction and legal-source registry | Jurisdictions, legal systems, source ownership, source types, coverage and explicit source-rights/ingestion gates are modelled and seeded. RLS and direct-grant restrictions are verified. |
-| 2.2 | Legal authority identity and version model | Stable authority identity is separate from immutable source versions; effective dates, publication/retrieval times, status, hashes and supersession relationships are represented. |
-| 2.3 | Normalisation and provenance contract | Source adapters produce canonical metadata, stable external IDs, source and normalised hashes, allow-listed source URIs, retrieval timestamp, normalisation profile and attribution/rights evidence. |
-| 2.4 | Full-text and vector retrieval substrate | Language-aware indexing strategy, generated full-text vectors, passage anchors, pgvector model-profile contract and retrieval indexes are implemented. |
-| 2.5 | Source ingestion lifecycle | Idempotent adapter runs, deterministic batches, checkpoints, retries, error classification, update detection and operational audit are implemented. |
-| 2.6 | Legal authority relationship graph | Amendment, repeal, implementation, interpretation, application, citation and overruling links are represented with provenance. |
-| 2.7 | Jurisdiction/source coverage governance | Coverage status, supported document classes, date ranges, language, update cadence and known omissions are explicit; unsupported jurisdictions are never represented as complete. |
-| 2.8 | Phase 2 verification and closeout | Clean migration replay, pgTAP, schema/type generation, application checks, source-rights review, provenance and retrieval contract tests, documentation and one verified phase commit. |
+| Phase closes on infrastructure alone | Requires a pilot source, an embedding profile and an evaluation (Tasks 2.8–2.10) | The first strategic priority must be demonstrated, not only scaffolded |
+| Status said "uncommitted"; "tests authored, not run" | Committed; tests run (114/114 unit; pgTAP partly failing) | Register accuracy |
+| Task 2.5 "persistence/queue pending"; Task 2.7 "not started" | Both implemented | Register accuracy |
+| Effective dates only | Bitemporal model with an as-of query (U-07) | Reproducible past answers |
+| Single 1536-dimension vector contract | Versioned embedding profile; dimension set by forward migration (U-22) | Multilingual Norwegian, English and French needs |
+| Hosted deployment "pending owner authorisation" | **Deferred until all phases are complete** (U-27) | Owner decision |
+| Batch-uncommitted cadence | Small commits, CI green (U-18) | Prevents a repeat of the delimiter corruption |
 
-## Initial implementation batch
+## 8. Task records
 
-Task 2.1 and foundational data contracts for Tasks 2.2–2.6 are introduced in the first additive migration:
+- [Task 2.1: Legal knowledge design](PHASE_2_TASK_2_1_LEGAL_KNOWLEDGE_DESIGN.md)
+- [Task 2.3: Source rights governance](PHASE_2_TASK_2_3_SOURCE_RIGHTS_GOVERNANCE.md)
+- [Task 2.4: Retrieval contract](PHASE_2_TASK_2_4_RETRIEVAL_CONTRACT.md) · [Citation bundle](PHASE_2_TASK_2_4_CITATION_BUNDLE.md)
+- [Task 2.5: Ingestion contract](PHASE_2_TASK_2_5_INGESTION_CONTRACT.md) · [Persistence](PHASE_2_TASK_2_5_PERSISTENCE.md) · [Durable queue](PHASE_2_TASK_2_5_DURABLE_QUEUE.md) · [Worker deployment](PHASE_2_TASK_2_5_WORKER_DEPLOYMENT.md)
+- [Task 2.6: Authority graph](PHASE_2_TASK_2_6_AUTHORITY_GRAPH.md)
+- [Task 2.8: Lovdata pilot, real embeddings, Norwegian evaluation](PHASE_2_TASK_2_8_LOVDATA_PILOT.md)
+- [Legal AI platform architecture](LEGAL_AI_PLATFORM_ARCHITECTURE.md)
 
-- jurisdiction registry seeded for Norway, EU, UK, US, international law and Cameroon;
-- official-source discovery catalogue seeded without claiming that all sources or rights are approved;
-- stable authority identity and separate historical versions;
-- source and normalised-content SHA-256 fields;
-- effective-period and current-version constraints;
-- version-bound passage records with stable page/section/offset anchors;
-- PostgreSQL full-text search and pgvector embedding field, with a partial HNSW cosine index for populated embeddings;
-- private server-only lexical and semantic retrieval RPCs, constrained by jurisdiction, language, legal status, effective date and approved/enabled source rights;
-- TypeScript source-manifest and rights validation, canonical metadata normalisation, source/normalised hashes and deterministic passage chunking;
-- deterministic ingestion batch planning, idempotency keys, retry classification and run-state transitions;
-- source-provenanced authority relationship validation and scoped jurisdiction-coverage assessment;
-- source-provenanced legal-authority relationships;
-- ingestion-run records with explicit status and checkpoints;
-- RLS enabled and direct anon/authenticated table privileges revoked;
-- trusted service-role access only for the initial ingestion substrate.
-
-## Important implementation boundaries
-
-1. A jurisdiction marked planned or pilot is not advertised as fully supported.
-2. No legal-source ingestion is enabled until the source's licence, terms, attribution, access method and permitted storage/redistribution rights have been reviewed and approved.
-3. Seeded source records are discovery references, not confirmation that an API is available or that bulk ingestion is legally permitted.
-4. The 1536-dimensional vector column is an initial storage contract only. The embedding model/profile must be selected and versioned before embeddings are generated. No provider is selected by this schema.
-5. Legal authority versions are append-only by application contract. A correction creates a new version; historical text is not overwritten.
-6. Legal-source content is distinct from customer evidence and matter documents. Phase 2 does not accept confidential customer documents.
-7. This migration is local/repository work only. Hosted Supabase remains unchanged pending separate owner authorisation.
-8. Service-role credentials must never be exposed to the browser. Ingestion adapters must run in a trusted server/worker boundary and re-check source rights and operational policy.
-
-## Dependencies and parallel-phase policy
-
-Phase 2 may proceed against planned Phase 1 contracts while Phase 1 combined verification and live Auth release checks remain outstanding. All customer-facing reads and writes must continue to fail closed until the Phase 1 access boundary is accepted. The Phase 2 schema is private and not directly exposed to PostgREST users.
-
-## Current status
-
-- Task 2.1: implementation written; combined database verification pending.
-- Task 2.2: stable identity, version history and append-only database guards written; verification pending.
-- Task 2.3: TypeScript adapter, rights, URL, metadata and text-normalisation contracts written; unit tests authored, not run.
-- Task 2.4: PostgreSQL full-text and pgvector substrate written, including GIN/HNSW indexes, private server-only lexical/semantic retrieval RPCs, executable retrieval-provider contract and reproducible citation bundles with rights-aware display/quotation checks and a composed legal-knowledge search service; language-aware ranking, calibrated thresholds, query evaluation and model-profile selection remain pending.
-- Task 2.5: deterministic ingestion planning, idempotency, state machine, bounded batch executor, source-rights rechecks, service-role Supabase persistence RPCs, append-only authority version/passages transaction, durable leased queue, checkpoint/retry/dead-letter RPCs, a separate worker runtime with lease renewal, lease-bound writes and restart recovery, exact-version adapter registry, trusted service-role worker bootstrap, source-rights evidence table and worker-only source-config RPC are written; a Supabase retrieval provider now calls service-role-only PostgREST wrappers for lexical and explicitly configured 1536-dimensional semantic retrieval; a server-only jurisdiction coverage snapshot service exposes conservative coverage assessments; a separate rights-review workflow records append-only human review evidence without activating sources; an idempotent enqueue RPC requires an approved, active, ingestion-enabled source and an exact adapter key/version. Adapter/runtime/database/bootstrap/retrieval/coverage/review/enqueue/citation-permission tests are authored but not run; a trusted search orchestrator now joins retrieval with citation metadata and suppresses source text when quotation is not permitted; adapters can declare typed authority relationships that are persisted idempotently under the same live worker lease and checked against source provenance hosts. Combined migration replay and runtime verification remain pending.
-- Task 2.6: authority relationship schema, validation contract, bounded breadth-first graph traversal, typed adapter relationship references and lease-bound, idempotent, provenance-host-checked relationship persistence are written; relationship source adapters and graph-query UI remain pending.
-- Task 2.7: scoped coverage assessment, server-only snapshot service, source-level coverage review RPC, jurisdiction-level authority-scope review RPC and append-only audit records are written; no jurisdiction is marked supported by declaration alone.
-- Task 2.8: not started; verification remains intentionally deferred until the planned implementation batch is complete.
-- No source adapter is registered; no hosted migration deployed; no legal-source ingestion enabled; no embeddings generated. All implementation and verification work remains on a prepared, uncommitted Git tree.
-
-
-## Worker bootstrap addition (10 November 2026)
-
-The worker deployment boundary now includes:
-
-- an immutable adapter-registry snapshot keyed by exact adapter key and version;
-- duplicate registration rejection and no latest-version fallback;
-- adapter factory manifest checks against the registered source identity;
-- a server-only bootstrap that creates a Supabase service-role client only inside the worker process;
-- required environment validation and a stable worker ID;
-- a worker-only source configuration RPC that joins source activation state with explicit licence-review evidence;
-- fail-closed source-key, source-ID, expiry and permission validation before ingestion;
-- deployment guidance covering secrets, process lifecycle, structured logs and activation gates.
-
-The new rights-evidence table does not approve any source. Existing source catalogue entries remain unapproved, planned and ingestion-disabled. The new migration is not deployed to hosted Supabase.
-
-
-## Retrieval and coverage administration addition (10 November 2026)
-
-- Added a Supabase-backed lexical retrieval provider that maps stable passage/version/source provenance into the retrieval contract.
-- Added an optional semantic embedding adapter. Semantic retrieval refuses to run unless an embedder returns a non-empty model key and exactly 1536 finite dimensions. No embedding vendor or model is selected.
-- Added service-role-only public RPC wrappers so the trusted server process can invoke the private retrieval functions through Supabase PostgREST without exposing private tables or retrieval functions to browser roles.
-- Added a server-only jurisdiction coverage snapshot service. The SQL snapshot distinguishes source freshness from licence-review timestamps and never treats a licence review as proof that the source itself was recently verified.
-- Added coverage and retrieval provider tests; they are authored but not run.
-
-
-## Source review and enqueue controls (10 November 2026)
-
-- Added a rights-review evidence audit table with append-only protection.
-- Added a trusted rights-review RPC. It records licence, terms, attribution, reviewer, review interval, permission matrix and restrictions. It can mark rights as approved or restricted, but deliberately does not change source status or enable ingestion.
-- Added exact adapter-version pinning to the source registry.
-- Added an idempotent enqueue RPC that rejects sources unless rights are approved, source status is active, ingestion is explicitly enabled, rights evidence is current, required permissions are present, and the queued adapter key/version exactly match the registry.
-- Added PgTAP assertions for the new rights-review and enqueue contracts. Tests remain unexecuted.
-- Corrected a malformed lexical-retrieval jurisdiction validation expression found during static source review. The correction is in the additive migration source; no database has been migrated.
-
-
-## Trusted rights-aware retrieval orchestration (10 November 2026)
-
-- Added a server-only search orchestrator that executes the retrieval provider, loads source attribution and permission metadata, assembles reproducible citation bundles, and returns only passages whose source permits display.
-- When display is permitted but quotation is not, the orchestrator suppresses the retrieved source text while retaining citation metadata and a warning.
-- Added a service-role-only citation metadata RPC. It keeps source licence/attribution data and separate display/quotation permissions behind the trusted server boundary.
-- Added focused tests for metadata loading and error sanitisation. Tests remain unexecuted.
-
-
-## Source-provenanced relationship ingestion (10 November 2026)
-
-- Authority adapters may now return typed relationship references by stable external authority ID.
-- Normalisation validates relationship type, target ID, effective date, source note and HTTPS provenance against the adapter's host allow-list.
-- Supabase persistence writes relationship edges after the authority upsert and before the worker checkpoint. If relationship persistence fails, the authority ID is not checkpointed and the retry can safely repeat the idempotent authority/edge writes.
-- The relationship RPC checks the live job lease, source rights and activation state, same-source authority identity, and provenance host against the registered source base URI.
-- Added tests for relationship normalisation and same-lease persistence. Tests remain unexecuted.
-
-
-## Explicit source activation governance (10 November 2026)
-
-- Added a separate trusted activation RPC and append-only operator audit.
-- A rights review can approve legal permissions, but only a separate operator activation action can change a source from planned to active or enable ingestion.
-- Enabling ingestion requires active status, approved rights, non-expired review evidence, all required ingestion permissions, and an exact adapter key/version.
-- Every activation change records operator, reason, prior state and resulting state. No activation RPC has been invoked; all seeded sources remain inactive and ingestion-disabled.
-
-
-## Worker hardening follow-up (10 November 2026)
-
-- The trusted worker now reloads source-rights evidence from the database for every upstream authority fetch rather than retaining a per-job snapshot.
-- Adapter factories must return a manifest identical to the registered manifest, including the complete allowed-host set, jurisdiction, base URI, source type and access method. Exact key/version matching alone is insufficient.
-- The source activation RPC validates nullable arguments explicitly and rejects malformed adapter pins before recording an activation change.
-
-
-## Executable worker process entrypoint (10 November 2026)
-
-- Added `npm run worker:legal-knowledge`, a Node 22 TypeScript-strip entrypoint using the React server condition to honour the `server-only` package boundary.
-- Added a deliberately empty adapter registration catalogue. The process refuses to start until at least one source-specific, rights-reviewed, exact-version adapter is intentionally registered. This avoids a misleading idle deployment and prevents discovery-catalogue entries from becoming live ingestion sources by accident.
-
-
-## Coverage and lease correctness refinements (10 November 2026)
-
-- Jurisdiction coverage now requires an explicitly ingestion-enabled source before it can count as currently usable for retrieval. Approved-but-disabled sources are reported separately and cannot inflate coverage claims.
-- Coverage snapshots expose the source ingestion-enabled flag. Source licence-review timestamps are not treated as source freshness timestamps.
-- Worker heartbeat renewal now begins immediately after a job claim, including during exact-version adapter resolution and trusted rights-evidence loading. This prevents slow startup lookups from consuming the entire lease before processing begins.
-
-
-## Coverage review administration (10 November 2026)
-
-- Added an auditable source coverage review RPC and append-only review history.
-- Reviewers can declare covered authority classes, languages, effective date intervals, source verification timestamp and known gaps.
-- The review updates only the source's coverage declaration. It does not approve legal-source rights, activate the source or enable ingestion.
-- The coverage administration service validates review input and returns the resulting declared coverage. Tests and PgTAP assertions are authored but not run.
-
-
-## Rights-permission separation refinement (10 November 2026)
-
-- Display permission and quotation permission are now evaluated independently in the source-governance contract. A source may permit display of a citation or metadata while prohibiting verbatim quotation.
-- Rights-review changes that would restrict a currently ingestion-enabled source require the source to be deactivated first. This avoids a rights update silently violating the source registry's activation invariant.
-- Coverage-review RPCs reject null or malformed authority-class, language and known-gap entries rather than silently accepting incomplete declarations.
-
-
-## Typed source-governance administration service (10 November 2026)
-
-- Added server-only exports for the trusted rights-review, source-activation and idempotent-ingestion-enqueue RPCs.
-- The typed administration layer validates source UUIDs, licence evidence, permission matrices, review timestamps, adapter pins, operator reasons, retry limits and returned job identifiers before exposing results to server actions.
-- Rights approval, activation and job enqueue remain three distinct operations. The service does not invoke any of them automatically.
-- Focused administration tests are authored but not run.
-
-
-## Jurisdiction coverage scope administration (10 November 2026)
-
-- Added a separate jurisdiction-level coverage scope review. Reviewers can declare the authority classes that a jurisdiction is expected to cover and the source verification interval.
-- The RPC records an append-only audit and updates only coverage metadata. It does not upgrade jurisdiction status or represent it as supported.
-- The coverage snapshot now has an explicit administration path for both jurisdiction expectations and source-level coverage declarations.
+Where a task record conflicts with this plan or the register on status, the register governs.

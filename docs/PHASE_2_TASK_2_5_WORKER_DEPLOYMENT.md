@@ -53,3 +53,32 @@ Structured logs include job identifiers and status events, not source document c
 ## Deployment remains gated
 
 This document is configuration guidance only. It does not authorise deploying Supabase migrations, registering live adapters, approving source licences, enabling source ingestion, or processing customer legal documents. Those actions require separate acceptance and explicit approval.
+
+## Embedding runtime (Task 2.9, added 11 November 2026)
+
+The worker embeds passages locally, at zero cost, with the owner-selected profile `multilingual-e5-small-v1` (`intfloat/multilingual-e5-small`, MIT licence, 384 dimensions, ONNX build `Xenova/multilingual-e5-small`).
+
+- **Runtime.** `@huggingface/transformers` is an *optional* worker-only runtime. It is loaded lazily by `local-embedder.ts` and is never bundled into the web app. Install it only on the worker host, at a pinned version:
+
+  ```bash
+  cd apps/web && npm install --no-save @huggingface/transformers@4.3.2
+  ```
+
+  Without it, the embedder fails closed with `LEGAL_EMBEDDING_RUNTIME_NOT_INSTALLED`.
+- **Model download.** The first run downloads the model (about 120 MB, quantised) from Hugging Face. The host needs outbound access to `huggingface.co` **and its file CDN** (`us.aws.cdn.hf.co` or `us.gcp.cdn.hf.co`; Hugging Face redirects model files there). After that, the model is cached locally. Node's `fetch` ignores `HTTPS_PROXY` unless `NODE_USE_ENV_PROXY=1` is set.
+- **Prefixes.** e5 requires `query: ` for searches and `passage: ` for stored text. The embedder adds them; callers must not.
+- **Backfill.** `runEmbeddingBackfill` reads passages without an embedding through `legal_embedding_pending_passages`, then writes them in batches of up to 64 through `legal_embedding_store`. Both functions are service-role only, and only accept passages from rights-approved, active, ingestion-enabled sources. Legal text stays immutable; only the embedding fields can be written.
+- **Changing the model** means a new profile row and, if the dimension differs, a forward migration. Embeddings from different profiles are never mixed.
+
+## Lovdata adapter runtime (Task 2.8, added 12 November 2026)
+
+- **bzip2.** Lovdata publishes `tar.bz2` archives. Node has no bzip2 decoder, so the adapter lazily loads the optional worker-only runtime `seek-bzip` (MIT). It is never bundled into the web app:
+
+  ```bash
+  cd apps/web && npm install --no-save seek-bzip@2.0.0
+  ```
+
+  Without it, the adapter fails closed with `LOVDATA_BZIP2_RUNTIME_NOT_INSTALLED`.
+- **Network.** The HTTP source needs `api.lovdata.no`. If Lovdata's edge refuses the worker host, use an operator-downloaded archive: set `LOVDATA_ARCHIVE_PATH`, plus `LOVDATA_ARCHIVE_SIZE_BYTES`, `LOVDATA_ARCHIVE_LAST_MODIFIED` and `LOVDATA_ARCHIVE_RETRIEVED_AT` from the listing (optionally `LOVDATA_ARCHIVE_SHA256`).
+- **Normalisation profile.** Set `LEGAL_NORMALISATION_PROFILE=lovdata-nl-html-v1`.
+- **Approval.** Registration of the adapter does not approve anything. See the [Task 2.8 record](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) §6.
