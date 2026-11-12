@@ -3,8 +3,11 @@
 // own session; the database re-checks research.create on every call.
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
+  abstentionOptions,
+  CALIBRATED_ABSTENTION,
   createRetrievalPlan,
   executeLegalRetrieval,
+  type RetrievalAbstentionReason,
   type RetrievalMode,
 } from '../legal-knowledge/retrieval.ts';
 import {
@@ -24,6 +27,13 @@ import { translateQuery, type GlossaryTerm } from '../global/glossary.ts';
 import { isEmbeddingUnavailable, KEYWORD_FALLBACK_NOTE } from './query-embedder.ts';
 
 type RpcClient = Pick<SupabaseClient, 'rpc'>;
+
+const ABSTENTION_NOTES: Record<RetrievalAbstentionReason, (asOfDate: string) => string> = {
+  version_not_held: (date) =>
+    `Njumeni holds the current text of the law that answers this question, but not the version in force on ${date}. No answer is given rather than one from other texts.`,
+  out_of_scope: () =>
+    'No source in Njumeni is close enough to this question to answer it. It may fall outside the law Njumeni covers.',
+};
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -108,8 +118,13 @@ export async function runLegalResearch(
   );
   // Second stage: legal reranking (provision, citation, authority, currency, jurisdiction and
   // language signals) over a wider first-stage pool; every finding keeps its ranking trace.
+  const seen: { abstention: RetrievalAbstentionReason | null } = { abstention: null };
   const retrieve = (retrievalPlan: typeof plan) =>
     executeLegalRetrieval(retrievalPlan, provider, {
+      ...abstentionOptions(CALIBRATED_ABSTENTION),
+      observe: (observation) => {
+        seen.abstention = observation.abstention;
+      },
       reranker: createLegalReranker({
         ...CALIBRATED_RERANK_OPTIONS,
         preferredLanguage: target ?? null,
@@ -165,9 +180,12 @@ export async function runLegalResearch(
     p_as_of_date: plan.asOfDate,
     p_language_codes: plan.languageCodes,
     p_retrieval_mode: plan.mode,
-    p_limitations: [crossLanguageNote, fallbackNote, ...composed.limitations].filter(
-      (note): note is string => Boolean(note),
-    ),
+    p_limitations: [
+      crossLanguageNote,
+      fallbackNote,
+      seen.abstention ? ABSTENTION_NOTES[seen.abstention](plan.asOfDate) : null,
+      ...composed.limitations,
+    ].filter((note): note is string => Boolean(note)),
     p_engine_version: RESEARCH_ENGINE_VERSION,
     p_findings: composed.findings,
     p_claims: composed.claims,

@@ -1,0 +1,583 @@
+{
+  "datasetKey": "lovdata-no-holdout-v1",
+  "version": 1,
+  "jurisdictionCode": "NO",
+  "description": "HELD-OUT Norwegian retrieval set. Never used to tune the reranker or the abstention policy: it only confirms settings chosen on lovdata-no-v1. Questions written for Njumeni on 2026-11-12, before any system output was seen, including plain-language phrasings, past-dated questions whose answer was in force on the date, temporal abstention cases (the current version of the answering act started after the date, so the corpus holds no version for it) and out-of-scope questions. Expected acts and sections are checked against the Lovdata text only. Corpus: Lovdata's free dataset gjeldende-lover.tar.bz2 (current consolidated acts).",
+  "contentLicence": "Questions: authored for Njumeni (no third-party content). Referenced legislation: Lovdata, NLOD-2.0.",
+  "status": "DRAFT: expectations to be verified against the act text; temporal abstention cases to be added from the corpus's version dates",
+  "cases": [
+    {
+      "id": "ho-aml-probation",
+      "question": "Hvor lang prøvetid kan avtales i et arbeidsforhold?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 15-6"
+      ]
+    },
+    {
+      "id": "ho-aml-lay-dismissal",
+      "question": "Kan sjefen min sparke meg uten grunn?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 15-7"
+      ]
+    },
+    {
+      "id": "ho-aml-overtime",
+      "question": "Hvor mye overtid kan en arbeidstaker jobbe?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 10-6"
+      ]
+    },
+    {
+      "id": "ho-aml-parental-leave",
+      "question": "Har jeg rett til permisjon fra jobben når jeg får barn?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 12-5",
+        "§ 12-6"
+      ]
+    },
+    {
+      "id": "ho-aml-applicant-health",
+      "question": "Kan en arbeidsgiver spørre jobbsøkere om helsen deres?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-06-17-62"
+        }
+      ],
+      "expectedSections": [
+        "§ 9-3"
+      ]
+    },
+    {
+      "id": "ho-tenancy-landlord-entry",
+      "question": "Kan utleier gå inn i leiligheten min når han vil?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 5-4"
+      ]
+    },
+    {
+      "id": "ho-tenancy-rent-increase",
+      "question": "Hvor mye kan husleien økes hvert år?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-03-26-17"
+        }
+      ],
+      "expectedSections": [
+        "§ 4-2"
+      ]
+    },
+    {
+      "id": "ho-craftsman-defect",
+      "question": "Hva kan jeg gjøre hvis håndverkeren har gjort en dårlig jobb?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1989-06-16-63"
+        }
+      ],
+      "expectedSections": [
+        "§ 22",
+        "§ 24"
+      ]
+    },
+    {
+      "id": "ho-consumer-broken-item",
+      "question": "Kan jeg få pengene tilbake hvis varen jeg kjøpte er ødelagt?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2002-06-21-34"
+        }
+      ],
+      "expectedSections": [
+        "§ 26",
+        "§ 34"
+      ]
+    },
+    {
+      "id": "ho-bookkeeping-retention",
+      "question": "Hvor lenge må en bedrift oppbevare regnskapsmateriale?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2004-11-19-73"
+        }
+      ],
+      "expectedSections": [
+        "§ 13"
+      ]
+    },
+    {
+      "id": "ho-offer-binding",
+      "question": "Hvor lenge er et tilbud bindende for den som har gitt det?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1918-05-31-4"
+        }
+      ],
+      "expectedSections": [
+        "§ 2",
+        "§ 3"
+      ]
+    },
+    {
+      "id": "ho-inheritance-no-children",
+      "question": "Hvem arver når en person dør uten barn og uten testament?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2019-06-14-21"
+        }
+      ],
+      "expectedSections": [
+        "§ 5"
+      ]
+    },
+    {
+      "id": "ho-will-formalities",
+      "question": "Hvilke formkrav gjelder for et testament?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2019-06-14-21"
+        }
+      ],
+      "expectedSections": [
+        "§ 41"
+      ]
+    },
+    {
+      "id": "ho-penal-murder",
+      "question": "Hva er straffen for drap?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-05-20-28"
+        }
+      ],
+      "expectedSections": [
+        "§ 275"
+      ]
+    },
+    {
+      "id": "ho-penal-recording",
+      "question": "Er det lov å ta opp en samtale i skjul?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-05-20-28"
+        }
+      ],
+      "expectedSections": [
+        "§ 205"
+      ]
+    },
+    {
+      "id": "ho-drugged-driving",
+      "question": "Er det forbudt å kjøre bil når man er påvirket av narkotika?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1965-06-18-4"
+        }
+      ],
+      "expectedSections": [
+        "§ 22"
+      ]
+    },
+    {
+      "id": "ho-search-home",
+      "question": "Kan politiet ransake boligen min?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-05-22-25"
+        }
+      ],
+      "expectedSections": [
+        "§ 192"
+      ]
+    },
+    {
+      "id": "ho-custody-limit",
+      "question": "Hvor lenge kan en siktet holdes i varetekt?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1981-05-22-25"
+        }
+      ],
+      "expectedSections": [
+        "§ 185"
+      ]
+    },
+    {
+      "id": "ho-company-formation",
+      "question": "Hvordan stifter man et aksjeselskap?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1997-06-13-44"
+        }
+      ],
+      "expectedSections": [
+        "§ 2-1"
+      ]
+    },
+    {
+      "id": "ho-housing-coop-subletting",
+      "question": "Kan jeg leie ut leiligheten min i et borettslag?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2003-06-06-39"
+        }
+      ],
+      "expectedSections": [
+        "§ 5-6"
+      ]
+    },
+    {
+      "id": "ho-condominium-short-let",
+      "question": "Er korttidsutleie av en eierseksjon tillatt?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2017-06-16-65"
+        }
+      ],
+      "expectedSections": [
+        "§ 24"
+      ]
+    },
+    {
+      "id": "ho-child-benefit",
+      "question": "Hvem har rett til barnetrygd?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2002-03-08-4"
+        }
+      ],
+      "expectedSections": [
+        "§ 2"
+      ]
+    },
+    {
+      "id": "ho-tax-appeal",
+      "question": "Hva er klagefristen for et vedtak fra Skatteetaten?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2016-05-27-14"
+        }
+      ],
+      "expectedSections": [
+        "§ 13-4"
+      ]
+    },
+    {
+      "id": "ho-nav-appeal-nn",
+      "question": "Kor lang tid har eg til å klage på eit vedtak frå Nav?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1997-02-28-19"
+        }
+      ],
+      "expectedSections": [
+        "§ 21-12"
+      ]
+    },
+    {
+      "id": "ho-patient-hospital-choice-nn",
+      "question": "Kan ein pasient velje kva sjukehus han vil bli behandla på?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1999-07-02-63"
+        }
+      ],
+      "expectedSections": [
+        "§ 2-4"
+      ]
+    },
+    {
+      "id": "ho-past-offer-binding",
+      "question": "Hvor lenge var et tilbud bindende for den som hadde gitt det?",
+      "asOfDate": "2019-01-01",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-1918-05-31-4"
+        }
+      ],
+      "expectedSections": [
+        "§ 2",
+        "§ 3"
+      ]
+    },
+    {
+      "id": "ho-past-penal-theft",
+      "question": "Hva var straffen for tyveri?",
+      "asOfDate": "2020-06-01",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": [
+        {
+          "sourceKey": "lovdata-official",
+          "citation": "LOV-2005-05-20-28"
+        }
+      ],
+      "expectedSections": [
+        "§ 321"
+      ]
+    },
+    {
+      "id": "ho-oos-mars-spacecraft",
+      "question": "Hvordan registrerer man et romskip som skal lande på Mars?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "ho-oos-dragons",
+      "question": "Hvilke regler gjelder for å temme drager?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "ho-oos-german-autobahn",
+      "question": "Hva er fartsgrensen på tyske motorveier?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "ho-oos-world-cup",
+      "question": "Hvem vinner fotball-VM i 2030?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    },
+    {
+      "id": "ho-oos-quidditch",
+      "question": "Hvem fastsetter reglene for quidditch-turneringer på Hogwarts?",
+      "asOfDate": "2026-11-12",
+      "languageCodes": [
+        "nb",
+        "nn",
+        "no"
+      ],
+      "relevant": []
+    }
+  ]
+}

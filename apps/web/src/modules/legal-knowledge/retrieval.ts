@@ -170,11 +170,58 @@ function mergeRetrievalCandidates(
   }
   return [...merged.values()];
 }
+/**
+ * Why retrieval abstained (returned nothing although candidates existed):
+ *   version_not_held  the authority that answers the question today has no version in force on the
+ *                     as-of date in the corpus, so answering from other texts would mislead;
+ *   out_of_scope      no passage is close enough in meaning to the question.
+ */
+export type RetrievalAbstentionReason='version_not_held'|'out_of_scope';
+export interface RetrievalObservation {
+  poolSize:number;
+  bestLexicalScore:number|null;
+  bestSemanticScore:number|null;
+  abstention:RetrievalAbstentionReason|null;
+  /** With the temporal check: the authority that answers the question under current law. */
+  currentTopAuthorityId:string|null;
+}
+// Abstention policy, applied after reranking (legal-abstain-1.0.0).
+export const LEGAL_ABSTENTION_VERSION='legal-abstain-1.0.0';
+/**
+ * The production abstention policy. Off until measured: the temporal check and the semantic floor
+ * are enabled only when a held-out evaluation confirms they fix abstention without losing recall.
+ */
+export interface LegalAbstentionPolicy {
+  temporalCoverage:boolean;
+  minSemanticScore:number|null;
+}
+export const CALIBRATED_ABSTENTION:Readonly<LegalAbstentionPolicy>=Object.freeze({
+  temporalCoverage:false,
+  minSemanticScore:null,
+});
+/** Retrieval options for an abstention policy; currentDate is today (UTC) unless given. */
+export function abstentionOptions(policy:Readonly<LegalAbstentionPolicy>,currentDate=new Date().toISOString().slice(0,10)):
+  Pick<LegalRetrievalOptions,'temporalCoverage'|'minSemanticScore'> {
+  return {
+    ...(policy.temporalCoverage?{temporalCoverage:{currentDate}}:{}),
+    ...(policy.minSemanticScore===null?{}:{minSemanticScore:policy.minSemanticScore}),
+  };
+}
 export interface LegalRetrievalOptions {
   /** Second stage. The first stage then searches a wider pool (3 × limit, 30 to 50 passages). */
   reranker?:LegalReranker;
   /** The question as asked (for provision and citation matching); defaults to the query text. */
   question?:string;
+  /**
+   * Temporal coverage check (needs the reranker): for a question about a date before currentDate,
+   * the same question is also answered under current law. If its top authority is absent from the
+   * dated answer, the corpus does not hold the version in force on that date: abstain.
+   */
+  temporalCoverage?:{currentDate:string};
+  /** Abstain (out_of_scope) when no candidate's semantic score reaches this. Semantic/hybrid only. */
+  minSemanticScore?:number;
+  /** Receives what retrieval saw and why it abstained (for limitations and evaluation diagnostics). */
+  observe?:(observation:RetrievalObservation)=>void;
 }
 async function searchCandidates(plan:RetrievalPlan,provider:LegalPassageSearchProvider):Promise<readonly RetrievalCandidate[]> {
   if(plan.mode==='lexical')return provider.searchLexical(plan);
@@ -203,8 +250,44 @@ export async function executeLegalRetrieval(
   provider:LegalPassageSearchProvider,
   options:LegalRetrievalOptions={},
 ):Promise<RankedLegalPassage[]> {
-  if(!options.reranker)return rankLegalPassages(plan,await searchCandidates(plan,provider));
-  const poolPlan:RetrievalPlan={...plan,limit:Math.min(50,Math.max(plan.limit*3,30))};
-  const pool=rankLegalPassages(poolPlan,await searchCandidates(poolPlan,provider));
-  return options.reranker.rerank(plan,options.question??plan.queryText,pool);
+  if(!options.reranker){
+    if(options.temporalCoverage||options.minSemanticScore!==undefined)throw new Error('LEGAL_RETRIEVAL_ABSTENTION_NEEDS_RERANKER');
+    return rankLegalPassages(plan,await searchCandidates(plan,provider));
+  }
+  const reranker=options.reranker;
+  const question=options.question??plan.queryText;
+  const rerankAt=async(target:RetrievalPlan)=>{
+    const poolPlan:RetrievalPlan={...target,limit:Math.min(50,Math.max(target.limit*3,30))};
+    const pool=rankLegalPassages(poolPlan,await searchCandidates(poolPlan,provider));
+    return {pool,result:reranker.rerank(target,question,pool)};
+  };
+  const {pool,result:reranked}=await rerankAt(plan);
+  let result=reranked;
+  const best=(key:'lexicalScore'|'semanticScore')=>pool.reduce<number|null>(
+    (max,p)=>p[key]===null?max:max===null?p[key]:Math.max(max,p[key]),null);
+  let abstention:RetrievalAbstentionReason|null=null;
+  let currentTopAuthorityId:string|null=null;
+  if(options.minSemanticScore!==undefined){
+    if(!(options.minSemanticScore>=0&&options.minSemanticScore<1))throw new Error('LEGAL_RETRIEVAL_OPTIONS_INVALID');
+    const semantic=best('semanticScore');
+    if(plan.mode!=='lexical'&&result.length&&(semantic===null||semantic<options.minSemanticScore)){
+      abstention='out_of_scope';
+      result=[];
+    }
+  }
+  if(!abstention&&result.length&&options.temporalCoverage){
+    const currentDate=options.temporalCoverage.currentDate;
+    if(!validDate(currentDate))throw new Error('LEGAL_RETRIEVAL_OPTIONS_INVALID');
+    if(plan.asOfDate<currentDate){
+      const current=(await rerankAt({...plan,asOfDate:currentDate})).result;
+      currentTopAuthorityId=current[0]?.authorityId??null;
+      if(currentTopAuthorityId&&!result.some(p=>p.authorityId===currentTopAuthorityId)){
+        abstention='version_not_held';
+        result=[];
+      }
+    }
+  }
+  options.observe?.({poolSize:pool.length,bestLexicalScore:best('lexicalScore'),bestSemanticScore:best('semanticScore'),
+    abstention,currentTopAuthorityId});
+  return result;
 }
