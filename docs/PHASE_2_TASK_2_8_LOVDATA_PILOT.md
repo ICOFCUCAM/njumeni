@@ -20,7 +20,8 @@ Facts were taken from the provider's own pages and data on 2026-11-12. Nothing b
 | Access and licence | `https://api.lovdata.no/om-api-tjenesten/` | 200 | "Lovdata tilbyr to gratis datasett med henholdsvis lover og sentrale forskrifter, **uten krav om bruker eller autentisering**." · "Også konsoliderte (ajourførte) versjoner av gjeldende lover og sentrale forskrifter **kan fritt benyttes til alle formål uten vederlag, gjennom API. Dataene er lisensiert under NLOD 2.0.**" · "Nye datapakker legges ut hver natt". Download links: `https://api.lovdata.no/v1/publicData/get/{filename}` |
 | Purpose | `https://api.lovdata.no/` | 200 | "Benytt datagrunnlaget fritt for eksperimentering og forskning med KI." · "Alle dokumenter foreligger i XML-kompatibel HTML med strukturer som kapitler, paragrafer og ledd." |
 | Exclusions | `https://api.lovdata.no/faq/` | 200 (headings only) | The question "Hvorfor inkluderer dere ikke historiske og opphevede lover?" confirms that historical and repealed acts are **not** in the free sets. The answer text, and the answer to "Hvorfor må vi kreditere Lovdata ved bruk?", were collapsed and could not be read |
-| NLOD 2.0 licence text | `https://data.norge.no/nlod/no/2.0`, `/en/2.0` | 406; with a trailing slash, 301 to plain HTTP | **Not verified.** The licence's grant and attribution clauses and its suggested attribution wording still need confirming (§6, step 1) |
+| NLOD 2.0 licence text | `https://data.norge.no/nlod/no/2.0`, `/en/2.0` (HTTPS, plain HTTP, `?lang=en`); `www.digdir.no` | 406 on every data.norge.no route; digdir.no does not resolve from this environment | **Not verified.** The licence's grant and attribution clauses and its suggested attribution wording still need confirming (§6, step 1). Second attempt 2026-11-12 |
+| Lovdata user terms | `https://lovdata.no/info/brukeravtale` ("Sist endret: 31.10.2025") | 200 | §2.3: you may "fritt kopiere, bruke og dele" regulations in Norsk Lovtidend, current formal acts and current central regulations "hvis du oppgir Lovdata som kilde og ellers følger vilkårene i" NLOD 2.0 (linked). The same section continues: "Av ytelseshensyn gjelder unntaket kun for enkeltlover og -forskrifter. **Massenedlasting og systematiske uttrekk er ikke tillatt.**" §2.1, for other content: "Det er ikke tillatt å bruke innholdet til trening eller utvikling av KI-algoritmer." |
 | API specification | `https://api.lovdata.no/swagger/index.html` | 200, rendered client-side only; `/swagger/v1/swagger.json` 404 | No rate limits found on any readable page |
 | File format | `/muligheter/` 404; no format documentation found | — | The structure was read from the archive itself (§3) |
 
@@ -42,7 +43,8 @@ The archive was never committed. A worker host that Lovdata serves directly uses
 | retrieve, store, normalise, index | yes | "fritt benyttes til alle formål" through the API, NLOD 2.0 |
 | quote, display | yes | Same statement; display with attribution |
 | redistribute | yes, **pending the NLOD text** | NLOD is an open-data licence permitting redistribution; confirm the clause (step 1) |
-| Attribution | Required | The FAQ asks why Lovdata must be credited. Proposed wording: "Kilde: Lovdata (https://lovdata.no/). Lisensiert under Norsk lisens for offentlige data (NLOD) 2.0." Replace it with NLOD's own form once that is verified |
+| Attribution | Required | The user terms require "oppgir Lovdata som kilde" (name Lovdata as the source) and NLOD 2.0's conditions. Proposed wording: "Kilde: Lovdata (https://lovdata.no/). Lisensiert under Norsk lisens for offentlige data (NLOD) 2.0." Adjust it to NLOD's own form once that is verified |
+| **Open question for the owner** | — | The website terms (§2.3) forbid bulk downloading and systematic extraction from the website services. The API page offers the same content as nightly bulk datasets "fritt … til alle formål" and "for eksperimentering og forskning med KI". The pilot uses only the API datasets and trains no model: it embeds text with a pre-trained model for retrieval. The reading that the API datasets are a separate, permitted channel is plausible, but it is not confirmed. **Confirm it with Lovdata, or take legal advice, before approval** |
 | Restrictions | Current consolidated acts only | No historical or repealed acts (FAQ). Lovdata's case law is commercial and out of scope (master plan §6.3) |
 
 Statutes are also not protected by copyright in Norway. Åndsverkloven § 14, as ingested: "Lover, forskrifter, rettsavgjørelser og andre vedtak av offentlig myndighet er uten vern etter denne loven." That is a separate basis for the statute text. This pilot nevertheless relies on the published licence, which also covers Lovdata's consolidation and metadata.
@@ -107,7 +109,7 @@ The model files come from Hugging Face's CDN. The environment's allow-list was e
 
 These operations are not done. They run on the hosted project, using a service-role connection (SQL editor or `psql "$SUPABASE_DB_URL"`). Each is a separate audited step. The hosted project holds the first 38 migrations (deployed 2026-11-12). **First apply `20261112900000`** with the owner-triggered workflow ([runbook](operations/RUNBOOK.md) §1); `legal_ingestion_enqueue_continuation` and section-aware appends depend on it.
 
-1. **Confirm the licence text.** Read NLOD 2.0 (`https://data.norge.no/nlod/no/2.0`) and the Lovdata FAQ answer on attribution. Fix the attribution wording and the `redistribute` permission.
+1. **Confirm the licence position.** Read NLOD 2.0 (`https://data.norge.no/nlod/no/2.0`; it could not be fetched from this environment) and the Lovdata FAQ answer on attribution. Settle the open question in §2: website terms against API datasets. Then fix the attribution wording and the `redistribute` permission.
 2. **Record the rights review** (sets `rights_status = 'approved'`; does not activate):
    ```sql
    select public.legal_source_record_rights_review(
@@ -184,7 +186,7 @@ This set's evaluation was **not** recorded as coverage evidence (`legal_record_r
 |---|---|---|
 | Historical versions are not in the free dataset | A question about the law before the latest amendment finds no version of that act. This is correct, but other acts still match | Version history comes from nightly re-ingestion (new versions from now on), or from licensed historical data |
 | A superseded version's `valid_until` is never closed (versions are append-only) | Once a second consolidated version exists, an as-of search can match both | Choose the latest version per authority at the as-of date in the search RPCs (Task 2.11 or Phase 6 monitoring) |
-| NLOD text and attribution wording not verified | Rights review uses the proposed wording | Owner step 1 |
+| NLOD text and attribution wording not verified; the website terms forbid bulk extraction | Approval is not safe until the owner confirms that the API datasets are a permitted channel | Owner step 1 (§2) |
 | Continuation pages are enqueued by an operator | Four commands per full run | Scheduled monitoring (Phase 12) |
 | Lovdata refuses this cloud environment's egress | The HTTP source cannot be exercised here against the live service (it is unit-tested) | Run the worker where Lovdata answers, or use the file source |
 | Central regulations (`gjeldende-sentrale-forskrifter.tar.bz2`) are not ingested | Regulations are absent | Same adapter shape; a separate review and pin |
