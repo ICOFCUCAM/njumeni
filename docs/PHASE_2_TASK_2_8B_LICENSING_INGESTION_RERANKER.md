@@ -138,6 +138,28 @@ Run by the Lovdata session on a fresh stack: 753 acts and 31 007 passages ingest
 - Settings are adopted only if every gate passes. The gate is not lowered.
 - Because the settings are calibrated on this set, a held-out set is required before `partial` coverage is claimed.
 
+**Calibration sweep (2026-11-12, 36 runs, real corpus).** Grid:
+- `authorityMargin` 0.7, 0.8, 0.85 or 0.9;
+- `maxAuthorities` 1, 2 or 3;
+- `abstainBelow` 0.2, 0.35 or 0.5;
+- `maxPassagesPerAuthority` 10.
+
+`abstainBelow` made no difference.
+
+| Margin | Max authorities | P@5 | R@10 | MRR | Currency | Section hit | All gates |
+|---|---|---|---|---|---|---|---|
+| any | 1 | 0.846 | 0.846 | 0.846 | 0.667 | 0.846 | ❌ currency |
+| 0.9 | 2 | 0.782 | 0.897 | 0.872 | 0.833 | 0.897 | ❌ currency |
+| 0.8 | 3 | 0.598 | 0.974 | 0.897 | 1.000 | 0.923 | ❌ P@5 |
+| 0.85 | 3 | 0.667 | 0.974 | 0.897 | 1.000 | 0.923 | ✅ |
+| **0.9** | **3** | **0.774** | **0.974** | **0.897** | **1.000** | **0.923** | **✅ adopted** |
+
+**Adopted.** `CALIBRATED_RERANK_OPTIONS` (margin 0.9, 3 authorities, 10 passages per authority) as `legal-rerank-1.1.0`, in the research engine and as the evaluation runner's default. The gates were not changed.
+
+**Open.**
+- Abstention is still 0/2. Its base scores exceed 0.5, so it needs a different signal, for example lexical evidence or out-of-scope detection.
+- A held-out Norwegian set must confirm the calibration before `partial` coverage is recorded.
+
 ## 5. Migration history reconciliation
 
 The repository files were compared with hosted `supabase_migrations.schema_migrations`, comparing the MD5 of each file with the stored statement.

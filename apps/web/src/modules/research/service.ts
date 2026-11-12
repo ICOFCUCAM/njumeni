@@ -19,7 +19,7 @@ import {
   type SourcePermission,
 } from './composer.ts';
 import { detectLanguage } from '../global/language.ts';
-import { createLegalReranker } from '../legal-knowledge/reranker.ts';
+import { CALIBRATED_RERANK_OPTIONS, createLegalReranker } from '../legal-knowledge/reranker.ts';
 import { translateQuery, type GlossaryTerm } from '../global/glossary.ts';
 
 type RpcClient = Pick<SupabaseClient, 'rpc'>;
@@ -107,7 +107,7 @@ export async function runLegalResearch(
   // Second stage: legal reranking (provision, citation, authority, currency, jurisdiction and
   // language signals) over a wider first-stage pool; every finding keeps its ranking trace.
   const passages = await executeLegalRetrieval(plan, provider, {
-    reranker: createLegalReranker({ preferredLanguage: target ?? null }),
+    reranker: createLegalReranker({ ...CALIBRATED_RERANK_OPTIONS, preferredLanguage: target ?? null }),
     // Provision and citation matching see the question as asked and, when translated, as searched.
     question: searchQuery === question ? question : question + '\n' + searchQuery,
   });

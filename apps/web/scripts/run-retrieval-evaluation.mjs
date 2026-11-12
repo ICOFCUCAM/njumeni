@@ -13,7 +13,7 @@ import { createSupabaseLegalPassageSearchProvider } from '../src/modules/legal-k
 import { evaluateRetrieval } from '../src/modules/legal-knowledge/retrieval-evaluation.ts';
 import { recordRetrievalEvaluation } from '../src/modules/legal-knowledge/coverage-admin-core.ts';
 import { createLocalLegalEmbedder } from '../src/modules/legal-knowledge/local-embedder.ts';
-import { createLegalReranker, LEGAL_RERANKER_VERSION } from '../src/modules/legal-knowledge/reranker.ts';
+import { CALIBRATED_RERANK_OPTIONS, createLegalReranker, LEGAL_RERANKER_VERSION } from '../src/modules/legal-knowledge/reranker.ts';
 
 const [datasetPath, defaultMode] = process.argv.slice(2);
 const url = process.env.NJUMENI_EVAL_SUPABASE_URL;
@@ -35,7 +35,8 @@ const provider = createSupabaseLegalPassageSearchProvider(
 );
 const firstStageOnly = process.env.NJUMENI_EVAL_FIRST_STAGE_ONLY === '1';
 // Reranker settings for calibration sweeps, e.g. NJUMENI_EVAL_RERANK_OPTIONS='{"authorityMargin":0.85,"maxAuthorities":2}'.
-const rerankOptions = process.env.NJUMENI_EVAL_RERANK_OPTIONS ? JSON.parse(process.env.NJUMENI_EVAL_RERANK_OPTIONS) : {};
+// Default: the calibrated production profile.
+const rerankOptions = process.env.NJUMENI_EVAL_RERANK_OPTIONS ? JSON.parse(process.env.NJUMENI_EVAL_RERANK_OPTIONS) : { ...CALIBRATED_RERANK_OPTIONS };
 const report = await evaluateRetrieval({
   dataset,
   defaultMode: defaultMode ?? 'hybrid',

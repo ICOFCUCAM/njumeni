@@ -66,7 +66,21 @@ export interface LegalReranker {
   rerank(plan: RetrievalPlan, question: string, passages: readonly RankedLegalPassage[]): RerankedLegalPassage[];
 }
 
-export const LEGAL_RERANKER_VERSION = 'legal-rerank-1.0.0';
+// 1.1.0: authority-level confidence cut (authorityMargin, maxAuthorities).
+export const LEGAL_RERANKER_VERSION = 'legal-rerank-1.1.0';
+
+/**
+ * Calibrated profile (2026-11-12, lovdata-no-v1, 41 cases, real corpus of 753 acts / 31 007
+ * embedded passages). 36-run sweep; the best setting passing every gate:
+ * Precision@5 0.774, Recall@10 0.974, MRR 0.897, currency 1.000, section hit 0.923.
+ * One or two authorities fail currency (a wrong top act cuts the right one); three is the floor.
+ * Tuned on the scored set: confirm on a held-out set before any coverage claim.
+ */
+export const CALIBRATED_RERANK_OPTIONS: Readonly<LegalRerankerOptions> = Object.freeze({
+  authorityMargin: 0.9,
+  maxAuthorities: 3,
+  maxPassagesPerAuthority: 10,
+});
 
 export const DEFAULT_RERANK_WEIGHTS: RerankWeights = Object.freeze({
   retrieval: 0.42,
