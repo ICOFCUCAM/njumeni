@@ -82,7 +82,7 @@ End to end with a real administrator and a real support operator:
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 10 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 10 commit~~ ✅ `29a526e`: runs `43135869994` (CI and security) and `43135870022` (database verification), both successful | Done |
 | 2 | **SSO verified against a real identity provider** (master plan acceptance) | Hosted Supabase Auth SAML (Stage 2) |
 | 3 | Conformity assessment content for high-risk deployments (§11.6) | Legal and regulatory work before any justice-sector customer |
 | 4 | Phases 3–9 closed | Their own closeout items |

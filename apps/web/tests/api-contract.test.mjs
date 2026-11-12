@@ -9,6 +9,8 @@ const ROUTES = {
   '/documents/{documentId}/export': '../src/app/api/v1/documents/[documentId]/export/route.ts',
   '/matters/{matterId}/export': '../src/app/api/v1/matters/[matterId]/export/route.ts',
   '/matters': '../src/app/api/v1/matters/route.ts',
+  '/billing/invoices/{invoiceId}/pdf':
+    '../src/app/api/v1/billing/invoices/[invoiceId]/pdf/route.ts',
 };
 
 test('every documented operation has a handler and every handler is documented', async () => {

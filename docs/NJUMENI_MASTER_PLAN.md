@@ -1665,7 +1665,7 @@ Plans → Subscriptions → Entitlements → Usage metering → Quota enforcemen
 Invoices and payments → Revenue analytics
 ```
 
-Billing is independent of legal matter data, so that changes to commercial arrangements cannot compromise legal records. *The provider-neutral billing identity, entitlements and usage ledger already exist from Phase 1, Task 1.10. Payment provider integration is Phase 11.*
+Billing is independent of legal matter data, so that changes to commercial arrangements cannot compromise legal records. *The provider-neutral billing identity, entitlements and usage ledger exist from Phase 1, Task 1.10. Phase 11 adds metering, quota enforcement, AI credits, immutable invoices, database-verified provider webhooks and commercial analytics ([Phase 11 plan](PHASE_11_PLAN.md)).*
 
 ---
 
@@ -1828,7 +1828,7 @@ Each phase must produce working, tested functionality before the dependent phase
 | — | ▲ **Release R1** | First release | Product specification P0 scope (§20.2) | First-release acceptance criteria | — |
 | 9 | Professional workspace | Professional product | Client management, professional research, matter collaboration, internal reviews, knowledge management, professional templates, document approval, professional reporting; ▲ conflict checks and information barriers | Journey 15.2 passes | 🔵 **IMPLEMENTED** (verified locally; journey 15.2 passed on synthetic data) |
 | 10 | Enterprise and institutional systems | Enterprise product | Organisation administration, teams and offices, advanced permissions, enterprise knowledge repositories, compliance workflows, institutional reporting, SSO readiness, enterprise APIs, custom deployment options | Enterprise isolation and SSO verified | 🔵 **IMPLEMENTED** (verified locally; live SSO awaits the hosted identity provider) |
-| 11 | Commercial infrastructure | Revenue infrastructure | Subscription plans, billing, usage metering, AI credits, entitlements, invoices, payment integration, commercial analytics | Billing end-to-end in staging | 🔒 LOCKED |
+| 11 | Commercial infrastructure | Revenue infrastructure | Subscription plans, billing, usage metering, AI credits, entitlements, invoices, payment integration, commercial analytics | Billing end-to-end in staging | 🔵 **IMPLEMENTED** (verified locally end to end; staging with a real provider awaits the owner's choice) |
 | 12 | Global expansion | Global readiness | Norway, EU, UK, US, international law and Cameroon legal content; additional African jurisdictions; multilingual support; jurisdiction-specific testing | Each jurisdiction reaches at least `partial` (§6.7) | 🔒 LOCKED |
 | 13 | Production hardening and launch | Production release | Security audits, penetration testing, performance testing, AI evaluation, disaster recovery, backup restoration, monitoring, operational documentation, ▲ **first deployment of the cumulative migration set to hosted Supabase (U-27)**, pilot customers, commercial launch | All release gates; Stage 2 infrastructure; hosted schema equals repository migrations | 🔒 LOCKED |
 

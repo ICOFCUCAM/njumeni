@@ -33,7 +33,9 @@ export async function askResearchQuestion(formData: FormData): Promise<void> {
     }));
   } catch (error) {
     const code = error instanceof Error ? error.message : '';
-    redirect(`${back}&error=${/NOT_AUTHORISED/.test(code) ? 'not-authorized' : 'research-failed'}`);
+    redirect(
+      `${back}&error=${/NOT_AUTHORISED/.test(code) ? 'not-authorized' : /QUOTA_EXCEEDED/.test(code) ? 'quota' : 'research-failed'}`,
+    );
   }
   redirect(`/research/${runId}`);
 }

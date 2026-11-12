@@ -183,6 +183,24 @@ isOneToOne: false
 "assign_workspace_role":
 { Args: { "p_organization_id": string,"p_principal_id": string,"p_role_key": string,"p_workspace_id": string }; Returns: string
                            },
+"billing_generate_invoice":
+{ Args: { "p_organization_id": string,"p_period_end": string,"p_period_start": string,"p_tax_rate_percent"?: number }; Returns: string
+                           },
+"billing_grant_credits":
+{ Args: { "p_credits": number,"p_note": string,"p_organization_id": string }; Returns: undefined
+                           },
+"billing_invoice_get":
+{ Args: { "p_invoice_id": string }; Returns: Json
+                           },
+"billing_overview":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"billing_plans":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"billing_webhook":
+{ Args: { "p_payload": string,"p_provider": string,"p_signature": string }; Returns: Json
+                           },
 "client_create":
 { Args: { "p_contact_note"?: string,"p_identifier"?: string,"p_kind": string,"p_name": string,"p_organization_id": string }; Returns: string
                            },
@@ -505,6 +523,9 @@ isOneToOne: false
                            },
 "organization_update_settings":
 { Args: { "p_organization_id": string,"p_require_conflict_check": boolean,"p_validity_days"?: number }; Returns: undefined
+                           },
+"platform_commercial_analytics":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "platform_is_operator":
 { Args: Record<PropertyKey, never>; Returns: boolean

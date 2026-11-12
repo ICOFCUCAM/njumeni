@@ -11,6 +11,7 @@ const errors: Record<string, string> = {
   'invalid-input': 'Enter a question of at least three characters and a valid date.',
   'not-authorized': 'You do not have permission to run research in this workspace.',
   'research-failed': 'The research could not be completed. Try again.',
+  quota: 'Your plan’s research allowance for this period is used up. See Plan and usage.',
 };
 
 const levelNotes: Record<string, string> = {

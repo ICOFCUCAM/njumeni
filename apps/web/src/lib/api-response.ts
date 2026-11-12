@@ -7,6 +7,7 @@ export type ApiErrorCode =
   | 'not_found'
   | 'invalid_request'
   | 'not_configured'
+  | 'quota_exceeded'
   | 'internal_error';
 
 const STATUS: Record<ApiErrorCode, number> = {
@@ -15,6 +16,7 @@ const STATUS: Record<ApiErrorCode, number> = {
   not_found: 404,
   invalid_request: 400,
   not_configured: 501,
+  quota_exceeded: 429,
   internal_error: 500,
 };
 
@@ -36,6 +38,8 @@ export function apiErrorFromCode(code: string): Response {
     return apiError('forbidden', 'You do not have access to this resource.');
   if (/_INVALID$|_UNKNOWN$|_REQUIRED$/.test(code))
     return apiError('invalid_request', 'The request is invalid.', code);
+  if (/QUOTA_EXCEEDED/.test(code))
+    return apiError('quota_exceeded', 'The plan allowance for this period is used up.', code);
   if (/NOT_CONFIGURED/.test(code))
     return apiError('not_configured', 'This capability is not configured.', code);
   return apiError('internal_error', 'The request could not be completed.');

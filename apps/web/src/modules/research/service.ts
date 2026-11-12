@@ -114,6 +114,11 @@ export async function runLegalResearch(
     p_findings: composed.findings,
     p_claims: composed.claims,
   });
-  if (recorded.error || typeof recorded.data !== 'string') fail('RESEARCH_RECORD_FAILED');
+  if (recorded.error || typeof recorded.data !== 'string')
+    fail(
+      /QUOTA_EXCEEDED/.test(recorded.error?.message ?? '')
+        ? 'RESEARCH_QUOTA_EXCEEDED'
+        : 'RESEARCH_RECORD_FAILED',
+    );
   return { runId: recorded.data };
 }

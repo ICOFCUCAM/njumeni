@@ -38,8 +38,20 @@ export default async function AdminPage({
   const supabase = await createClient();
   const { data: isOperator } = await supabase.rpc('platform_is_operator');
   if (!isOperator) notFound();
-  const { data } = await supabase.rpc('platform_overview');
+  const [{ data }, commercial] = await Promise.all([
+    supabase.rpc('platform_overview'),
+    supabase.rpc('platform_commercial_analytics'),
+  ]);
   const overview = data as unknown as Overview;
+  const sales = commercial.data as {
+    mrrMinor: number;
+    subscriptionsByPlan: Record<string, number>;
+    usageThisMonth: Record<string, number>;
+    aiCostUsdThisMonth: number;
+    invoicedMinorThisYear: number;
+    outstandingMinor: number;
+    creditTopUpsThisMonth: number;
+  } | null;
   return (
     <article>
       <header>
@@ -74,6 +86,30 @@ export default async function AdminPage({
           </article>
         ))}
       </section>
+      {sales ? (
+        <section className="module-panel" aria-label="Commercial analytics">
+          <h2 className="section-heading">Commercial analytics</h2>
+          <p>
+            MRR {(sales.mrrMinor / 100).toFixed(2)} USD · invoiced this year{' '}
+            {(sales.invoicedMinorThisYear / 100).toFixed(2)} · outstanding{' '}
+            {(sales.outstandingMinor / 100).toFixed(2)} · AI cost this month{' '}
+            {Number(sales.aiCostUsdThisMonth).toFixed(2)} USD · credit top-ups{' '}
+            {sales.creditTopUpsThisMonth}
+          </p>
+          <p>
+            <small>
+              Subscriptions:{' '}
+              {Object.entries(sales.subscriptionsByPlan)
+                .map(([k, v]) => `${k} ${v}`)
+                .join(' · ') || 'none'}{' '}
+              · Usage:{' '}
+              {Object.entries(sales.usageThisMonth)
+                .map(([k, v]) => `${k} ${v}`)
+                .join(' · ') || 'none'}
+            </small>
+          </p>
+        </section>
+      ) : null}
       <section className="module-panel" aria-label="Organisations">
         <h2 className="section-heading">Organisations</h2>
         <ul className="membership-list">

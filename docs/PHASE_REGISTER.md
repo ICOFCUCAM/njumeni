@@ -38,9 +38,9 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 0 | 🟢 Closed and verified |
 | Phase 1 | 🟢 Closed (11 November 2026) |
 | Phase 2 | 🟡 In progress: framework, embeddings profile, as-of and graph queries, coverage levels and evaluation harness built. Task 2.8 (first live source) blocked by network |
-| Phases 3–10 | 🔵 Implemented and verified locally (evidence; research; AI reasoning; verification; documents; case management; professional; enterprise and institutional) |
-| Phases 11–13 | 🔒 Locked |
-| Local checks (2026-11-12) | pgTAP 627/627 ✅ · db lint ✅ · typecheck ✅ · web tests 243/243 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
+| Phases 3–11 | 🔵 Implemented and verified locally (evidence; research; AI reasoning; verification; documents; case management; professional; enterprise and institutional; commercial) |
+| Phases 12–13 | 🔒 Locked |
+| Local checks (2026-11-12) | pgTAP 661/661 ✅ · db lint ✅ · typecheck ✅ · web tests 246/246 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
 | CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
@@ -308,7 +308,21 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Enterprise API keys:** delegated, scoped, hashed, revocable; key-authenticated `GET /research/runs/{id}` and `GET /matters`.
 - **Interface:** `/organisation`, `/compliance`, `/institutional`, `/admin`.
 - **Verification:** pgTAP 627/627 (enterprise 46/46); app 243/243; build passes. The end-to-end run over HTTP passed (API keys 200/401/403, break-glass 404→200, AI conformity gate).
-- **Outstanding:** live SSO against a real identity provider (Stage 2); Phases 3–9 closed; CI on the phase commit.
+- **Outstanding:** live SSO against a real identity provider (Stage 2); Phases 3–9 closed. CI green on the phase commit `29a526e`: runs `43135869994` (CI and security) and `43135870022` (database verification).
+
+## 5i. Phase 11: Commercial infrastructure (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_11_PLAN.md](PHASE_11_PLAN.md)
+
+- **Plans and metering.** Migration `20261112600000`: plan prices, allowances and overage rules; automatic, idempotent metering (research, paid AI credits, final documents, API requests).
+- **Quota enforcement in the database.** Free-plan hard stops; billed overage on paid plans; the API returns 429.
+- **AI credits (U-23)** with audited top-ups.
+- **Invoices:** immutable, gap-free numbering, overage, VAT, PDF.
+- **Payment webhooks verified by the database:** HMAC, freshness, idempotency; no secrets in the web app.
+- **Commercial analytics** for operators.
+- **Interface:** `/billing`.
+- **Verification:** pgTAP 661/661 (commercial 34/34); app 246/246; build passes. Billing passed end to end over HTTP (429 → signed upgrade → 201; invoice PDF; paid).
+- **Outstanding:** payment provider in staging (owner decision); Phases 3–10 closed; CI on the phase commit.
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
 
@@ -329,7 +343,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | — | Release R1: first release | — | Phase 8 closed, Stage 1 infrastructure, and an owner exception for hosted deployment **or** Phase 13 |
 | 9 | Professional workspace | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–8 closed and CI on the phase commit ([Phase 9 plan](PHASE_9_PLAN.md) §5) |
 | 10 | Enterprise and institutional systems | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs SSO against a real identity provider (Stage 2), Phases 3–9 closed and CI on the phase commit ([Phase 10 plan](PHASE_10_PLAN.md) §5) |
-| 11 | Commercial infrastructure | 🔒 LOCKED | Phase 10 closed |
+| 11 | Commercial infrastructure | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs a payment provider in staging (owner decision), Phases 3–10 closed and CI on the phase commit ([Phase 11 plan](PHASE_11_PLAN.md) §5) |
 | 12 | Global expansion | 🔒 LOCKED | Phase 11 closed |
 | 13 | Production hardening and launch | 🔒 LOCKED | Phase 12 closed; includes the **first hosted deployment of the cumulative migration set** |
 

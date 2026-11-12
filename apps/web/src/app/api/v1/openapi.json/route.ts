@@ -18,6 +18,7 @@ const errorSchema = {
             'not_found',
             'invalid_request',
             'not_configured',
+            'quota_exceeded',
             'internal_error',
           ],
         },
@@ -290,6 +291,38 @@ const document = {
           '200': {
             description: 'The case bundle. X-Content-SHA256 carries the archive hash',
             content: { 'application/zip': { schema: { type: 'string', format: 'binary' } } },
+          },
+          '400': {
+            description: 'Invalid identifier',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '401': {
+            description: 'Not signed in',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '404': {
+            description: 'Not found or not accessible',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+        },
+      },
+    },
+    '/billing/invoices/{invoiceId}/pdf': {
+      get: {
+        summary:
+          'Download an issued invoice as PDF (requires billing.read in the invoice organisation)',
+        parameters: [
+          {
+            name: 'invoiceId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'The invoice',
+            content: { 'application/pdf': { schema: { type: 'string', format: 'binary' } } },
           },
           '400': {
             description: 'Invalid identifier',

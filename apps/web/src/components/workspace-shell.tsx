@@ -39,6 +39,7 @@ const navigationGroups: { label: string; items: NavigationItem[] }[] = [
   {
     label: 'Account',
     items: [
+      { label: 'Plan and usage', href: '/billing', icon: 'briefcase' },
       { label: 'Profile settings', href: '/settings/profile', icon: 'user' },
       { label: 'Organisations and workspaces', href: '/settings/workspaces', icon: 'building' },
     ],
