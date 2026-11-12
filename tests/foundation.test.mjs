@@ -31,7 +31,10 @@ test('the phase register records verified Phase 0 closeout and authorised parall
   assert.match(register, /\| 1 \| Identity, tenancy and security foundation \| 🟢 CLOSED \|/);
   assert.match(register, /\| 2 \| Legal knowledge foundation \| 🟡 IN PROGRESS — PARALLEL \|/);
   // Phase 13 may be implemented, but launch is never claimed before the owner's launch steps.
-  assert.match(register, /\| 13 \| Production hardening and launch \| (🔒 LOCKED|🔵 IMPLEMENTED[^|]*) \|/);
+  assert.match(
+    register,
+    /\| 13 \| Production hardening and launch \| (🔒 LOCKED|🔵 IMPLEMENTED[^|]*) \|/,
+  );
   assert.doesNotMatch(register, /\| 13 \| Production hardening and launch \| 🟢 CLOSED/);
   assert.match(register, /6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1/);
   assert.match(register, /Phase 0 closeout verified/);
