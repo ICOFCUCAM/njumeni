@@ -14,6 +14,7 @@ const navigationGroups: { label: string; items: NavigationItem[] }[] = [
     items: [
       { label: 'Legal intelligence', href: '/intelligence', icon: 'sparkles' },
       { label: 'Legal research', href: '/research', icon: 'search' },
+      { label: 'Human review', href: '/reviews', icon: 'shield' },
       { label: 'Jurisdictions', href: '/jurisdictions', icon: 'globe' },
     ],
   },

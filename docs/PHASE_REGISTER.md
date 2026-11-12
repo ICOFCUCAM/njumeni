@@ -38,9 +38,9 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 0 | 🟢 Closed and verified |
 | Phase 1 | 🟢 Closed (11 November 2026) |
 | Phase 2 | 🟡 In progress: framework, embeddings profile, as-of and graph queries, coverage levels and evaluation harness built. Task 2.8 (first live source) blocked by network |
-| Phases 3–5 | 🔵 Implemented and verified locally (evidence intelligence; research engine; AI reasoning and agent framework) |
-| Phases 6–13 | 🔒 Locked |
-| Local checks (2026-11-12) | pgTAP 427/427 ✅ · db lint ✅ · typecheck ✅ · web tests 223/223 ✅ · build ✅ · root tests 19/19 ✅ |
+| Phases 3–6 | 🔵 Implemented and verified locally (evidence intelligence; research engine; AI reasoning and agent framework; verification and legal quality) |
+| Phases 7–13 | 🔒 Locked |
+| Local checks (2026-11-12) | pgTAP 463/463 ✅ · db lint ✅ · typecheck ✅ · web tests 226/226 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
 | CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
@@ -228,7 +228,26 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Reasoning agent.** Builds a grounded argument from verified research and the workspace's facts. Output is validated so it cannot cite unverified passages or outside material. An eight-check structural rubric scores the result.
 - **Interface:** `/arguments` and `/arguments/[issueId]`.
 - **Verification:** pgTAP 427/427 (AI 28/28); app 223/223; build passes. End-to-end run passed (proposal, injection flagged, review-once, refusal before any call, outsider denied).
-- **Outstanding:** Phases 3 and 4 closed; CI on the phase commit; the real provider adapter (D-5).
+- **Outstanding:** Phases 3 and 4 closed; the real provider adapter (D-5). CI green on the phase commits `07aa1b5`/`fdff7df`: runs `43125078347` (CI and security) and `43125078413` (database verification).
+
+## 5d. Phase 6: Verification and legal quality (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_6_PLAN.md](PHASE_6_PLAN.md)
+
+- **Re-verification.** Migration `20261112100000` re-checks a research run at any later date for:
+  - currency (changed since; scheduled);
+  - treatment (overruled, repealed, replaced, distinguished);
+  - conflicts between relied-on authorities;
+  - jurisdiction fit (including parent jurisdictions);
+  - source rights still in force;
+  - limitation disclosure.
+- **Outcomes and records.** Each check gives `clear`, `review_required` or `blocked`. Reports and findings are append-only and audited.
+- **Human review gates (§8.5).** Opened automatically from findings or on request. Decided by `quality.review` holders under four-eyes (recorded self-review in personal organisations). Decisions are final and audited.
+- **No uncalibrated confidence (§8.4).**
+- **Release gates (§18.3) in CI.** All 12 gates are mapped to the tests and steps that enforce them. Evaluation thresholds (§18.2) cannot regress without a recorded recalibration.
+- **Interface:** the verification panel on `/research/[runId]`; `/reviews`.
+- **Verification:** pgTAP 463/463 (quality 36/36); app 226/226; root 24/24; build passes. The end-to-end run passed.
+- **Outstanding:** Phases 3–5 closed; CI on the phase commit; calibration on real data (Task 2.8).
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
 
@@ -243,7 +262,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | 4 | Legal research engine (with verification core) | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in parallel (owner autonomous mode). Formal closeout needs Phase 2 content (Task 2.8) and CI on the phase commit ([Phase 4 plan](PHASE_4_PLAN.md) §5) |
 | — | Milestone M1: grounded-research demo (local stack) | — | Phase 4 exit criteria met for Norway |
 | 5 | AI reasoning and agent framework | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3 and 4 closed, CI on the phase commit and owner decision D-5 for a model-backed evaluation ([Phase 5 plan](PHASE_5_PLAN.md) §5) |
-| 6 | Verification and legal quality | 🔒 LOCKED | Phase 5 closed |
+| 6 | Verification and legal quality | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–5 closed, CI on the phase commit and calibration on real data ([Phase 6 plan](PHASE_6_PLAN.md) §5) |
 | 7 | Document intelligence | 🔒 LOCKED | Phase 6 closed |
 | 8 | Case management and personal workspace | 🔒 LOCKED | Phase 7 closed |
 | — | Release R1: first release | — | Phase 8 closed, Stage 1 infrastructure, and an owner exception for hosted deployment **or** Phase 13 |

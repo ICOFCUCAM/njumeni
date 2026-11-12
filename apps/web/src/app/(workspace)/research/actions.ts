@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { runLegalResearch } from '@/modules/research/service';
+import { MANUAL_GATES, verifyResearchRun } from '@/modules/verification/quality';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -35,4 +36,46 @@ export async function askResearchQuestion(formData: FormData): Promise<void> {
     redirect(`${back}&error=${/NOT_AUTHORISED/.test(code) ? 'not-authorized' : 'research-failed'}`);
   }
   redirect(`/research/${runId}`);
+}
+
+export async function recheckResearch(formData: FormData): Promise<void> {
+  const runId = String(formData.get('runId') ?? '');
+  if (!UUID.test(runId)) redirect('/research?error=invalid-input');
+  let failure: string | null = null;
+  try {
+    const supabase = await createClient();
+    await verifyResearchRun(supabase, runId);
+  } catch (error) {
+    failure =
+      error instanceof Error && error.message === 'QUALITY_NOT_AUTHORISED'
+        ? 'not-authorized'
+        : 'check-failed';
+  }
+  redirect(`/research/${runId}${failure ? `?error=${failure}` : '#verification'}`);
+}
+
+export async function requestResearchReview(formData: FormData): Promise<void> {
+  const runId = String(formData.get('runId') ?? '');
+  const organizationId = String(formData.get('organizationId') ?? '');
+  const workspaceId = String(formData.get('workspaceId') ?? '');
+  const gate = String(formData.get('gate') ?? '');
+  const reason = String(formData.get('reason') ?? '').trim();
+  if (
+    ![runId, organizationId, workspaceId].every((id) => UUID.test(id)) ||
+    reason.length < 3 ||
+    !(MANUAL_GATES as readonly string[]).includes(gate)
+  )
+    redirect(`/research/${UUID.test(runId) ? runId : ''}?error=invalid-review`);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('review_request_create', {
+    p_organization_id: organizationId,
+    p_workspace_id: workspaceId,
+    p_subject_type: 'research_run',
+    p_subject_id: runId,
+    p_gate: gate,
+    p_reason: reason,
+  });
+  redirect(
+    `/research/${runId}${error ? `?error=${/ALREADY_PENDING/.test(error.message) ? 'review-pending' : 'review-failed'}` : '#verification'}`,
+  );
 }

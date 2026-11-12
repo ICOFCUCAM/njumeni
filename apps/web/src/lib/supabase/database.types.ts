@@ -380,6 +380,15 @@ isOneToOne: false
               "attribution_text": string,"display_permitted": boolean,"licence_identifier": string,"quote_permitted": boolean,"source_key": string
             }[]
                            },
+"review_decide":
+{ Args: { "p_decision": string,"p_note"?: string,"p_request_id": string }; Returns: undefined
+                           },
+"review_list":
+{ Args: { "p_organization_id": string,"p_status"?: string,"p_workspace_id": string }; Returns: Json
+                           },
+"review_request_create":
+{ Args: { "p_gate": string,"p_organization_id": string,"p_reason": string,"p_subject_id": string,"p_subject_type": string,"p_workspace_id": string }; Returns: string
+                           },
 "revoke_organization_invitation":
 { Args: { "p_invitation_id": string }; Returns: boolean
                            },
@@ -394,6 +403,12 @@ isOneToOne: false
                            },
 "set_workspace_membership_status":
 { Args: { "p_membership_id": string,"p_status": string }; Returns: boolean
+                           },
+"verification_check_research_run":
+{ Args: { "p_check_date"?: string,"p_run_id": string }; Returns: Json
+                           },
+"verification_get_run_quality":
+{ Args: { "p_run_id": string }; Returns: Json
                            },
 "verify_security_audit_chain":
 { Args: Record<PropertyKey, never>; Returns: Json

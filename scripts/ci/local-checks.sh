@@ -16,6 +16,9 @@ node scripts/ci/verify-foundation.mjs
 step "Migration guard"
 node scripts/ci/check-migrations.mjs
 
+step "Release gates and evaluation thresholds"
+node scripts/ci/check-release-gates.mjs
+
 step "Root documentation and policy tests"
 node --test tests/*.test.mjs
 

@@ -101,3 +101,12 @@ Because the repository is public, GitHub Actions minutes are free, so automatic 
 | `supabase-dependency-lock.yml` | **Manual only.** It commits regenerated lockfiles by itself, which would conflict with the one-commit-per-phase cadence |
 
 The stand-alone `secret-scan.yml` was removed: Gitleaks and the content policy already run on every push inside `repository-security.yml`. `scripts/ci/local-checks.sh` remains the recommended pre-commit check.
+
+## Addendum — Release gates (Phase 6, 12 November 2026)
+
+The `quality` job in `repository-security.yml` now runs `node scripts/ci/check-release-gates.mjs` after the migration guard. It fails the build when:
+- any of the 12 release gates of master plan §18.3 loses the test or workflow step that evidences it (`quality/release-gates.json`);
+- an evaluation threshold of §18.2 is lowered or removed compared with the base commit, without a recalibration entry (`quality/evaluation-thresholds.json`);
+- a gate enforced in code is weaker than the thresholds file.
+
+`scripts/ci/local-checks.sh` runs the same check.

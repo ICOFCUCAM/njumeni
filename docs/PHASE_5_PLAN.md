@@ -90,7 +90,7 @@ The end-to-end run as a real signed-in user:
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 5 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 5 commit~~ ✅ `07aa1b5` and the follow-up `fdff7df`: runs `43125078347` (CI and security) and `43125078413` (database verification), both successful | Done |
 | 2 | Phases 3 and 4 closed | Their own closeout items (OCR and anti-virus; Task 2.8) |
 | 3 | A model-backed reasoning evaluation on real content | D-5 and Task 2.8 |
 

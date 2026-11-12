@@ -15,6 +15,7 @@
 | Migration discipline | `check-migrations.mjs` (naming, order, immutability, hash-pinned corrections) | CI | Every push |
 | Schema/type drift | Generated types compared with the committed file | CI `supabase-local.yml` | On schema changes |
 | Secrets and content policy | Gitleaks, `check-repository-content.sh` | CI | Every push |
+| Release gates and evaluation thresholds | `check-release-gates.mjs` with `quality/release-gates.json` and `quality/evaluation-thresholds.json` | CI | Every push |
 | Build | `next build` | CI | Every push |
 | End-to-end | Scripted flows against a local stack and the built app (synthetic users and data) | Per phase, before its commit | Recorded in each phase plan |
 | Legal-quality evaluation | `retrieval-evaluation.ts` + `npm run eval:retrieval` | `legal-data/evaluation-datasets/` | Per phase; becomes a CI gate once real content exists (Task 2.8) |
@@ -28,20 +29,20 @@
 5. **Gates with nothing to measure fail.** An evaluation without cases never passes silently.
 6. **Each phase records its evidence:** test counts, end-to-end results and CI run IDs, in the phase plan.
 
-## 3. Current totals (Phase 5)
+## 3. Current totals (Phase 6)
 
 | Suite | Count |
 |---|---|
-| pgTAP | 427 assertions in 16 files |
-| Application | 223 tests |
-| Root policy and documentation | 19 tests |
+| pgTAP | 463 assertions in 17 files |
+| Application | 226 tests |
+| Root policy and documentation | 24 tests |
 
 ## 4. Added by later phases
 
 | Phase | Addition |
 |---|---|
 | 5 | ✅ Agent authorisation and refusal tests (pgTAP); orchestrator, injection and grounding-validation tests; reasoning rubric (`evaluateArgumentGraph`). Model-backed evaluation follows D-5 |
-| 6 | Automated release gates (master plan §18.3) |
+| 6 | ✅ Automated release gates (§18.3, `check-release-gates.mjs`), evaluation-threshold regression guard (§18.2), re-verification and review-gate tests |
 | 7 | Document export fidelity tests (DOCX/PDF) |
 | 8–9 | Browser end-to-end journeys (master plan §15) with Playwright |
 | 13 | Load, performance, penetration and restore-drill testing |
