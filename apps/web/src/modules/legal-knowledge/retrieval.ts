@@ -212,8 +212,10 @@ export const CALIBRATED_ABSTENTION:Readonly<LegalAbstentionPolicy>=Object.freeze
   minSemanticScore:null,
 });
 /**
- * Production routing policy (legal-route-1.0.0). Off until measured: enabled only if the
- * development sets improve and a fresh held-out set confirms it.
+ * Production routing policy (legal-route-1.0.0). REJECTED 2026-11-12 by the pre-registered rule:
+ * on both development sets no grid setting (3/5/8 acts × 3/5 passages) raised mean P@5 above the
+ * baseline 0.634 without losing recall (3×3 and 5×3 tied the baseline; larger settings cut
+ * holdout-v1 recall 0.741 → 0.704). Kept as an option for future first stages; off in production.
  */
 export const LEGAL_ROUTING_VERSION='legal-route-1.0.0';
 export const CALIBRATED_ROUTING:Readonly<{authorities:number;passagesPerAuthority:number;minRouteScore:number|null}>|null=null;
