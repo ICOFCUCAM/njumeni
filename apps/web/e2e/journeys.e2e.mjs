@@ -468,3 +468,99 @@ test('journey GLCI: the Global Legal Observatory and its command centre (operato
   assert.deepEqual(approver.errors, [], 'no client-side errors');
   await approver.context.close();
 });
+
+test('journey homepage: public homepage, every link and anchor, demonstration, early access', async () => {
+  const browser = await chromium.launch();
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await context.newPage();
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  const response = await page.goto(`${BASE}/`);
+  assert.equal(response.status(), 200, 'the homepage is public (no redirect to sign-in)');
+  assert.equal(await page.locator('h1').count(), 1, 'one main heading');
+  assert.match(await page.locator('h1').innerText(), /Know the law\. Understand the evidence\. Stay ahead of change\./);
+  assert.match(await page.title(), /Njumeni/);
+  assert.ok(await page.locator('meta[name="description"]').getAttribute('content'), 'meta description');
+  assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'index, follow', 'the homepage is indexable');
+  assert.ok(await page.getByText('Njumeni is opening to early-access organisations, starting with Norway.').isVisible(), 'early-access notice');
+  // The story: eight chapters, each reachable from the table of contents.
+  for (const id of ['research', 'workspace', 'evidence', 'change-intelligence', 'enterprise', 'international', 'trust', 'audiences']) {
+    assert.equal(await page.locator(`section#${id}`).count(), 1, `chapter ${id}`);
+  }
+  // The time machine: moving the date changes the version of the law that applies.
+  const tm = page.locator('.nj-tm');
+  assert.ok(await tm.getByText('Version 2 · in force from 1 January 2024').isVisible());
+  await tm.getByLabel('Date of the law').fill('2020');
+  assert.ok(await tm.getByText('Version 1 · in force from 1 January 2019').isVisible(), 'earlier date, earlier version');
+  await tm.getByLabel('Date of the law').fill('2028');
+  assert.ok(await tm.getByText('Version 3 · in force from 1 July 2027').isVisible(), 'later date, later version');
+  // The case file: tabs switch with the mouse and the keyboard.
+  const dossier = page.locator('.nj-dz');
+  await dossier.getByRole('tab', { name: 'Chronology' }).click();
+  assert.ok(await dossier.getByText('Notice of dismissal').isVisible());
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await dossier.getByRole('tab', { name: 'Arguments' }).getAttribute('aria-selected'), 'true', 'arrow keys move between tabs');
+  // No inflated claims.
+  const text = await page.locator('main').innerText();
+  assert.ok(!/\b2[0-9]\+? jurisdictions\b/i.test(text), 'no inflated jurisdiction count');
+  assert.ok(text.includes('17 legal'), 'the framework size is stated accurately');
+  // Every link resolves: internal pages return 200 and every in-page anchor exists.
+  const hrefs = [...new Set(await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href'))))];
+  for (const href of hrefs) {
+    const url = new URL(href, `${BASE}/`);
+    if (url.hash && url.pathname === '/') {
+      assert.equal(await page.locator(url.hash).count(), 1, `anchor ${url.hash} exists`);
+      continue;
+    }
+    const res = await page.request.get(url.toString(), { maxRedirects: 0 });
+    assert.equal(res.status(), 200, `${href} returns 200`);
+  }
+  // The change-intelligence demonstration steps through the workflow.
+  const demo = page.locator('.nj-demo');
+  await demo.getByRole('button', { name: '3. Impact analysis' }).click();
+  assert.ok(await demo.getByText('4 research answers cite the previous wording.').isVisible());
+  await demo.getByRole('button', { name: 'Next step' }).click();
+  await demo.getByRole('button', { name: 'Next step' }).click();
+  assert.ok(await demo.getByText('The law has changed since this answer').isVisible(), 'the demonstration ends with the customer notice');
+  assert.ok(await demo.getByRole('button', { name: 'Next step' }).isDisabled());
+  // Keyboard: on a fresh load, the skip link is the first focusable element.
+  await page.goto(`${BASE}/`);
+  await page.keyboard.press('Tab');
+  assert.equal(await page.evaluate(() => document.activeElement?.textContent), 'Skip to content');
+  // SEO files.
+  assert.match(await (await page.request.get(`${BASE}/robots.txt`)).text(), /Disallow: \//);
+  assert.match(await (await page.request.get(`${BASE}/sitemap.xml`)).text(), /early-access/);
+
+  // Early access: the call to action leads to a working form; the request is stored once.
+  await Promise.all([page.waitForURL(/\/early-access$/), page.locator('.nj-hero').getByRole('link', { name: 'Request early access' }).click()]);
+  const email = `homepage-${stamp}@example.invalid`;
+  await page.getByLabel('Full name').fill('Early Access Journey');
+  await page.getByLabel('Work email').fill(email);
+  await page.getByLabel('Organisation').fill('Journey Law AS');
+  await page.getByLabel('I am').selectOption('law_firm');
+  await page.getByLabel('Norway').check();
+  await page.getByLabel(/I agree that Njumeni stores this request/).check();
+  await Promise.all([page.waitForURL(/status=received/), page.getByRole('button', { name: 'Request early access' }).click()]);
+  assert.ok(await page.getByText('Thank you — your request has been received.').isVisible());
+  assert.equal(sql(`select audience || '/' || array_to_string(jurisdictions, ',') from private.early_access_requests where email = '${email}'`), 'law_firm/NO');
+  // A bot filling the hidden field is told the same and nothing is stored.
+  await page.goto(`${BASE}/early-access?interest=demonstration`);
+  assert.ok(await page.getByRole('heading', { name: 'Request a demonstration.' }).isVisible());
+  await page.getByLabel('Full name').fill('Bot');
+  await page.getByLabel('Work email').fill(`bot-${stamp}@example.invalid`);
+  await page.getByLabel('I am').selectOption('individual');
+  await page.getByLabel(/I agree/).check();
+  await page.locator('input[name="website"]').fill('https://spam.example');
+  await Promise.all([page.waitForURL(/status=received/), page.getByRole('button', { name: 'Request a demonstration' }).click()]);
+  assert.equal(sql(`select count(*) from private.early_access_requests where email = 'bot-${stamp}@example.invalid'`), '0');
+
+  // Mobile: the menu opens and the page does not scroll sideways.
+  const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
+  const phone = await mobile.newPage();
+  await phone.goto(`${BASE}/`);
+  assert.equal(await phone.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), 0, 'no horizontal scroll on mobile');
+  await phone.getByText('Menu').click();
+  assert.ok(await phone.getByRole('navigation', { name: 'Main (mobile)' }).getByRole('link', { name: 'Request early access' }).isVisible());
+  assert.deepEqual(errors, [], 'no client-side errors');
+  await browser.close();
+});

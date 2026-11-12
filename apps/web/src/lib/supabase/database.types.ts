@@ -503,6 +503,25 @@ export type Database = {
       };
       document_templates_for: { Args: { p_organization_id: string }; Returns: Json };
       document_withdraw: { Args: { p_document_id: string }; Returns: undefined };
+      early_access_list: { Args: { p_status?: string }; Returns: Json };
+      early_access_purge_expired: { Args: Record<PropertyKey, never>; Returns: number };
+      early_access_request: {
+        Args: {
+          p_audience: string;
+          p_consent: boolean;
+          p_email: string;
+          p_full_name: string;
+          p_interest: string;
+          p_jurisdictions: string[];
+          p_message: string;
+          p_organisation: string;
+        };
+        Returns: string;
+      };
+      early_access_set_status: {
+        Args: { p_request_id: string; p_status: string };
+        Returns: undefined;
+      };
       evidence_add_event: {
         Args: {
           p_date_precision: string;
