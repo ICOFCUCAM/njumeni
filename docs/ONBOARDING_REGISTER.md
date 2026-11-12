@@ -76,6 +76,7 @@ A source is still not activated before its rights are reviewed.
 | Claude Code routine with API trigger (`GLCI_CLAUDE_CODE_ROUTINE_URL`, `_TOKEN`) | Open | Claude Code answers and engineering tasks |
 | `GLCI_GITHUB_TOKEN` (Actions read/write) and the `ANTHROPIC_API_KEY` repository secret | Open | Engineering-task fallback (GitHub workflow) |
 | Web hosting of the Next.js app, with the hosted Supabase URL and publishable key | Open | Everything reaching users, including the observatory |
+| Embedding runtime on the web server (`npm install --no-save @huggingface/transformers@4.3.2`; `LEGAL_QUERY_EMBEDDER=local`) | Open | Keyword-and-meaning research at the measured quality; without it research says it used keywords only |
 | Leaked-password protection (Supabase Auth setting) | Open | Security advisor recommendation |
 | Payment provider, independent penetration test | Open | Commercial launch (Phase 11/13) |
 

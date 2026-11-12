@@ -21,6 +21,7 @@ import {
 import { detectLanguage } from '../global/language.ts';
 import { CALIBRATED_RERANK_OPTIONS, createLegalReranker } from '../legal-knowledge/reranker.ts';
 import { translateQuery, type GlossaryTerm } from '../global/glossary.ts';
+import { isEmbeddingUnavailable, KEYWORD_FALLBACK_NOTE } from './query-embedder.ts';
 
 type RpcClient = Pick<SupabaseClient, 'rpc'>;
 
@@ -82,14 +83,15 @@ export async function runLegalResearch(
     }
   }
 
-  const plan = createRetrievalPlan({
+  const planInput = {
     query: searchQuery,
     jurisdictionCode: request.jurisdictionCode,
     asOfDate: request.asOfDate,
     languageCodes: request.languageCodes,
     mode,
     limit: 12,
-  });
+  };
+  let plan = createRetrievalPlan(planInput);
   const jurisdictions = await client.rpc('research_list_jurisdictions');
   if (jurisdictions.error || !Array.isArray(jurisdictions.data))
     fail('RESEARCH_JURISDICTIONS_UNAVAILABLE');
@@ -106,11 +108,27 @@ export async function runLegalResearch(
   );
   // Second stage: legal reranking (provision, citation, authority, currency, jurisdiction and
   // language signals) over a wider first-stage pool; every finding keeps its ranking trace.
-  const passages = await executeLegalRetrieval(plan, provider, {
-    reranker: createLegalReranker({ ...CALIBRATED_RERANK_OPTIONS, preferredLanguage: target ?? null }),
-    // Provision and citation matching see the question as asked and, when translated, as searched.
-    question: searchQuery === question ? question : question + '\n' + searchQuery,
-  });
+  const retrieve = (retrievalPlan: typeof plan) =>
+    executeLegalRetrieval(retrievalPlan, provider, {
+      reranker: createLegalReranker({
+        ...CALIBRATED_RERANK_OPTIONS,
+        preferredLanguage: target ?? null,
+      }),
+      // Provision and citation matching see the question as asked and, when translated, as searched.
+      question: searchQuery === question ? question : question + '\n' + searchQuery,
+    });
+  let passages: Awaited<ReturnType<typeof retrieve>>;
+  let fallbackNote: string | null = null;
+  try {
+    passages = await retrieve(plan);
+  } catch (error) {
+    // Meaning-based search unavailable (runtime or model missing): fall back to keyword search,
+    // record the run as lexical and tell the reader. An explicitly requested mode still fails.
+    if (request.mode || plan.mode === 'lexical' || !isEmbeddingUnavailable(error)) throw error;
+    plan = createRetrievalPlan({ ...planInput, mode: 'lexical' });
+    passages = await retrieve(plan);
+    fallbackNote = KEYWORD_FALLBACK_NOTE;
+  }
 
   const scope = { p_organization_id: request.organizationId, p_workspace_id: request.workspaceId };
   const authorityIds = [...new Set(passages.map((passage) => passage.authorityId))].slice(0, 50);
@@ -147,9 +165,9 @@ export async function runLegalResearch(
     p_as_of_date: plan.asOfDate,
     p_language_codes: plan.languageCodes,
     p_retrieval_mode: plan.mode,
-    p_limitations: crossLanguageNote
-      ? [crossLanguageNote, ...composed.limitations]
-      : composed.limitations,
+    p_limitations: [crossLanguageNote, fallbackNote, ...composed.limitations].filter(
+      (note): note is string => Boolean(note),
+    ),
     p_engine_version: RESEARCH_ENGINE_VERSION,
     p_findings: composed.findings,
     p_claims: composed.claims,

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { runLegalResearch } from '@/modules/research/service';
+import { researchQueryEmbedder } from '@/modules/research/query-embedder';
 import { MANUAL_GATES, verifyResearchRun } from '@/modules/verification/quality';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -24,14 +25,18 @@ export async function askResearchQuestion(formData: FormData): Promise<void> {
   let runId: string;
   try {
     const supabase = await createClient();
-    ({ runId } = await runLegalResearch(supabase, {
-      organizationId,
-      workspaceId,
-      question,
-      jurisdictionCode,
-      asOfDate,
-      languageCodes: [language],
-    }));
+    ({ runId } = await runLegalResearch(
+      supabase,
+      {
+        organizationId,
+        workspaceId,
+        question,
+        jurisdictionCode,
+        asOfDate,
+        languageCodes: [language],
+      },
+      researchQueryEmbedder(),
+    ));
   } catch (error) {
     const code = error instanceof Error ? error.message : '';
     redirect(

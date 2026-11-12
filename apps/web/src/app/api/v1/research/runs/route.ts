@@ -1,6 +1,7 @@
 import { apiError, apiErrorFromCode, apiJson } from '@/lib/api-response';
 import { createClient } from '@/lib/supabase/server';
 import { runLegalResearch } from '@/modules/research/service';
+import { researchQueryEmbedder } from '@/modules/research/query-embedder';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,14 +59,18 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
   try {
-    const { runId } = await runLegalResearch(supabase, {
-      organizationId,
-      workspaceId,
-      question,
-      jurisdictionCode,
-      asOfDate,
-      languageCodes: languageCodes as string[],
-    });
+    const { runId } = await runLegalResearch(
+      supabase,
+      {
+        organizationId,
+        workspaceId,
+        question,
+        jurisdictionCode,
+        asOfDate,
+        languageCodes: languageCodes as string[],
+      },
+      researchQueryEmbedder(),
+    );
     const { data, error } = await supabase.rpc('research_get_run', { p_run_id: runId });
     if (error) return apiErrorFromCode(error.message);
     return apiJson({ data }, 201);

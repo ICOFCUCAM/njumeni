@@ -134,6 +134,10 @@ test('journey 15.1: intake → matter → research → verification → review �
     page.getByRole('button', { name: 'Research' }).click(),
   ]);
   const researchUrl = page.url();
+  // Live research embeds the question when the runtime is installed; otherwise it says it used keywords only.
+  if (await page.getByText('search: keyword only').isVisible())
+    assert.ok(await page.getByText(/Meaning-based search was unavailable/).isVisible(), 'a keyword-only answer says so');
+  else assert.ok(await page.getByText('search: keyword and meaning').isVisible(), 'the answer used keyword and meaning search');
   assert.ok(
     await page.getByText('✓ verified').first().isVisible(),
     'the answer cites a verified provision',

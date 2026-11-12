@@ -8,7 +8,7 @@
 | Register revision | 2026-11-11: rewritten to align with Master Plan v2.0 and to correct status against the actual code and CI |
 | Reviewed head | `2b60d5f` |
 | Infrastructure stage | **Stage 0: zero cost, synthetic data only** |
-| Hosted database | Supabase project `Njumeni` (`eu-north-1`). **No migrations applied. Deployment deferred until all phases are complete (Phase 13)** |
+| Hosted database | Supabase project `Njumeni` (`eu-north-1`). **54 migrations deployed** (through `20261114400000`, GLCI-12), verified identical to the repository; every deployment since GLCI-11 is recorded in the GLCI deployment register |
 | Active phases | **Phase 2 (IN PROGRESS; 2.8 implemented locally, owner approval pending)** · **Phase 3 (IMPLEMENTED; CI green)** · **Phase 4 (IMPLEMENTED; verified locally)** · Phase 5 next |
 | Phase 0 closeout | `6cbcf032b3116ddb69f5ef9ccd29330d4a9212d1`; CI run `42768822407` SUCCESS |
 | Next action | Confirm CI on the Phase 4 commit, then Phase 5 (AI reasoning and agent framework) |

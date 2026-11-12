@@ -23,6 +23,13 @@ interface Claim {
   failureCodes: string[];
   sourceUri: string | null;
 }
+interface CurrencyNotice {
+  severity: 'high' | 'low';
+  message: string;
+  sections: string[] | null;
+  effectiveDate: string | null;
+  createdAt: string;
+}
 interface Run {
   question: string;
   jurisdictionCode: string;
@@ -31,6 +38,7 @@ interface Run {
   coverageLevel: string;
   limitations: string[];
   engineVersion: string;
+  retrievalMode: 'lexical' | 'semantic' | 'hybrid';
   claims: Claim[];
 }
 
@@ -71,10 +79,13 @@ export default async function ResearchRunPage({
   const { error: pageError } = await searchParams;
   if (!UUID.test(runId)) notFound();
   const supabase = await createClient();
-  const [{ data, error }, qualityResult] = await Promise.all([
+  const [{ data, error }, qualityResult, noticesResult] = await Promise.all([
     supabase.rpc('research_get_run', { p_run_id: runId }),
     supabase.rpc('verification_get_run_quality', { p_run_id: runId }),
+    supabase.rpc('research_run_currency_notices', { p_run_id: runId }),
   ]);
+  // Notices from the Global Legal Observatory: the law this answer relied on has changed since.
+  const notices = (noticesResult.data ?? []) as unknown as CurrencyNotice[];
   if (error || !data) notFound();
   const run = data as unknown as Run;
   const quality = (qualityResult.data ?? null) as unknown as RunQuality | null;
@@ -90,7 +101,7 @@ export default async function ResearchRunPage({
         <h1 className="page-title">{run.question}</h1>
         <p className="page-description">
           {run.jurisdictionCode} · law as it stood on {run.asOfDate} · coverage: {run.coverageLevel}{' '}
-          ·{' '}
+          · search: {run.retrievalMode === 'lexical' ? 'keyword only' : 'keyword and meaning'} ·{' '}
           <strong>
             {run.status === 'answered'
               ? 'Answered from verified sources'
@@ -98,6 +109,24 @@ export default async function ResearchRunPage({
           </strong>
         </p>
       </header>
+
+      {notices.length ? (
+        <section role="alert" className="module-panel" aria-label="The law has changed">
+          <h2 className="section-heading">The law has changed since this answer</h2>
+          <ul className="module-list">
+            {notices.map((notice) => (
+              <li key={notice.createdAt + notice.message}>
+                <strong>{notice.severity === 'high' ? 'Important: ' : ''}</strong>
+                {notice.message}
+                {notice.sections?.length ? ` Affected: ${notice.sections.join(', ')}.` : ''}
+                {notice.effectiveDate ? ` Takes effect ${notice.effectiveDate}.` : ''}{' '}
+                <small>(notified {notice.createdAt.slice(0, 10)})</small>
+              </li>
+            ))}
+          </ul>
+          <p>Ask the question again to research the law as it now stands.</p>
+        </section>
+      ) : null}
 
       {pageError && PAGE_ERRORS[pageError] ? (
         <p role="alert" className="module-panel">

@@ -39,18 +39,12 @@ This repository is **public by decision** ([ADR-0003](docs/architecture/ADR-0003
 | 12 | Global expansion | 🔵 Framework implemented: more jurisdictions (EEA, OHADA, African states), sources held for rights review, legal glossary and cross-language research, citation styles, en/nb/fr interface. The coverage gate needs real content |
 | 13 | Production hardening and launch | 🔵 Hardening implemented and verified: security audit and invariants, headers, penetration probes, load test, AI evaluation, restore drill, monitoring, runbook, hosted deployment workflow. Launch steps are with the owner |
 
-**What exists:**
-- A Next.js 16 application with Supabase authentication, organisations, workspaces, invitations and role management.
-- 23 database migrations: identity, RBAC, RLS, private storage policies, audit, entitlements, and the legal-knowledge registry, ingestion queue and retrieval. They replay cleanly on a local stack.
-- About 180 automated application tests, plus pgTAP database tests.
+**What exists (2026-11-12):**
+- A Next.js 16 application: identity, organisations, workspaces and roles; legal research with verified citations; matters, evidence, documents, arguments; and the Super Admin Global Legal Observatory (GLCI-01 to GLCI-12).
+- 54 database migrations, all deployed to the hosted Supabase project and verified identical to this repository.
+- About 320 application tests, about 990 pgTAP database tests and four browser journeys.
 
-**What does not exist yet:**
-- Legal content and source adapters.
-- AI models and embeddings.
-- Evidence upload, matters and research answers.
-- Any deployment.
-
-The hosted database is intentionally empty. **All migrations stay in this repository and are applied to the hosted project only when every phase is complete** (Phase 13).
+**Not yet live:** the web app is not hosted, the hosted database holds no legal content, and no official source is switched on. The owner's activation steps are in the [onboarding register](docs/ONBOARDING_REGISTER.md) §4; an independent audit is in [docs/SYSTEM_AUDIT_2026-11-12.md](docs/SYSTEM_AUDIT_2026-11-12.md).
 
 The live status, with evidence and blockers, is in the **[Phase Register](docs/PHASE_REGISTER.md)**.
 
