@@ -81,8 +81,36 @@ interface Message {
   content: string;
   intent: string | null;
   engine: string | null;
+  data: { attempts?: { engine: string; outcome: string; reason: string | null }[] } | null;
   createdAt: string;
 }
+interface AiSettings {
+  primaryEngine: 'claude_code' | 'anthropic_api' | 'rules';
+  fallbackEnabled: boolean;
+  anthropicModel: string;
+  monthlyBudgetUsd: number;
+  spentThisMonthUsd: number;
+}
+interface Dispatch {
+  id: string;
+  questionSequence: number;
+  status: 'dispatched' | 'answered' | 'failed';
+  sessionUrl: string | null;
+  dispatchedAt: string;
+}
+const ENGINE_LABEL: Record<string, string> = {
+  claude_code: 'Claude Code (your subscription)',
+  anthropic_api: 'Anthropic API (key)',
+  rules: 'Built-in rules (no AI)',
+};
+const engineName = (engine: string | null) =>
+  !engine
+    ? ''
+    : engine === 'claude-code'
+      ? 'Claude Code'
+      : engine.startsWith('anthropic-api')
+        ? 'Anthropic API'
+        : 'Rules engine';
 
 const VERDICT_LABEL: Record<string, string> = {
   current: 'Current',
@@ -128,6 +156,17 @@ export default async function ObservatoryPage({
         )
       ).data ?? []) as unknown as Message[])
     : [];
+  const aiSettings = (await supabase.rpc('glci_ai_settings_get' as never))
+    .data as unknown as AiSettings | null;
+  const dispatches = conversation
+    ? (((
+        await supabase.rpc(
+          'glci_conversation_dispatches' as never,
+          { p_conversation_id: conversation } as never,
+        )
+      ).data ?? []) as unknown as Dispatch[])
+    : [];
+  const pending = dispatches.filter((d) => d.status === 'dispatched');
   const queue = o.issues.flatMap((issue) =>
     issue.proposals
       .filter((p) => p.status === 'proposed' || p.status === 'approved')
@@ -188,11 +227,38 @@ export default async function ObservatoryPage({
               <strong>{m.authorKind === 'operator' ? 'You' : 'Njumeni'}</strong>{' '}
               {m.intent ? (
                 <span className="workspace-status">{m.intent.replace(/_/g, ' ')}</span>
-              ) : null}
+              ) : null}{' '}
+              {m.authorKind === 'assistant' ? <small>via {engineName(m.engine)}</small> : null}
               <p style={{ whiteSpace: 'pre-wrap', margin: '4px 0 0' }}>{m.content}</p>
+              {m.data?.attempts?.some((a) => a.outcome !== 'succeeded') ? (
+                <p style={{ margin: '4px 0 0' }}>
+                  <small>
+                    Fallback:{' '}
+                    {m.data.attempts
+                      .filter((a) => a.outcome !== 'succeeded')
+                      .map(
+                        (a) =>
+                          `${ENGINE_LABEL[a.engine] ?? a.engine} ${a.outcome} (${(a.reason ?? '').toLowerCase().replace(/_/g, ' ')})`,
+                      )
+                      .join('; ')}
+                  </small>
+                </p>
+              ) : null}
             </li>
           ))}
         </ol>
+        {pending.map((d) => (
+          <p key={d.id} role="status">
+            Claude Code is investigating question {d.questionSequence} (sent {time(d.dispatchedAt)}{' '}
+            UTC).{' '}
+            {d.sessionUrl ? (
+              <a href={d.sessionUrl} target="_blank" rel="noreferrer">
+                Watch the session
+              </a>
+            ) : null}{' '}
+            <a href={`/admin/observatory?conversation=${conversation}`}>Refresh</a>
+          </p>
+        ))}
         <form action={askCommandCentre} className="profile-actions">
           {conversation ? <input type="hidden" name="conversation" value={conversation} /> : null}
           <label htmlFor="question">Question</label>
@@ -205,8 +271,76 @@ export default async function ObservatoryPage({
             rows={2}
             placeholder="Is our European legal coverage current?"
           />
+          <label htmlFor="engine">Engine</label>
+          <select id="engine" name="engine" defaultValue="auto">
+            <option value="auto">
+              Default ({ENGINE_LABEL[aiSettings?.primaryEngine ?? 'rules']}
+              {aiSettings?.fallbackEnabled ? ', with fallback' : ''})
+            </option>
+            <option value="claude_code">{ENGINE_LABEL.claude_code}</option>
+            <option value="anthropic_api">{ENGINE_LABEL.anthropic_api}</option>
+            <option value="rules">{ENGINE_LABEL.rules}</option>
+          </select>
           <button type="submit">Ask</button>
         </form>
+        {aiSettings ? (
+          <details>
+            <summary>AI engine settings</summary>
+            <form action={observatoryAction} className="profile-actions">
+              <input type="hidden" name="action" value="ai-settings" />
+              <label htmlFor="primaryEngine">Primary engine</label>
+              <select
+                id="primaryEngine"
+                name="primaryEngine"
+                defaultValue={aiSettings.primaryEngine}
+              >
+                <option value="claude_code">{ENGINE_LABEL.claude_code}</option>
+                <option value="anthropic_api">{ENGINE_LABEL.anthropic_api}</option>
+                <option value="rules">{ENGINE_LABEL.rules}</option>
+              </select>
+              <label>
+                <input
+                  type="checkbox"
+                  name="fallbackEnabled"
+                  defaultChecked={aiSettings.fallbackEnabled}
+                />{' '}
+                Fall back to the next engine (Claude Code → Anthropic API → rules)
+              </label>
+              <label htmlFor="anthropicModel">API model</label>
+              <input
+                id="anthropicModel"
+                name="anthropicModel"
+                defaultValue={aiSettings.anthropicModel}
+              />
+              <label htmlFor="monthlyBudgetUsd">API budget per month (USD)</label>
+              <input
+                id="monthlyBudgetUsd"
+                name="monthlyBudgetUsd"
+                type="number"
+                min={0}
+                step="0.01"
+                defaultValue={aiSettings.monthlyBudgetUsd}
+              />
+              <input
+                name="note"
+                required
+                minLength={5}
+                maxLength={2000}
+                placeholder="Reason for the change"
+              />
+              <button type="submit">Save engine settings</button>
+            </form>
+            <p>
+              <small>
+                API spend this month: ${Number(aiSettings.spentThisMonthUsd).toFixed(2)} of $
+                {Number(aiSettings.monthlyBudgetUsd).toFixed(2)}. Claude Code runs on your Claude
+                subscription; it needs GLCI_CLAUDE_CODE_ROUTINE_URL and
+                GLCI_CLAUDE_CODE_ROUTINE_TOKEN on the server. The API needs ANTHROPIC_API_KEY. An
+                engine that is not configured is skipped.
+              </small>
+            </p>
+          </details>
+        ) : null}
       </section>
 
       <section className="module-panel" aria-label="Jurisdiction currency">

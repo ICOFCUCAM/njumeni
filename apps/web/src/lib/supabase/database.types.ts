@@ -334,6 +334,21 @@ isOneToOne: false
               "effective_from": string,"effective_until": string,"enabled": boolean,"entitlement_key": string,"limit_value": number,"plan_key": string,"subscription_status": string
             }[]
                            },
+"glci_agent_dispatch_create":
+{ Args: { "p_conversation_id": string,"p_dispatch_id": string,"p_question_sequence": number,"p_session_url": string }; Returns: string
+                           },
+"glci_agent_reply":
+{ Args: { "p_content": string,"p_data"?: Json,"p_dispatch_id": string }; Returns: number
+                           },
+"glci_ai_record_call":
+{ Args: { "p_conversation_id": string,"p_cost_usd": number,"p_engine": string,"p_input_tokens": number,"p_model": string,"p_outcome": string,"p_output_tokens": number,"p_reason": string }; Returns: undefined
+                           },
+"glci_ai_settings_get":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"glci_ai_settings_set":
+{ Args: { "p_anthropic_model": string,"p_fallback_enabled": boolean,"p_monthly_budget_usd": number,"p_primary_engine": string,"p_reason": string }; Returns: Json
+                           },
 "glci_audit_feed":
 { Args: { "p_limit"?: number }; Returns: Json
                            },
@@ -351,6 +366,9 @@ isOneToOne: false
                            },
 "glci_command_record":
 { Args: { "p_author_kind": string,"p_content": string,"p_conversation_id": string,"p_data": Json,"p_engine": string,"p_intent": string }; Returns: number
+                           },
+"glci_conversation_dispatches":
+{ Args: { "p_conversation_id": string }; Returns: Json
                            },
 "glci_currency":
 { Args: { "p_jurisdiction_code": string }; Returns: Json

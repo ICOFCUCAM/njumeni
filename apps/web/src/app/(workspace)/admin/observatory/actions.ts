@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { answerCommand } from '@/modules/glci/command-centre';
+import { aiEnvironmentFrom, GLCI_ENGINES, runCommandWithEngines, type GlciAiSettings, type GlciEngine } from '@/modules/glci/ai-engines';
 
 const PATH = '/admin/observatory';
 function back(params: Record<string, string>): never {
@@ -44,6 +44,18 @@ export async function observatoryAction(form: FormData): Promise<void> {
     case 'reconcile':
       result = await supabase.rpc('glci_reconcile_issues');
       break;
+    case 'ai-settings': {
+      const engine = String(form.get('primaryEngine') ?? '');
+      const budget = Number(form.get('monthlyBudgetUsd'));
+      result = await supabase.rpc('glci_ai_settings_set', {
+        p_primary_engine: engine,
+        p_fallback_enabled: form.get('fallbackEnabled') === 'on',
+        p_anthropic_model: String(form.get('anthropicModel') ?? '').trim() || null,
+        p_monthly_budget_usd: Number.isFinite(budget) ? budget : null,
+        p_reason: note,
+      } as never);
+      break;
+    }
     default:
       back({ error: 'unknown-action', ...(conversation ? { conversation } : {}) });
   }
@@ -52,27 +64,51 @@ export async function observatoryAction(form: FormData): Promise<void> {
   back({ done: action, ...(conversation ? { conversation } : {}) });
 }
 
-/** The command centre: records the question, answers from live data, records the answer. */
+/**
+ * The command centre: records the question, then runs the engines in the operator's order
+ * (Claude Code → Anthropic API → rules, or one engine chosen for this question). An immediate
+ * answer is recorded; a Claude Code answer arrives later through glci_agent_reply.
+ */
 export async function askCommandCentre(form: FormData): Promise<void> {
   const supabase = await createClient();
   const question = String(form.get('question') ?? '').trim();
   const given = String(form.get('conversation') ?? '');
   const conversation = /^[0-9a-f-]{36}$/.test(given) ? given : randomUUID();
+  const choice = String(form.get('engine') ?? 'auto');
+  const override = (GLCI_ENGINES as readonly string[]).includes(choice) ? (choice as GlciEngine) : null;
   if (question.length < 3 || question.length > 4000) back({ error: 'question-invalid', conversation });
   const rpc = (fn: string, args?: Record<string, unknown>) =>
     supabase.rpc(fn as never, args as never) as unknown as Promise<{ data: unknown; error: unknown }>;
+  const [settings, previous] = await Promise.all([rpc('glci_ai_settings_get'), rpc('glci_command_conversation', { p_conversation_id: conversation })]);
+  if (settings.error) back({ error: code(settings.error), conversation });
+  const history = ((previous.data ?? []) as { authorKind: 'operator' | 'assistant'; content: string }[]).map((m) => ({
+    authorKind: m.authorKind,
+    content: m.content,
+  }));
   const asked = await rpc('glci_command_record', {
     p_conversation_id: conversation, p_author_kind: 'operator', p_content: question, p_intent: null, p_engine: null, p_data: {},
   });
-  if (asked.error) back({ error: code(asked.error), conversation });
+  if (asked.error || typeof asked.data !== 'number') back({ error: code(asked.error), conversation });
   let failure: string | null = null;
   try {
-    const answer = await answerCommand(rpc, question, conversation);
-    const recorded = await rpc('glci_command_record', {
-      p_conversation_id: conversation, p_author_kind: 'assistant', p_content: answer.answer, p_intent: answer.intent,
-      p_engine: answer.engine, p_data: { jurisdictions: answer.jurisdictions, actions: answer.actions, data: answer.data },
+    const result = await runCommandWithEngines({
+      rpc,
+      settings: settings.data as GlciAiSettings,
+      environment: aiEnvironmentFrom(process.env),
+      question,
+      conversationId: conversation,
+      questionSequence: asked.data as number,
+      override,
+      history,
     });
-    if (recorded.error) failure = code(recorded.error);
+    if (result.status === 'answered') {
+      const recorded = await rpc('glci_command_record', {
+        p_conversation_id: conversation, p_author_kind: 'assistant', p_content: result.content, p_intent: result.rules.intent,
+        p_engine: result.engineLabel,
+        p_data: { jurisdictions: result.rules.jurisdictions, actions: result.rules.actions, attempts: result.attempts },
+      });
+      if (recorded.error) failure = code(recorded.error);
+    }
   } catch (error) {
     failure = code(error);
   }

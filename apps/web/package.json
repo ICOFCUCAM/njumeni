@@ -22,6 +22,7 @@
     "worker:glci-monitor": "node --experimental-strip-types src/modules/glci/monitor-main.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.119.0",
     "@tailwindcss/postcss": "4.3.5",

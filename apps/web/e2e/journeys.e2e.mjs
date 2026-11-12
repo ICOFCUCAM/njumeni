@@ -393,6 +393,12 @@ test('journey GLCI: the Global Legal Observatory and its command centre (operato
   await Promise.all([page.waitForURL(/conversation=/), page.getByRole('button', { name: 'Ask' }).click()]);
   await page.getByText(/Coverage report \(\d+ jurisdiction/).waitFor();
   assert.ok(await page.getByText(/NO: not monitored/).first().isVisible(), 'Norway is reported as not monitored, never as current');
+  // GLCI-08: the default engine is Claude Code with fallback. Neither Claude Code nor the API is
+  // configured here, so the answer comes from the rules engine and says which engines were skipped.
+  assert.ok(await page.getByText('via Rules engine').first().isVisible(), 'the answering engine is named');
+  assert.ok(await page.getByText(/Claude Code \(your subscription\) skipped \(claude code not configured\)/).first().isVisible(),
+    'the fallback is visible');
+  assert.ok(await page.getByLabel('Engine', { exact: true }).isVisible(), 'an engine can be chosen per question');
 
   // Spec §5 example 3: a connector change becomes an engineering request awaiting a second operator.
   await page.getByLabel('Question').fill('Update the Norwegian legal ingestion connector to support the latest official source format.');
