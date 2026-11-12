@@ -81,7 +81,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Structure legal issues, facts, rules, claims, arguments and counterarguments.',
     description:
       'A provenance-preserving argument graph and reasoning workspace that distinguishes facts, allegations, inferences, rules and legal conclusions.',
-    deliveryPhase: 'Phases 6–7',
+    deliveryPhase: 'Phase 5',
     icon: 'scale',
   },
   {

@@ -130,6 +130,35 @@ isOneToOne: false
               "organization_id": string,"organization_membership_id": string,"workspace_id": string,"workspace_membership_id": string
             }[]
                            },
+"ai_authorise_execution":
+{ Args: { "p_agent_key": string,"p_egress_classes": (string)[],"p_estimated_tokens": number,"p_organization_id": string,"p_provider_key": string,"p_workspace_id": string }; Returns: Json
+                           },
+"ai_get_workspace_settings":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
+                           },
+"ai_record_execution":
+{ Args: { "p_agent_key": string,"p_duration_ms": number,"p_egress_classes": (string)[],"p_input_refs": Json,"p_input_tokens": number,"p_model_id": string,"p_organization_id": string,"p_output_tokens": number,"p_prompt_version": string,"p_provider_key": string,"p_refusal_reason": string,"p_retrieval_refs": Json,"p_safety_flags": (string)[],"p_status": string,"p_verification_outcome": string,"p_workspace_id": string }; Returns: string
+                           },
+"ai_update_workspace_settings":
+{ Args: { "p_allowed_egress": (string)[],"p_allowed_providers": (string)[],"p_monthly_token_budget": number,"p_organization_id": string,"p_workspace_id": string }; Returns: undefined
+                           },
+"argument_add_graph":
+{ Args: { "p_ai_execution_id"?: string,"p_edges": Json,"p_issue_id": string,"p_nodes": Json }; Returns: Json
+                           },
+"argument_create_issue":
+{ Args: { "p_organization_id": string,"p_research_run_id"?: string,"p_title": string,"p_workspace_id": string }; Returns: string
+                           },
+"argument_get_graph":
+{ Args: { "p_issue_id": string }; Returns: Json
+                           },
+"argument_list_issues":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: {
+              "created_at": string,"issue_id": string,"node_count": number,"proposed_count": number,"research_run_id": string,"title": string
+            }[]
+                           },
+"argument_review_node":
+{ Args: { "p_decision": string,"p_node_id": string }; Returns: undefined
+                           },
 "assign_organization_role":
 { Args: { "p_organization_id": string,"p_principal_id": string,"p_role_key": string }; Returns: string
                            },
@@ -170,6 +199,9 @@ isOneToOne: false
 { Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: {
               "created_at": string,"event_count": number,"evidence_item_id": string,"evidence_type": string,"latest_filename": string,"latest_scan_status": string,"latest_version": number,"legal_hold": boolean,"passage_count": number,"privilege": string,"sensitivity": string,"status": string,"title": string
             }[]
+                           },
+"evidence_list_propositions":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
                            },
 "evidence_proposition_conflicts":
 { Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: {

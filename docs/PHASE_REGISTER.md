@@ -36,10 +36,11 @@ A task does not turn green because code was written. It turns green only when it
 | Area | State |
 |---|---|
 | Phase 0 | 🟢 Closed and verified |
-| Phase 1 | Implementation complete; **all database tests pass locally** (2026-11-11). Remaining: live Auth check, closeout items |
-| Phase 2 | Schema, ingestion framework, durable queue, worker, retrieval, citation bundles and rights/coverage governance implemented; pgTAP passing locally. **No legal content, no source adapters, no embeddings, no UI** |
-| Phases 3–13 | 🔒 Locked |
-| Local checks (2026-11-11) | pgTAP 272/272 ✅ · db lint ✅ · typecheck ✅ · web tests 161/161 ✅ (includes 114 legal-knowledge) · build ✅ · root tests 19/19 ✅ |
+| Phase 1 | 🟢 Closed (11 November 2026) |
+| Phase 2 | 🟡 In progress: framework, embeddings profile, as-of and graph queries, coverage levels and evaluation harness built. Task 2.8 (first live source) blocked by network |
+| Phases 3–5 | 🔵 Implemented and verified locally (evidence intelligence; research engine; AI reasoning and agent framework) |
+| Phases 6–13 | 🔒 Locked |
+| Local checks (2026-11-12) | pgTAP 427/427 ✅ · db lint ✅ · typecheck ✅ · web tests 223/223 ✅ · build ✅ · root tests 19/19 ✅ |
 | CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
@@ -210,7 +211,24 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Extractive composition** with verbatim quotes and citations. Later-amendment limitations. Conflict versus interpretation claims.
 - **API and interface.** `/api/v1/research` with OpenAPI 3.1 and a contract test. Pages `/research` and `/research/[id]`.
 - **Verification.** pgTAP 399/399 (research 27/27); app 214/214; build passes. Service and API end-to-end runs passed, including law applied as of 2015 versus 2024, abstention, 401/403 and forged claims withheld.
-- **Outstanding.** CI on the phase commit; real content and the Norway evaluation set (Task 2.8); the semantic model (network); API keys (Phase 10).
+- **Outstanding.** Real content and the Norway evaluation set (Task 2.8); the semantic model (network); API keys (Phase 10). CI green on the phase commit `1176b6a`: runs `43122547336` (CI and security) and `43122547422` (database verification).
+
+## 5c. Phase 5: AI reasoning and agent framework (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_5_PLAN.md](PHASE_5_PLAN.md) · **Architecture:** [AI_ARCHITECTURE.md](AI_ARCHITECTURE.md)
+
+- **Governed AI (U-13, U-23).** Migration `20261111400000` adds:
+  - the provider registry (mock enabled; commercial disabled);
+  - the 19 agents with their autonomy levels;
+  - a restrictive workspace AI policy;
+  - database authorisation (`ai_authorise_execution`);
+  - an append-only execution log with cost.
+- **Orchestrator.** `runAgent` covers egress classification, prompt-injection isolation and flags, and recording of refusals, failures and successes.
+- **Argument graph (U-14).** Grounding constraints in the database; agent output is proposed until a person reviews it, once.
+- **Reasoning agent.** Builds a grounded argument from verified research and the workspace's facts. Output is validated so it cannot cite unverified passages or outside material. An eight-check structural rubric scores the result.
+- **Interface:** `/arguments` and `/arguments/[issueId]`.
+- **Verification:** pgTAP 427/427 (AI 28/28); app 223/223; build passes. End-to-end run passed (proposal, injection flagged, review-once, refusal before any call, outsider denied).
+- **Outstanding:** Phases 3 and 4 closed; CI on the phase commit; the real provider adapter (D-5).
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
 
@@ -224,7 +242,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | 3 | Evidence intelligence | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Closeout needs Phase 1 closed, CI green on the Phase 3 commit, OCR and a full anti-malware engine ([Phase 3 plan](PHASE_3_PLAN.md) §5) |
 | 4 | Legal research engine (with verification core) | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in parallel (owner autonomous mode). Formal closeout needs Phase 2 content (Task 2.8) and CI on the phase commit ([Phase 4 plan](PHASE_4_PLAN.md) §5) |
 | — | Milestone M1: grounded-research demo (local stack) | — | Phase 4 exit criteria met for Norway |
-| 5 | AI reasoning and agent framework | 🔒 LOCKED | Phases 3 and 4 closed |
+| 5 | AI reasoning and agent framework | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3 and 4 closed, CI on the phase commit and owner decision D-5 for a model-backed evaluation ([Phase 5 plan](PHASE_5_PLAN.md) §5) |
 | 6 | Verification and legal quality | 🔒 LOCKED | Phase 5 closed |
 | 7 | Document intelligence | 🔒 LOCKED | Phase 6 closed |
 | 8 | Case management and personal workspace | 🔒 LOCKED | Phase 7 closed |

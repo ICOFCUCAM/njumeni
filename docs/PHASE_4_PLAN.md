@@ -96,7 +96,7 @@ They also prove:
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 4 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 4 commit~~ ✅ `1176b6a`: runs `43122547336` (CI and security) and `43122547422` (database verification), both successful | Done |
 | 2 | Real legal content and the Norway evaluation set (`lovdata-no-v1`) passing the §18.2 gates | Task 2.8 (network-enabled environment) |
 | 3 | Semantic and hybrid research with the real e5 model (lexical works today) | A model download host (network) |
 | 4 | API keys for non-browser clients | Phase 10 |

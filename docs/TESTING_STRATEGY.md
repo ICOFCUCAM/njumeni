@@ -28,19 +28,19 @@
 5. **Gates with nothing to measure fail.** An evaluation without cases never passes silently.
 6. **Each phase records its evidence:** test counts, end-to-end results and CI run IDs, in the phase plan.
 
-## 3. Current totals (Phase 4)
+## 3. Current totals (Phase 5)
 
 | Suite | Count |
 |---|---|
-| pgTAP | 399 assertions in 15 files |
-| Application | 214 tests |
+| pgTAP | 427 assertions in 16 files |
+| Application | 223 tests |
 | Root policy and documentation | 19 tests |
 
 ## 4. Added by later phases
 
 | Phase | Addition |
 |---|---|
-| 5 | Agent permission tests (agents can't exceed caller scope); reasoning-quality rubric evaluation |
+| 5 | ✅ Agent authorisation and refusal tests (pgTAP); orchestrator, injection and grounding-validation tests; reasoning rubric (`evaluateArgumentGraph`). Model-backed evaluation follows D-5 |
 | 6 | Automated release gates (master plan §18.3) |
 | 7 | Document export fidelity tests (DOCX/PDF) |
 | 8–9 | Browser end-to-end journeys (master plan §15) with Playwright |
