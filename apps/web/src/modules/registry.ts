@@ -154,7 +154,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Track regulatory sources, obligations, assessments, evidence and review schedules.',
     description:
       'A source-linked compliance and risk context built around traceable obligations, regulatory change, evidence, explainable assessments and review schedules.',
-    deliveryPhase: 'Phases 10 and 12',
+    deliveryPhase: 'Phase 10',
     icon: 'shield',
   },
   {

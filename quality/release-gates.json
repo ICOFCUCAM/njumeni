@@ -37,6 +37,14 @@
         {
           "file": "supabase/tests/professional_workspace.test.sql",
           "contains": "outsiders cannot run conflict checks against the firm"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "platform operators have no default access to customer matters"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "support access is read-only"
         }
       ]
     },
@@ -135,6 +143,14 @@
         {
           "file": "apps/web/tests/ai-reasoning.test.mjs",
           "contains": "runAgent records refusals without calling the provider"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "no agent runs in a high-risk workspace without a conformity record"
+        },
+        {
+          "file": "supabase/tests/enterprise_institutional.test.sql",
+          "contains": "the unchecked authoriser cannot be called directly"
         }
       ]
     },

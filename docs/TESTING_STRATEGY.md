@@ -29,12 +29,12 @@
 5. **Gates with nothing to measure fail.** An evaluation without cases never passes silently.
 6. **Each phase records its evidence:** test counts, end-to-end results and CI run IDs, in the phase plan.
 
-## 3. Current totals (Phase 9)
+## 3. Current totals (Phase 10)
 
 | Suite | Count |
 |---|---|
-| pgTAP | 581 assertions in 20 files |
-| Application | 241 tests |
+| pgTAP | 627 assertions in 21 files |
+| Application | 243 tests |
 | Root policy and documentation | 24 tests |
 
 ## 4. Added by later phases
@@ -46,5 +46,6 @@
 | 7 | ✅ Document tests (citation verification, four-eyes approval, versions); DOCX/PDF structure tests; exports checked with `pdftotext` and `python-docx` in the phase end-to-end run |
 | 8 | ✅ Matter tests; journey 15.1 end to end over HTTP (bundle manifest verified) |
 | 9 | ✅ Conflict, barrier, knowledge and template tests; journey 15.2 with three users over HTTP |
+| 10 | ✅ Break-glass, API-key, AI conformity, compliance and SSO tests; HTTP end-to-end with a real operator |
 | 13 | Browser end-to-end journeys (master plan §15) with Playwright |
 | 13 | Load, performance, penetration and restore-drill testing |

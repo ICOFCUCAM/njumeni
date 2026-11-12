@@ -38,9 +38,9 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 0 | 🟢 Closed and verified |
 | Phase 1 | 🟢 Closed (11 November 2026) |
 | Phase 2 | 🟡 In progress: framework, embeddings profile, as-of and graph queries, coverage levels and evaluation harness built. Task 2.8 (first live source) blocked by network |
-| Phases 3–9 | 🔵 Implemented and verified locally (evidence; research; AI reasoning; verification; documents; case management; professional workspace) |
-| Phases 10–13 | 🔒 Locked |
-| Local checks (2026-11-12) | pgTAP 581/581 ✅ · db lint ✅ · typecheck ✅ · web tests 241/241 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
+| Phases 3–10 | 🔵 Implemented and verified locally (evidence; research; AI reasoning; verification; documents; case management; professional; enterprise and institutional) |
+| Phases 11–13 | 🔒 Locked |
+| Local checks (2026-11-12) | pgTAP 627/627 ✅ · db lint ✅ · typecheck ✅ · web tests 243/243 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
 | CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
@@ -293,7 +293,22 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Professional reporting.**
 - **Interface:** `/professional`, `/professional/reports`, `/knowledge`, `/documents/templates`, plus the matter team and barrier panel.
 - **Verification:** pgTAP 581/581 (professional 42/42); app 241/241; build passes. Journey 15.2 passed end to end with three real users and over HTTP.
-- **Outstanding:** Phases 3–8 closed; CI on the phase commit.
+- **Outstanding:** Phases 3–8 closed. CI green on the phase commit `72e3b2d`: runs `43134526484` (CI and security) and `43134526547` (database verification).
+
+## 5h. Phase 10: Enterprise and institutional systems (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_10_PLAN.md](PHASE_10_PLAN.md)
+
+- **Organisation and platform administration.** Migration `20261112500000`: offices and teams; a platform back office without content access.
+- **Break-glass support access** (ADR-0002 item 4). Customer-approved, time-limited, read-only, audited.
+- **Retention policies** that respect legal hold.
+- **Compliance obligation register** anchored in verified law, with regulatory change detection.
+- **AI and institutions.** EU AI Act classification that blocks AI in high-risk justice workspaces until conformity is recorded; institutional reporting.
+- **SSO readiness:** domain verification and discovery.
+- **Enterprise API keys:** delegated, scoped, hashed, revocable; key-authenticated `GET /research/runs/{id}` and `GET /matters`.
+- **Interface:** `/organisation`, `/compliance`, `/institutional`, `/admin`.
+- **Verification:** pgTAP 627/627 (enterprise 46/46); app 243/243; build passes. The end-to-end run over HTTP passed (API keys 200/401/403, break-glass 404→200, AI conformity gate).
+- **Outstanding:** live SSO against a real identity provider (Stage 2); Phases 3–9 closed; CI on the phase commit.
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
 
@@ -313,7 +328,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | 8 | Case management and personal workspace | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–7 closed, CI on the phase commit and R1 acceptance ([Phase 8 plan](PHASE_8_PLAN.md) §5) |
 | — | Release R1: first release | — | Phase 8 closed, Stage 1 infrastructure, and an owner exception for hosted deployment **or** Phase 13 |
 | 9 | Professional workspace | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–8 closed and CI on the phase commit ([Phase 9 plan](PHASE_9_PLAN.md) §5) |
-| 10 | Enterprise and institutional systems | 🔒 LOCKED | Phase 9 closed |
+| 10 | Enterprise and institutional systems | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs SSO against a real identity provider (Stage 2), Phases 3–9 closed and CI on the phase commit ([Phase 10 plan](PHASE_10_PLAN.md) §5) |
 | 11 | Commercial infrastructure | 🔒 LOCKED | Phase 10 closed |
 | 12 | Global expansion | 🔒 LOCKED | Phase 11 closed |
 | 13 | Production hardening and launch | 🔒 LOCKED | Phase 12 closed; includes the **first hosted deployment of the cumulative migration set** |

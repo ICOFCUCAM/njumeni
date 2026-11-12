@@ -84,7 +84,7 @@ Journey 15.2 run with a partner, an associate and a colleague with a prior confl
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 9 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 9 commit~~ ✅ `72e3b2d`: runs `43134526484` (CI and security) and `43134526547` (database verification), both successful | Done |
 | 2 | Phases 3–8 closed | Their own closeout items |
 | 3 | Conflict matching validated with a firm's real naming data (fuzzy and phonetic matching are candidates) | First professional pilot |
 

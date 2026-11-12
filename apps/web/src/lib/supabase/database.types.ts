@@ -139,8 +139,26 @@ isOneToOne: false
 "ai_record_execution":
 { Args: { "p_agent_key": string,"p_duration_ms": number,"p_egress_classes": (string)[],"p_input_refs": Json,"p_input_tokens": number,"p_model_id": string,"p_organization_id": string,"p_output_tokens": number,"p_prompt_version": string,"p_provider_key": string,"p_refusal_reason": string,"p_retrieval_refs": Json,"p_safety_flags": (string)[],"p_status": string,"p_verification_outcome": string,"p_workspace_id": string }; Returns: string
                            },
+"ai_set_risk_classification":
+{ Args: { "p_class": string,"p_conformity_reference"?: string,"p_organization_id": string,"p_workspace_id": string }; Returns: undefined
+                           },
 "ai_update_workspace_settings":
 { Args: { "p_allowed_egress": (string)[],"p_allowed_providers": (string)[],"p_monthly_token_budget": number,"p_organization_id": string,"p_workspace_id": string }; Returns: undefined
+                           },
+"api_key_create":
+{ Args: { "p_days"?: number,"p_name": string,"p_organization_id": string,"p_scopes": (string)[],"p_workspace_id": string }; Returns: Json
+                           },
+"api_key_list":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
+                           },
+"api_key_matter_list":
+{ Args: { "p_key": string }; Returns: Json
+                           },
+"api_key_research_get_run":
+{ Args: { "p_key": string,"p_run_id": string }; Returns: Json
+                           },
+"api_key_revoke":
+{ Args: { "p_key_id": string }; Returns: undefined
                            },
 "argument_add_graph":
 { Args: { "p_ai_execution_id"?: string,"p_edges": Json,"p_issue_id": string,"p_nodes": Json }; Returns: Json
@@ -170,6 +188,15 @@ isOneToOne: false
                            },
 "client_list":
 { Args: { "p_organization_id": string }; Returns: Json
+                           },
+"compliance_add_obligation":
+{ Args: { "p_authority_passage_id": string,"p_description"?: string,"p_organization_id": string,"p_review_interval_days"?: number,"p_title": string,"p_workspace_id": string }; Returns: string
+                           },
+"compliance_assess":
+{ Args: { "p_evidence_item_id"?: string,"p_note": string,"p_obligation_id": string,"p_status": string }; Returns: undefined
+                           },
+"compliance_register":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
                            },
 "conflict_check_decide":
 { Args: { "p_check_id": string,"p_decision": string,"p_note"?: string }; Returns: undefined
@@ -291,6 +318,9 @@ isOneToOne: false
                            },
 "has_permission":
 { Args: { "p_organization_id": string,"p_permission_key": string,"p_workspace_id"?: string }; Returns: boolean
+                           },
+"institutional_report":
+{ Args: { "p_organization_id": string }; Returns: Json
                            },
 "is_organization_owner":
 { Args: { "p_organization_id": string }; Returns: boolean
@@ -416,6 +446,9 @@ isOneToOne: false
 "matter_assign":
 { Args: { "p_matter_id": string,"p_principal_id": string,"p_role": string }; Returns: undefined
                            },
+"matter_assign_team":
+{ Args: { "p_matter_id": string,"p_unit_id": string }; Returns: number
+                           },
 "matter_create":
 { Args: { "p_description"?: string,"p_intake"?: Json,"p_jurisdiction_code": string,"p_legal_category": string,"p_organization_id": string,"p_title": string,"p_workspace_id": string }; Returns: Json
                            },
@@ -455,11 +488,32 @@ isOneToOne: false
 "matter_update_task":
 { Args: { "p_status": string,"p_task_id": string }; Returns: undefined
                            },
+"org_member_directory":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"org_structure":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"org_unit_add_member":
+{ Args: { "p_principal_id": string,"p_unit_id": string }; Returns: undefined
+                           },
+"org_unit_create":
+{ Args: { "p_kind": string,"p_location"?: string,"p_name": string,"p_organization_id": string,"p_parent_id"?: string }; Returns: string
+                           },
 "organization_get_settings":
 { Args: { "p_organization_id": string }; Returns: Json
                            },
 "organization_update_settings":
 { Args: { "p_organization_id": string,"p_require_conflict_check": boolean,"p_validity_days"?: number }; Returns: undefined
+                           },
+"platform_is_operator":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"platform_overview":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"platform_verify_sso_domain":
+{ Args: { "p_domain": string }; Returns: undefined
                            },
 "professional_report":
 { Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
@@ -503,6 +557,12 @@ isOneToOne: false
               "attribution_text": string,"display_permitted": boolean,"licence_identifier": string,"quote_permitted": boolean,"source_key": string
             }[]
                            },
+"retention_report":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"retention_set_policy":
+{ Args: { "p_class": string,"p_organization_id": string,"p_years": number }; Returns: undefined
+                           },
 "review_decide":
 { Args: { "p_decision": string,"p_note"?: string,"p_request_id": string }; Returns: undefined
                            },
@@ -526,6 +586,27 @@ isOneToOne: false
                            },
 "set_workspace_membership_status":
 { Args: { "p_membership_id": string,"p_status": string }; Returns: boolean
+                           },
+"sso_add_domain":
+{ Args: { "p_domain": string,"p_organization_id": string }; Returns: Json
+                           },
+"sso_configure":
+{ Args: { "p_enforced"?: boolean,"p_issuer": string,"p_metadata_url"?: string,"p_organization_id": string,"p_protocol": string }; Returns: undefined
+                           },
+"sso_discover":
+{ Args: { "p_email": string }; Returns: Json
+                           },
+"sso_status":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"support_access_decide":
+{ Args: { "p_decision": string,"p_request_id": string }; Returns: undefined
+                           },
+"support_access_list":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"support_access_request":
+{ Args: { "p_minutes": number,"p_organization_id": string,"p_reason": string }; Returns: string
                            },
 "verification_check_research_run":
 { Args: { "p_check_date"?: string,"p_run_id": string }; Returns: Json

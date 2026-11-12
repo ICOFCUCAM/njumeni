@@ -82,14 +82,27 @@ const document = {
   openapi: '3.1.0',
   info: {
     title: 'Njumeni API',
-    version: '1.0.0-phase4',
+    version: '1.1.0-phase10',
     description:
-      'Legal research with database-verified citations. Every legal claim is checked for existence, resolution to a stored version, currency on the research date, source rights and verbatim quotation. Authentication is the signed-in session cookie; API keys arrive in Phase 10.',
+      'Legal research with database-verified citations. Every legal claim is checked for existence, resolution to a stored version, currency on the research date, source rights and verbatim quotation. Authentication is the signed-in session cookie or, for GET /research/runs/{runId} and GET /matters, an enterprise API key (Bearer njk_…).',
   },
   servers: [{ url: '/api/v1' }],
   components: {
-    securitySchemes: { session: { type: 'apiKey', in: 'cookie', name: 'sb-access-token' } },
     schemas: { Error: errorSchema, ResearchRun: runSchema, Claim: claimSchema },
+    securitySchemes: {
+      session: {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'sb-access-token',
+        description: 'Browser session',
+      },
+      apiKey: {
+        type: 'http',
+        scheme: 'bearer',
+        description:
+          'Enterprise API key (njk_…): scoped to one workspace, revocable, acts as its creator',
+      },
+    },
   },
   security: [{ session: [] }],
   paths: {
@@ -187,6 +200,7 @@ const document = {
     },
     '/research/runs/{runId}': {
       get: {
+        security: [{ session: [] }, { apiKey: [] }],
         summary: 'Get a research run with its claim ledger and citation checks',
         parameters: [
           { name: 'runId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
@@ -209,6 +223,52 @@ const document = {
           },
           '404': {
             description: 'Not found or not accessible',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+        },
+      },
+    },
+    '/matters': {
+      get: {
+        summary:
+          "List the matters of a workspace. With an API key (scope matters.read) the key's workspace is used; with a session, organizationId and workspaceId are required",
+        security: [{ apiKey: [] }, { session: [] }],
+        parameters: [
+          {
+            name: 'organizationId',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', format: 'uuid' },
+          },
+          {
+            name: 'workspaceId',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', format: 'uuid' },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Matters (barred matters are never listed)',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: { data: { type: 'array', items: { type: 'object' } } },
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Missing scope parameters',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '401': {
+            description: 'No session or an invalid API key',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '403': {
+            description: 'The API key lacks the scope',
             content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
           },
         },
