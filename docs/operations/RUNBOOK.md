@@ -12,7 +12,7 @@ The hosted project is empty by design until the owner decides to deploy.
 
 1. In GitHub, set the repository secret **`SUPABASE_DB_URL`**: the hosted project's session-pooler connection string, including the database password (Supabase dashboard → Connect).
 2. Create the GitHub environment **`production`** with the owner as required reviewer.
-3. Run **Actions → "Deploy database to hosted Supabase"** with `confirm = DEPLOY` and `dry_run = true`. Check the listed migrations. The first deployment (2026-11-12) applied 38, from `20261110141433` to `20261112800000`. The repository has 40; `20261112900000` (Task 2.8) and `20261113000000` (Task 2.8b) follow. The [Phase register](../PHASE_REGISTER.md) records what hosted holds.
+3. Run **Actions → "Deploy database to hosted Supabase"** with `confirm = DEPLOY` and `dry_run = true`. Check the listed migrations. The first deployment (2026-11-12) applied 38, from `20261110141433` to `20261112800000`. The second (Task 2.8b, 2026-11-12) applied `20261112900000` and `20261113000000`: hosted holds all 40. The [Phase register](../PHASE_REGISTER.md) records each deployment and its verification.
 4. Run it again with `dry_run = false`. The workflow applies every migration, then runs `scripts/ops/verify-hosted-schema.sql`. That script checks:
    - row level security is enabled everywhere;
    - no private grants exist;

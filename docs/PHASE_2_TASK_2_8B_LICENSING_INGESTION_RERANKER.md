@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | 🔵 IMPLEMENTED — verified locally; hosted deployment recorded in §6 |
+| Status | 🔵 IMPLEMENTED — verified locally and on hosted (§6) |
 | Date | 2026-11-12 |
 | Builds on | [Task 2.8 Lovdata pilot](PHASE_2_TASK_2_8_LOVDATA_PILOT.md) |
 | Migration | `20261113000000_source_licence_policy_and_sync` (new); `20261112900000_legal_pilot_ingestion_support` (Task 2.8, reviewed here) |
@@ -126,7 +126,7 @@ Nothing was renamed, deleted, re-applied or edited. Applied migrations are immut
 | Web unit tests (`npm test`) | **294** pass. New: `legal-knowledge-licence-sync` (9), `legal-knowledge-reranker` (12) |
 | Root tests, migration policy, release gates, foundation, Prettier CI set, `supabase db lint`, typecheck, build | Pass |
 | Browser journeys (`npm run test:e2e`) | 3/3. The research journey recorded a finding with its reranking trace (`extractive-1.1.0`) |
-| Hosted deployment | See the [Phase register](PHASE_REGISTER.md) entry for 2026-11-12 |
+| Hosted deployment | Both pending migrations applied in one transaction from commit `68dbe53`, each MD5-checked. History is 40/40, equal to the repository. Schema fingerprints (columns, functions, policies, triggers, indexes, constraints, grants) are identical to the tested local database. Security invariants hold; health reports schema `20261113000000`. A rolled-back probe confirmed enforcement. Details: [Phase register](PHASE_REGISTER.md) |
 
 ## 7. Owner steps that remain
 

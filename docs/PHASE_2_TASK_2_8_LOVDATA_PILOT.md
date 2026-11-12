@@ -107,7 +107,7 @@ The model files come from Hugging Face's CDN. The environment's allow-list was e
 
 ## 6. For the owner: approval and activation
 
-These operations are not done. They run on the hosted project, using a service-role connection (SQL editor or `psql "$SUPABASE_DB_URL"`). Each is a separate audited step. Hosted migrations: see the [Phase register](PHASE_REGISTER.md). `20261112900000` and `20261113000000` must be applied first (the licence policy, dataset synchronisation and item retries depend on the latter).
+These operations are not done. They run on the hosted project, using a service-role connection (SQL editor or `psql "$SUPABASE_DB_URL"`). Each is a separate audited step. Hosted holds all 40 migrations, including `20261112900000` and `20261113000000` (applied and verified 2026-11-12; [Phase register](PHASE_REGISTER.md)).
 
 1. **Licence position: settled** (owner, 2026-11-12; [Task 2.8b](PHASE_2_TASK_2_8B_LICENSING_INGESTION_RERANKER.md) §1). The attribution is fixed by licence policy version 1, and activation is refused under any other wording.
 2. **Record the rights review** (sets `rights_status = 'approved'`; does not activate):
