@@ -29,6 +29,14 @@
         {
           "file": "supabase/tests/case_management.test.sql",
           "contains": "an outsider cannot read another tenant''s matter"
+        },
+        {
+          "file": "supabase/tests/professional_workspace.test.sql",
+          "contains": "the barrier overrides the editor role"
+        },
+        {
+          "file": "supabase/tests/professional_workspace.test.sql",
+          "contains": "outsiders cannot run conflict checks against the firm"
         }
       ]
     },

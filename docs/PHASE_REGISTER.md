@@ -38,9 +38,9 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 0 | 🟢 Closed and verified |
 | Phase 1 | 🟢 Closed (11 November 2026) |
 | Phase 2 | 🟡 In progress: framework, embeddings profile, as-of and graph queries, coverage levels and evaluation harness built. Task 2.8 (first live source) blocked by network |
-| Phases 3–8 | 🔵 Implemented and verified locally (evidence intelligence; research engine; AI reasoning and agent framework; verification and legal quality; document intelligence; case management and personal workspace) |
-| Phases 9–13 | 🔒 Locked |
-| Local checks (2026-11-12) | pgTAP 539/539 ✅ · db lint ✅ · typecheck ✅ · web tests 239/239 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
+| Phases 3–9 | 🔵 Implemented and verified locally (evidence; research; AI reasoning; verification; documents; case management; professional workspace) |
+| Phases 10–13 | 🔒 Locked |
+| Local checks (2026-11-12) | pgTAP 581/581 ✅ · db lint ✅ · typecheck ✅ · web tests 241/241 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
 | CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
@@ -280,7 +280,20 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Case bundle export.** ZIP with a case report PDF, chronology CSV, approved documents, evidence manifest and a SHA-256 manifest, recorded and audited.
 - **Interface:** `/matters`, `/matters/new`, `/matters/[id]`.
 - **Verification:** pgTAP 539/539 (cases 34/34); app 239/239; build passes. Journey 15.1 passed end to end, including HTTP bundle download with every manifest hash verified.
-- **Outstanding:** Phases 3–7 closed; CI on the phase commit; R1 acceptance on real content.
+- **Outstanding:** Phases 3–7 closed; R1 acceptance on real content. CI green on the phase commit `8fd8b59`: runs `43133051153` (CI and security) and `43133051148` (database verification).
+
+## 5g. Phase 9: Professional workspace (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_9_PLAN.md](PHASE_9_PLAN.md)
+
+- **Clients and conflict checks.** Migration `20261112400000`: clients; organisation-wide conflict checks with normalised matching; justified, separated waivers.
+- **Gated matter opening.** A cleared or waived, current, single-use check is required by default in firms.
+- **Information barriers (U-16).** Exclusion overrides every role, everywhere a matter is read.
+- **Teams, knowledge and templates.** Matter team assignment; organisation knowledge with explicit, audited promotion; firm templates.
+- **Professional reporting.**
+- **Interface:** `/professional`, `/professional/reports`, `/knowledge`, `/documents/templates`, plus the matter team and barrier panel.
+- **Verification:** pgTAP 581/581 (professional 42/42); app 241/241; build passes. Journey 15.2 passed end to end with three real users and over HTTP.
+- **Outstanding:** Phases 3–8 closed; CI on the phase commit.
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
 
@@ -299,7 +312,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | 7 | Document intelligence | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–6 closed, CI on the phase commit and the draft-completeness evaluation ([Phase 7 plan](PHASE_7_PLAN.md) §5) |
 | 8 | Case management and personal workspace | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–7 closed, CI on the phase commit and R1 acceptance ([Phase 8 plan](PHASE_8_PLAN.md) §5) |
 | — | Release R1: first release | — | Phase 8 closed, Stage 1 infrastructure, and an owner exception for hosted deployment **or** Phase 13 |
-| 9 | Professional workspace | 🔒 LOCKED | Phase 8 closed |
+| 9 | Professional workspace | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–8 closed and CI on the phase commit ([Phase 9 plan](PHASE_9_PLAN.md) §5) |
 | 10 | Enterprise and institutional systems | 🔒 LOCKED | Phase 9 closed |
 | 11 | Commercial infrastructure | 🔒 LOCKED | Phase 10 closed |
 | 12 | Global expansion | 🔒 LOCKED | Phase 11 closed |

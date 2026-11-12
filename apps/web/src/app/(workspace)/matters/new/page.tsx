@@ -11,6 +11,8 @@ const errors: Record<string, string> = {
   missing: 'Give the matter a title and answer every required question.',
   'invalid-input': 'Dates must be entered as dates.',
   'not-authorized': 'You do not have permission to open matters in this workspace.',
+  'conflict-check':
+    'This organisation requires a cleared or waived, unused and current conflict check to open a matter.',
   failed: 'The matter could not be created. Try again.',
 };
 
@@ -28,7 +30,33 @@ export default async function NewMatterPage({
     notFound();
   const category = params.category as LegalCategory;
   const supabase = await createClient();
-  const { data: jurisdictions } = await supabase.rpc('research_list_jurisdictions');
+  const [{ data: jurisdictions }, settings] = await Promise.all([
+    supabase.rpc('research_list_jurisdictions'),
+    supabase.rpc('organization_get_settings', { p_organization_id: params.org! }),
+  ]);
+  const requireCheck =
+    (settings.data as { requireConflictCheck?: boolean } | null)?.requireConflictCheck === true;
+  const [checks, clients] = requireCheck
+    ? await Promise.all([
+        supabase.rpc('conflict_check_list', { p_organization_id: params.org! }),
+        supabase.rpc('client_list', { p_organization_id: params.org! }),
+      ])
+    : [null, null];
+  const eligible = (
+    (checks?.data ?? []) as {
+      id: string;
+      workspaceId: string;
+      subject: string;
+      decision: string;
+      usedByMatter: string | null;
+    }[]
+  ).filter(
+    (c) =>
+      c.workspaceId === params.ws &&
+      (c.decision === 'clear' || c.decision === 'waived') &&
+      !c.usedByMatter,
+  );
+  const clientList = (clients?.data ?? []) as { id: string; name: string }[];
   const questions = intakeQuestions(category);
 
   return (
@@ -53,6 +81,36 @@ export default async function NewMatterPage({
         <input type="hidden" name="organizationId" value={params.org} />
         <input type="hidden" name="workspaceId" value={params.ws} />
         <input type="hidden" name="category" value={category} />
+        {requireCheck ? (
+          <>
+            <label className="profile-field">
+              Conflict check * (<Link href={`/professional?org=${params.org}`}>run one</Link>)
+              <select name="conflictCheckId" required defaultValue="">
+                <option value="" disabled>
+                  {eligible.length
+                    ? 'Choose a cleared or waived check'
+                    : 'No usable check: run one first'}
+                </option>
+                {eligible.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.subject} ({c.decision})
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="profile-field">
+              Client
+              <select name="clientId" defaultValue="">
+                <option value="">—</option>
+                {clientList.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        ) : null}
         <label className="profile-field">
           Matter title *
           <input name="title" required minLength={3} maxLength={300} />

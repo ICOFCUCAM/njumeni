@@ -118,7 +118,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Bring client matters, research, evidence, drafting and review into one workspace.',
     description:
       'A professional workspace for client and matter assignments, research, evidence, argument development, drafting, collaboration and reviewed work product.',
-    deliveryPhase: 'Phases 9–10',
+    deliveryPhase: 'Phase 9',
     icon: 'briefcase',
   },
   {
@@ -166,7 +166,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Curate research, precedents, opinions, templates, arguments and approved knowledge.',
     description:
       'A governed knowledge context for saved research, precedents, opinions, templates, approved arguments, collections, taxonomies and access policies.',
-    deliveryPhase: 'Phases 9–10',
+    deliveryPhase: 'Phase 9',
     icon: 'book',
   },
 ];

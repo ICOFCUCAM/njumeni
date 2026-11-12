@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { matterAction } from '../actions';
+import { matterAction, professionalMatterAction } from '../actions';
 import { createClient } from '@/lib/supabase/server';
 import type { MatterView } from '@/modules/cases/bundle';
 import type { IntakeSummary } from '@/modules/cases/intake';
@@ -15,6 +15,7 @@ const ERRORS: Record<string, string> = {
   status: 'That status change is not allowed.',
   assignee: 'Tasks can only be assigned to workspace members.',
   event: 'Check the entry and try again.',
+  barred: 'That person is behind an information barrier on this matter.',
   failed: 'The change could not be saved.',
 };
 const ROLES = [
@@ -90,6 +91,25 @@ export default async function MatterPage({
     })),
   ].filter((o) => !linked.has(o.value));
   const summary = matter.intake.summary ?? null;
+  const [professional, candidates] = await Promise.all([
+    supabase.rpc('matter_professional', { p_matter_id: matterId }),
+    supabase.rpc('matter_team_candidates', { p_matter_id: matterId }),
+  ]);
+  const pro = professional.data as {
+    client: { name: string; kind: string } | null;
+    conflictCheck: { decision: string; decidedAt: string; hits: number } | null;
+    team: { name: string; role: string }[];
+    barrierCount: number;
+    canManageBarriers: boolean;
+  } | null;
+  const people = (
+    (candidates.data ?? []) as {
+      principalId: string;
+      name: string;
+      assignment: string | null;
+      barred: boolean;
+    }[]
+  ).filter((p) => !p.barred);
   const linkHref = (type: string, id: string) =>
     ({
       evidence_item: `/evidence/${id}`,
@@ -160,6 +180,68 @@ export default async function MatterPage({
           </form>
         ) : null}
       </section>
+
+      {pro ? (
+        <section className="module-panel" aria-labelledby="team-heading">
+          <h2 id="team-heading" className="section-heading">
+            Client, conflicts and team
+          </h2>
+          <p>
+            {pro.client ? <>Client: {pro.client.name} · </> : null}
+            {pro.conflictCheck
+              ? `Conflict check: ${pro.conflictCheck.decision} (${pro.conflictCheck.hits} hit(s), ${pro.conflictCheck.decidedAt.slice(0, 10)})`
+              : 'No conflict check recorded'}
+            {pro.barrierCount ? ` · ${pro.barrierCount} information barrier(s) in force` : ''}
+          </p>
+          <ul className="membership-list">
+            {pro.team.map((t, i) => (
+              <li key={i} className="membership-row">
+                {t.name} <span className="workspace-status">{label(t.role)}</span>
+              </li>
+            ))}
+          </ul>
+          {matter.canEdit && people.length ? (
+            <form action={professionalMatterAction} className="profile-actions">
+              <input type="hidden" name="matterId" value={matter.id} />
+              <input type="hidden" name="action" value="assign" />
+              <select name="principalId">
+                {people.map((p) => (
+                  <option key={p.principalId} value={p.principalId}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>{' '}
+              <select name="role" defaultValue="team_member">
+                <option value="responsible_lawyer">responsible lawyer</option>
+                <option value="team_member">team member</option>
+                <option value="supervisor">supervisor</option>
+              </select>{' '}
+              <button type="submit">Assign</button>
+            </form>
+          ) : null}
+          {pro.canManageBarriers && people.length ? (
+            <form action={professionalMatterAction} className="profile-actions">
+              <input type="hidden" name="matterId" value={matter.id} />
+              <input type="hidden" name="action" value="barrier" />
+              <select name="principalId">
+                {people.map((p) => (
+                  <option key={p.principalId} value={p.principalId}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>{' '}
+              <input
+                name="reason"
+                required
+                minLength={3}
+                maxLength={1000}
+                placeholder="Reason for the barrier"
+              />{' '}
+              <button type="submit">Add information barrier</button>
+            </form>
+          ) : null}
+        </section>
+      ) : null}
 
       {summary ? (
         <section className="module-panel" aria-labelledby="intake-heading">

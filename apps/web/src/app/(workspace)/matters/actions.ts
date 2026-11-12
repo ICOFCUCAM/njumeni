@@ -19,6 +19,8 @@ const ERRORS: Record<string, string> = {
   MATTER_LINK_OUT_OF_SCOPE: 'link',
   MATTER_STATUS_INVALID: 'status',
   MATTER_ASSIGNEE_NOT_MEMBER: 'assignee',
+  MATTER_ASSIGNEE_BARRED: 'barred',
+  MATTER_BARRIER_SELF: 'event',
   MATTER_EVENT_INVALID: 'event',
 };
 function back(matterId: string, message?: string): never {
@@ -70,7 +72,9 @@ export async function createMatterFromIntake(formData: FormData): Promise<void> 
     )
       throw error;
   }
-  const created = await supabase.rpc('matter_create', {
+  const conflictCheckId = String(formData.get('conflictCheckId') ?? '');
+  const clientId = String(formData.get('clientId') ?? '');
+  const common = {
     p_organization_id: organizationId,
     p_workspace_id: workspaceId,
     p_title: title,
@@ -80,11 +84,21 @@ export async function createMatterFromIntake(formData: FormData): Promise<void> 
     p_intake: JSON.parse(
       JSON.stringify({ category: intake.category, answers: intake.answers, summary, executionId }),
     ),
-  });
-  if (created.error || !created.data)
+  };
+  // Firms open matters through a cleared or waived conflict check (Phase 9).
+  const created = UUID.test(conflictCheckId)
+    ? await supabase.rpc('matter_open_checked', {
+        ...common,
+        p_conflict_check_id: conflictCheckId,
+        ...(UUID.test(clientId) ? { p_client_id: clientId } : {}),
+      })
+    : await supabase.rpc('matter_create', common);
+  if (created.error || !created.data) {
+    const message = created.error?.message ?? '';
     redirect(
-      `${form}&error=${/NOT_AUTHORISED/.test(created.error?.message ?? '') ? 'not-authorized' : 'failed'}`,
+      `${form}&error=${/NOT_AUTHORISED/.test(message) ? 'not-authorized' : /CONFLICT_CHECK/.test(message) ? 'conflict-check' : 'failed'}`,
     );
+  }
   const matterId = (created.data as { id: string }).id;
   for (const party of summary?.suggestedParties ?? [])
     await supabase.rpc('matter_add_party', {
@@ -193,4 +207,29 @@ export async function matterAction(formData: FormData): Promise<void> {
       back(matterId, 'MATTER_EVENT_INVALID');
   }
   back(matterId, result.error?.message);
+}
+
+export async function professionalMatterAction(formData: FormData): Promise<void> {
+  const matterId = field(formData, 'matterId');
+  const principalId = field(formData, 'principalId');
+  const action = field(formData, 'action');
+  if (!UUID.test(matterId) || !UUID.test(principalId)) redirect('/matters?error=invalid-input');
+  const supabase = await createClient();
+  const { error } =
+    action === 'barrier'
+      ? await supabase.rpc('matter_add_barrier', {
+          p_matter_id: matterId,
+          p_principal_id: principalId,
+          p_reason: field(formData, 'reason'),
+        })
+      : await supabase.rpc('matter_assign', {
+          p_matter_id: matterId,
+          p_principal_id: principalId,
+          p_role: ['responsible_lawyer', 'team_member', 'supervisor'].includes(
+            field(formData, 'role'),
+          )
+            ? field(formData, 'role')
+            : 'team_member',
+        });
+  back(matterId, error?.message);
 }

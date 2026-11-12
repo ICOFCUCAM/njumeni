@@ -27,18 +27,19 @@ const STATUS: Record<string, string> = {
 export default async function DocumentsPage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const supabase = await createClient();
-  const [{ data: workspaces }, { data: templates }] = await Promise.all([
-    supabase
-      .from('workspaces')
-      .select('id, organization_id, name')
-      .eq('status', 'active')
-      .order('created_at'),
-    supabase.rpc('document_list_templates'),
-  ]);
+  const { data: workspaces } = await supabase
+    .from('workspaces')
+    .select('id, organization_id, name')
+    .eq('status', 'active')
+    .order('created_at');
   const workspaceList = workspaces ?? [];
   const selected =
     workspaceList.find((w) => w.id === params.ws && w.organization_id === params.org) ??
     workspaceList[0];
+  // System templates plus the organisation's own templates.
+  const { data: templates } = selected
+    ? await supabase.rpc('document_templates_for', { p_organization_id: selected.organization_id })
+    : await supabase.rpc('document_list_templates');
   const scope = selected
     ? { p_organization_id: selected.organization_id, p_workspace_id: selected.id }
     : null;
@@ -101,7 +102,8 @@ export default async function DocumentsPage({ searchParams }: { searchParams: Se
                 <input name="title" required minLength={3} maxLength={300} />
               </label>
               <label className="profile-field">
-                Template
+                Template (
+                <Link href={`/documents/templates?org=${selected.organization_id}`}>manage</Link>)
                 <select name="templateKey" defaultValue="legal_memorandum">
                   {templateList.map((t) => (
                     <option key={t.key} value={t.key}>

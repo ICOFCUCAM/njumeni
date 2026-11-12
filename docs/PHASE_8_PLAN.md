@@ -88,7 +88,7 @@ Journey 15.1 run as a newly registered user:
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 8 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 8 commit~~ ✅ `8fd8b59`: runs `43133051153` (CI and security) and `43133051148` (database verification), both successful | Done |
 | 2 | Phases 3–7 closed | Their own closeout items |
 | 3 | Milestone **R1** acceptance: the product specification's P0 scope against real content and a live Auth provider | Task 2.8; ADR-0003 Stage 1 |
 

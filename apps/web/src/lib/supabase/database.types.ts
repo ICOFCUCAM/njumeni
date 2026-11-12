@@ -165,6 +165,21 @@ isOneToOne: false
 "assign_workspace_role":
 { Args: { "p_organization_id": string,"p_principal_id": string,"p_role_key": string,"p_workspace_id": string }; Returns: string
                            },
+"client_create":
+{ Args: { "p_contact_note"?: string,"p_identifier"?: string,"p_kind": string,"p_name": string,"p_organization_id": string }; Returns: string
+                           },
+"client_list":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"conflict_check_decide":
+{ Args: { "p_check_id": string,"p_decision": string,"p_note"?: string }; Returns: undefined
+                           },
+"conflict_check_list":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"conflict_check_run":
+{ Args: { "p_names": (string)[],"p_organization_id": string,"p_subject": string,"p_workspace_id": string }; Returns: string
+                           },
 "document_create":
 { Args: { "p_issue_id"?: string,"p_organization_id": string,"p_research_run_id"?: string,"p_template_key": string,"p_title": string,"p_workspace_id": string }; Returns: string
                            },
@@ -188,6 +203,12 @@ isOneToOne: false
                            },
 "document_submit":
 { Args: { "p_document_id": string }; Returns: undefined
+                           },
+"document_template_create":
+{ Args: { "p_document_type": string,"p_name": string,"p_organization_id": string,"p_sections": Json }; Returns: string
+                           },
+"document_templates_for":
+{ Args: { "p_organization_id": string }; Returns: Json
                            },
 "document_withdraw":
 { Args: { "p_document_id": string }; Returns: undefined
@@ -273,6 +294,18 @@ isOneToOne: false
                            },
 "is_organization_owner":
 { Args: { "p_organization_id": string }; Returns: boolean
+                           },
+"knowledge_get":
+{ Args: { "p_item_id": string }; Returns: Json
+                           },
+"knowledge_publish":
+{ Args: { "p_body": string,"p_kind": string,"p_organization_id": string,"p_review_due"?: string,"p_source_id"?: string,"p_source_type"?: string,"p_tags"?: (string)[],"p_title": string }; Returns: string
+                           },
+"knowledge_retire":
+{ Args: { "p_item_id": string }; Returns: undefined
+                           },
+"knowledge_search":
+{ Args: { "p_kind"?: string,"p_organization_id": string,"p_query"?: string }; Returns: Json
                            },
 "legal_authority_graph":
 { Args: { "p_as_of"?: string,"p_max_depth"?: number,"p_max_nodes"?: number,"p_relationship_types"?: (string)[],"p_root_authority_id": string }; Returns: Json
@@ -368,6 +401,9 @@ isOneToOne: false
               "actor_principal_id": string,"correlation_id": string,"event_id": string,"event_key": string,"metadata": Json,"occurred_at": string,"organization_id": string,"outcome": string,"resource_id": string,"resource_type": string,"sequence_id": number,"workspace_id": string
             }[]
                            },
+"matter_add_barrier":
+{ Args: { "p_matter_id": string,"p_principal_id": string,"p_reason": string }; Returns: undefined
+                           },
 "matter_add_deadline":
 { Args: { "p_basis"?: string,"p_due_at": string,"p_location"?: string,"p_matter_id": string,"p_title": string,"p_type": string }; Returns: string
                            },
@@ -376,6 +412,9 @@ isOneToOne: false
                            },
 "matter_add_task":
 { Args: { "p_assignee_principal_id"?: string,"p_description"?: string,"p_due_date"?: string,"p_matter_id": string,"p_priority"?: string,"p_title": string }; Returns: string
+                           },
+"matter_assign":
+{ Args: { "p_matter_id": string,"p_principal_id": string,"p_role": string }; Returns: undefined
                            },
 "matter_create":
 { Args: { "p_description"?: string,"p_intake"?: Json,"p_jurisdiction_code": string,"p_legal_category": string,"p_organization_id": string,"p_title": string,"p_workspace_id": string }; Returns: Json
@@ -392,6 +431,12 @@ isOneToOne: false
 "matter_my_agenda":
 { Args: { "p_days"?: number }; Returns: Json
                            },
+"matter_open_checked":
+{ Args: { "p_client_id"?: string,"p_conflict_check_id": string,"p_description"?: string,"p_intake"?: Json,"p_jurisdiction_code": string,"p_legal_category": string,"p_organization_id": string,"p_title": string,"p_workspace_id": string }; Returns: Json
+                           },
+"matter_professional":
+{ Args: { "p_matter_id": string }; Returns: Json
+                           },
 "matter_record_event":
 { Args: { "p_detail"?: Json,"p_event_type": string,"p_matter_id": string,"p_occurred_at"?: string,"p_summary": string }; Returns: undefined
                            },
@@ -401,11 +446,23 @@ isOneToOne: false
 "matter_set_status":
 { Args: { "p_matter_id": string,"p_note"?: string,"p_status": string }; Returns: undefined
                            },
+"matter_team_candidates":
+{ Args: { "p_matter_id": string }; Returns: Json
+                           },
 "matter_update_deadline":
 { Args: { "p_deadline_id": string,"p_status": string }; Returns: undefined
                            },
 "matter_update_task":
 { Args: { "p_status": string,"p_task_id": string }; Returns: undefined
+                           },
+"organization_get_settings":
+{ Args: { "p_organization_id": string }; Returns: Json
+                           },
+"organization_update_settings":
+{ Args: { "p_organization_id": string,"p_require_conflict_check": boolean,"p_validity_days"?: number }; Returns: undefined
+                           },
+"professional_report":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
                            },
 "record_usage_event":
 { Args: { "p_idempotency_key": string,"p_metadata"?: Json,"p_organization_id": string,"p_quantity": number,"p_unit": string,"p_usage_key": string,"p_workspace_id": string }; Returns: string
