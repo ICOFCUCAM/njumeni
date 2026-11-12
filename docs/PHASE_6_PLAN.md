@@ -82,7 +82,7 @@ The end-to-end run as a real signed-in user:
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 6 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 6 commit~~ ✅ `93f0660`: runs `43127442612` (CI and security) and `43127442624` (database verification), both successful | Done |
 | 2 | Phases 3–5 closed | Their own closeout items |
 | 3 | §18.2 metrics measured on real data and the thresholds calibrated | Task 2.8 |
 

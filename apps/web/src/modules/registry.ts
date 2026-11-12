@@ -69,7 +69,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Review, compare, draft and verify legal documents with traceable source references.',
     description:
       'A controlled document lifecycle for templates, drafts, analysis, citation verification, human review, approval and export.',
-    deliveryPhase: 'Phases 4 and 8',
+    deliveryPhase: 'Phase 7',
     icon: 'file',
   },
   {

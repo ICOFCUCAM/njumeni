@@ -214,6 +214,56 @@ const document = {
         },
       },
     },
+    '/documents/{documentId}/export': {
+      get: {
+        summary:
+          'Export a document version as DOCX or PDF. Versions other than the approved one are marked DRAFT; every export is recorded with its SHA-256',
+        parameters: [
+          {
+            name: 'documentId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+          },
+          {
+            name: 'format',
+            in: 'query',
+            required: true,
+            schema: { type: 'string', enum: ['docx', 'pdf'] },
+          },
+          {
+            name: 'version',
+            in: 'query',
+            required: false,
+            schema: { type: 'integer', minimum: 1 },
+          },
+        ],
+        responses: {
+          '200': {
+            description:
+              'The exported file. X-Document-Final says whether it is the approved version',
+            content: {
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+                schema: { type: 'string', format: 'binary' },
+              },
+              'application/pdf': { schema: { type: 'string', format: 'binary' } },
+            },
+          },
+          '400': {
+            description: 'Invalid format or version',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '401': {
+            description: 'Not signed in',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '404': {
+            description: 'Not found or not accessible',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+        },
+      },
+    },
   },
 } as const;
 

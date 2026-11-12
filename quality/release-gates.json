@@ -47,6 +47,10 @@
         {
           "file": "apps/web/tests/ai-reasoning.test.mjs",
           "contains": "validation rejects invented citations"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "a fabricated citation is rejected"
         }
       ]
     },
@@ -79,6 +83,10 @@
         {
           "file": "supabase/tests/evidence_intelligence.test.sql",
           "contains": "passages are append-only"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "document versions are append-only"
         }
       ]
     },
@@ -139,9 +147,17 @@
         {
           "file": "supabase/tests/verification_legal_quality.test.sql",
           "contains": "in a team organisation the requester cannot approve their own request"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "an editor cannot approve documents"
+        },
+        {
+          "file": "supabase/tests/document_intelligence.test.sql",
+          "contains": "in a team organisation nobody approves their own version"
         }
       ],
-      "note": "Document approval itself arrives in Phase 7; the review-gate controls it will reuse are tested here."
+      "note": "Document approval (Phase 7) and human review gates (Phase 6) share the same controls: permission, four-eyes in teams, audit."
     },
     {
       "id": "RG-09",

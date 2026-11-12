@@ -165,6 +165,33 @@ isOneToOne: false
 "assign_workspace_role":
 { Args: { "p_organization_id": string,"p_principal_id": string,"p_role_key": string,"p_workspace_id": string }; Returns: string
                            },
+"document_create":
+{ Args: { "p_issue_id"?: string,"p_organization_id": string,"p_research_run_id"?: string,"p_template_key": string,"p_title": string,"p_workspace_id": string }; Returns: string
+                           },
+"document_decide":
+{ Args: { "p_decision": string,"p_document_id": string,"p_note"?: string }; Returns: undefined
+                           },
+"document_get":
+{ Args: { "p_document_id": string,"p_version"?: number }; Returns: Json
+                           },
+"document_list":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
+                           },
+"document_list_templates":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"document_record_export":
+{ Args: { "p_document_id": string,"p_format": string,"p_sha256": string,"p_version": number }; Returns: boolean
+                           },
+"document_save_version":
+{ Args: { "p_ai_execution_id"?: string,"p_change_note"?: string,"p_citations"?: Json,"p_document_id": string,"p_expected_version": number,"p_sections": Json }; Returns: number
+                           },
+"document_submit":
+{ Args: { "p_document_id": string }; Returns: undefined
+                           },
+"document_withdraw":
+{ Args: { "p_document_id": string }; Returns: undefined
+                           },
 "evidence_add_event":
 { Args: { "p_date_precision": string,"p_description": string,"p_event_date": string,"p_evidence_item_id": string,"p_passage_id"?: string }; Returns: string
                            },
