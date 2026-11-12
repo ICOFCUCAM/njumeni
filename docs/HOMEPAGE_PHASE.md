@@ -58,6 +58,6 @@ Homepage and early-access pages are indexable (`index, follow`, canonical URLs, 
 
 ## 6. Open items
 
-- **Deployment**: the early-access migration must be deployed to hosted Supabase before the form works there; the web app itself still needs hosting.
+- **Deployment**: the early-access migration is deployed to hosted Supabase (2026-11-12, with `20261114500000`): 56/56 history and catalogue identical to the repository, exactly seven anonymous functions, `early-access-retention` scheduled daily, both deployments recorded in the GLCI register with an audit checkpoint, and a rolled-back anonymous smoke test passed. The web app itself still needs hosting.
 - **Second homepage branch**: `claude/njumeni-public-homepage` (PR #1) holds an earlier homepage at `src/app/page.tsx`, which would conflict with this route (two pages at `/`). This branch supersedes it.
 - **Owner**: a privacy notice page and the contact address for deletion requests.
