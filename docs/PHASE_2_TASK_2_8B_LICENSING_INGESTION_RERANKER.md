@@ -26,7 +26,15 @@ The owner settled the open question in Task 2.8 §2. The sources are:
 | AI training on ordinary website content | **Not permitted** |
 | Fine-tuning on any Lovdata material | **Not without separate legal confirmation** |
 
-This cloud session's network does not reach `lovdata.no`, `api.lovdata.no` or `data.norge.no`. The quotations in Task 2.8 §2 were read by the Lovdata session on 2026-11-12. A fresh read of the four pages was requested from that session.
+**Verified 2026-11-12.** The Lovdata session read the pages; this session's network does not reach those hosts. Quotes are verbatim:
+
+| Page | Finding |
+|---|---|
+| User terms ("Sist endret: 31.10.2025") §2.3 "Unntak" | "Gjeldende formelle lover" and "Gjeldende sentrale forskrifter" may be copied, used and shared "hvis du oppgir Lovdata som kilde og ellers følger vilkårene i" NLOD 2.0. Then: "Massenedlasting og systematiske uttrekk er ikke tillatt. For større nedlastinger, bruk våre åpne API-er." (Bulk download and systematic extraction are not allowed; for larger downloads, use the open APIs.) |
+| User terms §2.1 (open website services) | "Massenedlasting av innholdet er ikke tillatt." "Det er ikke tillatt å bruke innholdet til trening eller utvikling av KI-algoritmer." (No bulk download; no training or development of AI algorithms on website content.) |
+| Article 5277 (3 Nov 2025) | "Lovdata deler to datasett via API til henholdsvis lover og sentrale forskrifter, under en NLOD 2.0-lisens", free of charge; use in "KI-løsninger, chatboter, automatisert juridisk veiledning og analyseverktøy" is foreseen. It says nothing explicit on training |
+| `api.lovdata.no/v1/publicData/list` | The two NLOD datasets are `gjeldende-lover.tar.bz2` and `gjeldende-sentrale-forskrifter.tar.bz2`, exactly the policy's datasets. The four Norsk Lovtidend archives (`lovtidend-*`) are deliberately outside the policy |
+| `data.norge.no/nlod/{en,no}/2.0` | **Not readable:** HTTP 406 from every route. The attribution meets Lovdata's own condition ("oppgir Lovdata som kilde") and names NLOD 2.0. Re-check the licence's recommended wording once the page can be read; a changed wording is a new policy version |
 
 ## 2. Source-specific licence policy
 
