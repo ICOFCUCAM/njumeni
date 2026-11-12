@@ -56,7 +56,7 @@ The project is in exactly the state U-27 prescribes: untouched until the owner d
 
 | # | Step | Notes |
 |---|---|---|
-| 1 | CI green on the Phase 13 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 13 commit~~ ✅ Database verification `43139417538` on `ae46590` passed. CI and security failed on `ae46590` (Prettier formatting of `tests/foundation.test.mjs`) and passed on the fix `f6633b6` (`43139433213`) | Done |
 | 2 | **Deploy the database:** set `SUPABASE_DB_URL`, create the `production` environment, run "Deploy database to hosted Supabase" (dry run, then deploy) | [Runbook §1](operations/RUNBOOK.md); the workflow proves equality with the repository |
 | 3 | Deploy the web app (Stage 2 hosting) with the hosted URL and publishable key | No service-role key in the web app |
 | 4 | Independent penetration test | Before commercial launch |

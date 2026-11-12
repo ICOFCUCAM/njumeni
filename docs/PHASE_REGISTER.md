@@ -344,6 +344,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **AI evaluation:** grounding, citation accuracy and limitation disclosure all 1.0; restore drill passed (audit and custody chains intact).
 - **Monitoring:** health with schema version; operator operations status.
 - **Hosted deployment workflow (U-27).** Manual, dry run first, then proves the hosted schema equals the repository. The hosted project **Njumeni** (`vvjpsejeeffykaozfbik`) was inspected and is empty.
+- **CI:** database verification `43139417538` (on `ae46590`) and CI and security `43139433213` (on `f6633b6`, after a formatting fix) are green.
 - **Outstanding (owner):** run the deployment workflow; web hosting; independent penetration test; D-5 and payment provider; real content; pilots and launch.
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
