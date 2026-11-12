@@ -396,6 +396,9 @@ isOneToOne: false
               "adapter_key": string,"adapter_version": string,"attempt_count": number,"checkpoint": Json,"cursor_reference": string,"job_id": string,"lease_token": string,"source_id": string
             }[]
                            },
+"legal_ingestion_enqueue_continuation":
+{ Args: { "p_idempotency_key": string,"p_max_attempts"?: number,"p_previous_job_id": string }; Returns: string
+                           },
 "legal_ingestion_enqueue_job":
 { Args: { "p_adapter_key": string,"p_adapter_version": string,"p_idempotency_key": string,"p_max_attempts"?: number,"p_source_id": string }; Returns: string
                            },
