@@ -5,6 +5,7 @@ import {
   createSectionPassages,
   validateSourceManifest,
   validateSourceUri,
+  type LegalDatasetSnapshot,
   type LegalSourceAdapter,
   type LegalSourceRights,
 } from './contracts.ts';
@@ -22,6 +23,17 @@ export interface LegalIngestionPersistence {
     discovered:number;created:number;unchanged:number;skipped:number;
     nextCursor:string|null;failureCodes:readonly string[];
   }):Promise<void>;
+  /** Items whose earlier failure is due for another attempt (item-level retries). */
+  dueItemRetries?(sourceKey:string):Promise<string[]>;
+  recordItemOutcome?(input:{
+    sourceKey:string;externalId:string;succeeded:boolean;failureCode:string|null;
+    failureClass:IngestionFailureClass|null;lease?:{jobId:string;leaseToken:string};
+  }):Promise<string>;
+  /** The archive hash of the last complete synchronisation of a dataset, if any. */
+  lastDatasetSync?(sourceKey:string,dataset:string):Promise<{datasetSha256:string}|null>;
+  completeDatasetSync?(input:{
+    sourceKey:string;snapshot:LegalDatasetSnapshot;lease?:{jobId:string;leaseToken:string};
+  }):Promise<{authoritiesAbsent:number}>;
 }
 export interface LegalIngestionResult {
   runId:string;
@@ -29,6 +41,12 @@ export interface LegalIngestionResult {
   discovered:number;created:number;unchanged:number;skipped:number;
   nextCursor:string|null;
   failureCodes:string[];
+  /** Earlier failures retried in this batch. */
+  retried:number;
+  /** True when the dataset archive is identical to the last complete synchronisation. */
+  datasetUnchanged:boolean;
+  /** Authorities a complete dataset no longer lists (flagged, not deleted); null when not recorded. */
+  authoritiesAbsent:number|null;
 }
 export interface ExecuteIngestionOptions {
   adapter:LegalSourceAdapter;
@@ -61,10 +79,24 @@ export async function executeLegalIngestionBatch(options:ExecuteIngestionOptions
   if(!options.normalisationProfile.trim()||options.normalisationProfile.length>120)throw new Error('LEGAL_NORMALISATION_PROFILE_INVALID');
   const concurrency=options.concurrency??3;
   if(!Number.isInteger(concurrency)||concurrency<1||concurrency>10)throw new Error('LEGAL_INGESTION_CONCURRENCY_INVALID');
-  const discovery=await options.adapter.listChangedAuthorities(options.cursor);
+  const sourceKey=options.adapter.manifest.sourceKey;
+  const persistenceApi=options.persistence;
+  // Incremental synchronisation: a dataset whose archive is identical to the last complete
+  // synchronisation is not processed again (only due item retries run).
+  const snapshot=options.adapter.datasetSnapshot?await options.adapter.datasetSnapshot():null;
+  let datasetUnchanged=false;
+  if(snapshot&&options.cursor===null&&persistenceApi.lastDatasetSync){
+    const last=await persistenceApi.lastDatasetSync(sourceKey,snapshot.dataset);
+    datasetUnchanged=last?.datasetSha256===snapshot.sha256;
+  }
+  const discovery=datasetUnchanged?
+    {externalIds:[] as string[],nextCursor:null,complete:true}:
+    await options.adapter.listChangedAuthorities(options.cursor);
   if(!discovery.complete&&discovery.nextCursor===options.cursor)throw new Error('LEGAL_INGESTION_CURSOR_DID_NOT_ADVANCE');
   const completed=new Set(options.completedExternalIds??[]);
-  const remainingIds=discovery.externalIds.filter(id=>!completed.has(id));
+  const retryIds=new Set((persistenceApi.dueItemRetries?await persistenceApi.dueItemRetries(sourceKey):[])
+    .filter(id=>!completed.has(id)));
+  const remainingIds=[...new Set([...discovery.externalIds,...retryIds])].filter(id=>!completed.has(id));
   const batch=planIngestionBatch({
     manifest:options.adapter.manifest,rights:initialRights.rights,cursor:options.cursor,
     externalIds:remainingIds,
@@ -96,9 +128,17 @@ export async function executeLegalIngestionBatch(options:ExecuteIngestionOptions
           createSectionPassages(authority.normalisedText,fetched.sections):
           createPassages(authority.normalisedText),
       });
+      if(retryIds.has(item.externalId)&&persistenceApi.recordItemOutcome){
+        await persistenceApi.recordItemOutcome({sourceKey,externalId:item.externalId,succeeded:true,failureCode:null,failureClass:null});
+      }
       return {kind:result};
     }catch(error){
       const code=errorCode(error);const classification:IngestionFailureClass=classifyIngestionFailure(code);
+      if(persistenceApi.recordItemOutcome&&code!=='LEGAL_INGESTION_LEASE_LOST'){
+        try{
+          await persistenceApi.recordItemOutcome({sourceKey,externalId:item.externalId,succeeded:false,failureCode:code,failureClass:classification});
+        }catch{/* the batch result still reports the failure code */}
+      }
       return {kind:classification==='skip'?'skipped' as const:'failed' as const,code};
     }
   });
@@ -112,6 +152,12 @@ export async function executeLegalIngestionBatch(options:ExecuteIngestionOptions
   const cancelled=failures.includes('CANCELLED');
   const status=failures.length===0?'succeeded':
     (created+unchanged+skipped)>0||cancelled?'partial':'failed';
+  // A complete listing of a changed dataset is recorded: it pins the archive for incremental runs
+  // and flags authorities the dataset no longer lists. Items that failed are retried separately.
+  let authoritiesAbsent:number|null=null;
+  if(snapshot&&!datasetUnchanged&&discovery.complete&&status!=='failed'&&!cancelled&&persistenceApi.completeDatasetSync){
+    authoritiesAbsent=(await persistenceApi.completeDatasetSync({sourceKey,snapshot})).authoritiesAbsent;
+  }
   await options.persistence.persistRunResult({
     runId,status,discovered:discovery.externalIds.length,created,unchanged,skipped,
     nextCursor:discovery.nextCursor,failureCodes:[...new Set(failures)],
@@ -119,5 +165,7 @@ export async function executeLegalIngestionBatch(options:ExecuteIngestionOptions
   return {
     runId,status,discovered:discovery.externalIds.length,created,unchanged,skipped,
     nextCursor:discovery.nextCursor,failureCodes:[...new Set(failures)],
+    retried:[...retryIds].filter(id=>batch.items.some(item=>item.externalId===id)).length,
+    datasetUnchanged,authoritiesAbsent,
   };
 }

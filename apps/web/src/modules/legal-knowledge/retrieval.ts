@@ -1,3 +1,5 @@
+import type { LegalReranker, RerankedLegalPassage } from './reranker.ts';
+
 export type RetrievalMode='lexical'|'semantic'|'hybrid';
 export interface RetrievalQuery {
   query:string;
@@ -8,6 +10,8 @@ export interface RetrievalQuery {
   mode:RetrievalMode;
   limit?:number;
   minimumScore?:number;
+  /** Jurisdictions whose law also applies (OHADA for CM, EU via EEA for NO). Off unless given. */
+  relatedJurisdictionCodes?:readonly string[];
 }
 export interface RetrievalCandidate {
   passageId:string;
@@ -46,6 +50,7 @@ export interface RetrievalPlan {
   queryText:string;
   requireEffectiveAtDate:true;
   excludeStatuses:readonly ['repealed','expired','overruled'];
+  relatedJurisdictionCodes?:string[];
 }
 const DATE=/^\d{4}-\d{2}-\d{2}$/;
 function validDate(value:string):boolean {
@@ -65,7 +70,10 @@ export function createRetrievalPlan(input:RetrievalQuery):RetrievalPlan {
   if(!Number.isInteger(limit)||limit<1||limit>50)throw new Error('LEGAL_RETRIEVAL_LIMIT_INVALID');
   const minimumScore=input.minimumScore??0.12;
   if(!Number.isFinite(minimumScore)||minimumScore<0||minimumScore>1)throw new Error('LEGAL_RETRIEVAL_SCORE_INVALID');
+  const related=[...new Set(input.relatedJurisdictionCodes??[])].filter(code=>code!==input.jurisdictionCode).sort();
+  if(related.some(code=>!/^[A-Z][A-Z0-9_-]{1,15}$/.test(code)))throw new Error('LEGAL_RETRIEVAL_JURISDICTION_INVALID');
   return {
+    ...(related.length?{relatedJurisdictionCodes:related}:{}),
     jurisdictionCode:input.jurisdictionCode,asOfDate:input.asOfDate,
     languageCodes:[...new Set(input.languageCodes)].sort(),
     authorityTypes:[...new Set(input.authorityTypes??[])].sort(),
@@ -82,7 +90,7 @@ export function rankLegalPassages(
   candidates:readonly RetrievalCandidate[],
 ):RankedLegalPassage[] {
   const filtered=candidates.filter(candidate=>
-    candidate.jurisdictionCode===plan.jurisdictionCode&&
+    (candidate.jurisdictionCode===plan.jurisdictionCode||(plan.relatedJurisdictionCodes??[]).includes(candidate.jurisdictionCode))&&
     plan.languageCodes.includes(candidate.languageCode??'')&&
     (!plan.authorityTypes.length||plan.authorityTypes.includes(candidate.authorityType))&&
     candidate.legalStatus!=='repealed'&&candidate.legalStatus!=='expired'&&candidate.legalStatus!=='overruled'&&
@@ -162,18 +170,41 @@ function mergeRetrievalCandidates(
   }
   return [...merged.values()];
 }
+export interface LegalRetrievalOptions {
+  /** Second stage. The first stage then searches a wider pool (3 × limit, 30 to 50 passages). */
+  reranker?:LegalReranker;
+  /** The question as asked (for provision and citation matching); defaults to the query text. */
+  question?:string;
+}
+async function searchCandidates(plan:RetrievalPlan,provider:LegalPassageSearchProvider):Promise<readonly RetrievalCandidate[]> {
+  if(plan.mode==='lexical')return provider.searchLexical(plan);
+  if(plan.mode==='semantic')return provider.searchSemantic(plan);
+  const [lexical,semantic]=await Promise.all([
+    provider.searchLexical(plan),provider.searchSemantic(plan),
+  ]);
+  return mergeRetrievalCandidates(lexical,semantic);
+}
 export async function executeLegalRetrieval(
   plan:RetrievalPlan,
   provider:LegalPassageSearchProvider,
+):Promise<RankedLegalPassage[]>;
+export async function executeLegalRetrieval(
+  plan:RetrievalPlan,
+  provider:LegalPassageSearchProvider,
+  options:LegalRetrievalOptions&{reranker:LegalReranker},
+):Promise<RerankedLegalPassage[]>;
+export async function executeLegalRetrieval(
+  plan:RetrievalPlan,
+  provider:LegalPassageSearchProvider,
+  options?:LegalRetrievalOptions,
+):Promise<RankedLegalPassage[]>;
+export async function executeLegalRetrieval(
+  plan:RetrievalPlan,
+  provider:LegalPassageSearchProvider,
+  options:LegalRetrievalOptions={},
 ):Promise<RankedLegalPassage[]> {
-  let candidates:readonly RetrievalCandidate[];
-  if(plan.mode==='lexical')candidates=await provider.searchLexical(plan);
-  else if(plan.mode==='semantic')candidates=await provider.searchSemantic(plan);
-  else {
-    const [lexical,semantic]=await Promise.all([
-      provider.searchLexical(plan),provider.searchSemantic(plan),
-    ]);
-    candidates=mergeRetrievalCandidates(lexical,semantic);
-  }
-  return rankLegalPassages(plan,candidates);
+  if(!options.reranker)return rankLegalPassages(plan,await searchCandidates(plan,provider));
+  const poolPlan:RetrievalPlan={...plan,limit:Math.min(50,Math.max(plan.limit*3,30))};
+  const pool=rankLegalPassages(poolPlan,await searchCandidates(poolPlan,provider));
+  return options.reranker.rerank(plan,options.question??plan.queryText,pool);
 }

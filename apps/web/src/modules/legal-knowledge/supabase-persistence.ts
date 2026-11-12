@@ -51,6 +51,43 @@ export function createSupabaseLegalIngestionPersistence(client:RpcClient):LegalI
       }
       return data;
     },
+    async dueItemRetries(sourceKey) {
+      const {data,error}=await client.rpc('legal_ingestion_due_item_retries',{p_source_key:sourceKey,p_limit:25});
+      if(error)throw rpcError('LEGAL_INGESTION_DUE_RETRIES_FAILED',error);
+      return Array.isArray(data)?data.filter((id):id is string=>typeof id==='string'&&id.length>0):[];
+    },
+    async recordItemOutcome(input) {
+      if(!input.lease)throw new Error('LEGAL_INGESTION_LEASE_REQUIRED');
+      const {data,error}=await client.rpc('legal_ingestion_record_item_outcome',{
+        p_source_key:input.sourceKey,p_external_id:input.externalId,p_succeeded:input.succeeded,
+        p_failure_code:input.failureCode,p_failure_class:input.failureClass,
+        p_job_id:input.lease.jobId,p_lease_token:input.lease.leaseToken,
+      });
+      if(error)throw rpcError('LEGAL_INGESTION_ITEM_OUTCOME_FAILED',error);
+      if(typeof data!=='string')throw new Error('LEGAL_INGESTION_ITEM_OUTCOME_RESPONSE_INVALID');
+      return data;
+    },
+    async lastDatasetSync(sourceKey,dataset) {
+      const {data,error}=await client.rpc('legal_ingestion_last_dataset_sync',{p_source_key:sourceKey,p_dataset:dataset});
+      if(error)throw rpcError('LEGAL_INGESTION_DATASET_SYNC_READ_FAILED',error);
+      const sha=(data as {datasetSha256?:unknown}|null)?.datasetSha256;
+      return typeof sha==='string'&&/^[a-f0-9]{64}$/.test(sha)?{datasetSha256:sha}:null;
+    },
+    async completeDatasetSync(input) {
+      if(!input.lease)throw new Error('LEGAL_INGESTION_LEASE_REQUIRED');
+      const {snapshot}=input;
+      const {data,error}=await client.rpc('legal_ingestion_complete_dataset_sync',{
+        p_source_key:input.sourceKey,p_dataset:snapshot.dataset,p_dataset_sha256:snapshot.sha256,
+        p_dataset_size_bytes:snapshot.sizeBytes,p_dataset_last_modified:snapshot.lastModified,
+        p_retrieved_at:snapshot.retrievedAt,p_source_uri:snapshot.sourceUri,
+        p_listed_external_ids:[...snapshot.externalIds],
+        p_job_id:input.lease.jobId,p_lease_token:input.lease.leaseToken,
+      });
+      if(error)throw rpcError('LEGAL_INGESTION_DATASET_SYNC_FAILED',error);
+      const absent=Number((data as {authoritiesAbsent?:unknown}|null)?.authoritiesAbsent);
+      if(!Number.isSafeInteger(absent)||absent<0)throw new Error('LEGAL_INGESTION_DATASET_SYNC_RESPONSE_INVALID');
+      return {authoritiesAbsent:absent};
+    },
     async persistRunResult(input) {
       const {data,error}=await client.rpc('legal_ingestion_persist_run_result',{
         p_run_id:input.runId,p_status:input.status,p_discovered:input.discovered,

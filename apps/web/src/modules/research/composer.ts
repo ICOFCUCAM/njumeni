@@ -2,9 +2,11 @@
 // from a retrieved, in-force, rights-approved passage, recorded with its citation so that the
 // database can verify it. AI interpretation is added in Phase 5; until then the engine never
 // paraphrases law, and it abstains when nothing verifiable is found.
+import type { RerankedLegalPassage, RerankTrace } from '../legal-knowledge/reranker.ts';
 import type { RankedLegalPassage } from '../legal-knowledge/retrieval.ts';
 
-export const RESEARCH_ENGINE_VERSION = 'extractive-1.0.0';
+// 1.1.0: second-stage legal reranking with a recorded trace per finding.
+export const RESEARCH_ENGINE_VERSION = 'extractive-1.1.0';
 const MAX_AUTHORITIES = 5;
 
 export type ClaimCategory =
@@ -26,6 +28,8 @@ export interface ResearchFindingInput {
   rank: number;
   passage_id: string;
   score: number;
+  /** The second-stage reranker's trace, when the passages were reranked (evidence traceability). */
+  trace?: RerankTrace;
 }
 export interface AuthorityContextEdge {
   from_authority_id: string;
@@ -193,11 +197,15 @@ export function composeResearchAnswer(input: {
   const permissionBySource = new Map(input.permissions.map((p) => [p.source_key, p]));
   const claims: ResearchClaimInput[] = [];
   const limitations: string[] = [];
-  const findings: ResearchFindingInput[] = input.passages.map((passage, index) => ({
-    rank: index + 1,
-    passage_id: passage.passageId,
-    score: Math.max(0, Math.min(1, passage.score)),
-  }));
+  const findings: ResearchFindingInput[] = input.passages.map((passage, index) => {
+    const trace = (passage as Partial<RerankedLegalPassage>).rerank;
+    return {
+      rank: index + 1,
+      passage_id: passage.passageId,
+      score: Math.max(0, Math.min(1, passage.score)),
+      ...(trace ? { trace } : {}),
+    };
+  });
 
   // One claim per authority (its best-ranked passage), in rank order.
   const seen = new Set<string>();

@@ -396,6 +396,12 @@ isOneToOne: false
               "adapter_key": string,"adapter_version": string,"attempt_count": number,"checkpoint": Json,"cursor_reference": string,"job_id": string,"lease_token": string,"source_id": string
             }[]
                            },
+"legal_ingestion_complete_dataset_sync":
+{ Args: { "p_dataset": string,"p_dataset_last_modified": string,"p_dataset_sha256": string,"p_dataset_size_bytes": number,"p_job_id": string,"p_lease_token": string,"p_listed_external_ids": (string)[],"p_retrieved_at": string,"p_source_key": string,"p_source_uri": string }; Returns: Json
+                           },
+"legal_ingestion_due_item_retries":
+{ Args: { "p_limit"?: number,"p_source_key": string }; Returns: (string)[]
+                           },
 "legal_ingestion_enqueue_continuation":
 { Args: { "p_idempotency_key": string,"p_max_attempts"?: number,"p_previous_job_id": string }; Returns: string
                            },
@@ -408,8 +414,14 @@ isOneToOne: false
 "legal_ingestion_heartbeat":
 { Args: { "p_job_id": string,"p_lease_seconds"?: number,"p_lease_token": string }; Returns: boolean
                            },
+"legal_ingestion_last_dataset_sync":
+{ Args: { "p_dataset": string,"p_source_key": string }; Returns: Json
+                           },
 "legal_ingestion_persist_run_result":
 { Args: { "p_created": number,"p_discovered": number,"p_failure_codes": (string)[],"p_next_cursor": string,"p_run_id": string,"p_skipped": number,"p_status": string,"p_unchanged": number }; Returns: boolean
+                           },
+"legal_ingestion_record_item_outcome":
+{ Args: { "p_external_id": string,"p_failure_class": string,"p_failure_code": string,"p_job_id": string,"p_lease_token": string,"p_source_key": string,"p_succeeded": boolean }; Returns: string
                            },
 "legal_ingestion_save_checkpoint":
 { Args: { "p_completed_external_ids": (string)[],"p_created": number,"p_cursor": string,"p_discovered": number,"p_failures": number,"p_job_id": string,"p_lease_token": string,"p_skipped": number,"p_unchanged": number }; Returns: boolean
@@ -433,8 +445,14 @@ isOneToOne: false
               "authority_id": string,"authority_title": string,"authority_type": string,"authority_version_id": string,"citation": string,"jurisdiction_code": string,"language_code": string,"legal_status": string,"page_number": number,"passage_content": string,"passage_id": string,"section_path": (string)[],"semantic_score": number,"source_content_hash": string,"source_key": string,"source_uri": string,"valid_from": string,"valid_until": string
             }[]
                            },
+"legal_source_licence_policy_get":
+{ Args: { "p_source_key": string }; Returns: Json
+                           },
 "legal_source_record_coverage_review":
 { Args: { "p_authority_types": (string)[],"p_coverage_from": string,"p_coverage_until": string,"p_known_gaps"?: (string)[],"p_languages": (string)[],"p_last_verified_at": string,"p_reason": string,"p_reviewer": string,"p_source_id": string }; Returns: Json
+                           },
+"legal_source_record_licence_policy":
+{ Args: { "p_acquisition_hosts": (string)[],"p_attribution_text": string,"p_conditions": (string)[],"p_evidence_uris": (string)[],"p_legal_basis": string,"p_licence_identifier": string,"p_licence_uri": string,"p_permitted_datasets": (string)[],"p_permitted_uses": Json,"p_recorded_by": string,"p_source_key": string }; Returns: number
                            },
 "legal_source_record_rights_review":
 { Args: { "p_attribution_text": string,"p_licence_identifier": string,"p_licence_version": string,"p_permissions": Json,"p_restrictions"?: (string)[],"p_review_expires_at": string,"p_reviewed_at": string,"p_reviewer": string,"p_source_id": string,"p_terms_uri": string }; Returns: Json

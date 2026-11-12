@@ -10,6 +10,7 @@ import { readFile } from 'node:fs/promises';
 import { basename } from 'node:path';
 import { sha256 } from './contracts.ts';
 import { createHash } from 'node:crypto';
+import { assertAcquisitionPermitted, LOVDATA_LICENCE_POLICY } from './licence-policy.ts';
 
 export const LOVDATA_API_BASE = 'https://api.lovdata.no/v1/publicData';
 export const LOVDATA_USER_AGENT = 'njumeni-legal-ingestion/1.0 (+https://github.com/ICOFCUCAM/njumeni)';
@@ -63,6 +64,23 @@ export const loadSeekBzipDecoder: Bzip2DecoderLoader = async () => {
 
 function isSafeFilename(filename: string): boolean {
   return /^[a-z0-9][a-z0-9._-]{0,120}\.tar\.bz2$/.test(filename);
+}
+
+/** The datasets the Lovdata licence policy covers (NLOD 2.0 public API data). */
+export const LOVDATA_LICENSED_DATASETS: readonly string[] = LOVDATA_LICENCE_POLICY.permittedDatasets;
+
+export function assertLovdataDatasetLicensed(filename: string): void {
+  if (!isSafeFilename(filename)) throw new Error('LOVDATA_ARCHIVE_FILENAME_INVALID');
+  if (!LOVDATA_LICENSED_DATASETS.includes(filename)) throw new Error('LEGAL_SOURCE_LICENCE_DATASET_NOT_PERMITTED');
+}
+
+/** Every request goes to the official API host; the website is never fetched (no scraping). */
+function assertApiRequest(url: string, dataset: string | null): void {
+  if (!url.startsWith(LOVDATA_API_BASE + '/')) throw new Error('LEGAL_SOURCE_LICENCE_HOST_NOT_PERMITTED');
+  assertAcquisitionPermitted(
+    { ...LOVDATA_LICENCE_POLICY, permittedDatasets: dataset === null ? [] : LOVDATA_LICENCE_POLICY.permittedDatasets },
+    { uri: url, dataset },
+  );
 }
 
 export function parsePublicDataList(value: unknown): LovdataPublicDataFile[] {
@@ -141,7 +159,7 @@ export async function decodeLovdataArchive(input: {
   retrievedAt: string;
   loadDecoder?: Bzip2DecoderLoader;
 }): Promise<LovdataArchive> {
-  if (!isSafeFilename(input.filename)) throw new Error('LOVDATA_ARCHIVE_FILENAME_INVALID');
+  assertLovdataDatasetLicensed(input.filename);
   if (input.compressed.length === 0 || input.compressed.length > MAX_ARCHIVE_BYTES) {
     throw new Error('LOVDATA_ARCHIVE_SIZE_INVALID');
   }
@@ -185,13 +203,15 @@ export function createLovdataHttpArchiveSource(options: {
   now?: () => Date;
   timeoutMs?: number;
 }): LovdataArchiveSource {
-  if (!isSafeFilename(options.filename)) throw new Error('LOVDATA_ARCHIVE_FILENAME_INVALID');
+  assertLovdataDatasetLicensed(options.filename);
   const fetcher = options.fetch ?? (globalThis.fetch as unknown as FetchLike);
   const headers = { 'user-agent': LOVDATA_USER_AGENT };
   const timeout = options.timeoutMs ?? 120_000;
   return {
     async load() {
       let listResponse;
+      assertApiRequest(LOVDATA_API_BASE + '/list', null);
+      assertApiRequest(LOVDATA_API_BASE + '/get/' + options.filename, options.filename);
       try {
         listResponse = await fetcher(LOVDATA_API_BASE + '/list',
           { headers: { ...headers, accept: 'application/json' }, signal: AbortSignal.timeout(timeout) });
@@ -221,6 +241,8 @@ export function createLovdataHttpArchiveSource(options: {
  */
 export function createLovdataFileArchiveSource(options: {
   path: string;
+  /** The licensed dataset the file was downloaded as; defaults to the file name. */
+  dataset?: string;
   expectedSizeBytes: number;
   lastModified: string;
   retrievedAt: string;
@@ -231,7 +253,7 @@ export function createLovdataFileArchiveSource(options: {
     async load() {
       const compressed = new Uint8Array(await readFile(options.path));
       const archive = await decodeLovdataArchive({
-        filename: basename(options.path), compressed, expectedSizeBytes: options.expectedSizeBytes,
+        filename: options.dataset ?? basename(options.path), compressed, expectedSizeBytes: options.expectedSizeBytes,
         lastModified: new Date(options.lastModified).toISOString(),
         retrievedAt: new Date(options.retrievedAt).toISOString(),
         ...(options.loadDecoder ? { loadDecoder: options.loadDecoder } : {}),

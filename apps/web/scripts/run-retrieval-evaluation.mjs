@@ -3,6 +3,8 @@
 //   NJUMENI_EVAL_SUPABASE_URL=... NJUMENI_EVAL_SERVICE_KEY=... \
 //   npm run eval:retrieval -- ../../legal-data/evaluation-datasets/synthetic-no-v1.json [lexical|semantic|hybrid]
 // Set NJUMENI_EVAL_RECORD_AS=<reviewer> to record the run as coverage evidence (Task 2.7).
+// The production pipeline is evaluated by default: first-stage search plus the legal reranker, as
+// the research engine runs it. NJUMENI_EVAL_FIRST_STAGE_ONLY=1 measures the first stage alone.
 // Exit code 0 when every gate passes, 1 otherwise. Never run against data you may not process.
 import { readFile } from 'node:fs/promises';
 import { createClient } from '@supabase/supabase-js';
@@ -11,6 +13,7 @@ import { createSupabaseLegalPassageSearchProvider } from '../src/modules/legal-k
 import { evaluateRetrieval } from '../src/modules/legal-knowledge/retrieval-evaluation.ts';
 import { recordRetrievalEvaluation } from '../src/modules/legal-knowledge/coverage-admin-core.ts';
 import { createLocalLegalEmbedder } from '../src/modules/legal-knowledge/local-embedder.ts';
+import { createLegalReranker, LEGAL_RERANKER_VERSION } from '../src/modules/legal-knowledge/reranker.ts';
 
 const [datasetPath, defaultMode] = process.argv.slice(2);
 const url = process.env.NJUMENI_EVAL_SUPABASE_URL;
@@ -30,13 +33,21 @@ const provider = createSupabaseLegalPassageSearchProvider(
   client,
   needsEmbeddings ? createLocalLegalEmbedder().embedQuery : undefined,
 );
+const firstStageOnly = process.env.NJUMENI_EVAL_FIRST_STAGE_ONLY === '1';
 const report = await evaluateRetrieval({
   dataset,
   defaultMode: defaultMode ?? 'hybrid',
-  search: (query) => executeLegalRetrieval(createRetrievalPlan(query), provider),
+  search: (query) =>
+    firstStageOnly
+      ? executeLegalRetrieval(createRetrievalPlan(query), provider)
+      : executeLegalRetrieval(createRetrievalPlan(query), provider, {
+          reranker: createLegalReranker({ preferredLanguage: query.languageCodes[0] ?? null }),
+          question: query.query,
+        }),
 });
 
 console.log(`Dataset ${report.datasetKey} v${report.datasetVersion}: ${report.caseCount} cases`);
+console.log(`  pipeline: ${firstStageOnly ? 'first stage only' : 'first stage + ' + LEGAL_RERANKER_VERSION}`);
 for (const [metric, value] of Object.entries(report.metrics)) {
   console.log(`  ${metric.padEnd(20)} ${value === null ? 'n/a' : value.toFixed(3)}`);
 }

@@ -19,6 +19,7 @@ import {
   type SourcePermission,
 } from './composer.ts';
 import { detectLanguage } from '../global/language.ts';
+import { createLegalReranker } from '../legal-knowledge/reranker.ts';
 import { translateQuery, type GlossaryTerm } from '../global/glossary.ts';
 
 type RpcClient = Pick<SupabaseClient, 'rpc'>;
@@ -103,7 +104,13 @@ export async function runLegalResearch(
     undefined,
     workspaceResearchRouting(request.organizationId, request.workspaceId),
   );
-  const passages = await executeLegalRetrieval(plan, provider);
+  // Second stage: legal reranking (provision, citation, authority, currency, jurisdiction and
+  // language signals) over a wider first-stage pool; every finding keeps its ranking trace.
+  const passages = await executeLegalRetrieval(plan, provider, {
+    reranker: createLegalReranker({ preferredLanguage: target ?? null }),
+    // Provision and citation matching see the question as asked and, when translated, as searched.
+    question: searchQuery === question ? question : question + '\n' + searchQuery,
+  });
 
   const scope = { p_organization_id: request.organizationId, p_workspace_id: request.workspaceId };
   const authorityIds = [...new Set(passages.map((passage) => passage.authorityId))].slice(0, 50);

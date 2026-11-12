@@ -37,6 +37,16 @@ export interface LegalSourceAdapter {
     /** Structural units (for example statute sections) in text order; each text must occur in sourceText. */
     sections?:readonly LegalSourceSection[];
   }>;
+  /**
+   * For sources published as whole datasets: the identity of the dataset this adapter reads and
+   * every authority it lists. Enables incremental synchronisation (an unchanged archive is not
+   * re-processed) and absence detection (authorities a complete dataset no longer lists).
+   */
+  datasetSnapshot?():Promise<LegalDatasetSnapshot>;
+}
+export interface LegalDatasetSnapshot {
+  dataset:string; sha256:string; sizeBytes:number; lastModified:string|null; retrievedAt:string;
+  sourceUri:string; externalIds:readonly string[];
 }
 export interface LegalSourceSection { path:readonly string[]; text:string; }
 export interface PassageDraft {

@@ -14,19 +14,24 @@ import type {
   LegalSourceManifest,
 } from './contracts.ts';
 import {
+  assertLovdataDatasetLicensed,
   createLovdataFileArchiveSource,
   createLovdataHttpArchiveSource,
   type LovdataArchive,
   type LovdataArchiveSource,
 } from './lovdata-archive.ts';
 import { parseLovdataDocument, type LovdataDocument } from './lovdata-document.ts';
+import { LOVDATA_LICENCE_POLICY } from './licence-policy.ts';
 
 export const LOVDATA_SOURCE_KEY = 'lovdata-official';
 export const LOVDATA_ADAPTER_KEY = 'lovdata-public-data';
-export const LOVDATA_ADAPTER_VERSION = '1.0.0';
+// 1.1.0: licence-policy enforcement (licensed API datasets only), dataset snapshots for
+// incremental synchronisation and absence detection, licence URI in the provenance metadata.
+export const LOVDATA_ADAPTER_VERSION = '1.1.0';
 export const LOVDATA_NORMALISATION_PROFILE = 'lovdata-nl-html-v1';
 export const LOVDATA_CURRENT_ACTS_ARCHIVE = 'gjeldende-lover.tar.bz2';
-export const LOVDATA_LICENCE = 'NLOD-2.0';
+export const LOVDATA_CENTRAL_REGULATIONS_ARCHIVE = 'gjeldende-sentrale-forskrifter.tar.bz2';
+export const LOVDATA_LICENCE = LOVDATA_LICENCE_POLICY.licenceIdentifier;
 
 export const LOVDATA_MANIFEST: LegalSourceManifest = Object.freeze({
   sourceKey: LOVDATA_SOURCE_KEY,
@@ -155,6 +160,8 @@ export function toLovdataAuthority(index: LovdataIndex, externalId: string) {
       lastChangeInForce: isoDate(info.lastChangeInForce),
       lastChangedBy: info.lastChangedBy ? info.lastChangedBy.slice(0, 500) : null,
       licence: LOVDATA_LICENCE,
+      licenceUri: LOVDATA_LICENCE_POLICY.licenceUri,
+      licencePolicyVersion: LOVDATA_LICENCE_POLICY.policyVersion,
       normalisationProfile: LOVDATA_NORMALISATION_PROFILE,
     },
     relationships: relationshipsFor(index, indexed, uri),
@@ -201,13 +208,28 @@ export function createLovdataAdapter(options: {
     async fetchAuthority(externalId) {
       return toLovdataAuthority(await index(), externalId);
     },
+    async datasetSnapshot() {
+      const { archive, externalIds } = await index();
+      return {
+        dataset: archive.filename,
+        sha256: archive.sha256,
+        sizeBytes: archive.sizeBytes,
+        lastModified: archive.lastModified,
+        retrievedAt: archive.retrievedAt,
+        sourceUri: archive.sourceUri,
+        externalIds,
+      };
+    },
   };
 }
 
 /** Archive source from the worker environment: a verified local file, else the official API. */
 export function lovdataArchiveSourceFromEnv(env: NodeJS.ProcessEnv): LovdataArchiveSource {
+  // Only a dataset the licence policy covers can be selected (current laws by default).
+  const dataset = env.LOVDATA_DATASET?.trim() || LOVDATA_CURRENT_ACTS_ARCHIVE;
+  assertLovdataDatasetLicensed(dataset);
   const path = env.LOVDATA_ARCHIVE_PATH?.trim();
-  if (!path) return createLovdataHttpArchiveSource({ filename: LOVDATA_CURRENT_ACTS_ARCHIVE });
+  if (!path) return createLovdataHttpArchiveSource({ filename: dataset });
   const sizeBytes = Number(env.LOVDATA_ARCHIVE_SIZE_BYTES);
   const lastModified = env.LOVDATA_ARCHIVE_LAST_MODIFIED?.trim();
   const retrievedAt = env.LOVDATA_ARCHIVE_RETRIEVED_AT?.trim();
@@ -217,7 +239,7 @@ export function lovdataArchiveSourceFromEnv(env: NodeJS.ProcessEnv): LovdataArch
   }
   const expectedSha256 = env.LOVDATA_ARCHIVE_SHA256?.trim();
   return createLovdataFileArchiveSource({
-    path, expectedSizeBytes: sizeBytes, lastModified, retrievedAt,
+    path, dataset, expectedSizeBytes: sizeBytes, lastModified, retrievedAt,
     ...(expectedSha256 ? { expectedSha256 } : {}),
   });
 }

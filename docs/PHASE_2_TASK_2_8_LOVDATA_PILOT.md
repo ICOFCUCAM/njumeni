@@ -6,7 +6,7 @@
 | Date | 2026-11-12 |
 | Governing plan | [Phase 2 plan](PHASE_2_PLAN.md) Tasks 2.8 and 2.10; master plan §6.3, §6.7 (U-21), §5.7 (U-22), §18.2; U-27 |
 | Source | Lovdata public data: `gjeldende-lover.tar.bz2` (current consolidated acts) |
-| Code | `modules/legal-knowledge/lovdata-document.ts`, `lovdata-archive.ts`, `lovdata-adapter.ts`; adapter `lovdata-public-data@1.0.0` |
+| Code | `modules/legal-knowledge/lovdata-document.ts`, `lovdata-archive.ts`, `lovdata-adapter.ts`; adapter `lovdata-public-data@1.0.0` (now `1.1.0`: [Task 2.8b](PHASE_2_TASK_2_8B_LICENSING_INGESTION_RERANKER.md)) |
 | Migration | `20261112900000_legal_pilot_ingestion_support` |
 | Evaluation set | [`lovdata-no-v1`](../legal-data/evaluation-datasets/lovdata-no-v1.json) |
 
@@ -44,7 +44,7 @@ The archive was never committed. A worker host that Lovdata serves directly uses
 | quote, display | yes | Same statement; display with attribution |
 | redistribute | yes, **pending the NLOD text** | NLOD is an open-data licence permitting redistribution; confirm the clause (step 1) |
 | Attribution | Required | The user terms require "oppgir Lovdata som kilde" (name Lovdata as the source) and NLOD 2.0's conditions. Proposed wording: "Kilde: Lovdata (https://lovdata.no/). Lisensiert under Norsk lisens for offentlige data (NLOD) 2.0." Adjust it to NLOD's own form once that is verified |
-| **Open question for the owner** | — | The website terms (§2.3) forbid bulk downloading and systematic extraction from the website services. The API page offers the same content as nightly bulk datasets "fritt … til alle formål" and "for eksperimentering og forskning med KI". The pilot uses only the API datasets and trains no model: it embeds text with a pre-trained model for retrieval. The reading that the API datasets are a separate, permitted channel is plausible, but it is not confirmed. **Confirm it with Lovdata, or take legal advice, before approval** |
+| **Resolved 2026-11-12** | — | Owner decision: the public API datasets are licensed under NLOD 2.0 and may be used commercially and for RAG; website scraping stays prohibited; no training on website content; no fine-tuning without separate legal confirmation. Enforced as a source-specific licence policy: [Task 2.8b](PHASE_2_TASK_2_8B_LICENSING_INGESTION_RERANKER.md). The original note follows. The website terms (§2.3) forbid bulk downloading and systematic extraction from the website services. The API page offers the same content as nightly bulk datasets "fritt … til alle formål" and "for eksperimentering og forskning med KI". The pilot uses only the API datasets and trains no model: it embeds text with a pre-trained model for retrieval. The reading that the API datasets are a separate, permitted channel is plausible, but it is not confirmed. **Confirm it with Lovdata, or take legal advice, before approval** |
 | Restrictions | Current consolidated acts only | No historical or repealed acts (FAQ). Lovdata's case law is commercial and out of scope (master plan §6.3) |
 
 Statutes are also not protected by copyright in Norway. Åndsverkloven § 14, as ingested: "Lover, forskrifter, rettsavgjørelser og andre vedtak av offentlig myndighet er uten vern etter denne loven." That is a separate basis for the statute text. This pilot nevertheless relies on the published licence, which also covers Lovdata's consolidation and metadata.
@@ -107,15 +107,15 @@ The model files come from Hugging Face's CDN. The environment's allow-list was e
 
 ## 6. For the owner: approval and activation
 
-These operations are not done. They run on the hosted project, using a service-role connection (SQL editor or `psql "$SUPABASE_DB_URL"`). Each is a separate audited step. The hosted project holds the first 38 migrations (deployed 2026-11-12). **First apply `20261112900000`** with the owner-triggered workflow ([runbook](operations/RUNBOOK.md) §1); `legal_ingestion_enqueue_continuation` and section-aware appends depend on it.
+These operations are not done. They run on the hosted project, using a service-role connection (SQL editor or `psql "$SUPABASE_DB_URL"`). Each is a separate audited step. Hosted migrations: see the [Phase register](PHASE_REGISTER.md). `20261112900000` and `20261113000000` must be applied first (the licence policy, dataset synchronisation and item retries depend on the latter).
 
-1. **Confirm the licence position.** Read NLOD 2.0 (`https://data.norge.no/nlod/no/2.0`; it could not be fetched from this environment) and the Lovdata FAQ answer on attribution. Settle the open question in §2: website terms against API datasets. Then fix the attribution wording and the `redistribute` permission.
+1. **Licence position: settled** (owner, 2026-11-12; [Task 2.8b](PHASE_2_TASK_2_8B_LICENSING_INGESTION_RERANKER.md) §1). The attribution is fixed by licence policy version 1, and activation is refused under any other wording.
 2. **Record the rights review** (sets `rights_status = 'approved'`; does not activate):
    ```sql
    select public.legal_source_record_rights_review(
      (select id from private.legal_sources where source_key = 'lovdata-official'),
      '<owner name>', 'NLOD-2.0', '2.0', 'https://api.lovdata.no/om-api-tjenesten/',
-     '<attribution wording confirmed in step 1>',
+     (public.legal_source_licence_policy_get('lovdata-official') ->> 'attributionText'),
      now(), now() + interval '12 months',
      '{"retrieve":true,"store":true,"normalise":true,"index":true,"quote":true,"display":true,"redistribute":true}'::jsonb,
      array['attribution-required','current consolidated acts only; no historical or repealed acts']);
@@ -125,13 +125,13 @@ These operations are not done. They run on the hosted project, using a service-r
    select public.legal_source_set_activation(
      (select id from private.legal_sources where source_key = 'lovdata-official'),
      '<operator>', 'Pilot: Lovdata current acts under NLOD 2.0 (Task 2.8)', 'active', true,
-     'lovdata-public-data', '1.0.0');
+     'lovdata-public-data', '1.1.0');
    ```
 4. **Ingest.** Enqueue page 1, run the worker, then enqueue each next page until the RPC answers `LEGAL_INGESTION_NO_CONTINUATION` (four pages today):
    ```sql
    select public.legal_ingestion_enqueue_job(
      (select id from private.legal_sources where source_key = 'lovdata-official'),
-     'lovdata-public-data', '1.0.0', 'lovdata-gjeldende-lover-<date>-page-1');
+     'lovdata-public-data', '1.1.0', 'lovdata-gjeldende-lover-<date>-page-1');
    select public.legal_ingestion_enqueue_continuation('<finished job id>', 'lovdata-gjeldende-lover-<date>-page-2');
    ```
    Worker host: `cd apps/web && npm install --no-save seek-bzip@2.0.0 @huggingface/transformers@4.3.2`. Then run `npm run worker:legal-knowledge` with:
