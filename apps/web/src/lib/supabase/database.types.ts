@@ -349,6 +349,18 @@ isOneToOne: false
 "glci_currency_overview":
 { Args: Record<PropertyKey, never>; Returns: Json
                            },
+"glci_decide_proposal":
+{ Args: { "p_decision": string,"p_note": string,"p_proposal_id": string }; Returns: string
+                           },
+"glci_dismiss_issue":
+{ Args: { "p_issue_id": string,"p_reason": string }; Returns: undefined
+                           },
+"glci_execute_proposal":
+{ Args: { "p_proposal_id": string }; Returns: Json
+                           },
+"glci_issues_list":
+{ Args: { "p_status"?: string }; Returns: Json
+                           },
 "glci_monitor_claim":
 { Args: { "p_lease_seconds"?: number,"p_limit"?: number,"p_worker_id": string }; Returns: {
               "config": Json,"jurisdiction_code": string,"lease_token": string,"monitor_adapter_key": string,"official_uri": string,"previous_fingerprint": string,"source_key": string,"target_key": string
@@ -362,6 +374,9 @@ isOneToOne: false
                            },
 "glci_reanalyse_change":
 { Args: { "p_event_id": string }; Returns: number
+                           },
+"glci_reconcile_issues":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "glci_register_target":
 { Args: { "p_config"?: Json,"p_jurisdiction_code": string,"p_monitor_adapter_key": string,"p_name": string,"p_notes"?: string,"p_official_uri": string,"p_source_key": string,"p_target_key": string,"p_target_type": string }; Returns: string
@@ -652,6 +667,9 @@ isOneToOne: false
                            },
 "research_record_run":
 { Args: { "p_as_of_date": string,"p_claims": Json,"p_engine_version": string,"p_findings": Json,"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limitations": Json,"p_organization_id": string,"p_question": string,"p_retrieval_mode": string,"p_workspace_id": string }; Returns: string
+                           },
+"research_run_currency_notices":
+{ Args: { "p_run_id": string }; Returns: Json
                            },
 "research_search_lexical":
 { Args: { "p_as_of_date": string,"p_authority_types"?: (string)[],"p_jurisdiction_code": string,"p_language_codes": (string)[],"p_limit"?: number,"p_organization_id": string,"p_query": string,"p_workspace_id": string }; Returns: {

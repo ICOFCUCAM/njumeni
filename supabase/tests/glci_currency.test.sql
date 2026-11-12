@@ -1,7 +1,7 @@
 -- GLCI-05: currency verdicts for Norway, step by step. Rolled back.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(17);
+select plan(18);
 
 insert into auth.users (id, aud, role, email, created_at, updated_at) values
   ('c5000000-0000-4000-8000-0000000000a1', 'authenticated', 'authenticated', 'glci-currency-operator@example.invalid', now(), now()),
@@ -30,6 +30,9 @@ select ok((private.glci_jurisdiction_currency('NO') -> 'reasons' ->> 0) like '%n
 select pg_temp.check('dataset-v1');
 select is(pg_temp.verdict(), 'behind', 'a newly seen dataset that was never ingested: behind');
 select is(jsonb_array_length(private.glci_jurisdiction_currency('NO') -> 'knowledgeLag'), 1, 'the knowledge lag names the target');
+select pg_temp.check('dataset-v1');
+select is(jsonb_array_length(private.glci_jurisdiction_currency('NO') -> 'knowledgeLag'), 1,
+  'a later unchanged check does not hide a change that was never ingested');
 
 -- Ingest: one act, from the licensed dataset, completed after the change was seen.
 insert into private.legal_source_ingestion_runs (source_id, adapter_key, adapter_version, status, started_at, finished_at)
