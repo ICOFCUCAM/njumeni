@@ -353,6 +353,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
   - **Security invariants:** RLS everywhere, no private grants, pinned search paths, six anonymous functions, audit chain valid; `platform_health` reports schema `20261113000000`; the temporary `http` extension was removed.
   - **Enforcement:** a rolled-back probe showed the append-only policy, the attribution-mismatch and scraping triggers, and trace sanitising all enforced.
   - **Lovdata:** the source is still `review_required` / `planned` / not enabled.
+- **Hosted database updated, 2026-11-12 (Lovdata licence policy v2):** `20261113100000` was fetched from commit `539ead0`, MD5-checked (`3d888abb…`) and applied. History is 41/41, equal to the repository files. Both policy versions are byte-identical to the tested local database; version 2 (the owner's NLOD §5 attribution) is current. Lovdata is still not approved or enabled.
 - **Outstanding (owner):** enable leaked password protection; web hosting; independent penetration test; D-5 and payment provider; real content; pilots and launch.
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
