@@ -263,7 +263,7 @@ export default async function ObservatoryPage({
       'Claude Code routine (GLCI_CLAUDE_CODE_ROUTINE_URL and _TOKEN)',
       Boolean(
         process.env.GLCI_CLAUDE_CODE_ROUTINE_URL?.trim() &&
-        process.env.GLCI_CLAUDE_CODE_ROUTINE_TOKEN?.trim(),
+          process.env.GLCI_CLAUDE_CODE_ROUTINE_TOKEN?.trim(),
       ),
       'Primary engine and engineering tasks',
     ],
