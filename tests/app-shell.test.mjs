@@ -62,7 +62,8 @@ test('application shell documents every module route and preview limitation', as
   assert.match(docs, /\/intelligence/);
   assert.match(docs, /\/knowledge/);
   assert.match(docs, /server-side Supabase Auth user check/);
-  assert.match(dashboard, /Identity is active/);
+  assert.match(dashboard, /matter_my_agenda/);
+  assert.match(dashboard, /Verify every legal deadline/);
 });
 
 test('Supabase SSR auth is server-validated through the Next.js 16 Proxy', async () => {

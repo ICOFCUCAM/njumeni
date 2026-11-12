@@ -57,7 +57,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     summary: 'Manage matter lifecycles, parties, tasks, deadlines and procedural history.',
     description:
       'The matter context coordinates case intake, lifecycle, assignments, deadlines, events and authorised links to evidence and legal work product.',
-    deliveryPhase: 'Phases 9–10',
+    deliveryPhase: 'Phase 8',
     icon: 'folder',
   },
   {

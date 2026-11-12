@@ -86,7 +86,7 @@ pdftotext found one defect during this run: the page content streams were passed
 
 | # | Condition | Dependency |
 |---|---|---|
-| 1 | CI green on the Phase 7 commit | Automatic on push |
+| 1 | ~~CI green on the Phase 7 commit~~ ✅ `58d2c66`: runs `43130992509` (CI and security) and `43130992480` (database verification), both successful | Done |
 | 2 | Phases 3–6 closed | Their own closeout items |
 | 3 | Draft-completeness evaluation (§18.2, 100% of required sections) on real templates and content | Task 2.8; Phase 9 templates |
 

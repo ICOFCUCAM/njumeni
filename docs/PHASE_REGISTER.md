@@ -38,9 +38,9 @@ A task does not turn green because code was written. It turns green only when it
 | Phase 0 | 🟢 Closed and verified |
 | Phase 1 | 🟢 Closed (11 November 2026) |
 | Phase 2 | 🟡 In progress: framework, embeddings profile, as-of and graph queries, coverage levels and evaluation harness built. Task 2.8 (first live source) blocked by network |
-| Phases 3–7 | 🔵 Implemented and verified locally (evidence intelligence; research engine; AI reasoning and agent framework; verification and legal quality; document intelligence) |
-| Phases 8–13 | 🔒 Locked |
-| Local checks (2026-11-12) | pgTAP 505/505 ✅ · db lint ✅ · typecheck ✅ · web tests 234/234 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
+| Phases 3–8 | 🔵 Implemented and verified locally (evidence intelligence; research engine; AI reasoning and agent framework; verification and legal quality; document intelligence; case management and personal workspace) |
+| Phases 9–13 | 🔒 Locked |
+| Local checks (2026-11-12) | pgTAP 539/539 ✅ · db lint ✅ · typecheck ✅ · web tests 239/239 ✅ · build ✅ · root tests 24/24 ✅ · release gates 12/12 ✅ |
 | CI | ▶️ Automatic on every push. Runs on the Phase 3 commit provide the CI evidence for the Phase 1 closeout |
 
 ### 2.2 Owner decisions in force
@@ -261,7 +261,26 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 - **Exports.** DOCX and PDF with DRAFT marking, a Sources list and a recorded SHA-256 (`/api/v1/documents/{id}/export`).
 - **Interface:** `/documents`, `/documents/[id]`, `/documents/[id]/compare`.
 - **Verification:** pgTAP 505/505 (documents 42/42); app 234/234; build passes. Journey 15.5 passed end to end, including HTTP export with `pdftotext` and `python-docx`.
-- **Outstanding:** Phases 3–6 closed; CI on the phase commit; the draft-completeness evaluation.
+- **Outstanding:** Phases 3–6 closed; the draft-completeness evaluation. CI green on the phase commit `58d2c66`: runs `43130992509` (CI and security) and `43130992480` (database verification).
+
+## 5f. Phase 8: Case management and personal workspace (🔵 IMPLEMENTED, verified locally)
+
+**Plan and acceptance:** [PHASE_8_PLAN.md](PHASE_8_PLAN.md)
+
+- **Matters.** Migration `20261112300000`: numbered matters with category, jurisdiction and lifecycle. Retained, never deleted; archived matters are read-only.
+- **Contents of a matter:**
+  - parties and representatives;
+  - links to evidence, research, arguments and documents (same workspace only);
+  - tasks and assignees;
+  - deadlines and hearings;
+  - an append-only procedural history (communications, notes, procedural steps);
+  - a merged chronology.
+- **Guided intake and the intake agent.** Produces a research question, facts, missing information, parties and tasks; never asserts deadlines.
+- **Personal agenda** on `/dashboard`.
+- **Case bundle export.** ZIP with a case report PDF, chronology CSV, approved documents, evidence manifest and a SHA-256 manifest, recorded and audited.
+- **Interface:** `/matters`, `/matters/new`, `/matters/[id]`.
+- **Verification:** pgTAP 539/539 (cases 34/34); app 239/239; build passes. Journey 15.1 passed end to end, including HTTP bundle download with every manifest hash verified.
+- **Outstanding:** Phases 3–7 closed; CI on the phase commit; R1 acceptance on real content.
 
 **Phase 1 tag note:** the `phase-1-closed` tag (on `c51e53c`) could not be pushed from this environment; its Git proxy accepts branch pushes only. The closeout is recorded by commit SHA and CI run IDs. The owner can create the tag on GitHub (Releases).
 
@@ -278,7 +297,7 @@ Built in parallel with Phase 1 closeout, under the owner's continuous autonomous
 | 5 | AI reasoning and agent framework | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3 and 4 closed, CI on the phase commit and owner decision D-5 for a model-backed evaluation ([Phase 5 plan](PHASE_5_PLAN.md) §5) |
 | 6 | Verification and legal quality | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–5 closed, CI on the phase commit and calibration on real data ([Phase 6 plan](PHASE_6_PLAN.md) §5) |
 | 7 | Document intelligence | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–6 closed, CI on the phase commit and the draft-completeness evaluation ([Phase 7 plan](PHASE_7_PLAN.md) §5) |
-| 8 | Case management and personal workspace | 🔒 LOCKED | Phase 7 closed |
+| 8 | Case management and personal workspace | 🔵 IMPLEMENTED — VERIFIED LOCALLY | Built in owner autonomous mode. Formal closeout needs Phases 3–7 closed, CI on the phase commit and R1 acceptance ([Phase 8 plan](PHASE_8_PLAN.md) §5) |
 | — | Release R1: first release | — | Phase 8 closed, Stage 1 infrastructure, and an owner exception for hosted deployment **or** Phase 13 |
 | 9 | Professional workspace | 🔒 LOCKED | Phase 8 closed |
 | 10 | Enterprise and institutional systems | 🔒 LOCKED | Phase 9 closed |

@@ -214,6 +214,38 @@ const document = {
         },
       },
     },
+    '/matters/{matterId}/export': {
+      get: {
+        summary:
+          'Export a case bundle (ZIP): case report PDF, chronology CSV, approved documents (PDF and DOCX), evidence manifest and a SHA-256 manifest. The export is recorded in the matter history',
+        parameters: [
+          {
+            name: 'matterId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'The case bundle. X-Content-SHA256 carries the archive hash',
+            content: { 'application/zip': { schema: { type: 'string', format: 'binary' } } },
+          },
+          '400': {
+            description: 'Invalid identifier',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '401': {
+            description: 'Not signed in',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+          '404': {
+            description: 'Not found or not accessible',
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
+          },
+        },
+      },
+    },
     '/documents/{documentId}/export': {
       get: {
         summary:

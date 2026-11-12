@@ -7,6 +7,7 @@ const ROUTES = {
   '/research/runs': '../src/app/api/v1/research/runs/route.ts',
   '/research/runs/{runId}': '../src/app/api/v1/research/runs/[runId]/route.ts',
   '/documents/{documentId}/export': '../src/app/api/v1/documents/[documentId]/export/route.ts',
+  '/matters/{matterId}/export': '../src/app/api/v1/matters/[matterId]/export/route.ts',
 };
 
 test('every documented operation has a handler and every handler is documented', async () => {

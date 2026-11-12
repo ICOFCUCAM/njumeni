@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { ModuleIcon } from '@/components/module-icon';
 import { moduleRegistry } from '@/modules/registry';
+import { createClient } from '@/lib/supabase/server';
+
+export const dynamic = 'force-dynamic';
 
 const quickActions = [
   {
@@ -8,6 +11,12 @@ const quickActions = [
     description: 'Start a source-grounded legal intelligence workflow.',
     href: '/intelligence',
     icon: 'sparkles' as const,
+  },
+  {
+    title: 'Open a matter',
+    description: 'Start with a guided interview; Njumeni organises the facts and first tasks.',
+    href: '/matters',
+    icon: 'folder' as const,
   },
   {
     title: 'Research an authority',
@@ -23,61 +32,109 @@ const quickActions = [
   },
 ];
 
-export default function DashboardPage() {
+interface Agenda {
+  deadlines: {
+    matterId: string;
+    matterNumber: string;
+    matterTitle: string;
+    title: string;
+    type: string;
+    dueAt: string;
+    overdue: boolean;
+  }[];
+  tasks: {
+    matterId: string;
+    matterNumber: string;
+    title: string;
+    dueDate: string | null;
+    priority: string;
+    status: string;
+    assignedToMe: boolean;
+  }[];
+}
+
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc('matter_my_agenda', { p_days: 30 });
+  const agenda = (data ?? { deadlines: [], tasks: [] }) as unknown as Agenda;
+  const overdue = agenda.deadlines.filter((d) => d.overdue).length;
   return (
     <>
       <header>
-        <p className="page-eyebrow">Workspace overview</p>
+        <p className="page-eyebrow">Personal workspace</p>
         <h1 className="page-title">Your legal work, clearly organised.</h1>
         <p className="page-description">
-          A connected workspace for legal research, evidence, reasoning and verified work product.
-          The foundation shell establishes the routes and boundaries for the complete Njumeni
-          platform.
+          Your agenda across every matter you can see: deadlines and hearings in the next 30 days,
+          anything overdue, and the open tasks assigned to you or to nobody.
         </p>
       </header>
-      <div className="preview-notice" role="status">
-        <span className="notice-mark" aria-hidden="true">
-          i
-        </span>
-        <div>
-          <strong>Identity is active; legal data services are not connected.</strong> Your
-          authenticated session confirms account identity only. Organisation and workspace
-          membership, matter data, document storage and AI workflows remain disabled. No customer or
-          matter records are being displayed.
-        </div>
-      </div>
-      <section aria-labelledby="workspace-status-title">
+      <section aria-labelledby="agenda-title">
         <div className="section-heading">
           <div>
-            <h2 id="workspace-status-title">Workspace at a glance</h2>
+            <h2 id="agenda-title">Your agenda</h2>
             <p>
-              Live metrics will appear after identity, tenancy and data services are implemented.
+              Deadlines are as recorded on each matter. Verify every legal deadline at its source.
             </p>
           </div>
         </div>
         <div className="card-grid">
           {[
-            ['Active matters', 'Not connected', 'Matter data is not available in this preview.'],
-            ['Research sessions', 'Not connected', 'Research history will be workspace-scoped.'],
-            ['Evidence records', 'Not connected', 'Evidence remains private and matter-scoped.'],
+            [
+              'Deadlines (30 days)',
+              String(agenda.deadlines.length),
+              overdue ? `${overdue} overdue` : 'None overdue',
+            ],
+            [
+              'Open tasks',
+              String(agenda.tasks.length),
+              `${agenda.tasks.filter((t) => t.assignedToMe).length} assigned to you`,
+            ],
           ].map(([label, value, note]) => (
             <article className="metric-card" key={label}>
               <p className="metric-label">{label}</p>
-              <p className="metric-value" style={{ fontSize: 20 }}>
-                {value}
-              </p>
+              <p className="metric-value">{value}</p>
               <p className="metric-note">{note}</p>
             </article>
           ))}
         </div>
+        {agenda.deadlines.length > 0 ? (
+          <ul className="membership-list" aria-label="Deadlines">
+            {agenda.deadlines.map((d, i) => (
+              <li key={i} className="membership-row">
+                <span className="workspace-status">
+                  {d.overdue ? 'OVERDUE · ' : ''}
+                  {d.type}
+                </span>{' '}
+                {d.dueAt.slice(0, 16).replace('T', ' ')} UTC · {d.title} ·{' '}
+                <Link href={`/matters/${d.matterId}`}>
+                  {d.matterNumber} {d.matterTitle}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {agenda.tasks.length > 0 ? (
+          <ul className="membership-list" aria-label="Tasks">
+            {agenda.tasks.slice(0, 15).map((t, i) => (
+              <li key={i} className="membership-row">
+                <span className="workspace-status">{t.priority}</span> {t.title}
+                {t.dueDate ? <small> · due {t.dueDate}</small> : null} ·{' '}
+                <Link href={`/matters/${t.matterId}`}>{t.matterNumber}</Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {agenda.deadlines.length === 0 && agenda.tasks.length === 0 ? (
+          <p>
+            Nothing due. <Link href="/matters">Open a matter</Link> to start.
+          </p>
+        ) : null}
       </section>
       <section aria-labelledby="quick-actions-title">
         <div className="section-heading">
           <div>
             <h2 id="quick-actions-title">Start with an intelligence workflow</h2>
-            <p>
-              These links open module entry points; the underlying workflows are not yet enabled.
-            </p>
+            <p>Entry points to the workflows you use most.</p>
           </div>
         </div>
         <div className="card-grid">

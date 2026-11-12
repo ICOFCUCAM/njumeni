@@ -368,6 +368,45 @@ isOneToOne: false
               "actor_principal_id": string,"correlation_id": string,"event_id": string,"event_key": string,"metadata": Json,"occurred_at": string,"organization_id": string,"outcome": string,"resource_id": string,"resource_type": string,"sequence_id": number,"workspace_id": string
             }[]
                            },
+"matter_add_deadline":
+{ Args: { "p_basis"?: string,"p_due_at": string,"p_location"?: string,"p_matter_id": string,"p_title": string,"p_type": string }; Returns: string
+                           },
+"matter_add_party":
+{ Args: { "p_contact_note"?: string,"p_matter_id": string,"p_name": string,"p_represents_party_id"?: string,"p_role": string }; Returns: string
+                           },
+"matter_add_task":
+{ Args: { "p_assignee_principal_id"?: string,"p_description"?: string,"p_due_date"?: string,"p_matter_id": string,"p_priority"?: string,"p_title": string }; Returns: string
+                           },
+"matter_create":
+{ Args: { "p_description"?: string,"p_intake"?: Json,"p_jurisdiction_code": string,"p_legal_category": string,"p_organization_id": string,"p_title": string,"p_workspace_id": string }; Returns: Json
+                           },
+"matter_get":
+{ Args: { "p_matter_id": string }; Returns: Json
+                           },
+"matter_link":
+{ Args: { "p_link_type": string,"p_matter_id": string,"p_target_id": string }; Returns: undefined
+                           },
+"matter_list":
+{ Args: { "p_organization_id": string,"p_workspace_id": string }; Returns: Json
+                           },
+"matter_my_agenda":
+{ Args: { "p_days"?: number }; Returns: Json
+                           },
+"matter_record_event":
+{ Args: { "p_detail"?: Json,"p_event_type": string,"p_matter_id": string,"p_occurred_at"?: string,"p_summary": string }; Returns: undefined
+                           },
+"matter_record_export":
+{ Args: { "p_files": number,"p_matter_id": string,"p_sha256": string }; Returns: undefined
+                           },
+"matter_set_status":
+{ Args: { "p_matter_id": string,"p_note"?: string,"p_status": string }; Returns: undefined
+                           },
+"matter_update_deadline":
+{ Args: { "p_deadline_id": string,"p_status": string }; Returns: undefined
+                           },
+"matter_update_task":
+{ Args: { "p_status": string,"p_task_id": string }; Returns: undefined
+                           },
 "record_usage_event":
 { Args: { "p_idempotency_key": string,"p_metadata"?: Json,"p_organization_id": string,"p_quantity": number,"p_unit": string,"p_usage_key": string,"p_workspace_id": string }; Returns: string
                            },

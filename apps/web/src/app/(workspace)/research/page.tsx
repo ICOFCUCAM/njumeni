@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-type SearchParams = Promise<{ org?: string; ws?: string; error?: string }>;
+type SearchParams = Promise<{ org?: string; ws?: string; error?: string; q?: string }>;
 
 const errors: Record<string, string> = {
   'invalid-scope': 'Choose a workspace first.',
@@ -85,7 +85,14 @@ export default async function ResearchPage({ searchParams }: { searchParams: Sea
               <input type="hidden" name="workspaceId" value={selected.id} />
               <label className="profile-field">
                 Question
-                <textarea name="question" required minLength={3} maxLength={4000} rows={3} />
+                <textarea
+                  name="question"
+                  required
+                  minLength={3}
+                  maxLength={4000}
+                  rows={3}
+                  defaultValue={(params.q ?? '').slice(0, 4000)}
+                />
               </label>
               <label className="profile-field">
                 Jurisdiction

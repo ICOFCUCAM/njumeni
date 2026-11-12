@@ -29,12 +29,12 @@
 5. **Gates with nothing to measure fail.** An evaluation without cases never passes silently.
 6. **Each phase records its evidence:** test counts, end-to-end results and CI run IDs, in the phase plan.
 
-## 3. Current totals (Phase 7)
+## 3. Current totals (Phase 8)
 
 | Suite | Count |
 |---|---|
-| pgTAP | 505 assertions in 18 files |
-| Application | 234 tests |
+| pgTAP | 539 assertions in 19 files |
+| Application | 239 tests |
 | Root policy and documentation | 24 tests |
 
 ## 4. Added by later phases
@@ -44,5 +44,6 @@
 | 5 | ✅ Agent authorisation and refusal tests (pgTAP); orchestrator, injection and grounding-validation tests; reasoning rubric (`evaluateArgumentGraph`). Model-backed evaluation follows D-5 |
 | 6 | ✅ Automated release gates (§18.3, `check-release-gates.mjs`), evaluation-threshold regression guard (§18.2), re-verification and review-gate tests |
 | 7 | ✅ Document tests (citation verification, four-eyes approval, versions); DOCX/PDF structure tests; exports checked with `pdftotext` and `python-docx` in the phase end-to-end run |
-| 8–9 | Browser end-to-end journeys (master plan §15) with Playwright |
+| 8 | ✅ Matter tests; journey 15.1 end to end over HTTP (bundle manifest verified) |
+| 9 | Browser end-to-end journeys (master plan §15) with Playwright |
 | 13 | Load, performance, penetration and restore-drill testing |

@@ -25,6 +25,10 @@
         {
           "file": "supabase/tests/verification_legal_quality.test.sql",
           "contains": "an outsider cannot read verification results"
+        },
+        {
+          "file": "supabase/tests/case_management.test.sql",
+          "contains": "an outsider cannot read another tenant''s matter"
         }
       ]
     },
@@ -87,6 +91,10 @@
         {
           "file": "supabase/tests/document_intelligence.test.sql",
           "contains": "document versions are append-only"
+        },
+        {
+          "file": "supabase/tests/case_management.test.sql",
+          "contains": "matters are retained"
         }
       ]
     },
