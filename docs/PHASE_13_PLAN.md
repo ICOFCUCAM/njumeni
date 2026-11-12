@@ -76,6 +76,20 @@ The project is in exactly the state U-27 prescribes: untouched until the owner d
 | 6 | Real legal content (Task 2.8, then per jurisdiction) | Needed for coverage, evaluation calibration and pilot customers |
 | 7 | Pilot customers, then commercial launch | After steps 2–6 |
 
+## 5a. Browser journey suite (2026-11-12)
+
+`apps/web/e2e/journeys.e2e.mjs` (`npm run test:e2e`) drives headless Chromium through the real interface: sign-in, forms, server actions, redirects and downloads.
+
+| Journey | Steps exercised in the browser | Result |
+|---|---|---|
+| 15.1 Individual | Sign in → employment intake → numbered matter with intake summary and verify-deadline task → pre-filled research → verified answer → re-verify → approve the review gate → create a document from the research → drafting agent → submit → approve → PDF download (final, no DRAFT) → link research and document to the matter → case bundle download (ZIP) | ✅ |
+| 15.2 Firm | Law firm without a check → "No usable check" → register client → run a conflict check for the right workspace → clear → open the matter with the check and client → "Conflict check: clear" → assign the responsible lawyer → the used check cannot open a second matter | ✅ |
+| Localisation and accessibility | Norwegian navigation from the profile locale; one main heading per page; every form field labelled (6 pages) | ✅ |
+
+Passed twice in a row. Running the suite found and fixed **two real defects** that API-level tests could not see:
+1. **Stale research page after "Re-verify"**: the action redirected to the same page without refreshing it, so the new verification status appeared only after a manual reload. Fixed with `revalidatePath` in both research verification actions.
+2. **Overlapping controls in list rows**: inline forms (review decisions, deadlines, tasks, conflict decisions) were squeezed into the row's single flex line, and the Approve button overlapped the note field. Fixed with global CSS: inline forms take their own full-width line, and action rows wrap with consistent controls.
+
 ## 6. Decisions
 
 - **The hosted deployment is a button the owner presses, and it proves itself.** No migration reaches the hosted project from a developer's machine, and the run fails unless the hosted schema equals the repository.

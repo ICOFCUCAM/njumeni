@@ -18,6 +18,7 @@
 | Release gates and evaluation thresholds | `check-release-gates.mjs` with `quality/release-gates.json` and `quality/evaluation-thresholds.json` | CI | Every push |
 | Build | `next build` | CI | Every push |
 | End-to-end | Scripted flows against a local stack and the built app (synthetic users and data) | Per phase, before its commit | Recorded in each phase plan |
+| Browser journeys | Playwright (headless Chromium) through the real forms and server actions: journeys 15.1 and 15.2, localisation and accessibility basics (`apps/web/e2e/journeys.e2e.mjs`, `npm run test:e2e`) | Local stack + built app | Before every release |
 | Legal-quality evaluation | `retrieval-evaluation.ts` + `npm run eval:retrieval` | `legal-data/evaluation-datasets/` | Per phase; becomes a CI gate once real content exists (Task 2.8) |
 
 ## 2. Principles

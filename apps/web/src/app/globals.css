@@ -1058,3 +1058,43 @@ a:focus-visible {
     flex-direction: column;
   }
 }
+
+/* Inline forms inside list rows (reviews, deadlines, tasks, conflict checks…) take their own
+   full-width line instead of squeezing into the row, so controls never overlap (Phase 13 UI fix). */
+.membership-row {
+  flex-wrap: wrap;
+}
+.membership-row > form,
+.membership-row > ul,
+.membership-row > .profile-field-grid {
+  flex: 1 0 100%;
+}
+.profile-actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.profile-actions input:not([type='checkbox']):not([type='hidden']),
+.profile-actions select,
+.profile-field textarea {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  padding: 8px 10px;
+  color: var(--ink);
+  font: inherit;
+}
+.profile-field textarea {
+  width: 100%;
+}
+.profile-actions button:not(.auth-submit) {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  padding: 0 14px;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}

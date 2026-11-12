@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { runLegalResearch } from '@/modules/research/service';
 import { MANUAL_GATES, verifyResearchRun } from '@/modules/verification/quality';
@@ -53,6 +54,8 @@ export async function recheckResearch(formData: FormData): Promise<void> {
         ? 'not-authorized'
         : 'check-failed';
   }
+  // Refresh the run page so the new verification report is shown immediately.
+  revalidatePath(`/research/${runId}`);
   redirect(`/research/${runId}${failure ? `?error=${failure}` : '#verification'}`);
 }
 
@@ -77,6 +80,7 @@ export async function requestResearchReview(formData: FormData): Promise<void> {
     p_gate: gate,
     p_reason: reason,
   });
+  revalidatePath(`/research/${runId}`);
   redirect(
     `/research/${runId}${error ? `?error=${/ALREADY_PENDING/.test(error.message) ? 'review-pending' : 'review-failed'}` : '#verification'}`,
   );

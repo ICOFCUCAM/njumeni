@@ -17,7 +17,8 @@
     "test:legal-knowledge": "node --experimental-strip-types --test tests/legal-knowledge-*.test.mjs",
     "worker:legal-knowledge": "node --conditions=react-server --experimental-strip-types src/modules/legal-knowledge/worker-main.ts",
     "worker:evidence": "node --conditions=react-server --experimental-strip-types src/modules/evidence/worker-main.ts",
-    "eval:retrieval": "node --experimental-strip-types scripts/run-retrieval-evaluation.mjs"
+    "eval:retrieval": "node --experimental-strip-types scripts/run-retrieval-evaluation.mjs",
+    "test:e2e": "node --experimental-strip-types --test --test-concurrency=1 e2e/journeys.e2e.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
