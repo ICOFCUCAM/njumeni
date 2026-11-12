@@ -43,6 +43,18 @@ Prove the system is ready for production, and make the first hosted deployment a
 
 The project is in exactly the state U-27 prescribes: untouched until the owner deploys the complete, tested set.
 
+### 3.1 First hosted deployment (U-27), 2026-11-12, at the owner's request
+
+| Item | Result |
+|---|---|
+| Source | Commit `da164c72e2f5df8e2d3548ec03289fcbcf1e23a5`. The hosted database fetched each migration file from that immutable commit and **checked its MD5 against the repository's** before executing it |
+| Method | One transaction for all 38 migrations (all or nothing). Each was recorded in `supabase_migrations.schema_migrations` under its repository version, so later `supabase db push` runs and the deployment workflow continue from it. The temporary `http` extension used for fetching was dropped afterwards |
+| Migrations | **38/38**, `20261110141433` → `20261112800000`; `platform_health()` reports schema `20261112800000` |
+| Security invariants (hosted) | 0 tables without RLS · 0 private grants · 0 unpinned definers · anonymous functions exactly the intended six · 0 anonymous private functions · 0 unindexed foreign keys · audit chain valid |
+| **Schema equality** | Fingerprints identical to the local database: tables `0e59a41e56f519d1971530e47504c67a`, functions `53d643a977497295c4ea1a279c58e8c6`, policies `e68a9302aae0c1722cf3f2a25e93df1c`; 13 jurisdictions and 14 sources seeded on both |
+| Existing data | The one existing sign-in account was backfilled into a principal with its personal organisation |
+| Supabase security advisor | Only by-design notices: private tables have RLS with no policies (reachable only through checked functions); the six intended anonymous functions; signed-in users call security-definer RPCs (the architecture); `regconfig` column (language search). **Action for the owner:** enable *leaked password protection* (Authentication → Policies) |
+
 ## 4. Verification (local, 2026-11-12)
 
 | Check | Result |
@@ -57,7 +69,7 @@ The project is in exactly the state U-27 prescribes: untouched until the owner d
 | # | Step | Notes |
 |---|---|---|
 | 1 | ~~CI green on the Phase 13 commit~~ ✅ Database verification `43139417538` on `ae46590` passed. CI and security failed on `ae46590` (Prettier formatting of `tests/foundation.test.mjs`) and passed on the fix `f6633b6` (`43139433213`) | Done |
-| 2 | **Deploy the database:** set `SUPABASE_DB_URL`, create the `production` environment, run "Deploy database to hosted Supabase" (dry run, then deploy) | [Runbook §1](operations/RUNBOOK.md); the workflow proves equality with the repository |
+| 2 | ~~Deploy the database~~ ✅ Done 2026-11-12 (§3.1); hosted schema equals the repository. Future migrations: set `SUPABASE_DB_URL` and use the workflow | [Runbook §1](operations/RUNBOOK.md) |
 | 3 | Deploy the web app (Stage 2 hosting) with the hosted URL and publishable key | No service-role key in the web app |
 | 4 | Independent penetration test | Before commercial launch |
 | 5 | Decisions D-5 (AI provider and budget) and the payment provider | Capabilities stay off until then |
