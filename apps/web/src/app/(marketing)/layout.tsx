@@ -6,7 +6,7 @@ const NAV = [
   { href: '/#workspace', label: 'Workspace' },
   { href: '/#change-intelligence', label: 'Change intelligence' },
   { href: '/#international', label: 'Jurisdictions' },
-  { href: '/#audiences', label: 'Who it serves' },
+  { href: '/#organisations', label: 'Organisations' },
   { href: '/#plans', label: 'Plans' },
 ];
 
@@ -16,10 +16,12 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
       <a className="nj-skip" href="#main">
         Skip to content
       </a>
-      <p className="nj-notice">
-        Njumeni is opening to early-access organisations, starting with Norway.{' '}
-        <Link href="/early-access">Request access</Link>
-      </p>
+      <aside aria-label="Announcement">
+        <p className="nj-notice">
+          Njumeni is opening to early-access organisations, starting with Norway.{' '}
+          <Link href="/early-access">Request access</Link>
+        </p>
+      </aside>
       <header className="nj-header">
         <div className="nj-wrap nj-header-inner">
           <Link href="/" className="nj-brand" aria-label="Njumeni home">
@@ -36,10 +38,10 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             ))}
           </nav>
           <div className="nj-header-actions">
-            <Link href="/sign-in" className="nj-btn nj-btn-ghost nj-btn-sm nj-hide-md">
+            <Link href="/sign-in" className="nj-btn nj-btn--ghost nj-btn--sm nj-hide-md">
               Sign in
             </Link>
-            <Link href="/early-access" className="nj-btn nj-btn-gold nj-btn-sm">
+            <Link href="/early-access" className="nj-btn nj-btn--gold nj-btn--sm">
               Request early access
             </Link>
           </div>

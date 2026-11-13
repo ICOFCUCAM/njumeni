@@ -478,39 +478,48 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   const response = await page.goto(`${BASE}/`);
   assert.equal(response.status(), 200, 'the homepage is public (no redirect to sign-in)');
   assert.equal(await page.locator('h1').count(), 1, 'one main heading');
-  assert.match(await page.locator('h1').innerText(), /Know the law\. Understand the evidence\. Stay ahead of change\./);
+  assert.match(await page.locator('h1').innerText(), /Know the law\.\s*Understand its authority\.\s*Stay ahead of change\./);
   assert.match(await page.title(), /Njumeni/);
   assert.ok(await page.locator('meta[name="description"]').getAttribute('content'), 'meta description');
   assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'index, follow', 'the homepage is indexable');
   assert.ok(await page.getByText('Njumeni is opening to early-access organisations, starting with Norway.').isVisible(), 'early-access notice');
-  // The story: eight chapters, each reachable from the table of contents.
-  for (const id of ['research', 'workspace', 'evidence', 'change-intelligence', 'enterprise', 'international', 'trust', 'audiences', 'plans']) {
-    assert.equal(await page.locator(`section#${id}`).count(), 1, `chapter ${id}`);
+  // The story: the thirteen sections in order (sections with an anchor).
+  for (const id of ['research', 'workspace', 'evidence', 'change-intelligence', 'international', 'organisations', 'ai', 'trust', 'audiences', 'plans']) {
+    assert.equal(await page.locator(`section#${id}`).count(), 1, `section ${id}`);
   }
-  // The time machine: moving the date changes the version of the law that applies.
-  const tm = page.locator('.nj-tm');
-  assert.ok(await tm.getByText('Version 2 · in force from 1 January 2024').isVisible());
-  await tm.getByLabel('Date of the law').fill('2020');
-  assert.ok(await tm.getByText('Version 1 · in force from 1 January 2019').isVisible(), 'earlier date, earlier version');
-  await tm.getByLabel('Date of the law').fill('2028');
-  assert.ok(await tm.getByText('Version 3 · in force from 1 July 2027').isVisible(), 'later date, later version');
+  // The research view: the real held version answers; an earlier date gets the temporal refusal.
+  const rv = page.locator('.nj-rv');
+  assert.ok(await rv.getByText('In force from 1 July 2026').isVisible(), 'the version held is shown');
+  assert.ok(await rv.getByText(/Arbeidstaker kan ikke sies opp uten at det er saklig begrunnet/).isVisible(), 'the quotation of § 15-7 (1)');
+  await rv.getByRole('button', { name: '15 Jan 2025' }).click();
+  assert.ok(await rv.getByText(/not the\s+version in force on 15 January 2025/).isVisible(), 'no version held for that date: Njumeni declines');
+  await rv.getByRole('button', { name: '1 Aug 2026' }).click();
+  assert.ok(await rv.getByText('In force from 1 July 2026').isVisible());
   // The case file: tabs switch with the mouse and the keyboard.
-  const dossier = page.locator('.nj-dz');
-  await dossier.getByRole('tab', { name: 'Chronology' }).click();
-  assert.ok(await dossier.getByText('Notice of dismissal').isVisible());
-  await page.keyboard.press('ArrowRight');
-  assert.equal(await dossier.getByRole('tab', { name: 'Arguments' }).getAttribute('aria-selected'), 'true', 'arrow keys move between tabs');
-  // No inflated claims.
+  const caseFile = page.locator('.nj-cf');
+  await caseFile.getByRole('tab', { name: /Chronology/ }).click();
+  assert.ok(await caseFile.getByText('Notice of dismissal').isVisible());
+  await page.keyboard.press('ArrowDown');
+  assert.equal(await caseFile.getByRole('tab', { name: /Arguments/ }).getAttribute('aria-selected'), 'true', 'arrow keys move between tabs');
+  // Accuracy: status labels, no inflated claims, no live-coverage claim, no prices.
   const text = await page.locator('main').innerText();
   assert.ok(!/\b2[0-9]\+? jurisdictions\b/i.test(text), 'no inflated jurisdiction count');
-  assert.ok(text.includes('17 legal'), 'the framework size is stated accurately');
-  // Commercial policy (Master Plan §2.4, §17.1): four customer categories with their workspaces; plans without prices.
-  assert.equal(await page.locator('#audiences .nj-category').count(), 4, 'four customer categories');
-  for (const ws of ['Personal workspace', 'Professional workspace', 'Enterprise and Law Firm workspace', 'Institutional workspace']) {
-    assert.ok(await page.locator('#audiences').getByText(ws, { exact: true }).isVisible(), ws);
+  assert.ok(text.includes('17 legal systems'), 'the framework size is stated accurately');
+  assert.ok(text.includes('every jurisdiction reads'), 'currency today is stated: not monitored');
+  assert.ok(await page.locator('.nj-tag--awaiting').count() >= 3, 'capabilities awaiting activation are labelled');
+  assert.ok(!/certified|ISO 27001|SOC 2/i.test(text.replace(/has not yet completed an independent penetration test or a security\s+certification/, '')), 'no certification claimed');
+  assert.ok(await page.locator('.nj-map img').evaluate((img) => img.complete || img.loading === 'lazy'), 'jurisdiction map present');
+  // Customer journeys: four categories with their workspaces (Master Plan §2.4).
+  const journeys = page.locator('#audiences');
+  for (const [tab, ws] of [['Individuals', 'Personal workspace'], ['Legal professionals', 'Professional workspace'], ['Law firms and enterprises', 'Enterprise and Law Firm workspace'], ['Public institutions', 'Institutional workspace']]) {
+    await journeys.getByRole('tab', { name: new RegExp(tab) }).click();
+    assert.ok(await journeys.getByText(ws, { exact: true }).isVisible(), ws);
   }
-  assert.equal(await page.locator('#plans .nj-plan').count(), 6, 'six plans');
-  assert.ok(!/[$€£]\s?\d/.test(await page.locator('#plans').innerText()), 'no undecided prices are published');
+  // Plans: the eight configured plans with their allowances, no prices (Master Plan §17.1).
+  const plans = page.locator('#plans');
+  assert.equal(await plans.locator('thead th[scope="col"]:not(:first-child)').count(), 8, 'eight plans across the three groups');
+  assert.ok(await plans.getByText('20,000').first().isVisible(), 'allowances from the configuration');
+  assert.ok(!/[$€£]\s?\d/.test(await plans.innerText()), 'no undecided prices are published');
   // Every link resolves: internal pages return 200 and every in-page anchor exists.
   const hrefs = [...new Set(await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href'))))];
   for (const href of hrefs) {
@@ -524,12 +533,12 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   }
   // The change-intelligence demonstration steps through the workflow.
   const demo = page.locator('.nj-demo');
-  await demo.getByRole('button', { name: '3. Impact analysis' }).click();
-  assert.ok(await demo.getByText('4 research answers cite the previous wording.').isVisible());
-  await demo.getByRole('button', { name: 'Next step' }).click();
-  await demo.getByRole('button', { name: 'Next step' }).click();
+  await demo.getByRole('button', { name: '4. Impact' }).click();
+  assert.ok(await demo.getByText('4 research answers quote the previous wording').isVisible());
+  await demo.getByRole('button', { name: 'Next stage' }).click();
+  await demo.getByRole('button', { name: 'Next stage' }).click();
   assert.ok(await demo.getByText('The law has changed since this answer').isVisible(), 'the demonstration ends with the customer notice');
-  assert.ok(await demo.getByRole('button', { name: 'Next step' }).isDisabled());
+  assert.ok(await demo.getByRole('button', { name: 'Next stage' }).isDisabled());
   // Keyboard: on a fresh load, the skip link is the first focusable element.
   await page.goto(`${BASE}/`);
   await page.keyboard.press('Tab');

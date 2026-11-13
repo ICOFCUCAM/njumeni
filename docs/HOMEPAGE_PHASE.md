@@ -1,64 +1,86 @@
-# Public homepage phase
+# Public homepage
 
 | Field | Value |
 |---|---|
-| Date | 2026-11-12 |
+| Current version | v3, "global legal intelligence institution" redesign (2026-11-13) |
 | Routes | `/` (homepage, static), `/early-access` (request form), `/robots.txt`, `/sitemap.xml` |
-| Code | `apps/web/src/app/(marketing)/` (layout, page, `time-machine.tsx`, `dossier.tsx`, `change-demo.tsx`, `marketing.css`, `early-access/`) |
-| Database | Migration `20261114600000_early_access_requests` |
-| Brief | Owner's homepage brief and audit of 12 November 2026; owner's follow-up: tell one story, avoid conventional SaaS sections, present every section as the finished product |
+| Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `case-file.tsx`, `change-demo.tsx`, `journeys.tsx`, `marketing.css`, `early-access/` |
+| Assets | `apps/web/public/home/jurisdiction-map.svg`, generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
+| Database | Migration `20261114600000_early_access_requests` (unchanged in v3) |
+| Screenshots | `docs/assets/homepage-desktop.png`, `homepage-desktop-full.png`, `homepage-mobile.png` |
 
 ## 1. Story
 
-The page follows one legal question through Njumeni, in chapters instead of feature grids:
+The page tells one argument in thirteen steps. It moves from the problem, to the research answer, to professional work, to changing law, and then to institutional trust.
 
-| Chapter | Section | Device |
-|---|---|---|
-| Hero | Know the law. Understand the evidence. Stay ahead of change. | **Time machine**: drag a date and the provision changes version; a published-but-not-commenced amendment is shown as not yet in force |
-| Prologue | Where, when, on what authority | Chapter table of contents |
-| I · The question | Legal research | **Evidence trail**: question → jurisdiction → date → authority → version → verified quotation; "when the law is silent" |
-| II · The matter | Professional workspace | **Case file** with tabs: matter, evidence, chronology, arguments, draft, review (keyboard accessible) |
-| III · The evidence | Evidence and accountability | **Hash-chained custody ledger** |
-| IV · The change | Global Legal Change Intelligence | Detect, compare, trace, decide; **step-through change demonstration** ending in the customer notice |
-| V · The institution | Enterprise | **Organisation architecture**: organisation → workspaces (barrier) → controls |
-| VI · The world | International | **Jurisdiction board**: codes, official sources, languages |
-| VII · The principle | Trust and responsibility | Manifesto and six numbered commitments |
-| VIII · Who uses Njumeni | Customer categories (commercial policy, Master Plan §2.4) | The four categories (individuals; legal professionals; law firms and enterprises; institutions), each with its workspace, its users, a typical question and how it uses Njumeni |
-| IX · Plans | Plans (Master Plan §17.1) | Free, Personal, Professional, Law Firm, Enterprise, Institutional: who each is for and what it includes. **No prices**: §17.1 marks them as hypotheses still to be decided, so paid plans read "Announced at early access" or "By contract". States the allowance rule (no unlimited high-cost AI on low-priced plans) |
-| Close | Legal intelligence that keeps pace with the law | Request early access · Book a demonstration |
+| # | Section | Story | Visual |
+|---|---|---|---|
+| 01 | Hero | Know the law. Understand its authority. Stay ahead of change. | **Research view built on real data.** It shows Working Environment Act § 15-7 (1), `LOV-2005-06-17-62`, version in force from 1 July 2026, quoted exactly from the Lovdata dataset Njumeni holds. Choosing 15 Jan 2025 shows the engine's real temporal refusal, because no version is held for that date |
+| 02 | Proposition | Law is authority, time, evidence and responsibility | Four coordinates around "a legal question"; a contrast between a search engine, a chatbot and Njumeni |
+| 03 | Legal research | Ask a question, receive the authority | The eight research steps, ending with a refusal; a "why the date matters" panel showing publication versus commencement |
+| 04 | Professional workspace | From research to legal work | A finding traced from research to matter to document; a tabbed case file (matter, evidence, chronology, arguments, draft, review) |
+| 05 | Evidence | Every record, accounted for | A hash-chained custody record; a capability list with status labels |
+| 06 | Global Legal Change Intelligence | The law changes; legal knowledge must keep up | Five-stage pipeline; a six-stage change walkthrough (detected, compared, dated, impact, approval, notice); the four currency states (current, behind, unverified, not monitored), with today's position stated |
+| 07 | Jurisdictions | One framework, many legal systems | World map (Norway as reference; 12 more framework countries; EU members); the seven things each jurisdiction requires; regions |
+| 08 | Organisations | Built for organisations, from the foundation up | The four organisation types; organisation → workspaces → barrier → controls |
+| 09 | AI and responsibility | AI assists. The law provides the authority. Professionals retain responsibility | Where intelligence is used today, with status; four human-responsibility commitments |
+| 10 | Security and governance | Protect information, preserve accountability | Seven control layers, with their database mechanisms; plain statement that no penetration test or certification has been completed |
+| 11 | Who uses Njumeni | Four kinds of user, four journeys | Tabbed journeys: problem, provision, workspace and four steps each (Master Plan §2.4) |
+| 12 | Plans | Clear allowances, room to grow | The eight configured plans in three groups, with allowances from migration `20261112600000` (research runs, documents, AI credits, API requests, seats, storage). No prices |
+| 13 | Final invitation | Legal intelligence for a world where the law never stands still | Early access, demonstration, explore, sign in |
 
-Visual system: midnight navy, antique gold, warm ivory, forest teal; editorial serif headings; no stock photography and no chatbot imagery. All styles are scoped (`nj-` prefix); the application's styles are unchanged.
+## 2. Design system
 
-## 2. Accuracy decisions
+**Tokens** are defined on `.nj`:
+- navy `#142638` and deep navy `#0d1b29`;
+- ivory `#f5f1e8` and paper `#fcfaf5`;
+- champagne gold `#c6a66b`;
+- bronze `#7f6236` (darkened from `#9a7846` for contrast);
+- slate `#485665`;
+- border `#ded5c4`;
+- verified green `#33705f` (darkened from `#3e8273` for contrast).
 
-At the owner's request every capability is presented as the finished product, without status badges. Three things are kept true because a customer would rely on them:
-- **Access** is by request (early access or demonstration). There is no sign-up and no price.
-- **No live-state claims**: the page does not say a jurisdiction is monitored or verified current today, does not show a live AI assistant, and states the framework size accurately (17 legal systems; 22 official sources registered). The owner brief's "20+ jurisdictions" was corrected to 17.
-- **Examples are labelled**: the time-machine provision, the change demonstration (invented wording), the case file and the ledger are marked illustrative. The one quotation of real law (Working Environment Act § 15-7 (1)) is exact and attributed (Lovdata, NLOD 2.0). Example organisations are named "Example …".
+**Type:**
+- An editorial serif (Iowan Old Style or Palatino) for statements and headings.
+- A sans-serif for interface text.
+- A monospace face for citations, identifiers and hashes.
+- Body text is 17px. No running text is smaller than 13px.
 
-Shown as finished although not yet complete (audit, 12 November 2026): Norwegian research coverage (Lovdata activation pending; held-out quality not yet passing), live change monitoring (sources not activated), text recognition and full malware scanning on evidence intake, billing with a payment provider.
+**Layout:**
+- Background rhythm: navy, ivory, paper, ivory, paper, deep navy, paper, ivory, navy, paper, ivory, paper, deep navy.
+- No Roman-numeral chapter labels.
 
-## 3. Early access
+**Motion:** a short fade when the research date, case-file tab, journey or change stage changes. Nothing animates on its own, and `prefers-reduced-motion` turns all of it off.
 
-`public.early_access_request` is the seventh function callable without a session (the security allowlist test was updated deliberately). Controls: validation, explicit consent, one request per address (a repeat updates it and gets the same answer), 60 new requests per hour platform-wide, a hidden field that silently drops bots, no IP address or user agent stored, deletion 12 months after the last update (daily `early-access-retention` job). Only platform operators can read requests (`early_access_list`, `early_access_set_status`).
+## 3. Accuracy
 
-## 4. SEO and accessibility
+These are the rules for the brief's "legal product accuracy editor" role:
+- **No invented law.** The one real quotation is the Act's text as held. The change walkthrough uses wording marked as invented. Matters, parties and the organisation are named "Example …".
+- **Status labels.** These mark what is built, awaiting activation, in development or planned:
+  - research: Norwegian sources await activation, and quality is under independent evaluation;
+  - change intelligence: official sources await activation, and every jurisdiction reads "not monitored" today;
+  - evidence: OCR and the antivirus engine are in development;
+  - operator AI: awaiting activation;
+  - customer drafting and reasoning AI: planned.
+- **No coverage, certification, customer or price claims.** The framework size is stated exactly: 17 legal systems and 22 registered sources.
 
-Homepage and early-access pages are indexable (`index, follow`, canonical URLs, Open Graph); the application stays `noindex`. `robots.txt` allows only `/` and `/early-access`; `sitemap.xml` lists both. Skip link, one `h1`, labelled landmarks, tablist with arrow keys, `aria-live` demonstration, range input with a text value, reduced-motion support, visible focus.
-
-## 5. Checks
+## 4. Checks (v3)
 
 | Check | Result |
 |---|---|
-| Typecheck, production build | Pass; `/` is pre-rendered static |
-| pgTAP | All pass, including `early_access.test.sql` (14) and the security allowlist |
+| Typecheck and production build | Pass. `/` is pre-rendered static |
+| Repository CI steps (Prettier list, ESLint list, `tsconfig.ci.json`, root tests, release gates, foundation, content policy) | Pass |
 | Web unit tests | 332/332 |
-| Browser journeys | 5/5 (homepage journey: every link and anchor, time machine, case-file tabs and keys, demonstration, skip link, robots and sitemap, early-access submission stored once, bot dropped, mobile menu, no horizontal scroll, no client errors) |
-| Screenshots | Desktop 1440, tablet 820, mobile iPhone 13: no horizontal scroll, no console errors |
-| ESLint | The repository's ESLint config covers `.mjs` only; TypeScript is checked by `tsc` |
+| pgTAP | Pass |
+| Browser journeys | 5/5 on a fresh database (pgTAP pass first). The homepage journey covers: the research view and its refusal; case-file tabs with keyboard; the change walkthrough; the four journeys and their workspaces; eight plans with no prices; every link and anchor; the skip link; robots and sitemap; early access stored once; the bot field; the mobile menu; no client errors |
+| Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations on `/` and `/early-access`, after fixing contrast, landmark and link findings |
+| Responsive | 1440, 1280, 820 and 390 px: no horizontal scroll and no console errors. Plan tables scroll sideways on phones with the allowance column fixed |
 
-## 6. Open items
+## 5. Open items
 
-- **Deployment**: the early-access migration is deployed to hosted Supabase (2026-11-12, with `20261114500000`): 56/56 history and catalogue identical to the repository, exactly seven anonymous functions, `early-access-retention` scheduled daily, both deployments recorded in the GLCI register with an audit checkpoint, and a rolled-back anonymous smoke test passed. The web app itself still needs hosting.
-- **Second homepage branch**: `claude/njumeni-public-homepage` (PR #1) holds an earlier homepage at `src/app/page.tsx`, which would conflict with this route (two pages at `/`). This branch supersedes it.
-- **Owner**: a privacy notice page and the contact address for deletion requests.
+- **Web hosting:** Vercel builds the default branch once the deployment quota allows.
+- **Owner decisions:**
+  - plan prices, which stay unpublished until decided;
+  - a privacy notice page;
+  - the contact address for deletion requests.
+- **Product items that change homepage labels once done:** Lovdata activation, AI provider connection, OCR and antivirus, and the penetration test. Each status label should change when its capability does.
