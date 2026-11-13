@@ -16,117 +16,123 @@ interface Plan {
   storage: Allowance;
   access: string;
 }
-const GROUPS: { key: string; title: string; workspace: string; plans: Plan[] }[] = [
-  {
-    key: 'individuals',
-    title: 'Individuals',
-    workspace: 'Personal workspace',
-    plans: [
-      {
-        name: 'Free',
-        forWhom: 'The general public',
-        research: 30,
-        documents: 5,
-        ai: 50,
-        api: 100,
-        seats: 1,
-        storage: 1,
-        access: 'Free',
-      },
-      {
-        name: 'Personal',
-        forWhom: 'Individuals',
-        research: 200,
-        documents: 50,
-        ai: 500,
-        api: 0,
-        seats: 1,
-        storage: 5,
-        access: 'Price at early access',
-      },
-      {
-        name: 'Personal Plus',
-        forWhom: 'Ongoing legal matters',
-        research: 600,
-        documents: 150,
-        ai: 1500,
-        api: 0,
-        seats: 1,
-        storage: 20,
-        access: 'Price at early access',
-      },
-    ],
-  },
-  {
-    key: 'professionals',
-    title: 'Legal professionals',
-    workspace: 'Professional workspace',
-    plans: [
-      {
-        name: 'Professional',
-        forWhom: 'Lawyers and advisers',
-        research: 2000,
-        documents: 500,
-        ai: 4000,
-        api: 1000,
-        seats: 1,
-        storage: 50,
-        access: 'Price at early access',
-      },
-      {
-        name: 'Professional Plus',
-        forWhom: 'High-volume practitioners',
-        research: 6000,
-        documents: 1500,
-        ai: 10000,
-        api: 10000,
-        seats: 1,
-        storage: 200,
-        access: 'Price at early access',
-      },
-    ],
-  },
-  {
-    key: 'organisations',
-    title: 'Organisations',
-    workspace: 'Law Firm, Enterprise and Institutional workspaces',
-    plans: [
-      {
-        name: 'Law Firm',
-        forWhom: 'Legal practices',
-        research: 20000,
-        documents: 5000,
-        ai: 25000,
-        api: 50000,
-        seats: 10,
-        storage: 1000,
-        access: 'Price at early access',
-      },
-      {
-        name: 'Enterprise',
-        forWhom: 'Large organisations',
-        research: null,
-        documents: null,
-        ai: null,
-        api: null,
-        seats: null,
-        storage: null,
-        access: 'By contract',
-      },
-      {
-        name: 'Institutional',
-        forWhom: 'Public institutions',
-        research: null,
-        documents: null,
-        ai: null,
-        api: null,
-        seats: null,
-        storage: null,
-        access: 'By contract',
-      },
-    ],
-  },
-];
+const GROUPS: { key: string; title: string; workspace: string; promise: string; plans: Plan[] }[] =
+  [
+    {
+      key: 'individuals',
+      title: 'Individuals',
+      workspace: 'Personal workspace',
+      promise:
+        'Your own legal questions, answered from the law, with your documents kept in one place.',
+      plans: [
+        {
+          name: 'Free',
+          forWhom: 'The general public',
+          research: 30,
+          documents: 5,
+          ai: 50,
+          api: 100,
+          seats: 1,
+          storage: 1,
+          access: 'Free',
+        },
+        {
+          name: 'Personal',
+          forWhom: 'Individuals',
+          research: 200,
+          documents: 50,
+          ai: 500,
+          api: 0,
+          seats: 1,
+          storage: 5,
+          access: 'Price at early access',
+        },
+        {
+          name: 'Personal Plus',
+          forWhom: 'Ongoing legal matters',
+          research: 600,
+          documents: 150,
+          ai: 1500,
+          api: 0,
+          seats: 1,
+          storage: 20,
+          access: 'Price at early access',
+        },
+      ],
+    },
+    {
+      key: 'professionals',
+      title: 'Legal professionals',
+      workspace: 'Professional workspace',
+      promise: 'Research, matters and drafting for a lawyer or adviser’s own practice.',
+      plans: [
+        {
+          name: 'Professional',
+          forWhom: 'Lawyers and advisers',
+          research: 2000,
+          documents: 500,
+          ai: 4000,
+          api: 1000,
+          seats: 1,
+          storage: 50,
+          access: 'Price at early access',
+        },
+        {
+          name: 'Professional Plus',
+          forWhom: 'High-volume practitioners',
+          research: 6000,
+          documents: 1500,
+          ai: 10000,
+          api: 10000,
+          seats: 1,
+          storage: 200,
+          access: 'Price at early access',
+        },
+      ],
+    },
+    {
+      key: 'organisations',
+      title: 'Organisations',
+      workspace: 'Law Firm, Enterprise and Institutional workspaces',
+      promise:
+        'Shared workspaces with members, roles, barriers and governance — on configured or contracted terms.',
+      plans: [
+        {
+          name: 'Law Firm',
+          forWhom: 'Legal practices',
+          research: 20000,
+          documents: 5000,
+          ai: 25000,
+          api: 50000,
+          seats: 10,
+          storage: 1000,
+          access: 'Price at early access',
+        },
+        {
+          name: 'Enterprise',
+          forWhom: 'Large organisations',
+          research: null,
+          documents: null,
+          ai: null,
+          api: null,
+          seats: null,
+          storage: null,
+          access: 'By contract',
+        },
+        {
+          name: 'Institutional',
+          forWhom: 'Public institutions',
+          research: null,
+          documents: null,
+          ai: null,
+          api: null,
+          seats: null,
+          storage: null,
+          access: 'By contract',
+        },
+      ],
+    },
+  ];
 const ROWS: { key: keyof Plan; label: string; unit?: string }[] = [
   { key: 'research', label: 'Research runs / month' },
   { key: 'documents', label: 'Generated documents / month' },
@@ -137,6 +143,65 @@ const ROWS: { key: keyof Plan; label: string; unit?: string }[] = [
 ];
 const fmt = (value: Allowance, unit = '') =>
   value === null ? 'Contracted' : value === 0 ? '—' : value.toLocaleString('en-GB') + unit;
+
+const HIGHLIGHTS: { key: keyof Plan; label: string }[] = [
+  { key: 'research', label: 'research runs' },
+  { key: 'documents', label: 'generated documents' },
+  { key: 'ai', label: 'AI credits' },
+];
+
+export function PlanTiers() {
+  return (
+    <div className="nj-tiers">
+      {GROUPS.map((g) => (
+        <section
+          key={g.key}
+          className={`nj-tier nj-tier--${g.key}`}
+          aria-labelledby={`tier-${g.key}`}
+        >
+          <header className="nj-tier-head">
+            <p>{g.workspace}</p>
+            <h3 id={`tier-${g.key}`}>{g.title}</h3>
+            <span>{g.promise}</span>
+          </header>
+          <ul className="nj-tier-plans">
+            {g.plans.map((p) => (
+              <li key={p.name} className={p.research === null ? 'is-contract' : undefined}>
+                <h4>{p.name}</h4>
+                <p className="nj-tier-for">{p.forWhom}</p>
+                {p.research === null ? null : (
+                  <p className="nj-tier-month" aria-hidden="true">
+                    Each month
+                  </p>
+                )}
+                {p.research === null ? (
+                  <p className="nj-tier-contract">Allowances, seats and storage set by contract</p>
+                ) : (
+                  <dl aria-label="Each month">
+                    {HIGHLIGHTS.map((h) => (
+                      <div key={h.key}>
+                        <dt>{h.label}</dt>
+                        <dd>{fmt(p[h.key] as Allowance)}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+                {p.research === null ? null : (
+                  <p className="nj-tier-small">
+                    {p.seats === 1 ? '1 seat' : `${p.seats} seats included`} ·{' '}
+                    {fmt(p.storage, ' GB')} storage
+                    {p.api ? ` · ${fmt(p.api)} API requests` : ''}
+                  </p>
+                )}
+                <p className="nj-tier-access">{p.access}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
 
 export function Plans() {
   const [active, setActive] = useState(0);

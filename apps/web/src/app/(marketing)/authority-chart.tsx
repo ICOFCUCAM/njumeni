@@ -109,8 +109,8 @@ function Chart({ variant }: { variant: keyof typeof LAYOUTS }) {
         );
       })}
       <line x1={x(DATE)} x2={x(DATE)} y1={L.top} y2={L.axis + 4} className="nj-atc-date" />
-      <rect x={x(DATE) - 46} y={L.h - 18} width={92} height={18} rx={9} className="nj-atc-pill" />
-      <text x={x(DATE)} y={L.h - 5} className="nj-atc-pilltext">
+      <rect x={x(DATE) - 50} y={L.h - 22} width={100} height={22} rx={11} className="nj-atc-pill" />
+      <text x={x(DATE)} y={L.h - 6} className="nj-atc-pilltext">
         Your date
       </text>
     </svg>

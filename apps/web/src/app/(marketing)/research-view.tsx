@@ -56,10 +56,11 @@ export function ResearchView() {
           <div className="nj-app-result" aria-live="polite">
             {held ? (
               <div key="held" className="nj-fade">
-                <p className="nj-app-verdict">
-                  <span aria-hidden="true">✓</span> Verified authority
-                </p>
+                <p className="nj-app-verdict">Cited finding · example</p>
                 <p className="nj-app-prov">
+                  <i className="nj-anno" aria-hidden="true">
+                    1
+                  </i>
                   Working Environment Act <span lang="nb">(arbeidsmiljøloven)</span> § 15-7 (1)
                 </p>
                 <blockquote className="nj-app-quote" lang="nb">
@@ -80,7 +81,13 @@ export function ResearchView() {
                     <dd>Lovdata · NLOD 2.0</dd>
                   </div>
                 </dl>
-                <ul className="nj-app-checks" aria-label="Verification">
+                <p className="nj-app-checks-h">
+                  <i className="nj-anno" aria-hidden="true">
+                    3
+                  </i>
+                  Checked before an answer is shown
+                </p>
+                <ul className="nj-app-checks" aria-label="Checks before an answer is shown">
                   <li>Citation exists</li>
                   <li>Quotation matches</li>
                   <li>In force on date</li>
@@ -122,6 +129,7 @@ export function ResearchView() {
               </button>
             ))}
             <p className="nj-scrub-key" aria-hidden="true">
+              <i className="nj-anno">2</i>
               <span className="nj-scrub-key-none">No version held</span>
               <span className="nj-scrub-key-held">Version in force from 1 Jul 2026</span>
             </p>

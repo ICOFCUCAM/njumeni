@@ -517,6 +517,8 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   }
   // Plans: the eight configured plans with their allowances, no prices (Master Plan §17.1).
   const plans = page.locator('#plans');
+  assert.equal(await plans.locator('.nj-tier-plans > li').count(), 8, 'eight plans in the audience tracks');
+  await plans.locator('summary', { hasText: 'Compare every allowance' }).click();
   let planCount = 0;
   for (const group of ['Individuals', 'Legal professionals', 'Organisations']) {
     await plans.getByRole('tab', { name: group }).click();
@@ -541,12 +543,15 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   }
   // The change-intelligence demonstration steps through the workflow.
   const demo = page.locator('.nj-obs');
-  await demo.getByRole('button', { name: '04 Impact' }).click();
+  await demo.getByRole('button', { name: '05 Impact' }).click();
   assert.ok(await demo.getByText('4 quote the previous wording').isVisible());
   await demo.getByRole('button', { name: 'Next stage' }).click();
   await demo.getByRole('button', { name: 'Next stage' }).click();
-  assert.ok(await demo.getByText('The law has changed since this answer', { exact: true }).isVisible(), 'the demonstration ends with the customer notice');
+  assert.ok(await demo.getByText('The law has changed since this answer', { exact: true }).isVisible(), 'customers are told');
+  await demo.getByRole('button', { name: 'Next stage' }).click();
+  assert.ok(await demo.getByText('Legal currency is restored').isVisible(), 'the walkthrough ends with verified currency');
   assert.ok(await demo.getByRole('button', { name: 'Next stage' }).isDisabled());
+  assert.ok(await page.getByText('Actual status — not illustrative').isVisible(), 'the real status is marked apart from the illustration');
   // Keyboard: on a fresh load, the skip link is the first focusable element.
   await page.goto(`${BASE}/`);
   await page.keyboard.press('Tab');

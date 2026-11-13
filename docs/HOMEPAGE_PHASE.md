@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Current version | v3.1 — Phase 2 premium design refinement of the v3 story (2026-11-13) |
+| Current version | v3.2 — Phase 3 design critique and refinement (2026-11-13) |
 | Routes | `/` (homepage, static), `/early-access` (request form), `/robots.txt`, `/sitemap.xml` |
 | Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `marketing.css`, `early-access/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
 | Database | Migration `20261114600000_early_access_requests` (unchanged in v3) |
-| Screenshots | `docs/assets/homepage-desktop.png` (first screen), `homepage-desktop-full.png`, `homepage-mobile.png` (first screen), `homepage-overview.png` (desktop, three columns), `homepage-mobile-overview.png` (phone, six columns) |
+| Screenshots | `docs/assets/homepage-desktop.png` (first screen), `homepage-desktop-full.png`, `homepage-mobile.png` (first screen), `homepage-overview.png` (desktop, three columns), `homepage-mobile-overview.png` (phone, seven columns) |
 
 ## 1. Story
 
@@ -80,7 +80,19 @@ The narrative, section order and every claim are unchanged. Phase 2 replaced gen
   - on phones and tablets the hero stayed in two columns;
   - the authority chart, observatory schematic, status board and plan table were unreadable or cramped on phones. They now have compact layouts: a stacked chart, larger schematic labels, a non-wrapping status column and plan cards.
 
-## 5. Checks (v3.1)
+## 5. Phase 3 refinement (v3.2)
+
+The architecture and the claims are unchanged.
+
+- **Hero:** one composition. Numbered markers in the research interface match a reading key under the call to action. The example says "Cited finding · example"; it no longer says "verified".
+- **Research:** an "anatomy of a cited finding" panel shows question, jurisdiction, legal date, authority, provision, exact quotation, citation and checks, marked "Example · not a live answer". The eight steps are an index; "Why the date matters" is a full-width band.
+- **Workspace:** one citation (§ 15-7 (1)) is traced from research, to argument 1 of the matter, to footnote 1 of the draft. It uses the case file's own example content.
+- **GLCI:** an eight-stage observatory: source, amendment, comparison, commencement, impact, human approval, notification, verified current. One invented amendment passes through an approval gate into a fictional organisation's three workspaces. Below 900px it becomes a list. The status board is labelled "Actual status — not illustrative".
+- **Editorial variation:** a full-width statement between change intelligence and jurisdictions ("Not only answers to legal questions. Legal knowledge that stays current."). Security is drawn as a stack: request, seven layers, the organisation's data.
+- **Plans:** three audience tracks (ivory, navy, contract plans in deep navy), with monthly allowances first. The full allowance table opens on request. Configured values only, and no prices.
+- **Typography:** measured on the rendered page. Uppercase labels are at least 12.5px; interface content at least 14px; notes and captions 14–14.5px; diagram text scales with its container.
+
+## 6. Checks (v3.2)
 
 | Check | Result |
 |---|---|
@@ -89,10 +101,10 @@ The narrative, section order and every claim are unchanged. Phase 2 replaced gen
 | Web unit tests | 332/332 |
 | pgTAP | Pass |
 | Browser journeys | 5/5 on a fresh database (pgTAP pass first). The homepage journey covers: the research view and its refusal; case-file tabs with keyboard; the change observatory; the status board (every jurisdiction not monitored); plan groups with keyboard; the four journeys and their workspaces; eight plans with no prices; every link and anchor; the skip link; robots and sitemap; early access stored once; the bot field; the mobile menu; no client errors |
-| Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 820 and 390 px, both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
-| Responsive | 1440, 820 and 390 px reviewed viewport by viewport: no horizontal scroll and no console errors |
+| Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px, both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
+| Responsive | 1440, 1280, 768 and 390 px reviewed viewport by viewport: no horizontal scroll and no console errors |
 
-## 6. Open items
+## 7. Open items
 
 - **Web hosting:** Vercel builds the default branch once the deployment quota allows.
 - **Owner decisions:**

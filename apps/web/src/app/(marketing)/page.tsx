@@ -5,7 +5,7 @@ import { Atlas } from './atlas';
 import { AuthorityChart } from './authority-chart';
 import { Custody } from './custody';
 import { Observatory } from './observatory';
-import { Plans } from './plans';
+import { PlanTiers, Plans } from './plans';
 import { Journeys } from './journeys';
 import { ResearchView } from './research-view';
 
@@ -64,6 +64,17 @@ export default function HomePage() {
                   Sign in
                 </Link>
               </div>
+              <ol className="nj-hero-key" aria-label="How to read the example">
+                <li>
+                  <b>The authority</b> — the provision, quoted in the words of the law
+                </li>
+                <li>
+                  <b>Its version</b> — the text in force on the date you choose
+                </li>
+                <li>
+                  <b>The checks</b> — citation, quotation, date and source permission
+                </li>
+              </ol>
             </div>
             <ResearchView />
           </div>
@@ -148,7 +159,78 @@ export default function HomePage() {
               and verified before you see it. When the evidence is not there, Njumeni declines.
             </p>
           </div>
-          <div className="nj-research">
+          <figure className="nj-anatomy" aria-labelledby="anatomy-title">
+            <div className="nj-anatomy-head">
+              <h3 id="anatomy-title">Anatomy of a cited finding</h3>
+              <span className="nj-tag nj-tag--illustrative">Example · not a live answer</span>
+            </div>
+            <div className="nj-anatomy-body">
+              <dl className="nj-anatomy-rows">
+                <div>
+                  <dt>Question</dt>
+                  <dd className="nj-anatomy-q">
+                    Can an employer dismiss an employee without a reason?
+                  </dd>
+                </div>
+                <div>
+                  <dt>Jurisdiction</dt>
+                  <dd>Norway · Nordic civil law</dd>
+                </div>
+                <div>
+                  <dt>Legal date</dt>
+                  <dd>12 November 2026 — the law as it stands on that day</dd>
+                </div>
+                <div>
+                  <dt>Authority</dt>
+                  <dd>
+                    Working Environment Act <span lang="nb">(arbeidsmiljøloven)</span> · act in
+                    force
+                  </dd>
+                </div>
+                <div>
+                  <dt>Provision</dt>
+                  <dd>§ 15-7, first paragraph</dd>
+                </div>
+                <div className="nj-anatomy-quoterow">
+                  <dt>Quotation</dt>
+                  <dd>The exact words of the provision, shown in full</dd>
+                </div>
+                <div>
+                  <dt>Citation</dt>
+                  <dd>
+                    <span className="nj-mono">LOV-2005-06-17-62 § 15-7 (1)</span> · version in force
+                    from 1 July 2026 · Lovdata, NLOD 2.0
+                  </dd>
+                </div>
+                <div>
+                  <dt>Checks</dt>
+                  <dd>
+                    <ul className="nj-anatomy-checks">
+                      <li>Citation exists</li>
+                      <li>Quotation matches the held text</li>
+                      <li>In force on the legal date</li>
+                      <li>Source permits quotation</li>
+                    </ul>
+                  </dd>
+                </div>
+              </dl>
+              <blockquote className="nj-anatomy-quote" lang="nb">
+                <p>
+                  Arbeidstaker kan ikke sies opp uten at det er saklig begrunnet i virksomhetens,
+                  arbeidsgiverens eller arbeidstakerens forhold.
+                </p>
+                <footer>
+                  <span lang="en">Working Environment Act § 15-7 (1)</span>
+                </footer>
+              </blockquote>
+            </div>
+            <figcaption className="nj-figcap">
+              The quotation is the text of the Act as held by Njumeni (contains data under NLOD 2.0
+              from Lovdata). The layout shows what every answer carries; it is not the output of a
+              live run, and Norwegian sources still await activation.
+            </figcaption>
+          </figure>
+          <div className="nj-research2">
             <ol className="nj-steps8">
               <li>
                 <b>Ask a legal question</b>
@@ -247,26 +329,46 @@ export default function HomePage() {
               traced to the law.
             </p>
           </div>
-          <div className="nj-trace" aria-label="How a finding travels">
-            <div className="nj-trace-step">
-              <small>Research</small>
+          <ol
+            className="nj-thread"
+            aria-label="How one citation travels from research into a document"
+          >
+            <li>
+              <p className="nj-thread-where">
+                <span>01</span> Research · personal workspace
+              </p>
+              <span className="nj-thread-cite">§ 15-7 (1)</span>
               <h3>A cited finding</h3>
-              <p>The provision, its version and the exact words.</p>
-              <span className="nj-cite-chip">§ 15-7 (1) · LOV-2005-06-17-62</span>
-            </div>
-            <div className="nj-trace-step">
-              <small>Matter</small>
-              <h3>Attached to the case</h3>
-              <p>Linked to the argument and the evidence it supports.</p>
-              <span className="nj-cite-chip">M-2026-014 · argument 1</span>
-            </div>
-            <div className="nj-trace-step">
-              <small>Document</small>
-              <h3>Cited in the draft</h3>
-              <p>Re-verified against the law in force before it goes out.</p>
-              <span className="nj-cite-chip">reply · footnote 1 ✓</span>
-            </div>
-          </div>
+              <p className="nj-thread-snip" lang="nb">
+                “…uten at det er saklig begrunnet i virksomhetens, arbeidsgiverens eller
+                arbeidstakerens forhold.”
+              </p>
+              <p className="nj-thread-meta">Version in force from 1 July 2026 · saved to matter</p>
+            </li>
+            <li>
+              <p className="nj-thread-where">
+                <span>02</span> Matter M-2026-014 · Arguments
+              </p>
+              <span className="nj-thread-cite">§ 15-7 (1)</span>
+              <h3>Attached to argument 1</h3>
+              <p className="nj-thread-snip">
+                The dismissal was objectively justified by the employee’s conduct.
+              </p>
+              <p className="nj-thread-meta">Evidence: written warning (14 Mar) · meeting notes</p>
+            </li>
+            <li>
+              <p className="nj-thread-where">
+                <span>03</span> Reply to the claim · draft 3
+              </p>
+              <span className="nj-thread-cite">§ 15-7 (1)</span>
+              <h3>Cited as footnote 1</h3>
+              <p className="nj-thread-snip">
+                …objectively justified under the Working Environment Act § 15-7 (1)
+                <sup>1</sup>…
+              </p>
+              <p className="nj-thread-meta">Re-verified against the law in force before sending</p>
+            </li>
+          </ol>
           <CaseFile />
           <div className="nj-status-line">
             <Tag status="built" /> Matters, parties, deadlines, conflict checks, information
@@ -369,6 +471,7 @@ export default function HomePage() {
               </dl>
             </div>
             <div className="nj-board">
+              <p className="nj-board-actual">Actual status — not illustrative</p>
               <div className="nj-board-head">
                 <h3>Observatory status today</h3>
                 <span>Hosted service · 22 official sources registered</span>
@@ -413,6 +516,25 @@ export default function HomePage() {
             <Tag status="built" /> Monitoring, comparison, impact analysis, currency, remediation,
             approvals, notices and the operators’ Global Legal Observatory.
             <Tag status="awaiting" /> Official sources.
+          </div>
+        </div>
+      </section>
+
+      {/* Interlude — the position Njumeni holds */}
+      <section className="nj-interlude" aria-label="What Njumeni is for">
+        <div className="nj-wrap">
+          <p className="nj-interlude-s">
+            Not only answers to legal questions. <em>Legal knowledge that stays current.</em>
+          </p>
+          <div className="nj-interlude-cols">
+            <p>
+              <b>For a lawyer,</b> one place to research the law, manage legal work, preserve
+              evidence — and know when the law changes.
+            </p>
+            <p>
+              <b>For an institution,</b> one way to maintain legal intelligence across its
+              organisation and the jurisdictions it works in.
+            </p>
           </div>
         </div>
       </section>
@@ -683,6 +805,7 @@ export default function HomePage() {
               integration asks. These are the layers every request passes through.
             </p>
           </div>
+          <p className="nj-layers-in">Every request · screen, API or integration</p>
           <div className="nj-layers">
             <div className="nj-layer">
               <b>Organisation isolation</b>
@@ -720,6 +843,7 @@ export default function HomePage() {
               <code>holds &gt; retention</code>
             </div>
           </div>
+          <p className="nj-layers-core">Your organisation’s legal data</p>
           <p className="nj-honest">
             Njumeni has not yet completed an independent penetration test or a security
             certification; both are planned before launch. We will publish them when they exist.
@@ -767,7 +891,11 @@ export default function HomePage() {
               plans. Prices are announced at early access.
             </p>
           </div>
-          <Plans />
+          <PlanTiers />
+          <details className="nj-pl-compare">
+            <summary>Compare every allowance</summary>
+            <Plans />
+          </details>
           <div className="nj-plan-notes">
             <p>
               <b>AI credits</b>Allowance for AI-assisted features as they become available. One

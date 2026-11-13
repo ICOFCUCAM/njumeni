@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 
-// Global Legal Change Intelligence, as one instrument: a change moves through the system (the
-// schematic) while the panel shows what Njumeni records at each stage. Invented wording; not
-// the text of any act.
+// Global Legal Change Intelligence as one instrument: a single (invented) amendment travels along
+// the official-law lane, and — only through a human approval gate — into one organisation's legal
+// knowledge. The panel shows what Njumeni records at each stage. Illustrative throughout: the
+// wording is invented and the organisation is fictional.
 const STAGES = [
   {
-    key: 'monitor',
-    label: 'Monitor',
+    key: 'source',
+    label: 'Source',
     title: 'An official source is checked',
     body: 'The monitor reads the official listing on its schedule and records what it found — or that the check failed, so the source reads unverified, never current.',
     record: [
@@ -17,37 +18,47 @@ const STAGES = [
     ],
   },
   {
+    key: 'amendment',
+    label: 'Amendment',
+    title: 'A new version is found',
+    body: 'The listing shows an amendment. The new consolidated text is fetched and kept beside the version already held — nothing is overwritten.',
+    record: [
+      ['Detected', 'Amendment to section 28'],
+      ['Published', '2 March'],
+    ],
+  },
+  {
     key: 'compare',
     label: 'Compare',
-    title: 'The new version is compared',
-    body: 'Provision by provision, the new consolidated text is compared with the version held.',
+    title: 'Previous and new versions are compared',
+    body: 'Provision by provision, the new text is compared with the version held, so the change is known exactly.',
     diff: true,
   },
   {
-    key: 'date',
-    label: 'Date',
+    key: 'commence',
+    label: 'Commencement',
     title: 'Publication is not commencement',
-    body: 'The amendment was published on 2 March and takes effect on 1 July. Until then, research on the law in force still uses the previous wording.',
+    body: 'The amendment takes effect on 1 July. Until then, research on the law in force still uses the previous wording; after it, the new one.',
     record: [
       ['Published', '2 March'],
       ['In force', '1 July'],
+      ['Until 1 July', 'Previous wording governs'],
     ],
   },
   {
     key: 'impact',
     label: 'Impact',
     title: 'What relied on the old text',
-    body: 'Every answer, document and matter that quoted or cited section 28 is found.',
+    body: 'Every answer, document and matter in the organisation that quoted or cited section 28 is found — across workspaces, without crossing their barriers.',
     record: [
       ['Research answers', '4 quote the previous wording'],
       ['Documents', '2 need re-verification'],
       ['Matters', '1 deadline calculated from it'],
-      ['Norway', 'Reads “behind” until ingested'],
     ],
   },
   {
     key: 'approve',
-    label: 'Approve',
+    label: 'Approval',
     title: 'People decide',
     body: 'A knowledge administrator reviews the change and the proposed remediation. Nothing is changed or sent until an authorised person approves, and every decision is recorded.',
     record: [
@@ -57,31 +68,54 @@ const STAGES = [
   },
   {
     key: 'notify',
-    label: 'Notify',
+    label: 'Notification',
     title: 'Customers are told',
     body: 'Each affected research answer now opens with a notice: the law has changed since this answer, and when the change takes effect.',
     notice: true,
   },
+  {
+    key: 'current',
+    label: 'Verified current',
+    title: 'Legal currency is restored',
+    body: 'Once the new version is ingested and the affected work re-verified, the jurisdiction reads current again — and every answer shows the version it relies on.',
+    record: [
+      ['Re-verified', '4 answers · 2 documents · 1 matter'],
+      ['Norway', 'Current in this example'],
+    ],
+  },
 ] as const;
 
-// Schematic node positions (viewBox 640 × 300).
-const NODES = [
-  { key: 'monitor', x: 70, y: 150, label: 'Official source' },
-  { key: 'compare', x: 190, y: 150, label: 'Compare' },
-  { key: 'date', x: 300, y: 150, label: 'Dates' },
-  { key: 'impact', x: 410, y: 150, label: 'Impact' },
-  { key: 'approve', x: 520, y: 150, label: 'Approval' },
-  { key: 'notify', x: 600, y: 150, label: 'Notice' },
+const LAW = [
+  { n: 1, x: 110, kicker: 'Official source', title: 'Official gazette' },
+  { n: 2, x: 300, kicker: 'Amendment', title: 'Published 2 March' },
+  { n: 3, x: 490, kicker: 'Comparison', title: '§ 28: three → six' },
+  { n: 4, x: 680, kicker: 'Commencement', title: 'In force 1 July' },
 ];
-const AFFECTED = [
-  { x: 430, y: 62, label: 'Answers' },
-  { x: 488, y: 238, label: 'Documents' },
-  { x: 344, y: 238, label: 'Matters' },
+// Knowledge affected in the fictional organisation, by workspace.
+const ITEMS = [
+  { ws: 0, y: 330, label: '3 research answers' },
+  { ws: 0, y: 380, label: 'Matter · 1 deadline' },
+  { ws: 1, y: 330, label: '2 documents' },
+  { ws: 2, y: 330, label: '1 research answer' },
 ];
+const WS = [
+  { x: 60, name: 'Employment' },
+  { x: 370, name: 'Corporate' },
+  { x: 680, name: 'Compliance' },
+];
+const itemX = (ws: number) => WS[ws]!.x + 130;
+
+function itemState(stage: number) {
+  if (stage >= 7) return 'is-current';
+  if (stage >= 6) return 'is-notified';
+  if (stage >= 4) return 'is-affected';
+  return '';
+}
 
 export function Observatory() {
   const [index, setIndex] = useState(0);
   const stage = STAGES[index]!;
+  const state = itemState(index);
   return (
     <div className="nj-obs">
       <div className="nj-obs-head">
@@ -101,49 +135,142 @@ export function Observatory() {
         </ol>
         <span className="nj-tag nj-tag--illustrative nj-tag--ondark">Illustrative change</span>
       </div>
-      <div className="nj-obs-body">
-        <svg
-          viewBox="0 0 640 300"
-          className="nj-obs-map"
-          role="img"
-          aria-label={`Stage ${index + 1} of 6: ${stage.label}`}
-        >
-          <line x1={70} x2={600} y1={150} y2={150} className="nj-obs-track" />
-          <line x1={70} x2={NODES[index]!.x} y1={150} y2={150} className="nj-obs-track is-done" />
-          {AFFECTED.map((a) => (
-            <g key={a.label} className={index >= 3 ? 'nj-obs-aff is-on' : 'nj-obs-aff'}>
-              <line x1={410} y1={150} x2={a.x} y2={a.y} />
-              <circle cx={a.x} cy={a.y} r={7} />
-              <text x={a.x} y={a.y < 150 ? a.y - 16 : a.y + 26}>
-                {a.label}
+
+      <svg
+        viewBox="0 0 1000 452"
+        className="nj-obs-map"
+        role="img"
+        aria-label={`Stage ${index + 1} of 8, ${stage.label}: one amendment moving from the official source, through human approval, into an organisation's research answers, documents and matters.`}
+      >
+        <text x={40} y={26} className="nj-obs-lane">
+          Official law
+        </text>
+        <line x1={185} x2={605} y1={80} y2={80} className="nj-obs-track" />
+        <line
+          x1={185}
+          x2={185 + 190 * Math.min(index, 3)}
+          y1={80}
+          y2={80}
+          className="nj-obs-track is-done"
+        />
+        <line
+          x1={755}
+          x2={815}
+          y1={80}
+          y2={80}
+          className={index >= 7 ? 'nj-obs-track is-done' : 'nj-obs-track is-dashed'}
+        />
+        {LAW.map((n) => {
+          const i = n.n - 1;
+          const cls = i < index ? 'is-done' : i === index ? 'is-on' : '';
+          return (
+            <g key={n.n} className={`nj-obs-card ${cls}`}>
+              <rect x={n.x - 75} y={46} width={150} height={68} rx={8} />
+              <text x={n.x - 63} y={70} className="nj-obs-card-k">
+                {String(n.n).padStart(2, '0')} · {n.kicker}
+              </text>
+              <text x={n.x - 63} y={97} className="nj-obs-card-t">
+                {n.title}
               </text>
             </g>
-          ))}
-          {NODES.map((n, i) => (
-            <g
-              key={n.key}
-              className={
-                i < index
-                  ? 'nj-obs-node is-done'
-                  : i === index
-                    ? 'nj-obs-node is-on'
-                    : 'nj-obs-node'
-              }
-            >
-              {i === index ? <circle cx={n.x} cy={n.y} r={22} className="nj-obs-halo" /> : null}
-              <circle cx={n.x} cy={n.y} r={i === index ? 12 : 9} />
-              <text x={n.x} y={n.y + (i % 2 ? -32 : 40)}>
-                {n.label}
+          );
+        })}
+        <g className={`nj-obs-seal ${index >= 7 ? 'is-on' : ''}`}>
+          <rect x={815} y={46} width={150} height={68} rx={34} />
+          <text x={890} y={70} className="nj-obs-card-k" textAnchor="middle">
+            08 · Verified
+          </text>
+          <text x={890} y={97} className="nj-obs-card-t" textAnchor="middle">
+            Current again
+          </text>
+        </g>
+
+        <line
+          x1={680}
+          x2={680}
+          y1={114}
+          y2={176}
+          className={`nj-obs-flow ${index >= 4 ? 'is-on' : ''}`}
+        />
+        {WS.map((w) => (
+          <line
+            key={w.name}
+            x1={w.x + 130}
+            x2={w.x + 130}
+            y1={216}
+            y2={262}
+            className={`nj-obs-flow ${index >= 5 ? 'is-on' : index === 4 ? 'is-found' : ''}`}
+          />
+        ))}
+        <g className={`nj-obs-gate ${index >= 5 ? 'is-open' : index === 4 ? 'is-wait' : ''}`}>
+          <rect x={40} y={176} width={920} height={40} rx={6} />
+          <text x={60} y={201} className="nj-obs-gate-t">
+            06 · Human approval
+          </text>
+          <text x={940} y={201} className="nj-obs-gate-s" textAnchor="end">
+            {index >= 5
+              ? 'Approved · recorded with reason'
+              : 'Nothing changes until a person decides'}
+          </text>
+        </g>
+
+        {WS.map((w) => (
+          <g key={w.name} className="nj-obs-ws">
+            <rect x={w.x - 20} y={262} width={300} height={160} rx={8} />
+            <text x={w.x} y={292} className="nj-obs-ws-t">
+              {w.name}
+            </text>
+          </g>
+        ))}
+        {ITEMS.map((it) => (
+          <g key={it.label} className={`nj-obs-item ${state}`}>
+            <rect x={itemX(it.ws) - 120} y={it.y - 17} width={240} height={34} rx={17} />
+            <circle cx={itemX(it.ws) - 101} cy={it.y} r={5} />
+            <text x={itemX(it.ws) - 87} y={it.y + 5}>
+              {it.label}
+            </text>
+            {index >= 6 ? (
+              <text x={itemX(it.ws) + 106} y={it.y + 5} className="nj-obs-item-n" textAnchor="end">
+                {index >= 7 ? '✓' : 'notice'}
               </text>
-            </g>
-          ))}
-        </svg>
-        <div key={stage.key} className="nj-obs-panel nj-fade" aria-live="polite">
+            ) : null}
+          </g>
+        ))}
+        <text x={40} y={446} className="nj-obs-lane">
+          Example Advokatfirma AS · its legal knowledge
+        </text>
+      </svg>
+
+      <ul className="nj-obs-list" aria-label="Knowledge affected in the example organisation">
+        {ITEMS.map((it) => (
+          <li key={it.label} className={state}>
+            <span>
+              {WS[it.ws]!.name} · {it.label}
+            </span>
+            <b>
+              {index >= 7
+                ? 'Re-verified'
+                : index >= 6
+                  ? 'Notice shown'
+                  : index >= 5
+                    ? 'Approved for update'
+                    : index >= 4
+                      ? 'Relies on old text'
+                      : 'Unaffected so far'}
+            </b>
+          </li>
+        ))}
+      </ul>
+
+      <div key={stage.key} className="nj-obs-panel nj-fade" aria-live="polite">
+        <div>
           <p className="nj-obs-kicker">
-            Stage {index + 1} · {stage.label}
+            Stage {index + 1} of 8 · {stage.label}
           </p>
           <h3>{stage.title}</h3>
           <p>{stage.body}</p>
+        </div>
+        <div>
           {'diff' in stage ? (
             <div className="nj-diff">
               <span className="nj-obs-sec">Section 28 · Time limit for applications</span>
@@ -191,8 +318,9 @@ export function Observatory() {
         </div>
       </div>
       <p className="nj-obs-foot">
-        A walk through the workflow with invented wording (Immigration Act, section 28); it is not
-        the text of Norwegian law.
+        An illustrative walk through the workflow: invented wording (Immigration Act, section 28 —
+        not the text of Norwegian law) and a fictional organisation. It does not show live
+        monitoring; the actual status is below.
       </p>
     </div>
   );
