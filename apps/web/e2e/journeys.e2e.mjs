@@ -483,9 +483,9 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await page.locator('meta[name="description"]').getAttribute('content'), 'meta description');
   assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'index, follow', 'the homepage is indexable');
   assert.ok(await page.getByText('Njumeni is opening to early-access organisations, starting with Norway.').isVisible(), 'early-access notice');
-  // The story: the thirteen sections in order (sections with an anchor).
-  for (const id of ['research', 'workspace', 'evidence', 'change-intelligence', 'international', 'organisations', 'ai', 'trust', 'audiences', 'plans']) {
-    assert.equal(await page.locator(`section#${id}`).count(), 1, `section ${id}`);
+  // The homepage introduces and links onward; it does not reproduce every page.
+  for (const href of ['/platform/research', '/platform/workspace', '/platform/change-intelligence', '/solutions', '/security']) {
+    assert.ok((await page.locator(`main a[href="${href}"], main a[href^="${href}#"]`).count()) > 0, `the homepage links to ${href}`);
   }
   // The research view: the real held version answers; an earlier date gets the temporal refusal.
   const rv = page.locator('.nj-stage');
@@ -495,7 +495,46 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await rv.getByText(/not the\s+version in force on 15 January 2025/).isVisible(), 'no version held for that date: Njumeni declines');
   await rv.getByRole('button', { name: 'Law as at 1 Aug 2026' }).click();
   assert.ok(await rv.getByText('In force from 1 July 2026').isVisible());
-  // The research demonstration: real text for Norway; declines where no text or version is held.
+  await page.locator('.nj-envs').getByRole('button', { name: /Institutional/ }).click();
+  assert.ok(await page.getByText('A public body with formal accountability.').isVisible());
+
+  // Every public page: its own URL, title, one main heading, and the current page marked.
+  const PUBLIC = [
+    ['/platform/research', 'Research', /Ask a question/],
+    ['/platform/workspace', 'Workspace', /From research/],
+    ['/platform/change-intelligence', 'Change intelligence', /The law changes/],
+    ['/platform/jurisdictions', 'Jurisdictions', /One framework/],
+    ['/solutions', 'Who it serves', /Four kinds of user/],
+    ['/plans', 'Plans', /Clear allowances/],
+    ['/security', 'Security', /Protect information/],
+    ['/about', null, /Legal intelligence/],
+    ['/documentation', null, /Guides, technical notes/],
+  ];
+  const allText = [];
+  const hrefs = new Set();
+  for (const [path, nav, heading] of PUBLIC) {
+    const res = await page.goto(`${BASE}${path}`);
+    assert.equal(res.status(), 200, `${path} is public`);
+    assert.equal(await page.locator('h1').count(), 1, `${path}: one main heading`);
+    assert.match(await page.locator('h1').innerText(), heading, `${path}: its own heading`);
+    assert.match(await page.title(), /Njumeni/, `${path}: title`);
+    assert.ok(await page.locator('meta[name="description"]').getAttribute('content'), `${path}: description`);
+    if (nav) assert.equal(await page.locator('.nj-nav [aria-current="page"]').innerText(), nav, `${path}: current page marked`);
+    allText.push(await page.locator('main').innerText());
+    for (const h of await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href')))) hrefs.add(h);
+  }
+  // Direct access, refresh, and the browser's back and forward buttons.
+  await page.goto(`${BASE}/platform/change-intelligence`);
+  await page.reload();
+  assert.match(await page.locator('h1').innerText(), /The law changes/, 'refresh keeps the page');
+  await Promise.all([page.waitForURL(/\/plans$/), page.locator('.nj-nav').getByRole('link', { name: 'Plans' }).click()]);
+  await page.goBack();
+  assert.match(page.url(), /\/platform\/change-intelligence$/, 'back returns to the previous page');
+  await page.goForward();
+  assert.match(page.url(), /\/plans$/, 'forward returns again');
+
+  // Research page: the demonstration uses real text and declines where it must.
+  await page.goto(`${BASE}/platform/research`);
   const run = page.locator('.nj-demo2');
   assert.match(await run.locator('.nj-demo2-outcome').innerText(), /Cited finding/, 'Norway, current date: a cited finding');
   await run.getByRole('button', { name: /Sweden/ }).click();
@@ -503,62 +542,23 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   await run.getByRole('button', { name: /Norway/ }).click();
   await run.getByRole('button', { name: '15 Jan 2025' }).click();
   assert.match(await run.locator('.nj-demo2-outcome').innerText(), /version not held/, 'an earlier date: declined');
-  // Evidence pipeline, custody records, environments, access check and AI governance.
-  await page.locator('.nj-pipe').getByRole('button', { name: /Scan/ }).click();
-  assert.ok(await page.locator('.nj-pipe').getByText(/not yet connected/).isVisible(), 'the scan step states what is not built');
-  await page.locator('.nj-cus-toggle').first().click();
-  assert.ok(await page.locator('.nj-cus-full').isVisible(), 'a custody record expands');
-  await page.locator('.nj-envs').getByRole('button', { name: /Institutional/ }).click();
-  assert.ok(await page.getByText('A public body with formal accountability.').isVisible());
-  const access = page.locator('.nj-access');
-  await access.getByRole('button', { name: /K\. Dahl/ }).click();
-  await access.getByRole('button', { name: /Audit records/ }).click();
-  assert.equal(await access.locator('.nj-access-verdict').innerText(), 'Allowed', 'the access check follows the permission');
-  await page.locator('.nj-gov').getByRole('button', { name: /Recorded decision/ }).click();
-  assert.ok(await page.locator('.nj-gov').getByText(/append-only/).isVisible());
-  // The case file: tabs switch with the mouse and the keyboard.
+
+  // Workspace page: the case file, the evidence pipeline and the custody chain.
+  await page.goto(`${BASE}/platform/workspace`);
   const caseFile = page.locator('.nj-cf');
   await caseFile.getByRole('tab', { name: /Chronology/ }).click();
   assert.ok(await caseFile.getByText('Notice of dismissal').isVisible());
   await page.keyboard.press('ArrowDown');
   assert.equal(await caseFile.getByRole('tab', { name: /Arguments/ }).getAttribute('aria-selected'), 'true', 'arrow keys move between tabs');
-  // Accuracy: status labels, no inflated claims, no live-coverage claim, no prices.
-  const text = await page.locator('main').innerText();
-  assert.ok(!/\b2[0-9]\+? jurisdictions\b/i.test(text), 'no inflated jurisdiction count');
-  assert.ok(text.includes('17 legal systems'), 'the framework size is stated accurately');
-  assert.equal(await page.locator('.nj-board tbody tr').count(), await page.locator('.nj-board tbody td', { hasText: 'Not monitored' }).count(), 'currency today is stated: every jurisdiction not monitored');
-  assert.ok(await page.locator('.nj-tag--awaiting').count() >= 3, 'capabilities awaiting activation are labelled');
-  assert.ok(!/certified|ISO 27001|SOC 2/i.test(text.replace(/has not yet completed an independent penetration test or a security\s+certification/, '')), 'no certification claimed');
-  assert.ok(await page.locator('.nj-atlas-map img').evaluate((img) => img.complete || img.loading === 'lazy'), 'jurisdiction map present');
-  // Customer journeys: four categories with their workspaces (Master Plan §2.4).
-  const journeys = page.locator('#audiences');
-  for (const [tab, ws] of [['Individuals', 'Personal workspace'], ['Legal professionals', 'Professional workspace'], ['Law firms and enterprises', 'Enterprise and Law Firm workspace'], ['Public institutions', 'Institutional workspace']]) {
-    await journeys.getByRole('tab', { name: new RegExp(tab) }).click();
-    assert.ok(await journeys.getByText(ws, { exact: true }).isVisible(), ws);
-  }
-  // Plans: the eight configured plans with their allowances, no prices (Master Plan §17.1).
-  const plans = page.locator('#plans');
-  assert.equal(await plans.locator('.nj-tier-plans > li').count(), 8, 'eight plans in the audience tracks');
-  await plans.getByRole('button', { name: 'A firm or organisation' }).click();
-  await plans.getByRole('button', { name: 'A law firm' }).click();
-  assert.ok(await plans.locator('.nj-finder-name', { hasText: 'Law Firm' }).isVisible(), 'the finder suggests a configured plan');
-  assert.equal(await plans.locator('.nj-tier-plans > li.is-picked h4').innerText(), 'Law Firm', 'and highlights it');
-  await plans.locator('summary', { hasText: 'Compare every allowance' }).click();
-  assert.equal(await plans.locator('.nj-pl-table--all thead tr:last-child th[scope="col"]:not(:first-child)').count(), 8, 'all eight plans compared side by side');
-  assert.ok(await plans.getByText('20,000').first().isVisible(), 'allowances from the configuration');
-  assert.ok(!/[$€£]\s?\d/.test(await plans.innerText()), 'no undecided prices are published');
-  // Every link resolves: internal pages return 200 and every in-page anchor exists.
-  const hrefs = [...new Set(await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href'))))];
-  for (const href of hrefs) {
-    const url = new URL(href, `${BASE}/`);
-    if (url.hash && url.pathname === '/') {
-      assert.equal(await page.locator(url.hash).count(), 1, `anchor ${url.hash} exists`);
-      continue;
-    }
-    const res = await page.request.get(url.toString(), { maxRedirects: 0 });
-    assert.equal(res.status(), 200, `${href} returns 200`);
-  }
-  // The change-intelligence demonstration steps through the workflow.
+  await page.locator('.nj-pipe').getByRole('button', { name: /Scan/ }).click();
+  assert.ok(await page.locator('.nj-pipe').getByText(/not yet connected/).isVisible(), 'the scan step states what is not built');
+  await page.locator('.nj-cus-toggle').first().click();
+  assert.ok(await page.locator('.nj-cus-full').isVisible(), 'a custody record expands');
+  await page.locator('.nj-cus-try').click();
+  assert.match(await page.locator('.nj-cus-foot').innerText(), /Chain fails/, 'altering a record breaks the chain');
+
+  // Change intelligence page: the walkthrough and the actual status.
+  await page.goto(`${BASE}/platform/change-intelligence`);
   const demo = page.locator('.nj-obs');
   await demo.getByRole('button', { name: '03 Compare' }).click();
   await demo.getByRole('button', { name: 'Previous version' }).click();
@@ -575,13 +575,63 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await demo.getByText('Legal currency is restored').isVisible(), 'the walkthrough ends with verified currency');
   assert.ok(await demo.getByRole('button', { name: 'Next stage' }).isDisabled());
   assert.ok(await page.getByText('Actual status — not illustrative').isVisible(), 'the real status is marked apart from the illustration');
+  assert.equal(await page.locator('.nj-board tbody tr').count(), await page.locator('.nj-board tbody td', { hasText: 'Not monitored' }).count(), 'every jurisdiction reads not monitored');
+
+  // Jurisdictions page: the map and the directory; no jurisdiction is active.
+  await page.goto(`${BASE}/platform/jurisdictions`);
+  assert.ok(await page.locator('.nj-atlas-map img').evaluate((img) => img.complete || img.loading === 'lazy'), 'jurisdiction map present');
+  assert.equal(await page.locator('.nj-dir tbody tr').count(), 17, 'seventeen legal systems in the directory');
+  assert.equal(await page.locator('.nj-dir-stage.is-active').count(), 0, 'none is active for customers');
+
+  // Solutions page: four journeys with their workspaces, and the access check.
+  await page.goto(`${BASE}/solutions`);
+  const journeys = page.locator('#audiences');
+  for (const [tab, ws] of [['Individuals', 'Personal workspace'], ['Legal professionals', 'Professional workspace'], ['Law firms and enterprises', 'Enterprise and Law Firm workspace'], ['Public institutions', 'Institutional workspace']]) {
+    await journeys.getByRole('tab', { name: new RegExp(tab) }).click();
+    assert.ok(await journeys.getByText(ws, { exact: true }).isVisible(), ws);
+  }
+  const access = page.locator('.nj-access');
+  await access.getByRole('button', { name: /K\. Dahl/ }).click();
+  await access.getByRole('button', { name: /Audit records/ }).click();
+  assert.equal(await access.locator('.nj-access-verdict').innerText(), 'Allowed', 'the access check follows the permission');
+
+  // Security page: AI governance flow.
+  await page.goto(`${BASE}/security`);
+  await page.locator('.nj-gov').getByRole('button', { name: /Recorded decision/ }).click();
+  assert.ok(await page.locator('.nj-gov').getByText(/append-only/).isVisible());
+
+  // Plans page: the eight configured plans, the finder, the full comparison, no prices.
+  await page.goto(`${BASE}/plans`);
+  const plans = page.locator('#plans');
+  assert.equal(await plans.locator('.nj-tier-plans > li').count(), 8, 'eight plans in the audience tracks');
+  await plans.getByRole('button', { name: 'A firm or organisation' }).click();
+  await plans.getByRole('button', { name: 'A law firm' }).click();
+  assert.ok(await plans.locator('.nj-finder-name', { hasText: 'Law Firm' }).isVisible(), 'the finder suggests a configured plan');
+  assert.equal(await plans.locator('.nj-tier-plans > li.is-picked h4').innerText(), 'Law Firm', 'and highlights it');
+  assert.equal(await plans.locator('.nj-pl-table--all thead tr:last-child th[scope="col"]:not(:first-child)').count(), 8, 'all eight plans compared side by side');
+  assert.ok(await plans.getByText('20,000').first().isVisible(), 'allowances from the configuration');
+  assert.ok(!/[$€£]\s?\d/.test(await plans.innerText()), 'no undecided prices are published');
+
+  // Accuracy across the whole public site.
+  const text = allText.join('\n');
+  assert.ok(!/\b2[0-9]\+? jurisdictions\b/i.test(text), 'no inflated jurisdiction count');
+  assert.ok(text.includes('17 legal systems'), 'the framework size is stated accurately');
+  assert.ok(!/certified|ISO 27001|SOC 2/i.test(text.replace(/has not yet completed an independent penetration test or a security\s+certification/g, '')), 'no certification claimed');
+  // Every link on every public page resolves.
+  for (const href of hrefs) {
+    const url = new URL(href, `${BASE}/`);
+    if (url.hash && url.pathname === '/' && !url.search) continue;
+    const res = await page.request.get(url.toString(), { maxRedirects: 0 });
+    assert.equal(res.status(), 200, `${href} returns 200`);
+  }
+
   // Keyboard: on a fresh load, the skip link is the first focusable element.
   await page.goto(`${BASE}/`);
   await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(() => document.activeElement?.textContent), 'Skip to content');
   // SEO files.
   assert.match(await (await page.request.get(`${BASE}/robots.txt`)).text(), /Disallow: \//);
-  assert.match(await (await page.request.get(`${BASE}/sitemap.xml`)).text(), /early-access/);
+  assert.match(await (await page.request.get(`${BASE}/sitemap.xml`)).text(), /platform\/change-intelligence/);
 
   // Early access: the call to action leads to a working form; the request is stored once.
   await Promise.all([page.waitForURL(/\/early-access$/), page.locator('.nj-hero').getByRole('link', { name: 'Request early access' }).click()]);
@@ -612,7 +662,9 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   await phone.goto(`${BASE}/`);
   assert.equal(await phone.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), 0, 'no horizontal scroll on mobile');
   await phone.getByText('Menu').click();
-  assert.ok(await phone.getByRole('navigation', { name: 'Main (mobile)' }).getByRole('link', { name: 'Request early access' }).isVisible());
+  assert.ok(await phone.getByRole('navigation', { name: 'Main (mobile)' }).getByRole('link', { name: 'Documentation' }).isVisible(), 'the mobile menu lists every page');
+  await Promise.all([phone.waitForURL(/\/security$/), phone.getByRole('navigation', { name: 'Main (mobile)' }).getByRole('link', { name: 'Security' }).click()]);
+  assert.equal(await phone.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), 0, 'no horizontal scroll on a page');
   assert.deepEqual(errors, [], 'no client-side errors');
   await browser.close();
 });

@@ -1,9 +1,9 @@
-# Public homepage
+# Public website
 
 | Field | Value |
 |---|---|
-| Current version | v5 — global institutional design excellence (2026-11-13) |
-| Routes | `/` (homepage, static), `/early-access` (request form), `/robots.txt`, `/sitemap.xml` |
+| Current version | v6 — multi-page institutional website (2026-11-13) |
+| Routes | `/`, `/platform/research`, `/platform/workspace`, `/platform/change-intelligence`, `/platform/jurisdictions`, `/solutions`, `/plans`, `/security`, `/about`, `/documentation`, `/early-access`, `/robots.txt`, `/sitemap.xml` |
 | Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `research-demo.tsx`, `evidence-pipeline.tsx`, `org-explorer.tsx`, `governance-flow.tsx`, `section-nav.tsx`, `marketing.css`, `early-access/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
 | Database | Migration `20261114600000_early_access_requests` (unchanged in v3) |
@@ -135,7 +135,28 @@ Motion: short fades and staggered step reveals; all of it is turned off under `p
 9. The AI flow began with AI → it now begins with the legal source.
 10. Dimmed map buttons failed contrast, the comparison region wasn't keyboard-reachable, and phone landmarks were duplicated → fixed (axe 0 at every width).
 
-## 8. Checks (v5)
+## 8. v6 — a multi-page website
+
+Every navigation item now opens its own page, with its own URL, title, description and main heading. The homepage introduces the platform and links onward; the depth lives on the dedicated pages.
+
+| Page | Route | Contents |
+|---|---|---|
+| Home | `/` | Hero and promises; why authority matters; one citation from question to signed document; evidence; the change lifecycle at a glance; the position statement; environments; AI and responsibility; four audiences; early access |
+| Research | `/platform/research` | Run-the-research demonstration; the eight steps; why the date matters; retrieval, time, verification and refusal; traceability |
+| Workspace | `/platform/workspace` | The citation thread; the case file from research to sign-off; capabilities with status; evidence, custody and the evidence pipeline |
+| Change intelligence | `/platform/change-intelligence` | Three principles; the ten-stage observatory with currency meter and consequences; the four currency states and the actual status board; governance and auditability |
+| Jurisdictions | `/platform/jurisdictions` | The jurisdiction explorer; what each jurisdiction requires; a directory of all 17 legal systems with sources and stage (active, pending, registered, planned — none active yet); how a jurisdiction is onboarded |
+| Who it serves | `/solutions` | The four journeys; audiences side by side; environments, organisation structure and the access check |
+| Plans | `/plans` | Plan finder, audience tracks and the full comparison (open), with notes. No prices |
+| Security | `/security` | The control stack; identity, access and infrastructure, with status (SSO and private deployment are not live); the access check; AI governance |
+| About | `/about` | Mission, six founding principles, vision and responsibility |
+| Documentation | `/documentation` | Guides by audience, each marked "Available" or "In preparation" |
+
+**Route decision.** `/research` and `/jurisdictions` already belong to the signed-in application, and `/[slug]` serves application modules. The four product pages therefore live under `/platform/`. The public site and the application stay separate, and no application route changed.
+
+**Shared parts.** `site.tsx` holds the page list (one source for the header, footer, sitemap and robots), the page introduction, related links, the call-to-action band, `Tag` and `Kicker`. `section-nav.tsx` marks the current page in the header and the mobile menu.
+
+## 9. Checks (v6)
 
 | Check | Result |
 |---|---|
@@ -147,7 +168,7 @@ Motion: short fades and staggered step reveals; all of it is turned off under `p
 | Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px (iPhone 13), both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
 | Responsive | 1920, 1440, 1280, 1024, 768, 390 and 360 px: no horizontal scroll and no console errors; reviewed viewport by viewport: no horizontal scroll and no console errors |
 
-## 9. Open items
+## 10. Open items
 
 - **Web hosting:** Vercel builds the default branch once the deployment quota allows.
 - **Owner decisions:**

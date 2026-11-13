@@ -1,15 +1,18 @@
 import Link from 'next/link';
 import './marketing.css';
-import { SectionNav } from './section-nav';
+import { SiteNav } from './section-nav';
+import { PAGES } from './site';
 
 const NAV = [
-  { href: '/#research', label: 'Research' },
-  { href: '/#workspace', label: 'Workspace' },
-  { href: '/#change-intelligence', label: 'Change intelligence' },
-  { href: '/#international', label: 'Jurisdictions' },
-  { href: '/#organisations', label: 'Organisations' },
-  { href: '/#plans', label: 'Plans' },
+  PAGES.research,
+  PAGES.workspace,
+  PAGES.change,
+  PAGES.jurisdictions,
+  PAGES.solutions,
+  PAGES.plans,
+  PAGES.security,
 ];
+const MORE = [PAGES.about, PAGES.documentation];
 
 export default function MarketingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -31,7 +34,7 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             </span>
             NJUMENI
           </Link>
-          <SectionNav items={NAV} />
+          <SiteNav items={NAV} label="Main" className="nj-nav" />
           <div className="nj-header-actions">
             <Link href="/sign-in" className="nj-btn nj-btn--ghost nj-btn--sm nj-hide-md">
               Sign in
@@ -42,22 +45,18 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
           </div>
           <details className="nj-menu">
             <summary>Menu</summary>
-            <nav className="nj-menu-panel" aria-label="Main (mobile)">
-              {NAV.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  {item.label}
-                </Link>
-              ))}
+            <div className="nj-menu-panel">
+              <SiteNav items={[...NAV, ...MORE]} label="Main (mobile)" className="nj-menu-nav" />
               <Link href="/early-access">Request early access</Link>
               <Link href="/sign-in">Sign in</Link>
-            </nav>
+            </div>
           </details>
         </div>
       </header>
       <main id="main">{children}</main>
       <footer className="nj-footer">
         <div className="nj-wrap">
-          <div className="nj-footer-grid">
+          <div className="nj-footer-grid nj-footer-grid--4">
             <div>
               <p className="nj-brand" style={{ marginBottom: 14 }}>
                 <span className="nj-brand-mark" aria-hidden="true">
@@ -73,21 +72,21 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             <div>
               <h2>Platform</h2>
               <ul>
-                <li>
-                  <Link href="/#research">Legal research</Link>
-                </li>
-                <li>
-                  <Link href="/#change-intelligence">Global Legal Change Intelligence</Link>
-                </li>
-                <li>
-                  <Link href="/#workspace">Professional workspace</Link>
-                </li>
-                <li>
-                  <Link href="/#evidence">Evidence and custody</Link>
-                </li>
-                <li>
-                  <Link href="/#international">Jurisdictions</Link>
-                </li>
+                {[PAGES.research, PAGES.workspace, PAGES.change, PAGES.jurisdictions].map((p) => (
+                  <li key={p.href}>
+                    <Link href={p.href}>{p.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2>Njumeni</h2>
+              <ul>
+                {[PAGES.solutions, PAGES.security, PAGES.about, PAGES.documentation].map((p) => (
+                  <li key={p.href}>
+                    <Link href={p.href}>{p.label}</Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
@@ -100,7 +99,7 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
                   <Link href="/early-access?interest=demonstration">Request a demonstration</Link>
                 </li>
                 <li>
-                  <Link href="/#plans">Plans</Link>
+                  <Link href="/plans">Plans</Link>
                 </li>
                 <li>
                   <Link href="/sign-in">Sign in</Link>
