@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CaseFile } from './case-file';
-import { ChangeDemo } from './change-demo';
+import { Atlas } from './atlas';
+import { AuthorityChart } from './authority-chart';
+import { Custody } from './custody';
+import { Observatory } from './observatory';
+import { Plans } from './plans';
 import { Journeys } from './journeys';
 import { ResearchView } from './research-view';
 
@@ -33,139 +37,6 @@ function Tag({ status }: { status: Status }) {
 function Kicker({ children }: { children: React.ReactNode }) {
   return <p className="nj-kicker">{children}</p>;
 }
-
-// Plan allowances: the commercial configuration (migration 20261112600000, Master Plan §17.1).
-// Prices are hypotheses still to be decided and are not published.
-type Allowance = number | null;
-interface Plan {
-  name: string;
-  forWhom: string;
-  research: Allowance;
-  documents: Allowance;
-  ai: Allowance;
-  api: Allowance;
-  seats: Allowance;
-  storage: Allowance;
-  access: string;
-}
-const PLAN_GROUPS: { title: string; note: string; plans: Plan[] }[] = [
-  {
-    title: 'For individuals',
-    note: 'Personal workspace',
-    plans: [
-      {
-        name: 'Free',
-        forWhom: 'The general public',
-        research: 30,
-        documents: 5,
-        ai: 50,
-        api: 100,
-        seats: 1,
-        storage: 1,
-        access: 'Free',
-      },
-      {
-        name: 'Personal',
-        forWhom: 'Individuals',
-        research: 200,
-        documents: 50,
-        ai: 500,
-        api: 0,
-        seats: 1,
-        storage: 5,
-        access: 'At early access',
-      },
-      {
-        name: 'Personal Plus',
-        forWhom: 'Ongoing legal matters',
-        research: 600,
-        documents: 150,
-        ai: 1500,
-        api: 0,
-        seats: 1,
-        storage: 20,
-        access: 'At early access',
-      },
-    ],
-  },
-  {
-    title: 'For legal professionals',
-    note: 'Professional workspace',
-    plans: [
-      {
-        name: 'Professional',
-        forWhom: 'Lawyers and advisers',
-        research: 2000,
-        documents: 500,
-        ai: 4000,
-        api: 1000,
-        seats: 1,
-        storage: 50,
-        access: 'At early access',
-      },
-      {
-        name: 'Professional Plus',
-        forWhom: 'High-volume practitioners',
-        research: 6000,
-        documents: 1500,
-        ai: 10000,
-        api: 10000,
-        seats: 1,
-        storage: 200,
-        access: 'At early access',
-      },
-    ],
-  },
-  {
-    title: 'For organisations',
-    note: 'Law Firm, Enterprise and Institutional workspaces',
-    plans: [
-      {
-        name: 'Law Firm',
-        forWhom: 'Legal practices',
-        research: 20000,
-        documents: 5000,
-        ai: 25000,
-        api: 50000,
-        seats: 10,
-        storage: 1000,
-        access: 'At early access',
-      },
-      {
-        name: 'Enterprise',
-        forWhom: 'Large organisations',
-        research: null,
-        documents: null,
-        ai: null,
-        api: null,
-        seats: null,
-        storage: null,
-        access: 'By contract',
-      },
-      {
-        name: 'Institutional',
-        forWhom: 'Public institutions',
-        research: null,
-        documents: null,
-        ai: null,
-        api: null,
-        seats: null,
-        storage: null,
-        access: 'By contract',
-      },
-    ],
-  },
-];
-const PLAN_ROWS: { key: keyof Plan; label: string; unit?: string }[] = [
-  { key: 'research', label: 'Research runs a month' },
-  { key: 'documents', label: 'Generated documents a month' },
-  { key: 'ai', label: 'AI credits a month' },
-  { key: 'api', label: 'API requests a month' },
-  { key: 'seats', label: 'Seats included' },
-  { key: 'storage', label: 'Storage', unit: ' GB' },
-];
-const fmt = (value: Allowance, unit = '') =>
-  value === null ? 'Contracted' : value === 0 ? '—' : value.toLocaleString('en-GB') + unit;
 
 export default function HomePage() {
   return (
@@ -234,39 +105,7 @@ export default function HomePage() {
                 all four.
               </p>
             </div>
-            <div
-              className="nj-coords"
-              role="list"
-              aria-label="The four coordinates of a legal question"
-            >
-              <div className="nj-coord" role="listitem">
-                <small>Authority</small>
-                <b>On what law?</b>
-                <span>Official sources, the hierarchy of authority, the exact provision.</span>
-              </div>
-              <div className="nj-coord" role="listitem">
-                <small>Time</small>
-                <b>As of when?</b>
-                <span>
-                  The version in force on the date — never confusing publication with commencement.
-                </span>
-              </div>
-              <div className="nj-coord" role="listitem">
-                <small>Evidence</small>
-                <b>On what facts?</b>
-                <span>Documents with their custody, versions and chronology.</span>
-              </div>
-              <div className="nj-coord" role="listitem">
-                <small>Responsibility</small>
-                <b>Who decides?</b>
-                <span>Review, sign-off and an audit record of every decision.</span>
-              </div>
-              <div className="nj-coord-center" aria-hidden="true">
-                A legal
-                <br />
-                question
-              </div>
-            </div>
+            <AuthorityChart />
           </div>
           <div className="nj-contrast">
             <div>
@@ -489,51 +328,7 @@ export default function HomePage() {
             </ul>
           </div>
           <div>
-            <ol className="nj-chain" aria-label="Chain of custody">
-              <li>
-                <span className="nj-chain-n">01</span>
-                <span>
-                  <b>Received</b>
-                  <span>employment-contract.pdf, stored privately</span>
-                </span>
-                <span className="nj-chain-hash">
-                  prev 00000000<em>hash 9f2c41ab</em>
-                </span>
-              </li>
-              <li>
-                <span className="nj-chain-n">02</span>
-                <span>
-                  <b>Placed on legal hold</b>
-                  <span>Deletion blocked until released</span>
-                </span>
-                <span className="nj-chain-hash">
-                  prev 9f2c41ab<em>hash b81e07c3</em>
-                </span>
-              </li>
-              <li>
-                <span className="nj-chain-n">03</span>
-                <span>
-                  <b>New version added</b>
-                  <span>Version 1 kept, unchanged</span>
-                </span>
-                <span className="nj-chain-hash">
-                  prev b81e07c3<em>hash 3d5a9e10</em>
-                </span>
-              </li>
-              <li>
-                <span className="nj-chain-n">04</span>
-                <span>
-                  <b>Exported in a bundle</b>
-                  <span>Manifest lists every file and hash</span>
-                </span>
-                <span className="nj-chain-hash">
-                  prev 3d5a9e10<em>hash e47f2c65</em>
-                </span>
-              </li>
-            </ol>
-            <p className="nj-chain-caption">
-              Illustrative custody record. Each record’s hash includes the one before it.
-            </p>
+            <Custody />
           </div>
         </div>
       </section>
@@ -550,38 +345,12 @@ export default function HomePage() {
             and traces each change to the research, documents and matters that relied on the old law
             — then routes the response through people who are accountable for it.
           </p>
-          <ol className="nj-pipeline">
-            <li>
-              <b>Monitor</b>
-              <span>Authorised official publications, checked on a schedule.</span>
-            </li>
-            <li>
-              <b>Detect and compare</b>
-              <span>New and amended legislation, provision by provision.</span>
-            </li>
-            <li>
-              <b>Date</b>
-              <span>Publication, commencement and repeal kept apart.</span>
-            </li>
-            <li>
-              <b>Assess</b>
-              <span>Affected research and documents; the currency of what is held.</span>
-            </li>
-            <li>
-              <b>Decide and notify</b>
-              <span>Proposals, governed approval, customer notices — all recorded.</span>
-            </li>
-          </ol>
-          <div className="nj-glci-stage">
-            <ChangeDemo />
+          <Observatory />
+          <div className="nj-currency-grid">
             <div className="nj-currency">
-              <h3>Is the law you hold current?</h3>
-              <p>
-                For each jurisdiction, Njumeni states one of four positions — never “current”
-                without evidence.
-              </p>
+              <h3>Four honest answers to “is this law current?”</h3>
               <dl>
-                <div style={{ ['--c' as string]: '#5fae99' }}>
+                <div style={{ ['--c' as string]: '#6fb8a3' }}>
                   <dt>Current</dt>
                   <dd>Sources checked successfully; nothing newer than what is held.</dd>
                 </div>
@@ -589,19 +358,54 @@ export default function HomePage() {
                   <dt>Behind</dt>
                   <dd>A change was detected and is not yet ingested.</dd>
                 </div>
-                <div style={{ ['--c' as string]: '#c9785c' }}>
+                <div style={{ ['--c' as string]: '#d17f63' }}>
                   <dt>Unverified</dt>
-                  <dd>A source could not be checked. Shown as unverified, never as current.</dd>
+                  <dd>A source could not be checked — shown as unverified, never as current.</dd>
                 </div>
-                <div style={{ ['--c' as string]: 'rgba(245,241,232,0.45)' }}>
+                <div style={{ ['--c' as string]: 'rgba(245,241,232,0.5)' }}>
                   <dt>Not monitored</dt>
                   <dd>No authorised source is being watched yet.</dd>
                 </div>
               </dl>
-              <p className="nj-currency-now">
-                Today: every jurisdiction reads <b>not monitored</b>. Monitoring is built and
-                tested; official sources are switched on one by one after their rights review,
-                starting with Norway.
+            </div>
+            <div className="nj-board">
+              <div className="nj-board-head">
+                <h3>Observatory status today</h3>
+                <span>Hosted service · 22 official sources registered</span>
+              </div>
+              <table>
+                <caption className="nj-sr">Monitoring status by jurisdiction</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Jurisdiction</th>
+                    <th scope="col">Sources</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Norway', 5],
+                    ['United States', 3],
+                    ['European Union', 2],
+                    ['United Kingdom', 2],
+                    ['Sweden', 2],
+                    ['Denmark', 2],
+                    ['Finland', 2],
+                    ['Cameroon', 2],
+                    ['Uganda', 2],
+                  ].map(([name, count]) => (
+                    <tr key={name}>
+                      <th scope="row">{name}</th>
+                      <td className="nj-mono">{count}</td>
+                      <td>
+                        <span className="nj-dot nj-dot--off" aria-hidden="true" /> Not monitored
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p>
+                Sources are switched on one by one after their rights review, starting with Norway.
               </p>
             </div>
           </div>
@@ -629,30 +433,7 @@ export default function HomePage() {
               spans 17 legal systems: 13 countries, the EU, the EEA, OHADA and international law.
             </p>
           </div>
-          <figure className="nj-map">
-            <img
-              src="/home/jurisdiction-map.svg"
-              alt="World map of the Njumeni jurisdiction framework. Norway is the reference jurisdiction; Sweden, Denmark, Finland, the United Kingdom, the United States, Cameroon, Ghana, Kenya, Nigeria, Senegal, Uganda and South Africa are in the framework; EU member states are shaded for EU law."
-              width={1000}
-              height={472}
-              loading="lazy"
-              decoding="async"
-            />
-            <ul className="nj-map-legend">
-              <li style={{ ['--c' as string]: '#C6A66B' }}>
-                <i aria-hidden="true" />
-                Norway — reference jurisdiction
-              </li>
-              <li style={{ ['--c' as string]: '#142638' }}>
-                <i aria-hidden="true" />
-                In the framework
-              </li>
-              <li style={{ ['--c' as string]: '#B9C3CC' }}>
-                <i aria-hidden="true" />
-                EU member states (EU law)
-              </li>
-            </ul>
-          </figure>
+          <Atlas />
           <div className="nj-needs" aria-label="What each jurisdiction requires">
             <div>
               <b>Sources</b>
@@ -681,44 +462,6 @@ export default function HomePage() {
             <div>
               <b>Verification</b>
               <span>Evaluated before coverage is claimed</span>
-            </div>
-          </div>
-          <div className="nj-regions">
-            <div className="nj-region">
-              <h3>Europe</h3>
-              <ul>
-                <li>
-                  Norway <small>— reference</small>
-                </li>
-                <li>Sweden · Denmark · Finland</li>
-                <li>United Kingdom</li>
-                <li>European Union · EEA</li>
-              </ul>
-            </div>
-            <div className="nj-region">
-              <h3>Africa</h3>
-              <ul>
-                <li>
-                  Cameroon <small>— bijural</small>
-                </li>
-                <li>Ghana · Kenya · Nigeria</li>
-                <li>Senegal · Uganda · South Africa</li>
-                <li>OHADA</li>
-              </ul>
-            </div>
-            <div className="nj-region">
-              <h3>Americas</h3>
-              <ul>
-                <li>
-                  United States <small>— federal</small>
-                </li>
-              </ul>
-            </div>
-            <div className="nj-region">
-              <h3>International</h3>
-              <ul>
-                <li>International law and treaties</li>
-              </ul>
             </div>
           </div>
           <div className="nj-status-line">
@@ -831,7 +574,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <p className="nj-chain-caption">
+          <p className="nj-figcap">
             Illustrative organisation; the structure is the one Njumeni enforces.
           </p>
         </div>
@@ -1024,54 +767,7 @@ export default function HomePage() {
               plans. Prices are announced at early access.
             </p>
           </div>
-          <div className="nj-plangroups">
-            {PLAN_GROUPS.map((group) => (
-              <section key={group.title} className="nj-plangroup" aria-label={group.title}>
-                <div className="nj-plangroup-head">
-                  <h3>{group.title}</h3>
-                  <span>{group.note}</span>
-                </div>
-                <p className="nj-scroll-hint" aria-hidden="true">
-                  Swipe sideways to compare plans →
-                </p>
-                <div className="nj-plantable-wrap">
-                  <table className="nj-plantable">
-                    <thead>
-                      <tr>
-                        <th scope="col">
-                          <span className="nj-sr">Allowance</span>
-                        </th>
-                        {group.plans.map((p) => (
-                          <th key={p.name} scope="col">
-                            {p.name}
-                            <small>{p.forWhom}</small>
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {PLAN_ROWS.map((row) => (
-                        <tr key={row.key}>
-                          <th scope="row">{row.label}</th>
-                          {group.plans.map((p) => (
-                            <td key={p.name}>{fmt(p[row.key] as Allowance, row.unit)}</td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <th scope="row">Price</th>
-                        {group.plans.map((p) => (
-                          <td key={p.name}>{p.access}</td>
-                        ))}
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </section>
-            ))}
-          </div>
+          <Plans />
           <div className="nj-plan-notes">
             <p>
               <b>AI credits</b>Allowance for AI-assisted features as they become available. One

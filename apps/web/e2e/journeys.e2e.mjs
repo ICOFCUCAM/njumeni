@@ -488,12 +488,12 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
     assert.equal(await page.locator(`section#${id}`).count(), 1, `section ${id}`);
   }
   // The research view: the real held version answers; an earlier date gets the temporal refusal.
-  const rv = page.locator('.nj-rv');
+  const rv = page.locator('.nj-app');
   assert.ok(await rv.getByText('In force from 1 July 2026').isVisible(), 'the version held is shown');
   assert.ok(await rv.getByText(/Arbeidstaker kan ikke sies opp uten at det er saklig begrunnet/).isVisible(), 'the quotation of § 15-7 (1)');
-  await rv.getByRole('button', { name: '15 Jan 2025' }).click();
+  await rv.getByRole('button', { name: 'Law as at 15 Jan 2025' }).click();
   assert.ok(await rv.getByText(/not the\s+version in force on 15 January 2025/).isVisible(), 'no version held for that date: Njumeni declines');
-  await rv.getByRole('button', { name: '1 Aug 2026' }).click();
+  await rv.getByRole('button', { name: 'Law as at 1 Aug 2026' }).click();
   assert.ok(await rv.getByText('In force from 1 July 2026').isVisible());
   // The case file: tabs switch with the mouse and the keyboard.
   const caseFile = page.locator('.nj-cf');
@@ -505,10 +505,10 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   const text = await page.locator('main').innerText();
   assert.ok(!/\b2[0-9]\+? jurisdictions\b/i.test(text), 'no inflated jurisdiction count');
   assert.ok(text.includes('17 legal systems'), 'the framework size is stated accurately');
-  assert.ok(text.includes('every jurisdiction reads'), 'currency today is stated: not monitored');
+  assert.equal(await page.locator('.nj-board tbody tr').count(), await page.locator('.nj-board tbody td', { hasText: 'Not monitored' }).count(), 'currency today is stated: every jurisdiction not monitored');
   assert.ok(await page.locator('.nj-tag--awaiting').count() >= 3, 'capabilities awaiting activation are labelled');
   assert.ok(!/certified|ISO 27001|SOC 2/i.test(text.replace(/has not yet completed an independent penetration test or a security\s+certification/, '')), 'no certification claimed');
-  assert.ok(await page.locator('.nj-map img').evaluate((img) => img.complete || img.loading === 'lazy'), 'jurisdiction map present');
+  assert.ok(await page.locator('.nj-atlas-map img').evaluate((img) => img.complete || img.loading === 'lazy'), 'jurisdiction map present');
   // Customer journeys: four categories with their workspaces (Master Plan §2.4).
   const journeys = page.locator('#audiences');
   for (const [tab, ws] of [['Individuals', 'Personal workspace'], ['Legal professionals', 'Professional workspace'], ['Law firms and enterprises', 'Enterprise and Law Firm workspace'], ['Public institutions', 'Institutional workspace']]) {
@@ -517,8 +517,16 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   }
   // Plans: the eight configured plans with their allowances, no prices (Master Plan §17.1).
   const plans = page.locator('#plans');
-  assert.equal(await plans.locator('thead th[scope="col"]:not(:first-child)').count(), 8, 'eight plans across the three groups');
+  let planCount = 0;
+  for (const group of ['Individuals', 'Legal professionals', 'Organisations']) {
+    await plans.getByRole('tab', { name: group }).click();
+    planCount += await plans.locator('thead th[scope="col"]:not(:first-child)').count();
+  }
+  assert.equal(planCount, 8, 'eight plans across the three groups');
   assert.ok(await plans.getByText('20,000').first().isVisible(), 'allowances from the configuration');
+  await plans.getByRole('tab', { name: 'Individuals' }).focus();
+  await page.keyboard.press('ArrowRight');
+  assert.equal(await plans.getByRole('tab', { name: 'Legal professionals' }).getAttribute('aria-selected'), 'true', 'arrow keys move between plan groups');
   assert.ok(!/[$€£]\s?\d/.test(await plans.innerText()), 'no undecided prices are published');
   // Every link resolves: internal pages return 200 and every in-page anchor exists.
   const hrefs = [...new Set(await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href'))))];
@@ -532,9 +540,9 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
     assert.equal(res.status(), 200, `${href} returns 200`);
   }
   // The change-intelligence demonstration steps through the workflow.
-  const demo = page.locator('.nj-demo');
-  await demo.getByRole('button', { name: '4. Impact' }).click();
-  assert.ok(await demo.getByText('4 research answers quote the previous wording').isVisible());
+  const demo = page.locator('.nj-obs');
+  await demo.getByRole('button', { name: '04 Impact' }).click();
+  assert.ok(await demo.getByText('4 quote the previous wording').isVisible());
   await demo.getByRole('button', { name: 'Next stage' }).click();
   await demo.getByRole('button', { name: 'Next stage' }).click();
   assert.ok(await demo.getByText('The law has changed since this answer').isVisible(), 'the demonstration ends with the customer notice');

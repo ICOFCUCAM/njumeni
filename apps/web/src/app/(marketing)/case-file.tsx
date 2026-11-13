@@ -177,54 +177,80 @@ export function CaseFile() {
   const [active, setActive] = useState(0);
   const tab = TABS[active]!;
   return (
-    <div className="nj-cf">
-      <div className="nj-cf-side">
-        <div className="nj-cf-matter">
-          <small>M-2026-014</small>
-          <b>Unfair dismissal claim</b>
+    <div className="nj-cfx">
+      <div className="nj-app-top">
+        <span className="nj-app-dots" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className="nj-app-crumb">
+          Example Advokatfirma <span aria-hidden="true">/</span> Employment{' '}
+          <span aria-hidden="true">/</span> Matters
+        </span>
+        <span className="nj-app-env">Example view</span>
+      </div>
+      <div className="nj-cfx-head">
+        <div>
+          <p className="nj-cfx-id nj-mono">M-2026-014</p>
+          <p className="nj-cfx-title">Unfair dismissal claim</p>
         </div>
-        <div className="nj-cf-tabs" role="tablist" aria-label="Case file">
-          {TABS.map((t, i) => (
-            <button
-              key={t.key}
-              id={`cf-tab-${t.key}`}
-              role="tab"
-              aria-selected={i === active}
-              aria-controls="cf-panel"
-              tabIndex={i === active ? 0 : -1}
-              onClick={() => setActive(i)}
-              onKeyDown={(e) => {
-                const keys: Record<string, number> = {
-                  ArrowDown: 1,
-                  ArrowRight: 1,
-                  ArrowUp: -1,
-                  ArrowLeft: -1,
-                };
-                if (!(e.key in keys)) return;
-                e.preventDefault();
-                const next = (active + keys[e.key]! + TABS.length) % TABS.length;
-                setActive(next);
-                document.getElementById(`cf-tab-${TABS[next]!.key}`)?.focus();
-              }}
-            >
-              {t.label}
-              {t.count ? <span>{t.count}</span> : null}
-            </button>
-          ))}
+        <div className="nj-cfx-chips">
+          <span className="nj-pill">Open</span>
+          <span className="nj-pill nj-pill--gold">Reply due 18 Nov</span>
+          <span className="nj-cfx-team">
+            <span className="nj-sr">Team: </span>
+            <i>IB</i>
+            <i>KD</i>
+            <i>AL</i>
+          </span>
         </div>
       </div>
-      <div
-        key={tab.key}
-        id="cf-panel"
-        className="nj-cf-panel nj-fade"
-        role="tabpanel"
-        aria-labelledby={`cf-tab-${tab.key}`}
-      >
-        {tab.body}
-      </div>
-      <div className="nj-cf-foot">
-        <span>Illustrative matter · fictional parties</span>
-        <span>Employment workspace · Example Advokatfirma AS</span>
+      <div className="nj-cf">
+        <div className="nj-cf-side">
+          <div className="nj-cf-tabs" role="tablist" aria-label="Case file">
+            {TABS.map((t, i) => (
+              <button
+                key={t.key}
+                id={`cf-tab-${t.key}`}
+                role="tab"
+                aria-selected={i === active}
+                aria-controls="cf-panel"
+                tabIndex={i === active ? 0 : -1}
+                onClick={() => setActive(i)}
+                onKeyDown={(e) => {
+                  const keys: Record<string, number> = {
+                    ArrowDown: 1,
+                    ArrowRight: 1,
+                    ArrowUp: -1,
+                    ArrowLeft: -1,
+                  };
+                  if (!(e.key in keys)) return;
+                  e.preventDefault();
+                  const next = (active + keys[e.key]! + TABS.length) % TABS.length;
+                  setActive(next);
+                  document.getElementById(`cf-tab-${TABS[next]!.key}`)?.focus();
+                }}
+              >
+                {t.label}
+                {t.count ? <span>{t.count}</span> : null}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div
+          key={tab.key}
+          id="cf-panel"
+          className="nj-cf-panel nj-fade"
+          role="tabpanel"
+          aria-labelledby={`cf-tab-${tab.key}`}
+        >
+          {tab.body}
+        </div>
+        <div className="nj-cf-foot">
+          <span>Illustrative matter · fictional parties</span>
+          <span>Employment workspace · Example Advokatfirma AS</span>
+        </div>
       </div>
     </div>
   );
