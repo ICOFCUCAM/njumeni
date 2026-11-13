@@ -202,7 +202,7 @@ Every navigation item now opens its own page, with its own URL, title, descripti
 | Database | `private.research_question_submissions`: RLS on, no access for visitors or customers. `research_question_submit` is the only way in (callable without a session; consent required; input checked; 120 an hour across all visitors before `BUSY`). `research_question_list` is for platform operators only. `research_question_purge_expired` runs daily through pg_cron and deletes questions after 30 days. No IP address or user agent is stored |
 | Privacy notice | Adds what is collected, the purpose and legal basis (consent), and the 30-day deletion |
 
-**Hosted:** the migration is **not** applied to the hosted database. Until it is, the form on the live site answers "Your question could not be sent" and stores nothing.
+**Hosted:** applied to the hosted database (`vvjpsejeeffykaozfbik`, EU — Stockholm) on 2026-11-13 on the owner's "deploy", recorded as version `20261114700000`. Verified there: RLS on; visitors cannot read the table or list questions; the submit function works for a visitor (checked inside a rolled-back transaction, so nothing was stored); the daily deletion job `research-question-retention` (03:47 UTC) is active; the security advisor shows no new kind of finding.
 
 ## 12. Checks (v9)
 
@@ -218,7 +218,6 @@ Every navigation item now opens its own page, with its own URL, title, descripti
 
 ## 13. Open items
 
-- **Apply `20261114700000_research_question_capture` to the hosted database** (on the owner's "deploy"), so the Ask Njumeni form stores questions in production.
 - **Ask Njumeni phases 1–5** (activation and quality gate, registered research, guest research, AI explanations, change alerts) wait for the owner decisions listed in the assessment: Lovdata activation, guest limits, a bot check, retention, the AI provider, an email provider and languages.
 - **Fill in `site-details.ts`** (legal name, organisation number, address, contact, privacy and security emails, governing law), have counsel review the privacy notice and terms (including the liability section), then set `legalApprovedOn`.
 - **Pin the Vercel server region to the EU**, and update the trust centre and privacy notice once it is set.
