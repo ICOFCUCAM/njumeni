@@ -50,14 +50,15 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             <Link href="/sign-in" className="nj-btn nj-btn--ghost nj-btn--sm nj-hide-md">
               Sign in
             </Link>
-            <Link href="/early-access" className="nj-btn nj-btn--gold nj-btn--sm">
-              Request early access
+            <Link href="/ask" className="nj-btn nj-btn--gold nj-btn--sm">
+              Ask Njumeni
             </Link>
           </div>
           <details className="nj-menu">
             <summary>Menu</summary>
             <div className="nj-menu-panel">
               <MobileNav items={NAV} />
+              <Link href="/ask">Ask Njumeni</Link>
               <Link href="/early-access">Request early access</Link>
               <Link href="/sign-in">Sign in</Link>
             </div>
@@ -109,6 +110,9 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             <div>
               <h2>Access</h2>
               <ul>
+                <li>
+                  <Link href="/ask">Ask Njumeni</Link>
+                </li>
                 <li>
                   <Link href="/early-access">Request early access</Link>
                 </li>

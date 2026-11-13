@@ -36,14 +36,35 @@ export default function HomePage() {
               Global legal intelligence connecting authoritative legal research, professional legal
               work and continuous awareness of changing legislation.
             </p>
-            <div className="nj-ctas">
-              <Link href="/early-access" className="nj-btn nj-btn--gold">
-                Request early access
-              </Link>
-              <Link href="/sign-in" className="nj-btn nj-btn--ghost">
-                Sign in
-              </Link>
-            </div>
+            <form action="/ask" method="get" className="nj-askbox" aria-label="Ask Njumeni">
+              <label htmlFor="hero-q" className="nj-askbox-label">
+                Ask Njumeni a legal question
+              </label>
+              <div className="nj-askbox-row">
+                <input
+                  id="hero-q"
+                  name="q"
+                  type="text"
+                  maxLength={1000}
+                  required
+                  minLength={5}
+                  placeholder="Can my employer dismiss me without a reason?"
+                  autoComplete="off"
+                />
+                <button type="submit" className="nj-btn nj-btn--gold">
+                  Ask Njumeni
+                </button>
+              </div>
+              <p className="nj-askbox-note">
+                Live research opens in Norway first. Until then we keep your question — we do not
+                guess at an answer.
+              </p>
+            </form>
+            <p className="nj-hero-links">
+              <Link href="/platform/research#research">See an answer in the demonstration</Link>
+              <Link href="/early-access">Request early access for your organisation</Link>
+              <Link href="/sign-in">Sign in</Link>
+            </p>
           </ResearchView>
           <ol className="nj-promises" aria-label="What Njumeni promises">
             <li>

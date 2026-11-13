@@ -6881,3 +6881,171 @@ li.is-skip .nj-demo2-label {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* ------------------------------------------------------------------ v9 ask njumeni */
+.nj-askbox {
+  max-width: 40rem;
+  margin: 0 0 var(--s-5);
+}
+.nj-askbox-label {
+  display: block;
+  margin-bottom: var(--s-2);
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.nj-askbox-row {
+  display: flex;
+  gap: var(--s-2);
+  padding: 6px;
+  border: 1px solid var(--line-dark);
+  border-radius: var(--r-md);
+  background: rgba(245, 241, 232, 0.06);
+}
+.nj-askbox-row:focus-within {
+  border-color: var(--gold);
+}
+.nj-askbox input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 var(--s-3);
+  border: 0;
+  background: transparent;
+  color: var(--on-dark);
+  font: inherit;
+  font-size: 17px;
+}
+.nj-askbox input::placeholder {
+  color: var(--on-dark-faint);
+}
+.nj-askbox input:focus {
+  outline: none;
+}
+.nj-askbox-note {
+  margin: var(--s-3) 0 0;
+  font-size: var(--t-note);
+  line-height: 1.5;
+  color: var(--on-dark-faint);
+}
+.nj-hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+  margin: 0;
+  font-size: var(--t-ui);
+}
+.nj-hero-links a {
+  color: var(--on-dark);
+  text-decoration: underline;
+  text-decoration-color: var(--line-dark);
+  text-underline-offset: 4px;
+}
+.nj-hero-links a:hover {
+  text-decoration-color: var(--gold);
+}
+.nj-ask-state {
+  margin: var(--s-5) 0 0;
+  padding: var(--s-4) var(--s-4) var(--s-4) var(--s-5);
+  border-left: 3px solid var(--gold);
+  background: rgba(245, 241, 232, 0.06);
+  font-size: var(--t-ui);
+  line-height: 1.55;
+  color: var(--on-dark-soft);
+}
+.nj-ask-state b {
+  color: var(--on-dark);
+}
+.nj-ask-h {
+  margin: 0 0 var(--s-4);
+  font-family: var(--serif);
+  font-size: clamp(30px, 3vw, 42px);
+  font-weight: 500;
+  line-height: 1.12;
+}
+.nj-ask-sub {
+  margin: var(--s-6) 0 var(--s-3);
+  font-size: var(--t-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.nj-ask-alt {
+  margin: var(--s-5) 0 0;
+  font-size: var(--t-ui);
+  color: var(--slate);
+}
+.nj-ask-alt a,
+.nj-consent a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.nj-ask .nj-form-wrap {
+  padding: 0;
+  align-items: start;
+}
+.nj-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.nj-ask-done p {
+  margin: var(--s-3) 0 0;
+}
+.nj-ask-done .nj-ctas {
+  margin-top: var(--s-5);
+}
+.nj-ask-modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-5);
+  margin: var(--s-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.nj-ask-modes li {
+  padding: var(--s-5);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--paper);
+}
+.nj-ask-modes h3 {
+  margin: var(--s-4) 0 var(--s-1);
+  font-family: var(--serif);
+  font-size: var(--t-h3);
+  font-weight: 500;
+}
+.nj-ask-modes p {
+  margin: 0;
+  color: var(--slate);
+}
+.nj-ask-modes .nj-ask-who {
+  margin-bottom: var(--s-3);
+  font-size: var(--t-note);
+  font-weight: 600;
+  color: var(--bronze);
+}
+@media (max-width: 900px) {
+  .nj-ask-modes {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .nj-askbox-row {
+    flex-direction: column;
+  }
+  .nj-askbox input {
+    min-height: 48px;
+  }
+  .nj-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+.nj-ask-side .nj-ask-sub {
+  margin-top: var(--s-6);
+}
+.nj-ask .nj-field small {
+  font-size: var(--t-note);
+}

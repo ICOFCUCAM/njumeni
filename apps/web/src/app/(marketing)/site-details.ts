@@ -26,4 +26,5 @@ export const show = (value: string | null) => value ?? PENDING;
 export const FACTS = {
   databaseRegion: 'EU — Stockholm, Sweden (eu-north-1)',
   earlyAccessRetention: '12 months',
+  questionRetention: '30 days',
 };

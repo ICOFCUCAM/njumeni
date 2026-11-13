@@ -1554,6 +1554,19 @@ export type Database = {
           verified_claims: number;
         }[];
       };
+      research_question_list: { Args: Record<PropertyKey, never>; Returns: Json };
+      research_question_purge_expired: { Args: Record<PropertyKey, never>; Returns: number };
+      research_question_submit: {
+        Args: {
+          p_as_of_date: string;
+          p_consent: boolean;
+          p_contact_email: string;
+          p_jurisdiction_code: string;
+          p_question: string;
+          p_response_language: string;
+        };
+        Returns: string;
+      };
       research_record_run: {
         Args: {
           p_as_of_date: string;

@@ -519,6 +519,7 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
     ['/privacy', null, /Your data/],
     ['/terms', null, /The terms/],
     ['/legal', null, /Who operates/],
+    ['/ask', null, /What would you like to know/],
   ];
   const allText = [];
   const hrefs = new Set();
@@ -676,6 +677,41 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   await page.locator('input[name="website"]').fill('https://spam.example');
   await Promise.all([page.waitForURL(/status=received/), page.getByRole('button', { name: 'Request a demonstration' }).click()]);
   assert.equal(sql(`select count(*) from private.early_access_requests where email = 'bot-${stamp}@example.invalid'`), '0');
+
+  // Ask Njumeni: the hero question box leads to a form that stores the question — and never answers it.
+  await page.goto(`${BASE}/`);
+  assert.ok(await page.locator('.nj-header').getByRole('link', { name: 'Ask Njumeni' }).isVisible(), 'the header leads with Ask Njumeni');
+  const asked = `Journey question ${stamp}: can a tenancy be ended without notice?`;
+  await page.getByLabel('Ask Njumeni a legal question').fill(asked);
+  await Promise.all([page.waitForURL(/\/ask\?q=/), page.locator('.nj-askbox').getByRole('button', { name: 'Ask Njumeni' }).click()]);
+  assert.equal(await page.getByRole('textbox', { name: 'Your question' }).inputValue(), asked, 'the question carries over from the homepage');
+  assert.ok(await page.getByText('Live research is not open yet.').isVisible(), 'the page says research is not open');
+  // Consent is checked on the server too.
+  await page.getByLabel(/I agree that Njumeni keeps this question/).evaluate((el) => el.removeAttribute('required'));
+  await Promise.all([page.waitForURL(/error=consent/), page.getByRole('button', { name: 'Leave my question' }).click()]);
+  assert.match(await page.locator('main .nj-alert-error').innerText(), /confirm that we may keep your question/, 'consent is required');
+  assert.equal(await page.getByRole('textbox', { name: 'Your question' }).inputValue(), asked, 'the question is kept after an error');
+  assert.equal(sql(`select count(*) from private.research_question_submissions where question = '${asked}'`), '0', 'nothing stored without consent');
+  await page.getByLabel('Jurisdiction').selectOption('NO');
+  await page.getByLabel('Answer in').selectOption('nb');
+  await page.getByLabel(/^Email/).fill(`Asker-${stamp}@Example.invalid`);
+  await page.getByLabel(/I agree that Njumeni keeps this question/).check();
+  await Promise.all([page.waitForURL(/status=received/), page.getByRole('button', { name: 'Leave my question' }).click()]);
+  assert.ok(await page.getByText('Thank you — your question has been received.').isVisible());
+  assert.ok(await page.getByText(/It has not been answered/).isVisible(), 'the confirmation says no answer was given');
+  assert.equal(await page.locator('main blockquote').count(), 0, 'no answer or quotation is shown');
+  assert.equal(
+    sql(`select count(*) || '/' || string_agg(jurisdiction_code || '/' || response_language || '/' || contact_email || '/' || (retain_until::date - created_at::date), ',') from private.research_question_submissions where question = '${asked}'`),
+    `1/NO/nb/asker-${stamp}@example.invalid/30`,
+    'stored once, email in lower case, deleted after 30 days',
+  );
+  // A bot filling the hidden field is told the same and nothing is stored.
+  await page.goto(`${BASE}/ask`);
+  await page.getByRole('textbox', { name: 'Your question' }).fill(`Bot question ${stamp}`);
+  await page.getByLabel(/I agree that Njumeni keeps this question/).check();
+  await page.locator('input[name="website"]').fill('https://spam.example');
+  await Promise.all([page.waitForURL(/status=received/), page.getByRole('button', { name: 'Leave my question' }).click()]);
+  assert.equal(sql(`select count(*) from private.research_question_submissions where question = 'Bot question ${stamp}'`), '0');
 
   // Mobile: the menu opens and the page does not scroll sideways.
   const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });

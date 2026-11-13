@@ -53,10 +53,11 @@ export default function Page() {
             title: 'What this notice covers',
             body: (
               <p>
-                This website, early-access and demonstration requests, and accounts in the Njumeni
-                application. For the legal work an organisation keeps in its workspaces — matters,
-                documents and evidence — the organisation decides how its data is used; Njumeni
-                processes it on the organisation’s behalf under a data processing agreement.
+                This website, early-access and demonstration requests, questions left on “Ask
+                Njumeni”, and accounts in the Njumeni application. For the legal work an
+                organisation keeps in its workspaces — matters, documents and evidence — the
+                organisation decides how its data is used; Njumeni processes it on the
+                organisation’s behalf under a data processing agreement.
               </p>
             ),
           },
@@ -70,6 +71,12 @@ export default function Page() {
                   the kind of user you are, your interest, the jurisdictions you choose, any
                   message, and when you gave consent. No IP address or browser details are stored
                   with a request.
+                </li>
+                <li>
+                  <b>Questions left on “Ask Njumeni”:</b> the question, the jurisdiction, date and
+                  answer language you chose, your email if you gave one, and when you gave consent.
+                  No IP address or browser details are stored with a question, and no answer is
+                  generated from it.
                 </li>
                 <li>
                   <b>Accounts:</b> email, name, profile details, organisation memberships and roles.
@@ -94,6 +101,13 @@ export default function Page() {
                   withdraw at any time.
                 </li>
                 <li>
+                  <b>
+                    Learning what people need from legal research, and preparing and testing
+                    research before it opens
+                  </b>{' '}
+                  — your consent when you leave a question (art. 6(1)(a)).
+                </li>
+                <li>
                   <b>Providing the service and your account</b> — performance of a contract (art.
                   6(1)(b)).
                 </li>
@@ -115,6 +129,10 @@ export default function Page() {
                 <li>
                   Early-access and demonstration requests: deleted {FACTS.earlyAccessRetention}{' '}
                   after they are made, or earlier on request.
+                </li>
+                <li>
+                  Questions left on “Ask Njumeni”: deleted automatically {FACTS.questionRetention}{' '}
+                  after they are left, or earlier on request.
                 </li>
                 <li>Accounts: for as long as the account exists.</li>
                 <li>

@@ -21,6 +21,11 @@ export function Kicker({ children }: { children: React.ReactNode }) {
 
 // The public pages, in navigation order. One source for the header, footer and related links.
 export const PAGES = {
+  ask: {
+    href: '/ask',
+    label: 'Ask Njumeni',
+    blurb: 'Leave a legal question for when live research opens.',
+  },
   research: {
     href: '/platform/research',
     label: 'Research',

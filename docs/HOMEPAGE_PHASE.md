@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Current version | v8 — trust and legal pages (2026-11-13) |
-| Routes | `/`, `/platform/research`, `/platform/workspace`, `/platform/change-intelligence`, `/platform/jurisdictions`, `/solutions`, `/plans`, `/security`, `/about`, `/documentation`, `/trust`, `/responsible-ai`, `/early-access-programme`, `/contact`, `/privacy`, `/terms`, `/legal`, `/early-access`, `/robots.txt`, `/sitemap.xml` |
-| Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `research-demo.tsx`, `evidence-pipeline.tsx`, `org-explorer.tsx`, `governance-flow.tsx`, `section-nav.tsx`, `marketing.css`, `early-access/` |
+| Current version | v9 — Ask Njumeni, phase 0 (2026-11-13) |
+| Routes | `/`, `/platform/research`, `/platform/workspace`, `/platform/change-intelligence`, `/platform/jurisdictions`, `/solutions`, `/plans`, `/security`, `/about`, `/documentation`, `/trust`, `/responsible-ai`, `/early-access-programme`, `/contact`, `/privacy`, `/terms`, `/legal`, `/ask`, `/early-access`, `/robots.txt`, `/sitemap.xml` |
+| Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `research-demo.tsx`, `evidence-pipeline.tsx`, `org-explorer.tsx`, `governance-flow.tsx`, `section-nav.tsx`, `marketing.css`, `early-access/`, `ask/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
-| Database | Migration `20261114600000_early_access_requests` (unchanged in v3) |
+| Database | Migrations `20261114600000_early_access_requests` and `20261114700000_research_question_capture` (v9) |
 | Screenshots | `docs/assets/site-desktop-pages.png` and `site-mobile-pages.png` (every page), `homepage-desktop.png` (first screen), `homepage-desktop-full.png`, `homepage-mobile.png` (first screen), `homepage-overview.png` (desktop, three columns), `homepage-mobile-overview.png` (phone, seven columns) |
 
 ## 1. Story
@@ -188,7 +188,23 @@ Every navigation item now opens its own page, with its own URL, title, descripti
 
 **Navigation:** Platform · Who it serves · Trust (Security, Trust centre, Responsible AI) · Plans (Plans, Early-access programme) · Company (About, Contact, Documentation). The footer adds a legal row: Privacy, Terms, Legal notice, Documentation.
 
-## 11. Checks (v8)
+## 11. v9 — Ask Njumeni, phase 0
+
+"Ask Njumeni" is now the main action on the homepage and in the header. **No live answer is given anywhere.** Live public research waits for phase 1: Lovdata activated on the hosted database, and plain-language retrieval passing its evaluation (today P@5 0.506 / 0.407 and R@10 0.778 / 0.600 on the held-out sets, below the gate).
+
+| Part | What it does |
+|---|---|
+| Homepage hero | A question box (`GET /ask?q=…`) with the "Ask Njumeni" button, and a note that research opens in Norway first and that questions are kept rather than answered. Secondary links: the demonstration, early access for organisations, sign in |
+| Header | The gold button is "Ask Njumeni". Early access stays in the announcement bar, the mobile menu, the footer and every closing call to action |
+| `/ask` | States that live research is not open. The form takes the question (prefilled from the homepage), the jurisdiction (Norway first), an optional date, the answer language (English, Bokmål, Nynorsk), an optional email and required consent. It explains what happens to the question and the three modes: demonstration (built, real text, fixed example), early-access research (awaiting activation, organisations), live research for everyone (planned) |
+| Confirmation | Says the question has not been answered. No answer, quotation or source is shown |
+| Server action | `ask/actions.ts`: the bot field (stores nothing and confirms as normal); consent and input are checked on the server; errors keep the question |
+| Database | `private.research_question_submissions`: RLS on, no access for visitors or customers. `research_question_submit` is the only way in (callable without a session; consent required; input checked; 120 an hour across all visitors before `BUSY`). `research_question_list` is for platform operators only. `research_question_purge_expired` runs daily through pg_cron and deletes questions after 30 days. No IP address or user agent is stored |
+| Privacy notice | Adds what is collected, the purpose and legal basis (consent), and the 30-day deletion |
+
+**Hosted:** the migration is **not** applied to the hosted database. Until it is, the form on the live site answers "Your question could not be sent" and stores nothing.
+
+## 12. Checks (v9)
 
 | Check | Result |
 |---|---|
@@ -200,8 +216,10 @@ Every navigation item now opens its own page, with its own URL, title, descripti
 | Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px (iPhone 13), both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
 | Responsive | 1920, 1440, 1280, 1024, 768, 390 and 360 px: no horizontal scroll and no console errors; reviewed viewport by viewport: no horizontal scroll and no console errors |
 
-## 12. Open items
+## 13. Open items
 
+- **Apply `20261114700000_research_question_capture` to the hosted database** (on the owner's "deploy"), so the Ask Njumeni form stores questions in production.
+- **Ask Njumeni phases 1–5** (activation and quality gate, registered research, guest research, AI explanations, change alerts) wait for the owner decisions listed in the assessment: Lovdata activation, guest limits, a bot check, retention, the AI provider, an email provider and languages.
 - **Fill in `site-details.ts`** (legal name, organisation number, address, contact, privacy and security emails, governing law), have counsel review the privacy notice and terms (including the liability section), then set `legalApprovedOn`.
 - **Pin the Vercel server region to the EU**, and update the trust centre and privacy notice once it is set.
 
