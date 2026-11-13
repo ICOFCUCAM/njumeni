@@ -68,24 +68,26 @@ export default function HomePage() {
               </Link>
             </div>
           </ResearchView>
-          <ul className="nj-principles" aria-label="Principles">
+          <ol className="nj-promises" aria-label="What Njumeni promises">
             <li>
-              <b>Official sources</b>
-              <span>Rights-reviewed publications, named in every answer</span>
+              <small>Know the law</small>
+              <b>Research grounded in authoritative sources</b>
+              <span>Answers quote official, rights-reviewed text and name it — or decline.</span>
             </li>
             <li>
-              <b>Exact citations</b>
-              <span>The words of the law, quoted and cited to the provision</span>
+              <small>Understand its authority</small>
+              <b>Answers tied to the law on a date</b>
+              <span>Every finding carries the version in force on the date that matters.</span>
             </li>
             <li>
-              <b>Temporal accuracy</b>
-              <span>The version in force on the date that matters</span>
+              <small>Stay ahead of change</small>
+              <b>Continuous awareness of legislative change</b>
+              <span>
+                Once a source is activated, its changes are dated and traced to the work that relied
+                on the old law.
+              </span>
             </li>
-            <li>
-              <b>Human oversight</b>
-              <span>Qualified people review, approve and decide</span>
-            </li>
-          </ul>
+          </ol>
         </div>
       </section>
 

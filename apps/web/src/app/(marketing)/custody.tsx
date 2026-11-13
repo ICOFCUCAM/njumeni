@@ -45,6 +45,9 @@ const RECORDS = [
 
 export function Custody() {
   const [open, setOpen] = useState<string | null>(null);
+  // Demonstration: alter one record and the chain from that record onwards fails to verify.
+  const [altered, setAltered] = useState(false);
+  const broken = (i: number) => altered && i >= 1;
   return (
     <figure className="nj-cus">
       <div className="nj-cus-head" aria-hidden="true">
@@ -54,7 +57,13 @@ export function Custody() {
       </div>
       <ol className="nj-cus-list">
         {RECORDS.map((r, i) => (
-          <li key={r.hash} className={open === r.hash ? 'is-open' : undefined}>
+          <li
+            key={r.hash}
+            className={
+              [open === r.hash ? 'is-open' : '', broken(i) ? 'is-broken' : ''].join(' ').trim() ||
+              undefined
+            }
+          >
             <button
               type="button"
               className="nj-cus-toggle"
@@ -68,6 +77,7 @@ export function Custody() {
             </span>
             <span className="nj-cus-what">
               <b>{r.action}</b>
+              {altered && i === 1 ? <em className="nj-cus-alt">Altered after the fact</em> : null}
               <span>{r.object}</span>
               <small>{r.note}</small>
             </span>
@@ -79,6 +89,9 @@ export function Custody() {
               <span className="nj-cus-hash">
                 <small>this record</small>
                 <span className="nj-mono">{r.hash}</span>
+              </span>
+              <span className="nj-cus-ok" aria-hidden="true">
+                {broken(i) ? '✕' : '✓'}
               </span>
               {i < RECORDS.length - 1 ? <i className="nj-cus-chain" aria-hidden="true" /> : null}
             </span>
@@ -111,14 +124,25 @@ export function Custody() {
           </li>
         ))}
       </ol>
-      <div className="nj-cus-foot">
+      <div className={`nj-cus-foot ${altered ? 'is-broken' : ''}`} aria-live="polite">
         <span>
-          <b>Chain verifies</b> · 4 of 4 links intact
+          {altered ? (
+            <>
+              <b>Chain fails</b> · 1 of 4 links intact — the change to record 2 is detected
+            </>
+          ) : (
+            <>
+              <b>Chain verifies</b> · 4 of 4 links intact
+            </>
+          )}
         </span>
-        <span>Export with a digest anyone can recompute</span>
+        <button type="button" className="nj-cus-try" onClick={() => setAltered((a) => !a)}>
+          {altered ? 'Restore the record' : 'Try altering record 2'}
+        </button>
       </div>
       <figcaption className="nj-figcap">
-        Illustrative custody record with fictional people. Select a record to see what it seals.
+        Illustrative custody record with fictional people. Select a record to see what it seals;
+        alter one to see the chain fail.
       </figcaption>
     </figure>
   );

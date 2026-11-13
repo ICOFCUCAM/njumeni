@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Current version | v4 — institutional-grade premiumization and interactive product experience (2026-11-13) |
+| Current version | v5 — global institutional design excellence (2026-11-13) |
 | Routes | `/` (homepage, static), `/early-access` (request form), `/robots.txt`, `/sitemap.xml` |
 | Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `research-demo.tsx`, `evidence-pipeline.tsx`, `org-explorer.tsx`, `governance-flow.tsx`, `section-nav.tsx`, `marketing.css`, `early-access/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
@@ -111,7 +111,31 @@ The narrative and section order are unchanged. Each section now has one interact
 
 Motion: short fades and staggered step reveals; all of it is turned off under `prefers-reduced-motion`.
 
-## 7. Checks (v4)
+## 7. v5 — design excellence
+
+- **Design system:** one token layer on `.nj` covers the type scale (`--t-display`, `--t-h2`, `--t-h3`, `--t-lead`, `--t-body`, `--t-ui`, `--t-note`, `--t-label`), spacing (`--s-1` to `--s-8`), radii, shadows, reading widths, focus, easing and duration. Section headings and leads now use it, with wider reading measures. Every interactive control has one shared focus ring and transition.
+- **Hero:** the three promises (sources, date, change) sit under the stage, each keyed to a line of the headline.
+- **Change intelligence:** a live currency meter (current → behind → current) runs through the ten stages, with all four states always visible. The consequence table appears only once there are consequences.
+- **Evidence:** the custody chain can be verified, or a record altered: every link from the altered record onwards fails and the footer reports it.
+- **Workspace:** the journey runs Research → Matter → Evidence → Chronology → Arguments → Document → Review → Sign-off → Compliance. Review and sign-off are separate steps; sign-off writes the audit record.
+- **Jurisdictions:** a stage filter with counts ("Monitored live · 0"), a name label on the selected pin, and a "Content" row. Norway's legal text is prepared for activation; no jurisdiction has content available to customers.
+- **Organisations:** the access check shows the path of checks (organisation, barrier, workspace, permission) and where it stops.
+- **AI:** the governance flow starts at the legal source: legal source, AI suggestion, research finding, professional review, human approval, recorded decision.
+- **Plans:** the full comparison shows all eight plans side by side, grouped by audience. It is a keyboard-scrollable region, with grouped cards on phones.
+
+**The ten weakest decisions found in review, and what was done:**
+1. Section headings were small for their space → new heading scale and reading widths.
+2. Currency states were static → live meter in the walkthrough.
+3. The consequence table was dense before it meant anything → hidden until the affected-work stage.
+4. The custody chain's integrity was asserted, not shown → verify/alter demonstration.
+5. The matter journey stopped at review → research and sign-off added.
+6. Plan comparison needed three tabs → one grouped table.
+7. Map profiles lacked content availability → "Content" row and "Monitored live · 0".
+8. Access decisions lacked the reasoning path → checks shown in order.
+9. The AI flow began with AI → it now begins with the legal source.
+10. Dimmed map buttons failed contrast, the comparison region wasn't keyboard-reachable, and phone landmarks were duplicated → fixed (axe 0 at every width).
+
+## 8. Checks (v5)
 
 | Check | Result |
 |---|---|
@@ -123,7 +147,7 @@ Motion: short fades and staggered step reveals; all of it is turned off under `p
 | Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px (iPhone 13), both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
 | Responsive | 1920, 1440, 1280, 1024, 768, 390 and 360 px: no horizontal scroll and no console errors; reviewed viewport by viewport: no horizontal scroll and no console errors |
 
-## 8. Open items
+## 9. Open items
 
 - **Web hosting:** Vercel builds the default branch once the deployment quota allows.
 - **Owner decisions:**

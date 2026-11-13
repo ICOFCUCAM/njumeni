@@ -544,16 +544,8 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await plans.locator('.nj-finder-name', { hasText: 'Law Firm' }).isVisible(), 'the finder suggests a configured plan');
   assert.equal(await plans.locator('.nj-tier-plans > li.is-picked h4').innerText(), 'Law Firm', 'and highlights it');
   await plans.locator('summary', { hasText: 'Compare every allowance' }).click();
-  let planCount = 0;
-  for (const group of ['Individuals', 'Legal professionals', 'Organisations']) {
-    await plans.getByRole('tab', { name: group }).click();
-    planCount += await plans.locator('thead th[scope="col"]:not(:first-child)').count();
-  }
-  assert.equal(planCount, 8, 'eight plans across the three groups');
+  assert.equal(await plans.locator('.nj-pl-table--all thead tr:last-child th[scope="col"]:not(:first-child)').count(), 8, 'all eight plans compared side by side');
   assert.ok(await plans.getByText('20,000').first().isVisible(), 'allowances from the configuration');
-  await plans.getByRole('tab', { name: 'Individuals' }).focus();
-  await page.keyboard.press('ArrowRight');
-  assert.equal(await plans.getByRole('tab', { name: 'Legal professionals' }).getAttribute('aria-selected'), 'true', 'arrow keys move between plan groups');
   assert.ok(!/[$€£]\s?\d/.test(await plans.innerText()), 'no undecided prices are published');
   // Every link resolves: internal pages return 200 and every in-page anchor exists.
   const hrefs = [...new Set(await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href'))))];

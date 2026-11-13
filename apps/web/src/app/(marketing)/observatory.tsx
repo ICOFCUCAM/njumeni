@@ -190,6 +190,8 @@ export function Observatory() {
   const [view, setView] = useState<'changes' | 'previous' | 'new'>('changes');
   const stage = STAGES[index]!;
   const state = itemState(index);
+  // A detected change that is not yet ingested reads "behind"; currency returns once it is.
+  const currency = index === 0 || index === 9 ? 'Current' : 'Behind';
   return (
     <div className="nj-obs">
       <div className="nj-obs-head">
@@ -207,7 +209,23 @@ export function Observatory() {
             </li>
           ))}
         </ol>
-        <span className="nj-tag nj-tag--illustrative nj-tag--ondark">Illustrative change</span>
+        <div className="nj-obs-meta">
+          <div className="nj-currency-meter" aria-live="polite">
+            <span className="nj-currency-meter-k">Norway in this example</span>
+            <ol aria-label="Legal currency">
+              {(['Current', 'Behind', 'Unverified', 'Not monitored'] as const).map((c) => (
+                <li
+                  key={c}
+                  className={`nj-cm-${c.replace(' ', '-').toLowerCase()}${c === currency ? ' is-on' : ''}`}
+                  aria-current={c === currency ? 'true' : undefined}
+                >
+                  {c}
+                </li>
+              ))}
+            </ol>
+          </div>
+          <span className="nj-tag nj-tag--illustrative nj-tag--ondark">Illustrative change</span>
+        </div>
       </div>
 
       <svg
@@ -409,45 +427,47 @@ export function Observatory() {
               : '4 research answers · 2 documents · 1 matter · 3 workspaces · every action decided by a person'}
           </p>
         </div>
-        <table className="nj-cons-table">
-          <caption className="nj-sr">Consequences of the amendment, at stage {index + 1}</caption>
-          <thead>
-            <tr>
-              <th scope="col">Affected</th>
-              <th scope="col">Where</th>
-              <th scope="col">Required action</th>
-              <th scope="col">Decided by</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {CONSEQUENCES.map((c) => {
-              const status = index < 5 ? 'Not yet assessed' : c.status[index - 5]!;
-              const tone =
-                index < 5
-                  ? 'is-idle'
-                  : index === 9
-                    ? 'is-done'
-                    : index === 5
-                      ? 'is-found'
-                      : 'is-active';
-              return (
-                <tr key={c.what} className={tone}>
-                  <th scope="row">
-                    <b>{c.what}</b>
-                    <span>{c.why}</span>
-                  </th>
-                  <td data-label="Where">{c.where}</td>
-                  <td data-label="Action">{c.action}</td>
-                  <td data-label="Decided by">{c.who}</td>
-                  <td data-label="Status">
-                    <span className="nj-cons-status">{status}</span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {index < 5 ? null : (
+          <table className="nj-cons-table">
+            <caption className="nj-sr">Consequences of the amendment, at stage {index + 1}</caption>
+            <thead>
+              <tr>
+                <th scope="col">Affected</th>
+                <th scope="col">Where</th>
+                <th scope="col">Required action</th>
+                <th scope="col">Decided by</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CONSEQUENCES.map((c) => {
+                const status = index < 5 ? 'Not yet assessed' : c.status[index - 5]!;
+                const tone =
+                  index < 5
+                    ? 'is-idle'
+                    : index === 9
+                      ? 'is-done'
+                      : index === 5
+                        ? 'is-found'
+                        : 'is-active';
+                return (
+                  <tr key={c.what} className={tone}>
+                    <th scope="row">
+                      <b>{c.what}</b>
+                      <span>{c.why}</span>
+                    </th>
+                    <td data-label="Where">{c.where}</td>
+                    <td data-label="Action">{c.action}</td>
+                    <td data-label="Decided by">{c.who}</td>
+                    <td data-label="Status">
+                      <span className="nj-cons-status">{status}</span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
       <p className="nj-obs-foot">
         An illustrative walk through the workflow: invented wording (Immigration Act, section 28 —

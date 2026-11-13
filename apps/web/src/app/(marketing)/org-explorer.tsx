@@ -113,6 +113,37 @@ export function OrgExplorer() {
   );
 }
 
+// The order of checks the database applies; the first failure decides.
+const WS_OF: Record<MemberKey, string | null> = {
+  berg: 'Employment',
+  lie: 'Corporate',
+  dahl: null,
+};
+const PERM: Record<ResourceKey, string> = {
+  matter: 'matter.read',
+  doc: 'document.read',
+  audit: 'audit.read',
+};
+const HOLDS: Record<MemberKey, ResourceKey> = { berg: 'matter', lie: 'doc', dahl: 'audit' };
+function path(member: MemberKey, resource: ResourceKey): [string, boolean | null][] {
+  const target = resource === 'matter' ? 'Employment' : resource === 'doc' ? 'Corporate' : null;
+  const checks: [string, boolean][] = [
+    ['Member of Example Advokatfirma AS', true],
+    ['No information barrier in the way', !(member === 'lie' && resource === 'matter')],
+    [
+      target ? `Member of the ${target} workspace` : 'Organisation-level record',
+      target ? WS_OF[member] === target : true,
+    ],
+    [`Role holds ${PERM[resource]}`, HOLDS[member] === resource],
+  ];
+  let failed = false;
+  return checks.map(([label, ok]) => {
+    if (failed) return [label, null];
+    if (!ok) failed = true;
+    return [label, ok];
+  });
+}
+
 export function AccessCheck() {
   const [member, setMember] = useState<MemberKey>('lie');
   const [resource, setResource] = useState<ResourceKey>('matter');
@@ -167,6 +198,17 @@ export function AccessCheck() {
             {m.name} → {r.name}
           </p>
           <p className="nj-access-why">{reason}</p>
+          <ol className="nj-access-path" aria-label="Checks applied, in order">
+            {path(member, resource).map(([label, ok]) => (
+              <li key={label} className={ok === null ? 'is-skip' : ok ? 'is-ok' : 'is-fail'}>
+                <span aria-hidden="true">{ok === null ? '–' : ok ? '✓' : '✕'}</span>
+                {label}
+                <span className="nj-sr">
+                  {ok === null ? ': not reached' : ok ? ': passed' : ': failed'}
+                </span>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </div>

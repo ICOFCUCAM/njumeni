@@ -325,93 +325,80 @@ export function PlanChooser() {
 }
 
 export function Plans() {
-  const [active, setActive] = useState(0);
-  const group = GROUPS[active]!;
   return (
-    <div className="nj-pl">
-      <div className="nj-pl-switch" role="tablist" aria-label="Plan groups">
-        {GROUPS.map((g, i) => (
-          <button
-            key={g.key}
-            id={`pl-${g.key}`}
-            role="tab"
-            aria-selected={i === active}
-            aria-controls="pl-panel"
-            tabIndex={i === active ? 0 : -1}
-            onClick={() => setActive(i)}
-            onKeyDown={(e) => {
-              const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-              if (!step) return;
-              e.preventDefault();
-              const next = (i + step + GROUPS.length) % GROUPS.length;
-              setActive(next);
-              document.getElementById(`pl-${GROUPS[next]!.key}`)?.focus();
-            }}
-          >
-            {g.title}
-          </button>
-        ))}
-      </div>
+    <div className="nj-pl nj-pl--all">
       <div
-        key={group.key}
-        id="pl-panel"
-        role="tabpanel"
-        aria-labelledby={`pl-${group.key}`}
-        className="nj-pl-panel nj-fade"
+        className="nj-pl-scroll"
+        role="region"
+        aria-label="Allowances of all eight plans, scrollable"
+        tabIndex={0}
       >
-        <p className="nj-pl-ws">{group.workspace}</p>
-        <div className="nj-pl-scroll">
-          <table className="nj-pl-table" style={{ ['--cols' as string]: group.plans.length }}>
-            <thead>
-              <tr>
-                <th scope="col">
-                  <span className="nj-sr">Allowance</span>
+        <table className="nj-pl-table nj-pl-table--all">
+          <caption className="nj-sr">Allowances of all eight plans</caption>
+          <thead>
+            <tr className="nj-pl-groups">
+              <td />
+              {GROUPS.map((g) => (
+                <th key={g.key} scope="colgroup" colSpan={g.plans.length}>
+                  {g.title}
                 </th>
-                {group.plans.map((p) => (
-                  <th key={p.name} scope="col">
-                    <b>{p.name}</b>
-                    <span>{p.forWhom}</span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {ROWS.map((row) => (
-                <tr key={row.key}>
-                  <th scope="row">{row.label}</th>
-                  {group.plans.map((p) => (
-                    <td key={p.name}>{fmt(p[row.key] as Allowance, row.unit)}</td>
-                  ))}
-                </tr>
               ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th scope="row">Access</th>
-                {group.plans.map((p) => (
-                  <td key={p.name}>{p.access}</td>
+            </tr>
+            <tr>
+              <th scope="col">
+                <span className="nj-sr">Allowance</span>
+              </th>
+              {ALL_PLANS.map((p) => (
+                <th key={p.name} scope="col">
+                  <b>{p.name}</b>
+                  <span>{p.forWhom}</span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {ROWS.map((row) => (
+              <tr key={row.key}>
+                <th scope="row">{row.label}</th>
+                {ALL_PLANS.map((p) => (
+                  <td key={p.name}>{fmt(p[row.key] as Allowance, row.unit)}</td>
                 ))}
               </tr>
-            </tfoot>
-          </table>
-        </div>
-        <ul className="nj-pl-cards">
-          {group.plans.map((p) => (
-            <li key={p.name}>
-              <h3>{p.name}</h3>
-              <p>{p.forWhom}</p>
-              <dl>
-                {ROWS.map((row) => (
-                  <div key={row.key}>
-                    <dt>{row.label}</dt>
-                    <dd>{fmt(p[row.key] as Allowance, row.unit)}</dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="nj-pl-access">{p.access}</p>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row">Access</th>
+              {ALL_PLANS.map((p) => (
+                <td key={p.name}>{p.access}</td>
+              ))}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div className="nj-pl-cards-all">
+        {GROUPS.map((g) => (
+          <section key={g.key} aria-label={`${g.title}: every allowance`}>
+            <h3 className="nj-pl-ws">{g.title}</h3>
+            <ul className="nj-pl-cards">
+              {g.plans.map((p) => (
+                <li key={p.name}>
+                  <h4>{p.name}</h4>
+                  <p>{p.forWhom}</p>
+                  <dl>
+                    {ROWS.map((row) => (
+                      <div key={row.key}>
+                        <dt>{row.label}</dt>
+                        <dd>{fmt(p[row.key] as Allowance, row.unit)}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="nj-pl-access">{p.access}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </div>
     </div>
   );

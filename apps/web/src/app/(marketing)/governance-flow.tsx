@@ -6,6 +6,13 @@ import { useState } from 'react';
 // drafting and legal reasoning are planned and are not shown here as live. Fictional people.
 const STEPS = [
   {
+    key: 'source',
+    actor: 'The law',
+    label: 'Legal source',
+    does: 'The official text of the Working Environment Act is held with its version, dates and licence.',
+    cannot: 'Only rights-reviewed official sources can be quoted. Nothing else is treated as law.',
+  },
+  {
     key: 'suggest',
     actor: 'AI',
     label: 'AI suggestion',
@@ -14,8 +21,8 @@ const STEPS = [
   },
   {
     key: 'ground',
-    actor: 'The law',
-    label: 'Source-grounded finding',
+    actor: 'Finding',
+    label: 'Research finding',
     does: 'The finding quotes the held text of the provision, in force on the date asked.',
     cannot: 'If the text or the version is not held, there is no finding — the engine declines.',
   },

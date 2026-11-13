@@ -187,116 +187,161 @@ const STAGE_LABEL = {
 
 export function Atlas() {
   const [code, setCode] = useState('NO');
+  const [filter, setFilter] = useState<'all' | Jurisdiction['stage']>('all');
   const j = JURISDICTIONS.find((item) => item.code === code)!;
+  const count = (stage: Jurisdiction['stage']) =>
+    JURISDICTIONS.filter((x) => x.stage === stage).length;
+  const dim = (item: Jurisdiction) => filter !== 'all' && item.stage !== filter;
   return (
-    <div className="nj-atlas">
-      <div className="nj-atlas-map">
-        <div className="nj-atlas-canvas">
-          <img
-            src="/home/jurisdiction-atlas.svg"
-            alt=""
-            width={1000}
-            height={491}
-            loading="lazy"
-            decoding="async"
-          />
-          {JURISDICTIONS.map((item) => (
-            <button
-              key={item.code}
-              type="button"
-              className={`nj-atlas-pin nj-atlas-pin--${item.stage}`}
-              style={{ left: `${item.x}%`, top: `${item.y}%` }}
-              aria-pressed={item.code === code}
-              aria-label={`${item.name}: ${STAGE_LABEL[item.stage]}`}
-              onClick={() => setCode(item.code)}
-            />
-          ))}
-        </div>
-        <ul className="nj-atlas-legend">
-          <li style={{ ['--c' as string]: '#C6A66B' }}>
-            <i aria-hidden="true" />
-            Reference jurisdiction
-          </li>
-          <li style={{ ['--c' as string]: '#142638' }}>
-            <i aria-hidden="true" />
-            Profiled · official sources registered
-          </li>
-          <li style={{ ['--c' as string]: '#FCFAF5', ['--b' as string]: '#142638' }}>
-            <i aria-hidden="true" />
-            Catalogued
-          </li>
-          <li style={{ ['--c' as string]: '#C3CBD2' }}>
-            <i aria-hidden="true" />
-            EU member states
-          </li>
-        </ul>
+    <div className="nj-atlas-wrap">
+      <div className="nj-atlas-filter" role="group" aria-label="Show jurisdictions by stage">
+        {(
+          [
+            ['all', `All · ${JURISDICTIONS.length}`],
+            ['reference', `Reference · ${count('reference')}`],
+            ['profiled', `Profiled · ${count('profiled')}`],
+            ['catalogued', `Catalogued · ${count('catalogued')}`],
+          ] as const
+        ).map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={filter === key}
+            onClick={() => setFilter(key)}
+          >
+            {label}
+          </button>
+        ))}
+        <span className="nj-atlas-monitored">Monitored live · 0</span>
       </div>
-      <div className="nj-atlas-side">
-        <div className="nj-atlas-pick" role="group" aria-label="Choose a jurisdiction">
-          {JURISDICTIONS.map((item) => (
-            <button
-              key={item.code}
-              type="button"
-              aria-pressed={item.code === code}
-              onClick={() => setCode(item.code)}
-            >
-              {item.code}
-            </button>
-          ))}
+      <div className="nj-atlas">
+        <div className="nj-atlas-map">
+          <div className="nj-atlas-canvas">
+            <img
+              src="/home/jurisdiction-atlas.svg"
+              alt=""
+              width={1000}
+              height={491}
+              loading="lazy"
+              decoding="async"
+            />
+            {JURISDICTIONS.map((item) => (
+              <button
+                key={item.code}
+                type="button"
+                className={`nj-atlas-pin nj-atlas-pin--${item.stage}${dim(item) ? ' is-dim' : ''}`}
+                style={{ left: `${item.x}%`, top: `${item.y}%` }}
+                aria-pressed={item.code === code}
+                aria-label={`${item.name}: ${STAGE_LABEL[item.stage]}`}
+                onClick={() => setCode(item.code)}
+              />
+            ))}
+            {j.x !== undefined ? (
+              <span
+                className="nj-atlas-label"
+                style={{ left: `${j.x}%`, top: `${j.y}%` }}
+                aria-hidden="true"
+              >
+                {j.name}
+              </span>
+            ) : null}
+          </div>
+          <ul className="nj-atlas-legend">
+            <li style={{ ['--c' as string]: '#C6A66B' }}>
+              <i aria-hidden="true" />
+              Reference jurisdiction
+            </li>
+            <li style={{ ['--c' as string]: '#142638' }}>
+              <i aria-hidden="true" />
+              Profiled · official sources registered
+            </li>
+            <li style={{ ['--c' as string]: '#FCFAF5', ['--b' as string]: '#142638' }}>
+              <i aria-hidden="true" />
+              Catalogued
+            </li>
+            <li style={{ ['--c' as string]: '#C3CBD2' }}>
+              <i aria-hidden="true" />
+              EU member states
+            </li>
+          </ul>
         </div>
-        <div key={j.code} className="nj-atlas-card nj-fade" aria-live="polite">
-          <p className="nj-atlas-stage">{STAGE_LABEL[j.stage]}</p>
-          <h3>{j.name}</h3>
-          <dl>
-            <div>
-              <dt>Legal system</dt>
-              <dd>{j.system}</dd>
-            </div>
-            <div>
-              <dt>Languages</dt>
-              <dd>{j.languages}</dd>
-            </div>
-            <div>
-              <dt>Official sources</dt>
-              <dd>
-                {j.sources.length ? (
-                  <ul>
-                    {j.sources.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  'To be registered with the jurisdiction profile'
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Authority structure</dt>
-              <dd>{STRUCTURE[j.code] ?? 'Described when the jurisdiction is profiled'}</dd>
-            </div>
-            <div>
-              <dt>Source rights</dt>
-              <dd>
-                {RIGHTS[j.code] ??
-                  (j.sources.length
-                    ? 'Rights review pending for each source'
-                    : 'No sources registered yet')}
-              </dd>
-            </div>
-            <div>
-              <dt>Monitoring</dt>
-              <dd>
-                <span className="nj-dot nj-dot--off" aria-hidden="true" /> Not monitored yet
-              </dd>
-            </div>
-            <div>
-              <dt>Verification</dt>
-              <dd>Not evaluated · no legal coverage is claimed</dd>
-            </div>
-          </dl>
-          <p className="nj-atlas-note">
-            A profile describes a legal system. It is not legal coverage.
-          </p>
+        <div className="nj-atlas-side">
+          <div className="nj-atlas-pick" role="group" aria-label="Choose a jurisdiction">
+            {JURISDICTIONS.map((item) => (
+              <button
+                key={item.code}
+                type="button"
+                aria-pressed={item.code === code}
+                aria-label={item.name}
+                className={dim(item) ? 'is-dim' : undefined}
+                onClick={() => setCode(item.code)}
+              >
+                {item.code}
+              </button>
+            ))}
+          </div>
+          <div key={j.code} className="nj-atlas-card nj-fade" aria-live="polite">
+            <p className="nj-atlas-stage">{STAGE_LABEL[j.stage]}</p>
+            <h3>{j.name}</h3>
+            <dl>
+              <div>
+                <dt>Legal system</dt>
+                <dd>{j.system}</dd>
+              </div>
+              <div>
+                <dt>Languages</dt>
+                <dd>{j.languages}</dd>
+              </div>
+              <div>
+                <dt>Official sources</dt>
+                <dd>
+                  {j.sources.length ? (
+                    <ul>
+                      {j.sources.map((s) => (
+                        <li key={s}>{s}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    'To be registered with the jurisdiction profile'
+                  )}
+                </dd>
+              </div>
+              <div>
+                <dt>Authority structure</dt>
+                <dd>{STRUCTURE[j.code] ?? 'Described when the jurisdiction is profiled'}</dd>
+              </div>
+              <div>
+                <dt>Source rights</dt>
+                <dd>
+                  {RIGHTS[j.code] ??
+                    (j.sources.length
+                      ? 'Rights review pending for each source'
+                      : 'No sources registered yet')}
+                </dd>
+              </div>
+              <div>
+                <dt>Content</dt>
+                <dd>
+                  {j.code === 'NO'
+                    ? 'Legal text prepared for activation · not available to customers yet'
+                    : 'No legal content available'}
+                </dd>
+              </div>
+              <div>
+                <dt>Monitoring</dt>
+                <dd>
+                  <span className="nj-dot nj-dot--off" aria-hidden="true" /> Not monitored yet
+                </dd>
+              </div>
+              <div>
+                <dt>Verification</dt>
+                <dd>Not evaluated · no legal coverage is claimed</dd>
+              </div>
+            </dl>
+            <p className="nj-atlas-note">
+              A profile describes a legal system. It is not legal coverage.
+            </p>
+          </div>
         </div>
       </div>
     </div>

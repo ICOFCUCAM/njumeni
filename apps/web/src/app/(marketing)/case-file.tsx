@@ -5,8 +5,31 @@ import { useState } from 'react';
 // An illustrative matter in the professional workspace. Names are fictional ("Example …").
 const TABS = [
   {
+    key: 'research',
+    label: 'Research',
+    count: '1',
+    body: (
+      <>
+        <h4>Saved research · attached to this matter</h4>
+        <p className="nj-cf-claim">Working Environment Act § 15-7 (1)</p>
+        <dl className="nj-kv">
+          <dt>Question</dt>
+          <dd>Can an employer dismiss an employee without a reason?</dd>
+          <dt>Version</dt>
+          <dd>In force from 1 July 2026 · law as at 12 Nov 2026</dd>
+          <dt>Citation</dt>
+          <dd>
+            <span className="nj-mono">LOV-2005-06-17-62</span> · Lovdata, NLOD 2.0
+          </dd>
+          <dt>Used in</dt>
+          <dd>Argument 1 · reply, footnote 1</dd>
+        </dl>
+      </>
+    ),
+  },
+  {
     key: 'overview',
-    label: 'Overview',
+    label: 'Matter',
     count: '',
     body: (
       <>
@@ -123,7 +146,7 @@ const TABS = [
   },
   {
     key: 'draft',
-    label: 'Draft',
+    label: 'Document',
     count: 'v3',
     body: (
       <>
@@ -145,18 +168,35 @@ const TABS = [
     count: '',
     body: (
       <>
-        <h4>Review and sign-off</h4>
+        <h4>Review before sign-off</h4>
         <ul className="nj-rows">
           <li>
             <span>Citation accuracy</span>
-            <span />
+            <span className="nj-mono">3 of 3</span>
             <span className="nj-pill">Passed</span>
           </li>
           <li>
             <span>Law in force on the relevant date</span>
-            <span />
+            <span className="nj-mono">12 Nov 2026</span>
             <span className="nj-pill">Passed</span>
           </li>
+          <li>
+            <span>Evidence referenced is held and fingerprinted</span>
+            <span className="nj-mono">2 items</span>
+            <span className="nj-pill">Passed</span>
+          </li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    key: 'signoff',
+    label: 'Sign-off',
+    count: '',
+    body: (
+      <>
+        <h4>Sign-off and release</h4>
+        <ul className="nj-rows">
           <li>
             <span>Partner sign-off</span>
             <span className="nj-mono">I. Berg</span>
@@ -166,6 +206,11 @@ const TABS = [
             <span>Sent to client</span>
             <span className="nj-mono">18 Nov 09:42</span>
             <span className="nj-pill nj-pill--gold">Recorded</span>
+          </li>
+          <li>
+            <span>Audit record</span>
+            <span className="nj-mono">who · when · why</span>
+            <span className="nj-pill">Written</span>
           </li>
         </ul>
       </>
