@@ -529,9 +529,11 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.match(await page.locator('h1').innerText(), /The law changes/, 'refresh keeps the page');
   await Promise.all([page.waitForURL(/\/plans$/), page.locator('.nj-nav').getByRole('link', { name: 'Plans' }).click()]);
   await page.goBack();
-  assert.match(page.url(), /\/platform\/change-intelligence$/, 'back returns to the previous page');
+  await page.waitForURL(/\/platform\/change-intelligence$/);
+  assert.match(await page.locator('h1').innerText(), /The law changes/, 'back returns to the previous page');
   await page.goForward();
-  assert.match(page.url(), /\/plans$/, 'forward returns again');
+  await page.waitForURL(/\/plans$/);
+  assert.match(await page.locator('h1').innerText(), /Clear allowances/, 'forward returns again');
 
   // Research page: the demonstration uses real text and declines where it must.
   await page.goto(`${BASE}/platform/research`);
