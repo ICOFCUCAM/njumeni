@@ -23,7 +23,8 @@ The page follows one legal question through Njumeni, in chapters instead of feat
 | V · The institution | Enterprise | **Organisation architecture**: organisation → workspaces (barrier) → controls |
 | VI · The world | International | **Jurisdiction board**: codes, official sources, languages |
 | VII · The principle | Trust and responsibility | Manifesto and six numbered commitments |
-| VIII · Who asks | Audiences | Five people, each with their own question |
+| VIII · Who uses Njumeni | Customer categories (commercial policy, Master Plan §2.4) | The four categories (individuals; legal professionals; law firms and enterprises; institutions), each with its workspace, its users, a typical question and how it uses Njumeni |
+| IX · Plans | Plans (Master Plan §17.1) | Free, Personal, Professional, Law Firm, Enterprise, Institutional: who each is for and what it includes. **No prices**: §17.1 marks them as hypotheses still to be decided, so paid plans read "Announced at early access" or "By contract". States the allowance rule (no unlimited high-cost AI on low-priced plans) |
 | Close | Legal intelligence that keeps pace with the law | Request early access · Book a demonstration |
 
 Visual system: midnight navy, antique gold, warm ivory, forest teal; editorial serif headings; no stock photography and no chatbot imagery. All styles are scoped (`nj-` prefix); the application's styles are unchanged.

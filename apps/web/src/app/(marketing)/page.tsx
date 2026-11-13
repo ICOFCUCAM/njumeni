@@ -96,31 +96,95 @@ const BOARD = [
   { code: 'UG', name: 'Uganda', source: 'ULII · Uganda Gazette', lang: 'en', state: 'Common law' },
 ];
 
-const PERSONAS = [
+// Customer categories and workspaces: Master Plan v2.0 §2.4 and Product Specification §3.
+const CATEGORIES = [
   {
-    who: 'An individual',
+    n: '01',
+    who: 'Individuals',
+    workspace: 'Personal workspace',
+    users: 'People with a legal problem, including those representing themselves',
     q: '“Can my landlord keep my deposit?”',
-    a: 'A clear answer from the Tenancy Act, with the exact section — and a reminder of when to see a lawyer.',
+    uses: [
+      'Understand their rights in plain language, with the exact section of law',
+      'Organise their facts, documents and correspondence',
+      'Prepare the right questions — and know when to see a lawyer',
+    ],
   },
   {
-    who: 'A legal professional',
+    n: '02',
+    who: 'Legal professionals',
+    workspace: 'Professional workspace',
+    users: 'Lawyers, advocates, solicitors, barristers, advisers, paralegals and researchers',
     q: '“What was the notice period on the day the contract ended?”',
-    a: 'The version in force on that date, quoted and cited, ready for the brief.',
+    uses: [
+      'Research the law in force on the relevant date, quoted and cited',
+      'Verify every citation before it is relied on',
+      'Analyse evidence, build arguments and draft documents',
+    ],
   },
   {
-    who: 'A law firm',
-    q: '“Can we act for this client?”',
-    a: 'A conflict search across matters and parties, with barriers recorded before work begins.',
+    n: '03',
+    who: 'Law firms and enterprises',
+    workspace: 'Enterprise and Law Firm workspace',
+    users: 'Partners, in-house legal teams, compliance teams and matter managers',
+    q: '“Can we act for this client — and which policies does the new regulation touch?”',
+    uses: [
+      'Shared matters with conflict checks, barriers and team permissions',
+      'Firm knowledge and repeatable workflows',
+      'Oversight, compliance registers and reporting',
+    ],
   },
   {
-    who: 'An enterprise',
-    q: '“Which of our policies does the new regulation touch?”',
-    a: 'Change intelligence mapped to your compliance register and the people who own it.',
-  },
-  {
-    who: 'A public institution',
+    n: '04',
+    who: 'Institutions',
+    workspace: 'Institutional workspace',
+    users: 'Public bodies, institutional legal departments and regulators',
     q: '“Is our guidance still correct after the amendment?”',
-    a: 'Every document that quotes the changed provision, flagged for review.',
+    uses: [
+      'Controlled institutional legal knowledge',
+      'Policy, administrative and regulatory work',
+      'Accountability with audit records that can be verified',
+    ],
+  },
+];
+
+// Plans: Master Plan v2.0 §17.1. Prices are hypotheses still to be decided, so none are shown.
+const PLANS = [
+  {
+    name: 'Free',
+    forWhom: 'The general public',
+    includes: 'Public-law research with a low monthly allowance',
+    price: 'Free',
+  },
+  {
+    name: 'Personal',
+    forWhom: 'Individuals, and individuals with ongoing legal matters (Personal Plus)',
+    includes: 'Research, saved answers and a personal document workspace',
+    price: 'Announced at early access',
+  },
+  {
+    name: 'Professional',
+    forWhom: 'Lawyers and advisers; high-volume practitioners (Professional Plus)',
+    includes: 'The full research and verification toolset, matters, evidence and drafting',
+    price: 'Announced at early access',
+  },
+  {
+    name: 'Law Firm',
+    forWhom: 'Legal practices',
+    includes: 'Per-seat workspaces, shared matters, conflict checks, barriers and firm knowledge',
+    price: 'Announced at early access',
+  },
+  {
+    name: 'Enterprise',
+    forWhom: 'Large organisations and in-house legal teams',
+    includes: 'Compliance registers, governance, API access, retention controls and SSO',
+    price: 'By contract',
+  },
+  {
+    name: 'Institutional',
+    forWhom: 'Public institutions',
+    includes: 'Institutional workspaces, controlled knowledge, audit and licensed deployments',
+    price: 'By contract',
   },
 ];
 
@@ -479,30 +543,87 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* VIII. Who asks */}
+      {/* VIII. Who uses Njumeni */}
       <section
         id="audiences"
         className="nj-section nj-section-alt"
         aria-labelledby="audiences-title"
       >
         <div className="nj-wrap">
-          <Chapter n="VIII" title="Who asks" />
-          <h2 id="audiences-title">
-            Five people. Five questions. <em>One standard of evidence.</em>
-          </h2>
-          <div className="nj-personas">
-            {PERSONAS.map((p) => (
-              <figure key={p.who} className="nj-persona">
-                <figcaption>{p.who}</figcaption>
-                <blockquote>{p.q}</blockquote>
-                <p>{p.a}</p>
-              </figure>
+          <div className="nj-split-head">
+            <div>
+              <Chapter n="VIII" title="Who uses Njumeni" />
+              <h2 id="audiences-title">
+                Four kinds of user. <em>Four workspaces. One standard of evidence.</em>
+              </h2>
+            </div>
+            <p className="nj-lead">
+              Every user works on the same legal intelligence engine, in the workspace made for how
+              they work. One person can belong to more than one; what they can see is decided by
+              their organisation, role and permissions.
+            </p>
+          </div>
+          <div className="nj-categories">
+            {CATEGORIES.map((c) => (
+              <article key={c.who} className="nj-category">
+                <header>
+                  <span className="nj-category-n">{c.n}</span>
+                  <div>
+                    <h3>{c.who}</h3>
+                    <p className="nj-category-ws">{c.workspace}</p>
+                  </div>
+                </header>
+                <p className="nj-category-users">{c.users}</p>
+                <blockquote>{c.q}</blockquote>
+                <ul className="nj-checks">
+                  {c.uses.map((u) => (
+                    <li key={u}>{u}</li>
+                  ))}
+                </ul>
+              </article>
             ))}
           </div>
           <p className="nj-fineprint">
             Njumeni provides legal information and research tools. It is not a law firm and does not
             replace advice from a qualified lawyer.
           </p>
+        </div>
+      </section>
+
+      {/* IX. Plans */}
+      <section id="plans" className="nj-section" aria-labelledby="plans-title">
+        <div className="nj-wrap">
+          <div className="nj-split-head">
+            <div>
+              <Chapter n="IX" title="Plans" />
+              <h2 id="plans-title">
+                From one question <em>to a whole institution.</em>
+              </h2>
+            </div>
+            <p className="nj-lead">
+              Every plan has clear allowances for research, documents and AI, with no unlimited
+              high-cost AI on low-priced plans. Organisations add seats, AI credits, API access and
+              storage as they grow; monthly and annual terms are available.
+            </p>
+          </div>
+          <div className="nj-plans">
+            {PLANS.map((plan) => (
+              <article key={plan.name} className="nj-plan">
+                <h3>{plan.name}</h3>
+                <p className="nj-plan-for">{plan.forWhom}</p>
+                <p className="nj-plan-includes">{plan.includes}</p>
+                <p className="nj-plan-price">{plan.price}</p>
+              </article>
+            ))}
+          </div>
+          <div className="nj-cta-row" style={{ marginTop: 28 }}>
+            <Link href="/early-access" className="nj-btn nj-btn-navy">
+              Request early access
+            </Link>
+            <Link href="/early-access?interest=demonstration" className="nj-btn nj-btn-outline">
+              Talk to us about Enterprise or Institutional
+            </Link>
+          </div>
         </div>
       </section>
 

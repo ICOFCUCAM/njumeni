@@ -484,7 +484,7 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'index, follow', 'the homepage is indexable');
   assert.ok(await page.getByText('Njumeni is opening to early-access organisations, starting with Norway.').isVisible(), 'early-access notice');
   // The story: eight chapters, each reachable from the table of contents.
-  for (const id of ['research', 'workspace', 'evidence', 'change-intelligence', 'enterprise', 'international', 'trust', 'audiences']) {
+  for (const id of ['research', 'workspace', 'evidence', 'change-intelligence', 'enterprise', 'international', 'trust', 'audiences', 'plans']) {
     assert.equal(await page.locator(`section#${id}`).count(), 1, `chapter ${id}`);
   }
   // The time machine: moving the date changes the version of the law that applies.
@@ -504,6 +504,13 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   const text = await page.locator('main').innerText();
   assert.ok(!/\b2[0-9]\+? jurisdictions\b/i.test(text), 'no inflated jurisdiction count');
   assert.ok(text.includes('17 legal'), 'the framework size is stated accurately');
+  // Commercial policy (Master Plan §2.4, §17.1): four customer categories with their workspaces; plans without prices.
+  assert.equal(await page.locator('#audiences .nj-category').count(), 4, 'four customer categories');
+  for (const ws of ['Personal workspace', 'Professional workspace', 'Enterprise and Law Firm workspace', 'Institutional workspace']) {
+    assert.ok(await page.locator('#audiences').getByText(ws, { exact: true }).isVisible(), ws);
+  }
+  assert.equal(await page.locator('#plans .nj-plan').count(), 6, 'six plans');
+  assert.ok(!/[$€£]\s?\d/.test(await page.locator('#plans').innerText()), 'no undecided prices are published');
   // Every link resolves: internal pages return 200 and every in-page anchor exists.
   const hrefs = [...new Set(await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href'))))];
   for (const href of hrefs) {
