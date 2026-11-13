@@ -545,7 +545,7 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await demo.getByText('4 quote the previous wording').isVisible());
   await demo.getByRole('button', { name: 'Next stage' }).click();
   await demo.getByRole('button', { name: 'Next stage' }).click();
-  assert.ok(await demo.getByText('The law has changed since this answer').isVisible(), 'the demonstration ends with the customer notice');
+  assert.ok(await demo.getByText('The law has changed since this answer', { exact: true }).isVisible(), 'the demonstration ends with the customer notice');
   assert.ok(await demo.getByRole('button', { name: 'Next stage' }).isDisabled());
   // Keyboard: on a fresh load, the skip link is the first focusable element.
   await page.goto(`${BASE}/`);

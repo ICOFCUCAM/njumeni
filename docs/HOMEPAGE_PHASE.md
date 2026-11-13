@@ -7,7 +7,7 @@
 | Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `marketing.css`, `early-access/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
 | Database | Migration `20261114600000_early_access_requests` (unchanged in v3) |
-| Screenshots | `docs/assets/homepage-desktop.png` (first screen), `homepage-desktop-full.png`, `homepage-mobile.png`, `homepage-overview.png` |
+| Screenshots | `docs/assets/homepage-desktop.png` (first screen), `homepage-desktop-full.png`, `homepage-mobile.png` (first screen), `homepage-overview.png` (desktop, three columns), `homepage-mobile-overview.png` (phone, six columns) |
 
 ## 1. Story
 
