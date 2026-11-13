@@ -227,7 +227,7 @@ export function CaseFile() {
                   };
                   if (!(e.key in keys)) return;
                   e.preventDefault();
-                  const next = (active + keys[e.key]! + TABS.length) % TABS.length;
+                  const next = (i + keys[e.key]! + TABS.length) % TABS.length;
                   setActive(next);
                   document.getElementById(`cf-tab-${TABS[next]!.key}`)?.focus();
                 }}

@@ -93,7 +93,7 @@ export function Journeys() {
               const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
               if (!step) return;
               e.preventDefault();
-              const next = (active + step + JOURNEYS.length) % JOURNEYS.length;
+              const next = (i + step + JOURNEYS.length) % JOURNEYS.length;
               setActive(next);
               document.getElementById(`jt-${JOURNEYS[next]!.key}`)?.focus();
             }}

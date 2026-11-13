@@ -157,7 +157,7 @@ export function Plans() {
               const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
               if (!step) return;
               e.preventDefault();
-              const next = (active + step + GROUPS.length) % GROUPS.length;
+              const next = (i + step + GROUPS.length) % GROUPS.length;
               setActive(next);
               document.getElementById(`pl-${GROUPS[next]!.key}`)?.focus();
             }}
