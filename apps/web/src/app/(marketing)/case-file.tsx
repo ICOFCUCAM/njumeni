@@ -171,6 +171,33 @@ const TABS = [
       </>
     ),
   },
+  {
+    key: 'compliance',
+    label: 'Compliance',
+    count: '',
+    body: (
+      <>
+        <h4>Compliance register · employment obligations</h4>
+        <ul className="nj-rows">
+          <li>
+            <span>Dismissal grounds documented before notice</span>
+            <span className="nj-mono">§ 15-7 (1)</span>
+            <span className="nj-pill">Linked to this matter</span>
+          </li>
+          <li>
+            <span>Owner</span>
+            <span className="nj-mono">K. Dahl</span>
+            <span className="nj-pill">Named</span>
+          </li>
+          <li>
+            <span>If § 15-7 changes</span>
+            <span />
+            <span className="nj-pill nj-pill--gold">Change intelligence notifies the owner</span>
+          </li>
+        </ul>
+      </>
+    ),
+  },
 ];
 
 export function CaseFile() {
@@ -246,6 +273,27 @@ export function CaseFile() {
           aria-labelledby={`cf-tab-${tab.key}`}
         >
           {tab.body}
+        </div>
+        <div className="nj-cf-journey">
+          <ol aria-label="Where this matter is in its journey">
+            {TABS.map((t, i) => (
+              <li
+                key={t.key}
+                className={i < active ? 'is-done' : i === active ? 'is-on' : undefined}
+              >
+                {t.label}
+              </li>
+            ))}
+          </ol>
+          {active < TABS.length - 1 ? (
+            <button type="button" className="nj-cf-next" onClick={() => setActive(active + 1)}>
+              Next step: {TABS[active + 1]!.label} <span aria-hidden="true">→</span>
+            </button>
+          ) : (
+            <button type="button" className="nj-cf-next" onClick={() => setActive(0)}>
+              Back to the overview
+            </button>
+          )}
         </div>
         <div className="nj-cf-foot">
           <span>Illustrative matter · fictional parties</span>

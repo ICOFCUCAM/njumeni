@@ -48,7 +48,18 @@ const STAGES = [
   {
     key: 'impact',
     label: 'Impact',
-    title: 'What relied on the old text',
+    title: 'Legal impact analysis',
+    body: 'The change is classified before anything else happens: what kind of change it is, when it takes effect, and which kinds of legal work can depend on it.',
+    record: [
+      ['Change', 'Substantive · a time limit is extended'],
+      ['Takes effect', '1 July — not on publication'],
+      ['Can depend on it', 'Answers, documents, deadlines'],
+    ],
+  },
+  {
+    key: 'affected',
+    label: 'Affected work',
+    title: 'Affected research, documents and matters',
     body: 'Every answer, document and matter in the organisation that quoted or cited section 28 is found — across workspaces, without crossing their barriers.',
     record: [
       ['Research answers', '4 quote the previous wording'],
@@ -57,13 +68,24 @@ const STAGES = [
     ],
   },
   {
+    key: 'remediate',
+    label: 'Remediation',
+    title: 'A remediation proposal',
+    body: 'Njumeni proposes what should happen to each affected item, and who must decide it. Nothing is applied yet.',
+    record: [
+      ['The act', 'Ingest the new version for 1 July'],
+      ['Answers', 'Notice on each of the 4'],
+      ['Documents and deadline', 'Review by the responsible lawyers'],
+    ],
+  },
+  {
     key: 'approve',
     label: 'Approval',
     title: 'People decide',
     body: 'A knowledge administrator reviews the change and the proposed remediation. Nothing is changed or sent until an authorised person approves, and every decision is recorded.',
     record: [
-      ['Proposal', 'Re-ingest the act; notify workspaces'],
-      ['Decision', 'Approved · recorded with reason'],
+      ['Proposal', 'Approved · recorded with reason'],
+      ['Deadline', 'Left to the lawyer on the matter'],
     ],
   },
   {
@@ -105,8 +127,8 @@ const WS = [
 ];
 const itemX = (ws: number) => WS[ws]!.x + 130;
 
-// What the change means, and who must decide. Status by stage: impact, approval, notification,
-// verified current.
+// What the change means, and who must decide. Status by stage: affected work, remediation,
+// approval, notification, verified current.
 const CONSEQUENCES = [
   {
     what: '4 research answers',
@@ -114,7 +136,7 @@ const CONSEQUENCES = [
     where: 'Employment (3) · Compliance (1)',
     action: 'Notice on each answer; re-run on the new version',
     who: 'Knowledge administrator',
-    status: ['Found', 'Approved', 'Notice shown', 'Re-verified'],
+    status: ['Found', 'Notice proposed', 'Approved', 'Notice shown', 'Re-verified'],
   },
   {
     what: '2 documents',
@@ -122,7 +144,7 @@ const CONSEQUENCES = [
     where: 'Corporate',
     action: 'Re-verify citations before anything is sent',
     who: 'Responsible lawyer',
-    status: ['Found', 'Assigned for review', 'In review', 'Re-verified'],
+    status: ['Found', 'Review proposed', 'Assigned for review', 'In review', 'Re-verified'],
   },
   {
     what: '1 matter deadline',
@@ -130,7 +152,13 @@ const CONSEQUENCES = [
     where: 'Employment',
     action: 'Recalculate the deadline',
     who: 'Lawyer on the matter',
-    status: ['Found', 'Awaiting the lawyer', 'Lawyer notified', 'Confirmed by the lawyer'],
+    status: [
+      'Found',
+      'Recalculation proposed',
+      'Awaiting the lawyer',
+      'Lawyer notified',
+      'Confirmed by the lawyer',
+    ],
   },
   {
     what: 'Workspace members',
@@ -138,7 +166,7 @@ const CONSEQUENCES = [
     where: 'Employment · Corporate · Compliance',
     action: 'Tell the people who use it',
     who: 'Knowledge administrator',
-    status: ['Identified', 'Approved', 'Notified', 'Notified'],
+    status: ['Identified', 'Notice proposed', 'Approved', 'Notified', 'Notified'],
   },
   {
     what: 'Norway’s legal currency',
@@ -146,14 +174,14 @@ const CONSEQUENCES = [
     where: 'Jurisdiction',
     action: 'Ingest the new version',
     who: 'Two people (four eyes)',
-    status: ['Behind', 'Approved', 'Ingesting', 'Current'],
+    status: ['Behind', 'Ingestion proposed', 'Approved', 'Ingesting', 'Current'],
   },
 ] as const;
 
 function itemState(stage: number) {
-  if (stage >= 7) return 'is-current';
-  if (stage >= 6) return 'is-notified';
-  if (stage >= 4) return 'is-affected';
+  if (stage >= 9) return 'is-current';
+  if (stage >= 8) return 'is-notified';
+  if (stage >= 5) return 'is-affected';
   return '';
 }
 
@@ -186,7 +214,7 @@ export function Observatory() {
         viewBox="0 0 1000 452"
         className="nj-obs-map"
         role="img"
-        aria-label={`Stage ${index + 1} of 8, ${stage.label}: one amendment moving from the official source, through human approval, into an organisation's research answers, documents and matters.`}
+        aria-label={`Stage ${index + 1} of 10, ${stage.label}: one amendment moving from the official source, through human approval, into an organisation's research answers, documents and matters.`}
       >
         <text x={40} y={26} className="nj-obs-lane">
           Official law
@@ -204,7 +232,7 @@ export function Observatory() {
           x2={815}
           y1={80}
           y2={80}
-          className={index >= 7 ? 'nj-obs-track is-done' : 'nj-obs-track is-dashed'}
+          className={index >= 9 ? 'nj-obs-track is-done' : 'nj-obs-track is-dashed'}
         />
         {LAW.map((n) => {
           const i = n.n - 1;
@@ -221,10 +249,10 @@ export function Observatory() {
             </g>
           );
         })}
-        <g className={`nj-obs-seal ${index >= 7 ? 'is-on' : ''}`}>
+        <g className={`nj-obs-seal ${index >= 9 ? 'is-on' : ''}`}>
           <rect x={815} y={46} width={150} height={68} rx={34} />
           <text x={890} y={70} className="nj-obs-card-k" textAnchor="middle">
-            08 · Verified
+            10 · Verified
           </text>
           <text x={890} y={97} className="nj-obs-card-t" textAnchor="middle">
             Current again
@@ -245,16 +273,16 @@ export function Observatory() {
             x2={w.x + 130}
             y1={216}
             y2={262}
-            className={`nj-obs-flow ${index >= 5 ? 'is-on' : index === 4 ? 'is-found' : ''}`}
+            className={`nj-obs-flow ${index >= 7 ? 'is-on' : index >= 5 ? 'is-found' : ''}`}
           />
         ))}
-        <g className={`nj-obs-gate ${index >= 5 ? 'is-open' : index === 4 ? 'is-wait' : ''}`}>
+        <g className={`nj-obs-gate ${index >= 7 ? 'is-open' : index >= 5 ? 'is-wait' : ''}`}>
           <rect x={40} y={176} width={920} height={40} rx={6} />
           <text x={60} y={201} className="nj-obs-gate-t">
-            06 · Human approval
+            08 · Human approval
           </text>
           <text x={940} y={201} className="nj-obs-gate-s" textAnchor="end">
-            {index >= 5
+            {index >= 7
               ? 'Approved · recorded with reason'
               : 'Nothing changes until a person decides'}
           </text>
@@ -275,9 +303,9 @@ export function Observatory() {
             <text x={itemX(it.ws) - 87} y={it.y + 5}>
               {it.label}
             </text>
-            {index >= 6 ? (
+            {index >= 8 ? (
               <text x={itemX(it.ws) + 106} y={it.y + 5} className="nj-obs-item-n" textAnchor="end">
-                {index >= 7 ? '✓' : 'notice'}
+                {index >= 9 ? '✓' : 'notice'}
               </text>
             ) : null}
           </g>
@@ -290,7 +318,7 @@ export function Observatory() {
       <div key={stage.key} className="nj-obs-panel nj-fade" aria-live="polite">
         <div>
           <p className="nj-obs-kicker">
-            Stage {index + 1} of 8 · {stage.label}
+            Stage {index + 1} of 10 · {stage.label}
           </p>
           <h3>{stage.title}</h3>
           <p>{stage.body}</p>
@@ -376,7 +404,7 @@ export function Observatory() {
         <div className="nj-cons-head">
           <h3>What this one change means for the organisation</h3>
           <p>
-            {index < 4
+            {index < 5
               ? 'Consequences are assessed once the change and its commencement are known.'
               : '4 research answers · 2 documents · 1 matter · 3 workspaces · every action decided by a person'}
           </p>
@@ -394,13 +422,13 @@ export function Observatory() {
           </thead>
           <tbody>
             {CONSEQUENCES.map((c) => {
-              const status = index < 4 ? 'Not yet assessed' : c.status[index - 4]!;
+              const status = index < 5 ? 'Not yet assessed' : c.status[index - 5]!;
               const tone =
-                index < 4
+                index < 5
                   ? 'is-idle'
-                  : index === 7
+                  : index === 9
                     ? 'is-done'
-                    : index === 4
+                    : index === 5
                       ? 'is-found'
                       : 'is-active';
               return (

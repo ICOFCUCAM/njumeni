@@ -1,3 +1,7 @@
+'use client';
+
+import { useState } from 'react';
+
 // Chain of custody: each record's hash covers the record before it, so a change anywhere breaks
 // every link after it. Illustrative records; the mechanism is the one Njumeni stores.
 const RECORDS = [
@@ -40,6 +44,7 @@ const RECORDS = [
 ];
 
 export function Custody() {
+  const [open, setOpen] = useState<string | null>(null);
   return (
     <figure className="nj-cus">
       <div className="nj-cus-head" aria-hidden="true">
@@ -49,7 +54,14 @@ export function Custody() {
       </div>
       <ol className="nj-cus-list">
         {RECORDS.map((r, i) => (
-          <li key={r.hash}>
+          <li key={r.hash} className={open === r.hash ? 'is-open' : undefined}>
+            <button
+              type="button"
+              className="nj-cus-toggle"
+              aria-expanded={open === r.hash}
+              aria-label={`${r.action}: show the full record`}
+              onClick={() => setOpen(open === r.hash ? null : r.hash)}
+            />
             <span className="nj-cus-time">
               <span className="nj-mono">{r.time}</span>
               <small>{r.actor}</small>
@@ -70,6 +82,32 @@ export function Custody() {
               </span>
               {i < RECORDS.length - 1 ? <i className="nj-cus-chain" aria-hidden="true" /> : null}
             </span>
+            {open === r.hash ? (
+              <dl className="nj-cus-full nj-fade">
+                <div>
+                  <dt>Record</dt>
+                  <dd>
+                    {r.action} · {r.object}
+                  </dd>
+                </div>
+                <div>
+                  <dt>By</dt>
+                  <dd>
+                    {r.actor} at {r.time}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Seals</dt>
+                  <dd className="nj-mono">
+                    hash({r.prev} + this record) = {r.hash}
+                  </dd>
+                </div>
+                <div>
+                  <dt>If altered</dt>
+                  <dd>This hash and every one after it would no longer verify.</dd>
+                </div>
+              </dl>
+            ) : null}
           </li>
         ))}
       </ol>
@@ -80,8 +118,7 @@ export function Custody() {
         <span>Export with a digest anyone can recompute</span>
       </div>
       <figcaption className="nj-figcap">
-        Illustrative custody record with fictional people. Each record’s hash includes the one
-        before it.
+        Illustrative custody record with fictional people. Select a record to see what it seals.
       </figcaption>
     </figure>
   );

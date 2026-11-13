@@ -4,9 +4,13 @@ import { CaseFile } from './case-file';
 import { Atlas } from './atlas';
 import { AuthorityChart } from './authority-chart';
 import { Custody } from './custody';
+import { EvidencePipeline } from './evidence-pipeline';
+import { GovernanceFlow } from './governance-flow';
 import { Observatory } from './observatory';
+import { AccessCheck, OrgExplorer } from './org-explorer';
 import { PlanChooser, Plans } from './plans';
 import { Journeys } from './journeys';
+import { ResearchDemo } from './research-demo';
 import { ResearchView } from './research-view';
 
 export const metadata: Metadata = {
@@ -145,77 +149,7 @@ export default function HomePage() {
               and verified before you see it. When the evidence is not there, Njumeni declines.
             </p>
           </div>
-          <figure className="nj-anatomy" aria-labelledby="anatomy-title">
-            <div className="nj-anatomy-head">
-              <h3 id="anatomy-title">Anatomy of a cited finding</h3>
-              <span className="nj-tag nj-tag--illustrative">Example · not a live answer</span>
-            </div>
-            <div className="nj-anatomy-body">
-              <dl className="nj-anatomy-rows">
-                <div>
-                  <dt>Question</dt>
-                  <dd className="nj-anatomy-q">
-                    Can an employer dismiss an employee without a reason?
-                  </dd>
-                </div>
-                <div>
-                  <dt>Jurisdiction</dt>
-                  <dd>Norway · Nordic civil law</dd>
-                </div>
-                <div>
-                  <dt>Legal date</dt>
-                  <dd>12 November 2026 — the law as it stands on that day</dd>
-                </div>
-                <div>
-                  <dt>Authority</dt>
-                  <dd>
-                    Working Environment Act <span lang="nb">(arbeidsmiljøloven)</span> · act in
-                    force
-                  </dd>
-                </div>
-                <div>
-                  <dt>Provision</dt>
-                  <dd>§ 15-7, first paragraph</dd>
-                </div>
-                <div className="nj-anatomy-quoterow">
-                  <dt>Quotation</dt>
-                  <dd>The exact words of the provision, shown in full</dd>
-                </div>
-                <div>
-                  <dt>Citation</dt>
-                  <dd>
-                    <span className="nj-mono">LOV-2005-06-17-62 § 15-7 (1)</span> · version in force
-                    from 1 July 2026 · Lovdata, NLOD 2.0
-                  </dd>
-                </div>
-                <div>
-                  <dt>Checks</dt>
-                  <dd>
-                    <ul className="nj-anatomy-checks">
-                      <li>Citation exists</li>
-                      <li>Quotation matches the held text</li>
-                      <li>In force on the legal date</li>
-                      <li>Source permits quotation</li>
-                    </ul>
-                  </dd>
-                </div>
-              </dl>
-              <blockquote className="nj-anatomy-quote" lang="nb">
-                <p>
-                  Arbeidstaker kan ikke sies opp uten at det er saklig begrunnet i virksomhetens,
-                  arbeidsgiverens eller arbeidstakerens forhold.
-                </p>
-                <footer>
-                  <span lang="en">Working Environment Act § 15-7 (1)</span>
-                </footer>
-              </blockquote>
-            </div>
-            <figcaption className="nj-figcap">
-              The quotation is the text of the Act as held by Njumeni (contains data under NLOD 2.0
-              from Lovdata). The layout shows what every answer carries; it is not the output of a
-              live run, and Norwegian sources still await activation.
-            </figcaption>
-          </figure>
+          <ResearchDemo />
           <div className="nj-research2">
             <ol className="nj-steps8">
               <li>
@@ -419,6 +353,9 @@ export default function HomePage() {
             <Custody />
           </div>
         </div>
+        <div className="nj-wrap">
+          <EvidencePipeline />
+        </div>
       </section>
 
       {/* 06 — Global Legal Change Intelligence */}
@@ -450,9 +387,12 @@ export default function HomePage() {
                   <dt>Unverified</dt>
                   <dd>A source could not be checked — shown as unverified, never as current.</dd>
                 </div>
-                <div style={{ ['--c' as string]: 'rgba(245,241,232,0.5)' }}>
+                <div className="is-today" style={{ ['--c' as string]: 'rgba(245,241,232,0.5)' }}>
                   <dt>Not monitored</dt>
-                  <dd>No authorised source is being watched yet.</dd>
+                  <dd>
+                    No authorised source is being watched yet.
+                    <span className="nj-today">Every jurisdiction today</span>
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -592,33 +532,11 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="nj-lead">
-              Four kinds of organisation, one architecture. Isolation is enforced by the database
-              itself, not by the interface: every organisation, workspace, role and decision has its
-              place.
+              Five environments, one architecture. Isolation is enforced by the database itself, not
+              by the interface: every organisation, workspace, role and decision has its place.
             </p>
           </div>
-          <div className="nj-orgtypes">
-            <div>
-              <small>01</small>
-              <h3>Personal</h3>
-              <p>One person, their questions and their documents.</p>
-            </div>
-            <div>
-              <small>02</small>
-              <h3>Law firm</h3>
-              <p>Practices with clients, matters, conflicts and barriers.</p>
-            </div>
-            <div>
-              <small>03</small>
-              <h3>Enterprise</h3>
-              <p>In-house legal, compliance and governance teams.</p>
-            </div>
-            <div>
-              <small>04</small>
-              <h3>Institution</h3>
-              <p>Public bodies with formal accountability.</p>
-            </div>
-          </div>
+          <OrgExplorer />
           <div className="nj-arch" aria-label="Example organisation structure">
             <div className="nj-arch-org">
               <small>Organisation</small>
@@ -685,6 +603,7 @@ export default function HomePage() {
           <p className="nj-figcap">
             Illustrative organisation; the structure is the one Njumeni enforces.
           </p>
+          <AccessCheck />
         </div>
       </section>
 
@@ -707,6 +626,7 @@ export default function HomePage() {
             </p>
             <p>Reviews, sign-off and approvals come before any work is relied on.</p>
           </div>
+          <GovernanceFlow />
           <div className="nj-ai-grid">
             <div>
               <h3 className="nj-ai-title">Where intelligence is used today</h3>

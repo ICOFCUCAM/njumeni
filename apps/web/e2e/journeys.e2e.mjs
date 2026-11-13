@@ -495,6 +495,27 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await rv.getByText(/not the\s+version in force on 15 January 2025/).isVisible(), 'no version held for that date: Njumeni declines');
   await rv.getByRole('button', { name: 'Law as at 1 Aug 2026' }).click();
   assert.ok(await rv.getByText('In force from 1 July 2026').isVisible());
+  // The research demonstration: real text for Norway; declines where no text or version is held.
+  const run = page.locator('.nj-demo2');
+  assert.ok(await run.getByText('Cited finding', { exact: true }).isVisible(), 'Norway, current date: a cited finding');
+  await run.getByRole('button', { name: /Sweden/ }).click();
+  assert.ok(await run.getByText('Declined · no legal text held').isVisible(), 'Sweden: no text held, declined');
+  await run.getByRole('button', { name: /Norway/ }).click();
+  await run.getByRole('button', { name: '15 Jan 2025' }).click();
+  assert.ok(await run.getByText('Declined · version not held').isVisible(), 'an earlier date: declined');
+  // Evidence pipeline, custody records, environments, access check and AI governance.
+  await page.locator('.nj-pipe').getByRole('button', { name: /Scan/ }).click();
+  assert.ok(await page.locator('.nj-pipe').getByText(/not yet connected/).isVisible(), 'the scan step states what is not built');
+  await page.locator('.nj-cus-toggle').first().click();
+  assert.ok(await page.locator('.nj-cus-full').isVisible(), 'a custody record expands');
+  await page.locator('.nj-envs').getByRole('button', { name: /Institutional/ }).click();
+  assert.ok(await page.getByText('A public body with formal accountability.').isVisible());
+  const access = page.locator('.nj-access');
+  await access.getByRole('button', { name: /K\. Dahl/ }).click();
+  await access.getByRole('button', { name: /Audit records/ }).click();
+  assert.equal(await access.locator('.nj-access-verdict').innerText(), 'Allowed', 'the access check follows the permission');
+  await page.locator('.nj-gov').getByRole('button', { name: /Recorded decision/ }).click();
+  assert.ok(await page.locator('.nj-gov').getByText(/append-only/).isVisible());
   // The case file: tabs switch with the mouse and the keyboard.
   const caseFile = page.locator('.nj-cf');
   await caseFile.getByRole('tab', { name: /Chronology/ }).click();
@@ -550,9 +571,11 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   await demo.getByRole('button', { name: '03 Compare' }).click();
   await demo.getByRole('button', { name: 'Previous version' }).click();
   assert.ok(await demo.getByText('in force until 30 June').isVisible(), 'versions can be compared');
-  await demo.getByRole('button', { name: '05 Impact' }).click();
+  await demo.getByRole('button', { name: '06 Affected work' }).click();
   assert.ok(await demo.locator('.nj-cons-status', { hasText: 'Found' }).first().isVisible(), 'consequences are listed');
   assert.ok(await demo.getByText('4 quote the previous wording').isVisible());
+  await demo.getByRole('button', { name: 'Next stage' }).click();
+  assert.ok(await demo.getByText('A remediation proposal').isVisible(), 'a remediation is proposed');
   await demo.getByRole('button', { name: 'Next stage' }).click();
   await demo.getByRole('button', { name: 'Next stage' }).click();
   assert.ok(await demo.getByText('The law has changed since this answer', { exact: true }).isVisible(), 'customers are told');

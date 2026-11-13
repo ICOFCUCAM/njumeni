@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Current version | v3.2 — Phase 3 design critique and refinement (2026-11-13) |
+| Current version | v4 — institutional-grade premiumization and interactive product experience (2026-11-13) |
 | Routes | `/` (homepage, static), `/early-access` (request form), `/robots.txt`, `/sitemap.xml` |
-| Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `marketing.css`, `early-access/` |
+| Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `research-demo.tsx`, `evidence-pipeline.tsx`, `org-explorer.tsx`, `governance-flow.tsx`, `section-nav.tsx`, `marketing.css`, `early-access/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
 | Database | Migration `20261114600000_early_access_requests` (unchanged in v3) |
 | Screenshots | `docs/assets/homepage-desktop.png` (first screen), `homepage-desktop-full.png`, `homepage-mobile.png` (first screen), `homepage-overview.png` (desktop, three columns), `homepage-mobile-overview.png` (phone, seven columns) |
@@ -92,7 +92,26 @@ The architecture and the claims are unchanged.
 - **Plans:** three audience tracks (ivory, navy, contract plans in deep navy), with monthly allowances first. The full allowance table opens on request. Configured values only, and no prices.
 - **Typography:** measured on the rendered page. Uppercase labels are at least 12.5px; interface content at least 14px; notes and captions 14–14.5px; diagram text scales with its container.
 
-## 6. Checks (v3.2)
+## 6. v4 — integrated, interactive experience
+
+The narrative and section order are unchanged. Each section now has one interaction with a clear purpose, and every interaction states what is real and what is illustrative.
+
+| Section | Interaction | Real or illustrative |
+|---|---|---|
+| Hero | The "law as at" line runs under the headline and the answer, and the date governs the answer. Choosing 15 Jan 2025 shows the real refusal | Real: § 15-7 (1) as held, and the engine's temporal refusal |
+| Research | "Run the research": choose a jurisdiction and a legal date, and watch eight steps resolve or stop. Norway gives a cited finding; Sweden and the United Kingdom decline, since no text is held; an earlier date declines, since that version is not held. The verification step states that source permission awaits rights activation | Real text and rules; not a live query |
+| Workspace | One citation is traced from research to argument to footnote. The case file gains a Compliance step, a journey bar and "Next step" | Illustrative matter |
+| Evidence | Eight-step pipeline (upload, fingerprint, quarantine, scan, custody, hold, versioning, bundle). Scan is marked "partly built": screening is live, the anti-malware engine is not connected. Custody records expand to show what each one seals | Mechanism as built; fictional people |
+| Change intelligence | Ten stages: source, amendment, comparison (previous, new or changes), commencement, impact analysis, affected work, remediation proposal, human approval, notification, verified current. A consequence ledger shows each affected item, the action, who decides and its status at each stage. The status board is marked "Actual status"; "Not monitored" is marked as every jurisdiction's state today | Invented wording, fictional firm; the status board is real |
+| Jurisdictions | Each profile shows legal system, languages, official sources, authority structure, source rights, monitoring and verification ("not evaluated · no legal coverage is claimed") | Registry framework |
+| Organisations | Five environments (personal, professional, law firm, enterprise, institutional). An access check lets you pick a member and a resource and see the database's decision (workspace membership, barrier, `matter.read`, `document.read`, `audit.read`) | Rules as built; fictional people |
+| AI | The statement set as three columns. A five-step governance flow (AI suggestion, source-grounded finding, professional review, human approval, recorded decision), each with its safeguard | The AI step is meaning search, which is built; customer AI is shown as planned |
+| Plans | A two-question finder suggests and highlights one configured plan; the full comparison opens on request | Configured allowances only; no prices |
+| Navigation | The header marks the section being read | — |
+
+Motion: short fades and staggered step reveals; all of it is turned off under `prefers-reduced-motion`.
+
+## 7. Checks (v4)
 
 | Check | Result |
 |---|---|
@@ -100,11 +119,11 @@ The architecture and the claims are unchanged.
 | Repository CI steps (Prettier list, ESLint list, `tsconfig.ci.json`, root tests, release gates, foundation, content policy) | Pass |
 | Web unit tests | 332/332 |
 | pgTAP | Pass |
-| Browser journeys | 5/5 on a fresh database (pgTAP pass first). The homepage journey covers: the research view and its refusal; case-file tabs with keyboard; the change observatory; the status board (every jurisdiction not monitored); plan groups with keyboard; the four journeys and their workspaces; eight plans with no prices; every link and anchor; the skip link; robots and sitemap; early access stored once; the bot field; the mobile menu; no client errors |
-| Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px, both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
-| Responsive | 1440, 1280, 768 and 390 px reviewed viewport by viewport: no horizontal scroll and no console errors |
+| Browser journeys | 5/5 on a fresh database (pgTAP pass first). The homepage journey covers: the research view and its refusal; the research demonstration (Norway, Sweden, an earlier date); the evidence pipeline and custody records; environments, the access check and the governance flow; the plan finder; version comparison and the consequence ledger; case-file tabs with keyboard; the change observatory; the status board (every jurisdiction not monitored); plan groups with keyboard; the four journeys and their workspaces; eight plans with no prices; every link and anchor; the skip link; robots and sitemap; early access stored once; the bot field; the mobile menu; no client errors |
+| Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px (iPhone 13), both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
+| Responsive | 1920, 1440, 1280, 1024, 768, 390 and 360 px: no horizontal scroll and no console errors; reviewed viewport by viewport: no horizontal scroll and no console errors |
 
-## 7. Open items
+## 8. Open items
 
 - **Web hosting:** Vercel builds the default branch once the deployment quota allows.
 - **Owner decisions:**

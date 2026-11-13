@@ -163,6 +163,22 @@ const JURISDICTIONS: Jurisdiction[] = [
     sources: [],
   },
 ];
+// Authority structure: the broad hierarchy each profile describes (general, not exhaustive).
+const STRUCTURE: Record<string, string> = {
+  NO: 'Constitution · acts · regulations · court decisions',
+  SE: 'Fundamental laws · acts · ordinances · court decisions',
+  DK: 'Constitution · acts · executive orders · court decisions',
+  FI: 'Constitution · acts · decrees · court decisions',
+  GB: 'Acts of Parliament · statutory instruments · case law',
+  EU: 'Treaties · regulations and directives · case law of the Court of Justice',
+  US: 'Constitution · federal statutes · regulations · case law',
+  CM: 'Constitution · laws · ordinances and decrees · OHADA uniform acts',
+  UG: 'Constitution · acts · statutory instruments · case law',
+};
+const RIGHTS: Record<string, string> = {
+  NO: 'Lovdata datasets under NLOD 2.0 · activation awaits the rights review',
+};
+
 const STAGE_LABEL = {
   reference: 'Reference jurisdiction',
   profiled: 'Profiled · sources registered',
@@ -255,12 +271,32 @@ export function Atlas() {
               </dd>
             </div>
             <div>
+              <dt>Authority structure</dt>
+              <dd>{STRUCTURE[j.code] ?? 'Described when the jurisdiction is profiled'}</dd>
+            </div>
+            <div>
+              <dt>Source rights</dt>
+              <dd>
+                {RIGHTS[j.code] ??
+                  (j.sources.length
+                    ? 'Rights review pending for each source'
+                    : 'No sources registered yet')}
+              </dd>
+            </div>
+            <div>
               <dt>Monitoring</dt>
               <dd>
                 <span className="nj-dot nj-dot--off" aria-hidden="true" /> Not monitored yet
               </dd>
             </div>
+            <div>
+              <dt>Verification</dt>
+              <dd>Not evaluated · no legal coverage is claimed</dd>
+            </div>
           </dl>
+          <p className="nj-atlas-note">
+            A profile describes a legal system. It is not legal coverage.
+          </p>
         </div>
       </div>
     </div>

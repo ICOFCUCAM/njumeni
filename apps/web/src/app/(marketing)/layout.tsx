@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import './marketing.css';
+import { SectionNav } from './section-nav';
 
 const NAV = [
   { href: '/#research', label: 'Research' },
@@ -30,13 +31,7 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             </span>
             NJUMENI
           </Link>
-          <nav className="nj-nav" aria-label="Main">
-            {NAV.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <SectionNav items={NAV} />
           <div className="nj-header-actions">
             <Link href="/sign-in" className="nj-btn nj-btn--ghost nj-btn--sm nj-hide-md">
               Sign in

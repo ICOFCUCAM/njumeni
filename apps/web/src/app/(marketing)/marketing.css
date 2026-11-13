@@ -5037,8 +5037,8 @@
 .nj-diff-modes button {
   font-family: var(--sans);
 }
-.nj-cons-table tr.is-idle > :not(:last-child) {
-  opacity: 0.6;
+.nj-cons-table tr.is-idle td {
+  color: var(--slate-soft);
 }
 /* ------------------------------------------------------------------ Phase 4 — plan finder */
 .nj-finder {
@@ -5235,5 +5235,940 @@
   .nj-facet dd.nj-mono {
     font-size: 12.5px;
     white-space: nowrap;
+  }
+}
+/* ------------------------------------------------------------------ Phase 5 — research demo */
+.nj-demo2 {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  margin: 0 0 clamp(56px, 7vw, 88px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -44px rgba(13, 27, 41, 0.4);
+}
+.nj-demo2-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 30px;
+  background: var(--navy);
+  color: var(--on-dark);
+}
+.nj-demo2-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.nj-demo2-head h3 {
+  margin: 0;
+  font-size: 26px;
+  color: var(--on-dark);
+}
+.nj-demo2-q {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.35;
+}
+.nj-demo2 fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.nj-demo2 legend {
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.nj-demo2-opts {
+  display: grid;
+  gap: 8px;
+}
+.nj-demo2-opts--dates {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.nj-demo2-opts button {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1px solid rgba(245, 241, 232, 0.2);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--on-dark);
+  font: inherit;
+  font-size: 15.5px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+.nj-demo2-opts--dates button {
+  justify-content: center;
+}
+.nj-demo2-opts button b {
+  font-weight: 600;
+}
+.nj-demo2-opts button small {
+  font-size: 13px;
+  color: var(--on-dark-faint);
+}
+.nj-demo2-opts button:hover {
+  border-color: var(--gold);
+}
+.nj-demo2-opts button[aria-pressed='true'] {
+  border-color: var(--gold);
+  background: rgba(198, 166, 107, 0.18);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.nj-demo2-outcome {
+  display: grid;
+  gap: 2px;
+  margin: auto 0 0;
+  padding-top: 18px;
+  border-top: 1px solid rgba(245, 241, 232, 0.16);
+  font-family: var(--serif);
+  font-size: 24px;
+}
+.nj-demo2-outcome small {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-faint);
+}
+.nj-demo2-outcome.is-ok {
+  color: #a9dccd;
+}
+.nj-demo2-outcome.is-stop {
+  color: #f0c2b2;
+}
+.nj-demo2-steps {
+  margin: 0;
+  padding: 10px 30px 10px;
+  list-style: none;
+}
+.nj-demo2-steps li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-soft);
+  animation: nj-step-in 360ms ease both;
+  animation-delay: calc(var(--i) * 70ms);
+}
+.nj-demo2-steps li:last-child {
+  border-bottom: 0;
+}
+@keyframes nj-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.nj-demo2-n {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--green);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--green);
+}
+.nj-demo2-label {
+  margin: 0 0 3px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.nj-demo2-value {
+  font-size: 16.5px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.nj-demo2-value q {
+  display: block;
+  padding: 10px 14px;
+  border-left: 3px solid var(--gold);
+  background: #f6f0e2;
+  font-family: var(--serif);
+  font-size: 19px;
+  quotes: '“' '”';
+}
+li.is-stop .nj-demo2-n {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff;
+}
+li.is-stop .nj-demo2-value {
+  color: #7a2e1e;
+  font-weight: 600;
+}
+li.is-warn .nj-demo2-n {
+  border-color: #b98a2e;
+  color: #6e4f16;
+}
+li.is-skip .nj-demo2-n {
+  border-color: var(--line);
+  color: var(--slate-soft);
+}
+li.is-skip .nj-demo2-value,
+li.is-skip .nj-demo2-label {
+  color: var(--slate-soft);
+}
+.nj-demo2-foot {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 14px 30px 16px;
+  border-top: 1px solid var(--line);
+  background: #faf7f0;
+  font-size: 14px;
+  color: var(--slate);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nj-demo2-steps li {
+    animation: none;
+  }
+}
+@media (max-width: 1024px) {
+  .nj-demo2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 680px) {
+  .nj-demo2-controls,
+  .nj-demo2-steps {
+    padding-inline: 18px;
+  }
+  .nj-demo2-foot {
+    padding-inline: 18px;
+  }
+  .nj-demo2-opts--dates {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.nj-currency .is-today {
+  border-radius: 8px;
+  background: rgba(245, 241, 232, 0.06);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.nj-today {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--navy-deep);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  vertical-align: 1px;
+}
+/* ------------------------------------------------------------------ Phase 5 — custody records */
+.nj-cus-list li {
+  position: relative;
+  transition: background 160ms ease;
+}
+.nj-cus-list li:hover,
+.nj-cus-list li.is-open {
+  background: #fbf8f1;
+}
+.nj-cus-toggle {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.nj-cus-toggle:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: -3px;
+}
+.nj-cus-full {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 14px 16px;
+  border-left: 3px solid var(--gold);
+  background: #fff;
+  font-size: 15px;
+}
+.nj-cus-full div {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 12px;
+}
+.nj-cus-full dt {
+  color: var(--slate-soft);
+}
+.nj-cus-full dd {
+  margin: 0;
+}
+/* ------------------------------------------------------------------ Phase 5 — evidence pipeline */
+.nj-pipe {
+  margin-top: clamp(48px, 6vw, 72px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  overflow: hidden;
+}
+.nj-pipe-steps {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+  background: #f6f2e9;
+}
+.nj-pipe-steps li + li {
+  border-left: 1px solid var(--line);
+}
+.nj-pipe-steps button {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  width: 100%;
+  height: 100%;
+  padding: 16px 14px 18px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.nj-pipe-steps button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background: transparent;
+}
+.nj-pipe-steps button.is-done::after {
+  background: rgba(198, 166, 107, 0.5);
+}
+.nj-pipe-steps button[aria-pressed='true'] {
+  background: #fff;
+}
+.nj-pipe-steps button[aria-pressed='true']::after {
+  background: var(--gold);
+}
+.nj-pipe-n {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--bronze);
+}
+.nj-pipe-l {
+  font-size: 15.5px;
+  font-weight: 650;
+  color: var(--ink);
+}
+.nj-pipe-flag {
+  justify-self: start;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ece6f3;
+  color: #4b3c6b;
+  font-size: 12px;
+  font-weight: 650;
+}
+.nj-pipe-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 40px;
+  padding: 26px 30px 28px;
+}
+.nj-pipe-k {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.nj-pipe-does {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.nj-pipe-rec {
+  margin: 0 0 14px;
+  font-size: 16.5px;
+  color: var(--slate);
+}
+.nj-pipe-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--slate);
+}
+@media (max-width: 1100px) {
+  .nj-pipe-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .nj-pipe-steps li:nth-child(5) {
+    border-left: 0;
+  }
+  .nj-pipe-steps li:nth-child(n + 5) {
+    border-top: 1px solid var(--line);
+  }
+  .nj-pipe-detail {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+}
+@media (max-width: 680px) {
+  .nj-pipe-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .nj-pipe-steps li:nth-child(odd) {
+    border-left: 0;
+  }
+  .nj-pipe-steps li:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  .nj-pipe-detail {
+    padding: 20px 18px 22px;
+  }
+  .nj-cus-full div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+/* ------------------------------------------------------------------ Phase 5 — matter journey */
+.nj-cf-journey {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 20px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+.nj-cf-journey ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: j;
+}
+.nj-cf-journey li {
+  counter-increment: j;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  color: var(--slate-soft);
+}
+.nj-cf-journey li::before {
+  content: counter(j);
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.nj-cf-journey li.is-done {
+  color: var(--slate);
+}
+.nj-cf-journey li.is-done::before {
+  content: '✓';
+  border-color: var(--green);
+  color: var(--green);
+}
+.nj-cf-journey li.is-on {
+  background: var(--navy);
+  color: var(--on-dark);
+  font-weight: 600;
+}
+.nj-cf-journey li.is-on::before {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-deep);
+}
+.nj-cf-next {
+  padding: 9px 16px;
+  border: 1px solid var(--navy);
+  border-radius: 8px;
+  background: var(--navy);
+  color: var(--on-dark);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.nj-cf-next:hover {
+  background: var(--navy-deep);
+}
+@media (max-width: 680px) {
+  .nj-cf-journey ol {
+    display: none;
+  }
+  .nj-cf-next {
+    width: 100%;
+  }
+}
+.nj-atlas-note {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 14px;
+  color: var(--slate);
+}
+/* ------------------------------------------------------------------ Phase 5 — environments */
+.nj-envs {
+  margin-bottom: 28px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  overflow: hidden;
+}
+.nj-envs-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-bottom: 1px solid var(--line);
+  background: #f6f2e9;
+}
+.nj-envs-tabs button {
+  display: grid;
+  gap: 2px;
+  padding: 16px 18px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  font: inherit;
+  font-family: var(--serif);
+  font-size: 20px;
+  text-align: left;
+  color: var(--slate);
+  cursor: pointer;
+  box-shadow: inset 0 -3px 0 transparent;
+}
+.nj-envs-tabs button:last-child {
+  border-right: 0;
+}
+.nj-envs-tabs button .nj-mono {
+  font-size: 12.5px;
+  color: var(--bronze);
+}
+.nj-envs-tabs button[aria-pressed='true'] {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: inset 0 -3px 0 var(--gold);
+}
+.nj-envs-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px;
+  padding: 26px 28px 28px;
+}
+.nj-envs-who {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 23px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.nj-envs-k {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.nj-envs-body ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nj-envs-body li {
+  padding-left: 16px;
+  position: relative;
+  font-size: 16px;
+  color: var(--slate);
+}
+.nj-envs-body li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+/* access check */
+.nj-access {
+  margin-top: 28px;
+  border-radius: 18px;
+  background: var(--navy);
+  color: var(--on-dark);
+  overflow: hidden;
+}
+.nj-access-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba(245, 241, 232, 0.14);
+}
+.nj-access-head h3 {
+  margin: 0;
+  font-size: 24px;
+  color: var(--on-dark);
+}
+.nj-access-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
+}
+.nj-access fieldset {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  margin: 0;
+  padding: 22px 28px 26px;
+  border: 0;
+  border-right: 1px solid rgba(245, 241, 232, 0.14);
+}
+.nj-access legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.nj-access fieldset button {
+  display: grid;
+  gap: 1px;
+  padding: 11px 14px;
+  border: 1px solid rgba(245, 241, 232, 0.2);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--on-dark);
+  font: inherit;
+  font-size: 15.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.nj-access fieldset button small {
+  font-size: 13px;
+  color: var(--on-dark-faint);
+}
+.nj-access fieldset button:hover {
+  border-color: var(--gold);
+}
+.nj-access fieldset button[aria-pressed='true'] {
+  border-color: var(--gold);
+  background: rgba(198, 166, 107, 0.18);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.nj-access-result {
+  padding: 22px 28px 26px;
+}
+.nj-access-result.is-yes {
+  background: rgba(111, 184, 163, 0.1);
+}
+.nj-access-result.is-no {
+  background: rgba(209, 127, 99, 0.1);
+}
+.nj-access-k {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-dark-faint);
+}
+.nj-access-verdict {
+  margin: 8px 0 4px;
+  font-family: var(--serif);
+  font-size: 40px;
+  line-height: 1;
+}
+.is-yes .nj-access-verdict {
+  color: #a9dccd;
+}
+.is-no .nj-access-verdict {
+  color: #f0c2b2;
+}
+.nj-access-q {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: var(--on-dark-soft);
+}
+.nj-access-why {
+  margin: 0;
+  font-size: 16.5px;
+  line-height: 1.55;
+  color: var(--on-dark);
+}
+@media (max-width: 1024px) {
+  .nj-envs-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .nj-envs-tabs button:nth-child(3) {
+    border-right: 0;
+  }
+  .nj-envs-tabs button:nth-child(n + 4) {
+    border-top: 1px solid var(--line);
+  }
+  .nj-envs-body,
+  .nj-access-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .nj-access fieldset {
+    border-right: 0;
+    border-bottom: 1px solid rgba(245, 241, 232, 0.14);
+  }
+}
+@media (max-width: 680px) {
+  .nj-envs-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .nj-envs-tabs button {
+    border-right: 1px solid var(--line) !important;
+    border-top: 1px solid var(--line);
+    font-size: 18px;
+    padding: 12px 14px;
+  }
+  .nj-envs-tabs button:nth-child(even) {
+    border-right: 0 !important;
+  }
+  .nj-envs-body,
+  .nj-access-head,
+  .nj-access fieldset,
+  .nj-access-result {
+    padding-inline: 18px;
+  }
+}
+/* ------------------------------------------------------------------ Phase 5 — AI governance flow */
+.nj-gov {
+  margin-top: clamp(40px, 5vw, 64px);
+  border: 1px solid rgba(245, 241, 232, 0.16);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.nj-gov-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nj-gov-steps li + li {
+  border-left: 1px solid rgba(245, 241, 232, 0.14);
+}
+.nj-gov-steps button {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 18px 18px 20px;
+  border: 0;
+  background: transparent;
+  color: var(--on-dark-soft);
+  font: inherit;
+  font-family: var(--serif);
+  font-size: 19px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 -3px 0 transparent;
+}
+.nj-gov-steps button small {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.nj-gov-suggest small {
+  color: #b9c7d6;
+}
+.nj-gov-ground small {
+  color: var(--gold);
+}
+.nj-gov-review small,
+.nj-gov-approve small {
+  color: #a9dccd;
+}
+.nj-gov-record small {
+  color: #d8c9ef;
+}
+.nj-gov-steps button.is-done {
+  color: var(--on-dark);
+}
+.nj-gov-steps button[aria-pressed='true'] {
+  background: rgba(245, 241, 232, 0.07);
+  color: var(--on-dark);
+  box-shadow: inset 0 -3px 0 var(--gold);
+}
+.nj-gov-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  padding: 24px 28px 28px;
+  border-top: 1px solid rgba(245, 241, 232, 0.14);
+  background: var(--paper);
+  color: var(--ink);
+}
+.nj-gov-k {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.nj-gov-does {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.45;
+}
+.nj-gov-cannot {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--slate);
+}
+@media (max-width: 1024px) {
+  .nj-gov-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nj-gov-steps li + li {
+    border-left: 0;
+    border-top: 1px solid rgba(245, 241, 232, 0.14);
+  }
+  .nj-gov-steps button {
+    padding: 14px 18px;
+    box-shadow: inset 3px 0 0 transparent;
+  }
+  .nj-gov-steps button[aria-pressed='true'] {
+    box-shadow: inset 3px 0 0 var(--gold);
+  }
+  .nj-gov-detail {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding-inline: 18px;
+  }
+}
+.nj-nav a {
+  position: relative;
+  transition: color 160ms ease;
+}
+.nj-nav a[aria-current='location'] {
+  color: var(--on-dark);
+}
+.nj-nav a[aria-current='location']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 2px;
+  background: var(--gold);
+}
+.nj-atlas {
+  align-items: center;
+}
+.nj-currency-grid > * {
+  min-width: 0;
+}
+@media (max-width: 680px) {
+  .nj-currency-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nj-today {
+    display: block;
+    width: max-content;
+    margin: 6px 0 0;
+  }
+  .nj-currency h3 {
+    overflow-wrap: anywhere;
+  }
+}
+@media (max-width: 400px) {
+  .nj-board {
+    padding-inline: 14px;
+  }
+  .nj-board table {
+    font-size: 14.5px;
+  }
+  .nj-board th,
+  .nj-board td {
+    padding-right: 8px;
+  }
+  .nj-board thead th {
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+  }
+}
+.nj-demo2-opts button small,
+.nj-access fieldset button small,
+.nj-finder-opts button small {
+  color: var(--on-dark-soft);
+}
+.nj-today {
+  display: block;
+  width: max-content;
+  margin: 6px 0 0;
+}
+@media (min-width: 1025px) {
+  .nj-obs-steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    flex: 1 1 100%;
+  }
+  .nj-obs-steps button {
+    width: 100%;
+    text-align: left;
   }
 }

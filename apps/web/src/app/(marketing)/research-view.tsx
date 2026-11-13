@@ -57,10 +57,10 @@ export function ResearchView({ children }: { children: React.ReactNode }) {
                   <span className="nj-answer-dot" aria-hidden="true" />
                   Cited finding · law as at {date.label}
                 </p>
-                <h3 className="nj-answer-prov">
+                <p className="nj-answer-prov">
                   Working Environment Act § 15-7 (1)
                   <span lang="nb">arbeidsmiljøloven</span>
-                </h3>
+                </p>
                 <blockquote className="nj-answer-quote" lang="nb">
                   <p>
                     Arbeidstaker kan ikke sies opp uten at det er saklig begrunnet i virksomhetens,
@@ -96,7 +96,7 @@ export function ResearchView({ children }: { children: React.ReactNode }) {
                   <span className="nj-answer-dot" aria-hidden="true" />
                   No answer · law as at {date.label}
                 </p>
-                <h3 className="nj-answer-prov">Njumeni declines to answer</h3>
+                <p className="nj-answer-prov">Njumeni declines to answer</p>
                 <p className="nj-answer-decline">
                   Njumeni holds the current text of the law that answers this question, but not the
                   version in force on {date.long}. No answer is given rather than one from other
