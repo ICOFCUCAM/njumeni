@@ -6,7 +6,8 @@ const NAV = [
   { href: '/#workspace', label: 'Workspace' },
   { href: '/#change-intelligence', label: 'Change intelligence' },
   { href: '/#international', label: 'Jurisdictions' },
-  { href: '/#trust', label: 'Principles' },
+  { href: '/#audiences', label: 'Who it serves' },
+  { href: '/#plans', label: 'Plans' },
 ];
 
 export default function MarketingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -100,6 +101,9 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
                 </li>
                 <li>
                   <Link href="/early-access?interest=demonstration">Request a demonstration</Link>
+                </li>
+                <li>
+                  <Link href="/#plans">Plans</Link>
                 </li>
                 <li>
                   <Link href="/sign-in">Sign in</Link>
