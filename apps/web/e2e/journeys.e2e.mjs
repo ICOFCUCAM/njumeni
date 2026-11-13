@@ -488,7 +488,7 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
     assert.equal(await page.locator(`section#${id}`).count(), 1, `section ${id}`);
   }
   // The research view: the real held version answers; an earlier date gets the temporal refusal.
-  const rv = page.locator('.nj-app');
+  const rv = page.locator('.nj-stage');
   assert.ok(await rv.getByText('In force from 1 July 2026').isVisible(), 'the version held is shown');
   assert.ok(await rv.getByText(/Arbeidstaker kan ikke sies opp uten at det er saklig begrunnet/).isVisible(), 'the quotation of § 15-7 (1)');
   await rv.getByRole('button', { name: 'Law as at 15 Jan 2025' }).click();
@@ -518,6 +518,10 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   // Plans: the eight configured plans with their allowances, no prices (Master Plan §17.1).
   const plans = page.locator('#plans');
   assert.equal(await plans.locator('.nj-tier-plans > li').count(), 8, 'eight plans in the audience tracks');
+  await plans.getByRole('button', { name: 'A firm or organisation' }).click();
+  await plans.getByRole('button', { name: 'A law firm' }).click();
+  assert.ok(await plans.locator('.nj-finder-name', { hasText: 'Law Firm' }).isVisible(), 'the finder suggests a configured plan');
+  assert.equal(await plans.locator('.nj-tier-plans > li.is-picked h4').innerText(), 'Law Firm', 'and highlights it');
   await plans.locator('summary', { hasText: 'Compare every allowance' }).click();
   let planCount = 0;
   for (const group of ['Individuals', 'Legal professionals', 'Organisations']) {
@@ -543,7 +547,11 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   }
   // The change-intelligence demonstration steps through the workflow.
   const demo = page.locator('.nj-obs');
+  await demo.getByRole('button', { name: '03 Compare' }).click();
+  await demo.getByRole('button', { name: 'Previous version' }).click();
+  assert.ok(await demo.getByText('in force until 30 June').isVisible(), 'versions can be compared');
   await demo.getByRole('button', { name: '05 Impact' }).click();
+  assert.ok(await demo.locator('.nj-cons-status', { hasText: 'Found' }).first().isVisible(), 'consequences are listed');
   assert.ok(await demo.getByText('4 quote the previous wording').isVisible());
   await demo.getByRole('button', { name: 'Next stage' }).click();
   await demo.getByRole('button', { name: 'Next stage' }).click();

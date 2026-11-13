@@ -105,6 +105,51 @@ const WS = [
 ];
 const itemX = (ws: number) => WS[ws]!.x + 130;
 
+// What the change means, and who must decide. Status by stage: impact, approval, notification,
+// verified current.
+const CONSEQUENCES = [
+  {
+    what: '4 research answers',
+    why: 'Quote the previous wording of § 28',
+    where: 'Employment (3) · Compliance (1)',
+    action: 'Notice on each answer; re-run on the new version',
+    who: 'Knowledge administrator',
+    status: ['Found', 'Approved', 'Notice shown', 'Re-verified'],
+  },
+  {
+    what: '2 documents',
+    why: 'Cite § 28 in a draft reply',
+    where: 'Corporate',
+    action: 'Re-verify citations before anything is sent',
+    who: 'Responsible lawyer',
+    status: ['Found', 'Assigned for review', 'In review', 'Re-verified'],
+  },
+  {
+    what: '1 matter deadline',
+    why: 'Calculated from the § 28 time limit',
+    where: 'Employment',
+    action: 'Recalculate the deadline',
+    who: 'Lawyer on the matter',
+    status: ['Found', 'Awaiting the lawyer', 'Lawyer notified', 'Confirmed by the lawyer'],
+  },
+  {
+    what: 'Workspace members',
+    why: 'Rely on the affected work',
+    where: 'Employment · Corporate · Compliance',
+    action: 'Tell the people who use it',
+    who: 'Knowledge administrator',
+    status: ['Identified', 'Approved', 'Notified', 'Notified'],
+  },
+  {
+    what: 'Norway’s legal currency',
+    why: 'Reads “behind” until the new version is held',
+    where: 'Jurisdiction',
+    action: 'Ingest the new version',
+    who: 'Two people (four eyes)',
+    status: ['Behind', 'Approved', 'Ingesting', 'Current'],
+  },
+] as const;
+
 function itemState(stage: number) {
   if (stage >= 7) return 'is-current';
   if (stage >= 6) return 'is-notified';
@@ -114,6 +159,7 @@ function itemState(stage: number) {
 
 export function Observatory() {
   const [index, setIndex] = useState(0);
+  const [view, setView] = useState<'changes' | 'previous' | 'new'>('changes');
   const stage = STAGES[index]!;
   const state = itemState(index);
   return (
@@ -241,27 +287,6 @@ export function Observatory() {
         </text>
       </svg>
 
-      <ul className="nj-obs-list" aria-label="Knowledge affected in the example organisation">
-        {ITEMS.map((it) => (
-          <li key={it.label} className={state}>
-            <span>
-              {WS[it.ws]!.name} · {it.label}
-            </span>
-            <b>
-              {index >= 7
-                ? 'Re-verified'
-                : index >= 6
-                  ? 'Notice shown'
-                  : index >= 5
-                    ? 'Approved for update'
-                    : index >= 4
-                      ? 'Relies on old text'
-                      : 'Unaffected so far'}
-            </b>
-          </li>
-        ))}
-      </ul>
-
       <div key={stage.key} className="nj-obs-panel nj-fade" aria-live="polite">
         <div>
           <p className="nj-obs-kicker">
@@ -274,8 +299,38 @@ export function Observatory() {
           {'diff' in stage ? (
             <div className="nj-diff">
               <span className="nj-obs-sec">Section 28 · Time limit for applications</span>
-              <span className="nj-del">within three months of arrival</span>
-              <span className="nj-ins">within six months of arrival</span>
+              <div className="nj-diff-modes" role="group" aria-label="Compare versions">
+                {(['changes', 'previous', 'new'] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    aria-pressed={view === m}
+                    onClick={() => setView(m)}
+                  >
+                    {m === 'changes'
+                      ? 'Changes'
+                      : m === 'previous'
+                        ? 'Previous version'
+                        : 'New version'}
+                  </button>
+                ))}
+              </div>
+              {view === 'changes' ? (
+                <p className="nj-diff-text">
+                  An application must be made within <del>three</del> <ins>six</ins> months of
+                  arrival.
+                </p>
+              ) : (
+                <p className="nj-diff-text">
+                  An application must be made within {view === 'previous' ? 'three' : 'six'} months
+                  of arrival.
+                  <small>
+                    {view === 'previous'
+                      ? 'Version held · in force until 30 June'
+                      : 'New version · in force from 1 July'}
+                  </small>
+                </p>
+              )}
             </div>
           ) : null}
           {'record' in stage ? (
@@ -316,6 +371,55 @@ export function Observatory() {
             </button>
           </div>
         </div>
+      </div>
+      <div className="nj-cons">
+        <div className="nj-cons-head">
+          <h3>What this one change means for the organisation</h3>
+          <p>
+            {index < 4
+              ? 'Consequences are assessed once the change and its commencement are known.'
+              : '4 research answers · 2 documents · 1 matter · 3 workspaces · every action decided by a person'}
+          </p>
+        </div>
+        <table className="nj-cons-table">
+          <caption className="nj-sr">Consequences of the amendment, at stage {index + 1}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Affected</th>
+              <th scope="col">Where</th>
+              <th scope="col">Required action</th>
+              <th scope="col">Decided by</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {CONSEQUENCES.map((c) => {
+              const status = index < 4 ? 'Not yet assessed' : c.status[index - 4]!;
+              const tone =
+                index < 4
+                  ? 'is-idle'
+                  : index === 7
+                    ? 'is-done'
+                    : index === 4
+                      ? 'is-found'
+                      : 'is-active';
+              return (
+                <tr key={c.what} className={tone}>
+                  <th scope="row">
+                    <b>{c.what}</b>
+                    <span>{c.why}</span>
+                  </th>
+                  <td data-label="Where">{c.where}</td>
+                  <td data-label="Action">{c.action}</td>
+                  <td data-label="Decided by">{c.who}</td>
+                  <td data-label="Status">
+                    <span className="nj-cons-status">{status}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
       <p className="nj-obs-foot">
         An illustrative walk through the workflow: invented wording (Immigration Act, section 28 —

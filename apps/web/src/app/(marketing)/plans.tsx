@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 // Plan allowances: the commercial configuration (migration 20261112600000, Master Plan §17.1).
@@ -150,7 +151,7 @@ const HIGHLIGHTS: { key: keyof Plan; label: string }[] = [
   { key: 'ai', label: 'AI credits' },
 ];
 
-export function PlanTiers() {
+export function PlanTiers({ picked }: { picked?: string | undefined }) {
   return (
     <div className="nj-tiers">
       {GROUPS.map((g) => (
@@ -166,7 +167,17 @@ export function PlanTiers() {
           </header>
           <ul className="nj-tier-plans">
             {g.plans.map((p) => (
-              <li key={p.name} className={p.research === null ? 'is-contract' : undefined}>
+              <li
+                key={p.name}
+                className={
+                  [p.research === null ? 'is-contract' : '', picked === p.name ? 'is-picked' : '']
+                    .join(' ')
+                    .trim() || undefined
+                }
+              >
+                {picked === p.name ? (
+                  <span className="nj-tier-badge">Suggested for you</span>
+                ) : null}
                 <h4>{p.name}</h4>
                 <p className="nj-tier-for">{p.forWhom}</p>
                 {p.research === null ? null : (
@@ -200,6 +211,116 @@ export function PlanTiers() {
         </section>
       ))}
     </div>
+  );
+}
+
+// A guided choice: who will use Njumeni, then how. Suggests one configured plan; it decides
+// nothing and changes no terms.
+const FINDER = [
+  {
+    who: 'Myself, for my own legal matters',
+    ask: 'How will you use it?',
+    options: [
+      ['A few questions a month', 'Free'],
+      ['Regularly', 'Personal'],
+      ['For an ongoing legal matter', 'Personal Plus'],
+    ],
+  },
+  {
+    who: 'Me, as a lawyer or adviser',
+    ask: 'How much legal work?',
+    options: [
+      ['A typical practice', 'Professional'],
+      ['High volume', 'Professional Plus'],
+    ],
+  },
+  {
+    who: 'A firm or organisation',
+    ask: 'What kind of organisation?',
+    options: [
+      ['A law firm', 'Law Firm'],
+      ['A company or large organisation', 'Enterprise'],
+      ['A public institution', 'Institutional'],
+    ],
+  },
+] as const;
+const ALL_PLANS = GROUPS.flatMap((g) => g.plans);
+
+export function PlanChooser() {
+  const [who, setWho] = useState<number | null>(null);
+  const [plan, setPlan] = useState<string | undefined>(undefined);
+  const found = ALL_PLANS.find((p) => p.name === plan);
+  return (
+    <>
+      <div className="nj-finder" role="group" aria-labelledby="finder-title">
+        <div className="nj-finder-step">
+          <p id="finder-title" className="nj-finder-q">
+            <span>1</span> Who will use Njumeni?
+          </p>
+          <div className="nj-finder-opts">
+            {FINDER.map((f, i) => (
+              <button
+                key={f.who}
+                type="button"
+                aria-pressed={who === i}
+                onClick={() => {
+                  setWho(i);
+                  setPlan(undefined);
+                }}
+              >
+                {f.who}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className={`nj-finder-step ${who === null ? 'is-wait' : ''}`}>
+          <p className="nj-finder-q">
+            <span>2</span> {who === null ? 'Then, how you will use it' : FINDER[who]!.ask}
+          </p>
+          {who === null ? null : (
+            <div className="nj-finder-opts">
+              {FINDER[who]!.options.map(([label, name]) => (
+                <button
+                  key={label}
+                  type="button"
+                  aria-pressed={plan === name}
+                  onClick={() => setPlan(name)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="nj-finder-result" aria-live="polite">
+          {found ? (
+            <>
+              <p className="nj-finder-k">Suggested plan</p>
+              <p className="nj-finder-name">{found.name}</p>
+              <p className="nj-finder-sum">
+                {found.research === null
+                  ? 'Allowances, seats and storage are agreed by contract.'
+                  : `${fmt(found.research)} research runs, ${fmt(found.documents)} generated documents and ${fmt(found.ai)} AI credits a month.`}
+              </p>
+              <p className="nj-finder-access">{found.access}</p>
+              <Link
+                href={
+                  found.research === null ? '/early-access?interest=demonstration' : '/early-access'
+                }
+                className="nj-btn nj-btn--gold nj-btn--sm nj-finder-cta"
+              >
+                {found.research === null ? 'Talk to us' : 'Request early access'}
+              </Link>
+            </>
+          ) : (
+            <p className="nj-finder-hint">
+              Answer two questions to see which plan fits. Every plan is listed below.
+            </p>
+          )}
+        </div>
+      </div>
+      <PlanTiers picked={plan} />
+    </>
   );
 }
 

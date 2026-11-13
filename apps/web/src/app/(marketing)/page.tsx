@@ -5,7 +5,7 @@ import { Atlas } from './atlas';
 import { AuthorityChart } from './authority-chart';
 import { Custody } from './custody';
 import { Observatory } from './observatory';
-import { PlanTiers, Plans } from './plans';
+import { PlanChooser, Plans } from './plans';
 import { Journeys } from './journeys';
 import { ResearchView } from './research-view';
 
@@ -44,40 +44,26 @@ export default function HomePage() {
       {/* 01 — Hero */}
       <section className="nj-hero" aria-labelledby="hero-title">
         <div className="nj-wrap">
-          <div className="nj-hero-grid">
-            <div>
-              <Kicker>Global legal intelligence</Kicker>
-              <h1 id="hero-title">
-                <span>Know the law.</span>
-                <span>Understand its authority.</span>
-                <span>Stay ahead of change.</span>
-              </h1>
-              <p className="nj-hero-lead">
-                Global legal intelligence connecting authoritative legal research, professional
-                legal work and continuous awareness of changing legislation.
-              </p>
-              <div className="nj-ctas">
-                <Link href="/early-access" className="nj-btn nj-btn--gold">
-                  Request early access
-                </Link>
-                <Link href="/sign-in" className="nj-btn nj-btn--ghost">
-                  Sign in
-                </Link>
-              </div>
-              <ol className="nj-hero-key" aria-label="How to read the example">
-                <li>
-                  <b>The authority</b> — the provision, quoted in the words of the law
-                </li>
-                <li>
-                  <b>Its version</b> — the text in force on the date you choose
-                </li>
-                <li>
-                  <b>The checks</b> — citation, quotation, date and source permission
-                </li>
-              </ol>
+          <ResearchView>
+            <Kicker>Global legal intelligence</Kicker>
+            <h1 id="hero-title">
+              <span>Know the law.</span>
+              <span>Understand its authority.</span>
+              <span>Stay ahead of change.</span>
+            </h1>
+            <p className="nj-hero-lead">
+              Global legal intelligence connecting authoritative legal research, professional legal
+              work and continuous awareness of changing legislation.
+            </p>
+            <div className="nj-ctas">
+              <Link href="/early-access" className="nj-btn nj-btn--gold">
+                Request early access
+              </Link>
+              <Link href="/sign-in" className="nj-btn nj-btn--ghost">
+                Sign in
+              </Link>
             </div>
-            <ResearchView />
-          </div>
+          </ResearchView>
           <ul className="nj-principles" aria-label="Principles">
             <li>
               <b>Official sources</b>
@@ -706,11 +692,21 @@ export default function HomePage() {
       <section id="ai" className="nj-s nj-s--navy" aria-labelledby="ai-title">
         <div className="nj-wrap">
           <Kicker>AI and human responsibility</Kicker>
-          <h2 id="ai-title" className="nj-ai-statement">
-            <span>AI assists.</span>
-            <span>The law provides the authority.</span>
+          <h2 id="ai-title" className="nj-roles-title">
+            <span>AI assists.</span> <span>The law provides the authority.</span>{' '}
             <span>Professionals retain responsibility.</span>
           </h2>
+          <div className="nj-roles" aria-hidden="false">
+            <p>
+              It finds, ranks and compares. Drafting and legal reasoning arrive only when a provider
+              is connected — and are labelled when they do.
+            </p>
+            <p>
+              Answers quote the official text in force on your date. Nothing is generated and
+              presented as law.
+            </p>
+            <p>Reviews, sign-off and approvals come before any work is relied on.</p>
+          </div>
           <div className="nj-ai-grid">
             <div>
               <h3 className="nj-ai-title">Where intelligence is used today</h3>
@@ -769,10 +765,6 @@ export default function HomePage() {
                   Source activation, remediation and deployments need an authorised decision — two
                   people by default.
                 </span>
-              </li>
-              <li>
-                <b>Professionals sign off.</b>
-                <span>Reviews and sign-off gates come before work is relied on.</span>
               </li>
               <li>
                 <b>Limits are stated, not hidden.</b>
@@ -891,7 +883,7 @@ export default function HomePage() {
               plans. Prices are announced at early access.
             </p>
           </div>
-          <PlanTiers />
+          <PlanChooser />
           <details className="nj-pl-compare">
             <summary>Compare every allowance</summary>
             <Plans />
