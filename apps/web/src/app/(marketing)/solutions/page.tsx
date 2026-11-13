@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Journeys } from '../journeys';
-import { AccessCheck, OrgExplorer } from '../org-explorer';
+import { OrgExplorer } from '../org-explorer';
 import { CtaBand, Kicker, PageIntro, Related } from '../site';
 
 export const metadata: Metadata = {
@@ -186,7 +186,6 @@ export default function Page() {
           <p className="nj-figcap">
             Illustrative organisation; the structure is the one Njumeni enforces.
           </p>
-          <AccessCheck />
         </div>
       </section>
       <Related keys={['plans', 'workspace', 'security']} />

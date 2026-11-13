@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Current version | v6 — multi-page institutional website (2026-11-13) |
+| Current version | v7 — foundations: fonts, stylesheet, grouped navigation (2026-11-13) |
 | Routes | `/`, `/platform/research`, `/platform/workspace`, `/platform/change-intelligence`, `/platform/jurisdictions`, `/solutions`, `/plans`, `/security`, `/about`, `/documentation`, `/early-access`, `/robots.txt`, `/sitemap.xml` |
 | Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `research-demo.tsx`, `evidence-pipeline.tsx`, `org-explorer.tsx`, `governance-flow.tsx`, `section-nav.tsx`, `marketing.css`, `early-access/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
@@ -156,7 +156,23 @@ Every navigation item now opens its own page, with its own URL, title, descripti
 
 **Shared parts.** `site.tsx` holds the page list (one source for the header, footer, sitemap and robots), the page introduction, related links, the call-to-action band, `Tag` and `Kicker`. `section-nav.tsx` marks the current page in the header and the mobile menu.
 
-## 9. Checks (v6)
+## 9. v7 — foundations
+
+- **Fonts:** Newsreader (editorial serif, regular and italic) and Inter (sans-serif), both under the SIL Open Font License. They are self-hosted through `next/font`, downloaded at build time and served from the site, so the visitor's browser makes no request to Google. Metric-matched fallbacks avoid layout shift. The page renders identically on macOS, Windows, Android and iOS.
+- **Stylesheet:** 201 selectors that referenced classes no longer in any component were removed (7,359 → 6,337 lines). Screenshots of all 11 public pages at 1440 and 390 px were pixel-identical before and after. An attempt to merge repeated rules changed the cascade, so it was reverted.
+- **Navigation:** five top-level items.
+  - Platform: a menu with Research, Workspace, Change intelligence and Jurisdictions, each with a one-line description.
+  - Who it serves, Security and Plans: direct links.
+  - Company: a menu with About and Documentation.
+
+  Menus are disclosure buttons. They close on Escape, an outside click or navigation, and mark the current page. The phone menu groups the same items under headings.
+- **One home per demonstration:**
+  - the homepage keeps only the date line and gains four doorways into the product, with change intelligence as the signature;
+  - the custody chain lives on Workspace;
+  - the environment selector lives on Who it serves;
+  - the access check lives on Security.
+
+## 10. Checks (v7)
 
 | Check | Result |
 |---|---|
@@ -168,7 +184,7 @@ Every navigation item now opens its own page, with its own URL, title, descripti
 | Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px (iPhone 13), both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
 | Responsive | 1920, 1440, 1280, 1024, 768, 390 and 360 px: no horizontal scroll and no console errors; reviewed viewport by viewport: no horizontal scroll and no console errors |
 
-## 10. Open items
+## 11. Open items
 
 - **Web hosting:** Vercel builds the default branch once the deployment quota allows.
 - **Owner decisions:**

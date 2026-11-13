@@ -1,22 +1,33 @@
 import Link from 'next/link';
+import { Inter, Newsreader } from 'next/font/google';
 import './marketing.css';
-import { SiteNav } from './section-nav';
+import { MobileNav, SiteNav, type NavItem } from './section-nav';
 import { PAGES } from './site';
 
-const NAV = [
-  PAGES.research,
-  PAGES.workspace,
-  PAGES.change,
-  PAGES.jurisdictions,
+// Self-hosted at build time (no request to Google from the visitor's browser), with metric-matched
+// fallbacks so text does not shift while the fonts load.
+const serif = Newsreader({
+  subsets: ['latin', 'latin-ext'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+const sans = Inter({ subsets: ['latin', 'latin-ext'], variable: '--font-sans', display: 'swap' });
+
+const NAV: NavItem[] = [
+  {
+    label: 'Platform',
+    group: [PAGES.research, PAGES.workspace, PAGES.change, PAGES.jurisdictions],
+  },
   PAGES.solutions,
-  PAGES.plans,
   PAGES.security,
+  PAGES.plans,
+  { label: 'Company', group: [PAGES.about, PAGES.documentation] },
 ];
-const MORE = [PAGES.about, PAGES.documentation];
 
 export default function MarketingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="nj">
+    <div className={`nj ${serif.variable} ${sans.variable}`}>
       <a className="nj-skip" href="#main">
         Skip to content
       </a>
@@ -34,7 +45,7 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             </span>
             NJUMENI
           </Link>
-          <SiteNav items={NAV} label="Main" className="nj-nav" />
+          <SiteNav items={NAV} />
           <div className="nj-header-actions">
             <Link href="/sign-in" className="nj-btn nj-btn--ghost nj-btn--sm nj-hide-md">
               Sign in
@@ -46,7 +57,7 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
           <details className="nj-menu">
             <summary>Menu</summary>
             <div className="nj-menu-panel">
-              <SiteNav items={[...NAV, ...MORE]} label="Main (mobile)" className="nj-menu-nav" />
+              <MobileNav items={NAV} />
               <Link href="/early-access">Request early access</Link>
               <Link href="/sign-in">Sign in</Link>
             </div>

@@ -495,8 +495,11 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await rv.getByText(/not the\s+version in force on 15 January 2025/).isVisible(), 'no version held for that date: Njumeni declines');
   await rv.getByRole('button', { name: 'Law as at 1 Aug 2026' }).click();
   assert.ok(await rv.getByText('In force from 1 July 2026').isVisible());
-  await page.locator('.nj-envs').getByRole('button', { name: /Institutional/ }).click();
-  assert.ok(await page.getByText('A public body with formal accountability.').isVisible());
+  // Grouped navigation: the Platform menu opens, lists the product pages and closes on Escape.
+  await page.locator('.nj-nav').getByRole('button', { name: 'Platform' }).click();
+  assert.ok(await page.locator('#menu-platform').getByRole('link', { name: /Change intelligence/ }).isVisible(), 'the Platform menu lists the product pages');
+  await page.keyboard.press('Escape');
+  assert.ok(await page.locator('#menu-platform').isHidden(), 'Escape closes the menu');
 
   // Every public page: its own URL, title, one main heading, and the current page marked.
   const PUBLIC = [
@@ -519,7 +522,7 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
     assert.match(await page.locator('h1').innerText(), heading, `${path}: its own heading`);
     assert.match(await page.title(), /Njumeni/, `${path}: title`);
     assert.ok(await page.locator('meta[name="description"]').getAttribute('content'), `${path}: description`);
-    if (nav) assert.equal(await page.locator('.nj-nav [aria-current="page"]').innerText(), nav, `${path}: current page marked`);
+    if (nav) assert.match(await page.locator('.nj-nav [aria-current="page"]').textContent(), new RegExp(`^${nav}`), `${path}: current page marked`);
     allText.push(await page.locator('main').innerText());
     for (const h of await page.locator('a[href]').evaluateAll((links) => links.map((a) => a.getAttribute('href')))) hrefs.add(h);
   }
@@ -592,13 +595,15 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
     await journeys.getByRole('tab', { name: new RegExp(tab) }).click();
     assert.ok(await journeys.getByText(ws, { exact: true }).isVisible(), ws);
   }
+  await page.locator('.nj-envs').getByRole('button', { name: /Institutional/ }).click();
+  assert.ok(await page.getByText('A public body with formal accountability.').isVisible());
+
+  // Security page: the access check and the AI governance flow.
+  await page.goto(`${BASE}/security`);
   const access = page.locator('.nj-access');
   await access.getByRole('button', { name: /K\. Dahl/ }).click();
   await access.getByRole('button', { name: /Audit records/ }).click();
   assert.equal(await access.locator('.nj-access-verdict').innerText(), 'Allowed', 'the access check follows the permission');
-
-  // Security page: AI governance flow.
-  await page.goto(`${BASE}/security`);
   await page.locator('.nj-gov').getByRole('button', { name: /Recorded decision/ }).click();
   assert.ok(await page.locator('.nj-gov').getByText(/append-only/).isVisible());
 

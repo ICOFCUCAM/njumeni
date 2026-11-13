@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { AuthorityChart } from './authority-chart';
-import { Custody } from './custody';
-import { OrgExplorer } from './org-explorer';
 import { ResearchView } from './research-view';
 import { Kicker } from './site';
 
@@ -115,66 +113,67 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 04 — From question to legal work */}
-      <section className="nj-s nj-s--paper" aria-labelledby="journey-title">
+      {/* 04 — The platform: four doorways */}
+      <section className="nj-s nj-s--paper" aria-labelledby="platform-title">
         <div className="nj-wrap">
           <div className="nj-head">
             <div>
-              <Kicker>Research to legal work</Kicker>
-              <h2 id="journey-title">
-                One citation, <em>from question to signed document.</em>
+              <Kicker>The platform</Kicker>
+              <h2 id="platform-title">
+                Four capabilities, <em>one standard of evidence.</em>
               </h2>
             </div>
             <p className="nj-lead">
-              A finding does not end in a chat window. It moves into a matter, beside the parties,
-              deadlines and evidence — and into the document, where it can still be traced to the
-              law.
+              Research grounded in the law, legal work that keeps its citations, change intelligence
+              that keeps knowledge current, and a framework built for many legal systems.
             </p>
           </div>
-          <ol
-            className="nj-thread"
-            aria-label="How one citation travels from research into a document"
-          >
+          <ul className="nj-doors">
             <li>
-              <p className="nj-thread-where">
-                <span>01</span> Research · personal workspace
-              </p>
-              <span className="nj-thread-cite">§ 15-7 (1)</span>
-              <h3>A cited finding</h3>
-              <p className="nj-thread-snip" lang="nb">
-                “…uten at det er saklig begrunnet i virksomhetens, arbeidsgiverens eller
-                arbeidstakerens forhold.”
-              </p>
-              <p className="nj-thread-meta">Version in force from 1 July 2026 · saved to matter</p>
+              <Link href="/platform/research">
+                <small>01 · Legal research</small>
+                <b>Ask a question. Receive the authority.</b>
+                <span>
+                  The official text in force on your date, quoted exactly and cited — or a refusal
+                  that says why.
+                </span>
+                <i>Run the research</i>
+              </Link>
             </li>
             <li>
-              <p className="nj-thread-where">
-                <span>02</span> Matter M-2026-014 · Arguments
-              </p>
-              <span className="nj-thread-cite">§ 15-7 (1)</span>
-              <h3>Attached to argument 1</h3>
-              <p className="nj-thread-snip">
-                The dismissal was objectively justified by the employee’s conduct.
-              </p>
-              <p className="nj-thread-meta">Evidence: written warning (14 Mar) · meeting notes</p>
+              <Link href="/platform/workspace">
+                <small>02 · Professional workspace</small>
+                <b>From research to legal work.</b>
+                <span>
+                  Matters, evidence, chronologies, arguments and documents — with every citation
+                  still traceable to the law.
+                </span>
+                <i>Open the case file</i>
+              </Link>
+            </li>
+            <li className="is-signature">
+              <Link href="/platform/change-intelligence">
+                <small>03 · Global Legal Change Intelligence</small>
+                <b>The law changes. Legal knowledge keeps up.</b>
+                <span>
+                  One amendment, followed from the official source to the answers, documents and
+                  deadlines that relied on it.
+                </span>
+                <i>Follow a change</i>
+              </Link>
             </li>
             <li>
-              <p className="nj-thread-where">
-                <span>03</span> Reply to the claim · draft 3
-              </p>
-              <span className="nj-thread-cite">§ 15-7 (1)</span>
-              <h3>Cited as footnote 1</h3>
-              <p className="nj-thread-snip">
-                …objectively justified under the Working Environment Act § 15-7 (1)
-                <sup>1</sup>…
-              </p>
-              <p className="nj-thread-meta">Re-verified against the law in force before sending</p>
+              <Link href="/platform/jurisdictions">
+                <small>04 · Jurisdictions</small>
+                <b>One framework. Many legal systems.</b>
+                <span>
+                  Seventeen legal systems, each with its own sources, languages, hierarchy and
+                  status — stated as it is.
+                </span>
+                <i>Explore the atlas</i>
+              </Link>
             </li>
-          </ol>
-          <p className="nj-more">
-            <Link href="/platform/research">How research works</Link>
-            <Link href="/platform/workspace">Inside the professional workspace</Link>
-          </p>
+          </ul>
         </div>
       </section>
 
@@ -192,12 +191,23 @@ export default function HomePage() {
               independently.
             </p>
             <p className="nj-more">
-              <Link href="/platform/workspace#evidence">The evidence lifecycle</Link>
+              <Link href="/platform/workspace#evidence">Verify a custody chain</Link>
             </p>
           </div>
-          <div>
-            <Custody />
-          </div>
+          <ol className="nj-facts">
+            <li>
+              <b>Fingerprinted on arrival</b>
+              <span>A SHA-256 fingerprint of the exact file, before anyone can open it.</span>
+            </li>
+            <li>
+              <b>Sealed, record by record</b>
+              <span>Each custody record includes the one before it, so any change shows.</span>
+            </li>
+            <li>
+              <b>Never overwritten, never lost to a hold</b>
+              <span>Versions sit beside each other; a legal hold stops deletion.</span>
+            </li>
+          </ol>
         </div>
       </section>
 
@@ -270,7 +280,28 @@ export default function HomePage() {
               by the interface.
             </p>
           </div>
-          <OrgExplorer />
+          <ol className="nj-envlist">
+            <li>
+              <b>Personal</b>
+              <span>One person and their own legal questions</span>
+            </li>
+            <li>
+              <b>Professional</b>
+              <span>A lawyer or adviser working on their own</span>
+            </li>
+            <li>
+              <b>Law firm</b>
+              <span>Partners, associates and staff, with barriers</span>
+            </li>
+            <li>
+              <b>Enterprise</b>
+              <span>In-house legal, compliance and governance</span>
+            </li>
+            <li>
+              <b>Institutional</b>
+              <span>Public bodies with formal accountability</span>
+            </li>
+          </ol>
           <p className="nj-more">
             <Link href="/security">Security and governance</Link>
             <Link href="/solutions">Who Njumeni serves</Link>
