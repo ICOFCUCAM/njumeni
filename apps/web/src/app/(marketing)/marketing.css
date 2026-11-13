@@ -6615,3 +6615,269 @@ li.is-skip .nj-demo2-label {
     padding: 26px 22px 24px;
   }
 }
+/* =====================================================================================
+   v8 — trust and legal pages
+   ===================================================================================== */
+.nj-nav {
+  gap: 24px;
+}
+.nj-muted {
+  color: var(--slate-soft);
+}
+.nj-draft-notice {
+  margin-top: 22px;
+  padding: 14px 18px;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: rgba(198, 166, 107, 0.14);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.nj-intro--navy .nj-draft-notice {
+  color: var(--on-dark);
+}
+/* legal documents */
+.nj-doc {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.nj-doc-toc {
+  position: sticky;
+  top: 110px;
+}
+.nj-doc-toc p {
+  margin: 0 0 12px;
+  font-size: var(--t-label);
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.nj-doc-toc ol {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--line);
+}
+.nj-doc-toc a {
+  display: block;
+  padding: 6px 0 6px 14px;
+  font-size: 15px;
+  color: var(--slate);
+  text-decoration: none;
+}
+.nj-doc-toc a:hover {
+  color: var(--navy);
+  box-shadow: inset 2px 0 0 var(--gold);
+}
+.nj-doc-body {
+  max-width: 72ch;
+}
+.nj-doc-body section {
+  padding: 0 0 32px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.nj-doc-body section:last-child {
+  border-bottom: 0;
+}
+.nj .nj-doc-body h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  max-width: none;
+  margin: 0 0 14px;
+  font-size: var(--t-h3);
+  line-height: 1.25;
+}
+.nj-doc-body h2 span {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--bronze);
+}
+.nj-doc-body p,
+.nj-doc-body li {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--slate);
+}
+.nj-doc-body p {
+  margin: 0 0 12px;
+}
+.nj-doc-body ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+.nj-doc-body b {
+  color: var(--ink);
+}
+.nj-doc-body a {
+  color: var(--navy);
+}
+.nj-doc-dl {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 10px 20px;
+  margin: 0;
+  font-size: 17px;
+}
+.nj-doc-dl dt {
+  color: var(--slate-soft);
+}
+.nj-doc-dl dd {
+  margin: 0;
+  color: var(--ink);
+}
+/* contact */
+.nj-contact {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nj-contact li {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 8px;
+  padding: 28px 26px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold);
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  background: #fff;
+}
+.nj-contact small {
+  font-size: var(--t-label);
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bronze);
+}
+.nj-contact b {
+  font-family: var(--serif);
+  font-size: 25px;
+  font-weight: 500;
+}
+.nj-contact span {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--slate);
+}
+.nj-contact p {
+  margin: 4px 0 0;
+  font-weight: 600;
+  color: var(--navy);
+}
+.nj-contact .nj-btn {
+  margin-top: 6px;
+}
+/* programme */
+.nj-exchange {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.nj-exchange > div {
+  padding: 30px 32px;
+  border-radius: var(--r-lg);
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.nj-exchange > div:first-child {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--on-dark);
+}
+.nj .nj-exchange h3 {
+  margin: 0 0 16px;
+}
+.nj-exchange > div:first-child h3 {
+  color: var(--on-dark);
+}
+.nj-exchange ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nj-exchange li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 16.5px;
+  line-height: 1.55;
+}
+.nj-exchange li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.nj-exchange > div:last-child li {
+  color: var(--slate);
+}
+.nj-intro .nj-ctas {
+  margin-top: 26px;
+}
+/* footer legal row */
+.nj-footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(245, 241, 232, 0.12);
+  font-size: 14.5px;
+}
+.nj-footer-legal a {
+  color: var(--on-dark-soft);
+  text-decoration: none;
+}
+.nj-footer-legal a:hover {
+  color: var(--gold);
+}
+@media (max-width: 1100px) {
+  .nj-doc {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nj-doc-toc {
+    position: static;
+  }
+  .nj-contact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 680px) {
+  .nj-contact,
+  .nj-exchange {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nj-doc-dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+  .nj-doc-dl dd {
+    margin-bottom: 10px;
+  }
+  .nj-exchange > div {
+    padding: 22px 20px;
+  }
+}
+.nj-doc-body a,
+.nj-deflist a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

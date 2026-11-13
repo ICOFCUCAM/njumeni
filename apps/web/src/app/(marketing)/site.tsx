@@ -58,6 +58,31 @@ export const PAGES = {
     label: 'Documentation',
     blurb: 'Guides, technical notes and API resources.',
   },
+  trust: {
+    href: '/trust',
+    label: 'Trust centre',
+    blurb: 'Control status, data location, processors and assurance.',
+  },
+  responsibleAi: {
+    href: '/responsible-ai',
+    label: 'Responsible AI',
+    blurb: 'Where AI is used, its rules, and the conditions for more.',
+  },
+  programme: {
+    href: '/early-access-programme',
+    label: 'Early-access programme',
+    blurb: 'Who it is for, what participants receive, how it unfolds.',
+  },
+  contact: {
+    href: '/contact',
+    label: 'Contact',
+    blurb: 'Early access, demonstrations, privacy and security.',
+  },
+  privacy: {
+    href: '/privacy',
+    label: 'Privacy notice',
+    blurb: 'What is collected, why, for how long, and your rights.',
+  },
 } as const;
 export type PageKey = keyof typeof PAGES;
 
@@ -140,6 +165,50 @@ export function CtaBand({
           <Link href="/early-access?interest=demonstration" className="nj-btn nj-btn--ghost">
             Request a demonstration
           </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Shown on legal documents until the owner records their approval in site-details.ts.
+export function DraftNotice() {
+  return (
+    <div className="nj-draft-notice" role="note" aria-label="Document status">
+      <b>Draft for legal review.</b> This document is not yet in force. It describes how Njumeni is
+      built today; the operator’s details and some provisions are completed before launch.
+    </div>
+  );
+}
+
+// A long legal document: numbered sections with a contents list.
+export function LegalDoc({
+  sections,
+}: {
+  sections: { id: string; title: string; body: React.ReactNode }[];
+}) {
+  return (
+    <section className="nj-s nj-s--paper" aria-label="Document">
+      <div className="nj-wrap nj-doc">
+        <nav className="nj-doc-toc" aria-label="Contents">
+          <p>Contents</p>
+          <ol>
+            {sections.map((s) => (
+              <li key={s.id}>
+                <a href={`#${s.id}`}>{s.title}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+        <div className="nj-doc-body">
+          {sections.map((s, i) => (
+            <section key={s.id} id={s.id} aria-labelledby={`${s.id}-h`}>
+              <h2 id={`${s.id}-h`}>
+                <span>{String(i + 1).padStart(2, '0')}</span> {s.title}
+              </h2>
+              {s.body}
+            </section>
+          ))}
         </div>
       </div>
     </section>

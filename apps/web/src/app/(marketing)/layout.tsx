@@ -20,9 +20,9 @@ const NAV: NavItem[] = [
     group: [PAGES.research, PAGES.workspace, PAGES.change, PAGES.jurisdictions],
   },
   PAGES.solutions,
-  PAGES.security,
-  PAGES.plans,
-  { label: 'Company', group: [PAGES.about, PAGES.documentation] },
+  { label: 'Trust', group: [PAGES.security, PAGES.trust, PAGES.responsibleAi] },
+  { label: 'Plans', group: [PAGES.plans, PAGES.programme] },
+  { label: 'Company', group: [PAGES.about, PAGES.contact, PAGES.documentation] },
 ];
 
 export default function MarketingLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -93,7 +93,13 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
             <div>
               <h2>Njumeni</h2>
               <ul>
-                {[PAGES.solutions, PAGES.security, PAGES.about, PAGES.documentation].map((p) => (
+                {[
+                  PAGES.solutions,
+                  PAGES.security,
+                  PAGES.trust,
+                  PAGES.responsibleAi,
+                  PAGES.about,
+                ].map((p) => (
                   <li key={p.href}>
                     <Link href={p.href}>{p.label}</Link>
                   </li>
@@ -113,11 +119,23 @@ export default function MarketingLayout({ children }: Readonly<{ children: React
                   <Link href="/plans">Plans</Link>
                 </li>
                 <li>
+                  <Link href="/early-access-programme">Early-access programme</Link>
+                </li>
+                <li>
+                  <Link href="/contact">Contact</Link>
+                </li>
+                <li>
                   <Link href="/sign-in">Sign in</Link>
                 </li>
               </ul>
             </div>
           </div>
+          <p className="nj-footer-legal">
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/legal">Legal notice</Link>
+            <Link href="/documentation">Documentation</Link>
+          </p>
           <p className="nj-footer-base">
             © 2026 Njumeni. Njumeni provides legal information and research tools. It is not a law
             firm and does not replace advice from a qualified lawyer.

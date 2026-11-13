@@ -512,6 +512,13 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
     ['/security', 'Security', /Protect information/],
     ['/about', null, /Legal intelligence/],
     ['/documentation', null, /Guides, technical notes/],
+    ['/trust', 'Trust centre', /What we have done/],
+    ['/responsible-ai', 'Responsible AI', /AI assists/],
+    ['/early-access-programme', 'Early-access programme', /Shape Njumeni/],
+    ['/contact', 'Contact', /Speak with/],
+    ['/privacy', null, /Your data/],
+    ['/terms', null, /The terms/],
+    ['/legal', null, /Who operates/],
   ];
   const allText = [];
   const hrefs = new Set();
@@ -530,7 +537,8 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   await page.goto(`${BASE}/platform/change-intelligence`);
   await page.reload();
   assert.match(await page.locator('h1').innerText(), /The law changes/, 'refresh keeps the page');
-  await Promise.all([page.waitForURL(/\/plans$/), page.locator('.nj-nav').getByRole('link', { name: 'Plans' }).click()]);
+  await page.locator('.nj-nav').getByRole('button', { name: 'Plans' }).click();
+  await Promise.all([page.waitForURL(/\/plans$/), page.locator('#menu-plans').getByRole('link', { name: /^Plans/ }).click()]);
   await page.goBack();
   await page.waitForURL(/\/platform\/change-intelligence$/);
   assert.match(await page.locator('h1').innerText(), /The law changes/, 'back returns to the previous page');
@@ -618,6 +626,12 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.equal(await plans.locator('.nj-pl-table--all thead tr:last-child th[scope="col"]:not(:first-child)').count(), 8, 'all eight plans compared side by side');
   assert.ok(await plans.getByText('20,000').first().isVisible(), 'allowances from the configuration');
   assert.ok(!/[$€£]\s?\d/.test(await plans.innerText()), 'no undecided prices are published');
+
+  // Legal documents are drafts until approved: marked as such and kept out of search engines.
+  await page.goto(`${BASE}/privacy`);
+  assert.ok(await page.getByText('Draft for legal review.').isVisible(), 'the privacy notice is marked as a draft');
+  assert.equal(await page.locator('meta[name="robots"]').getAttribute('content'), 'noindex, follow', 'drafts are not indexed');
+  assert.ok((await page.getByText('To be published before launch').count()) > 0, 'owner details are not invented');
 
   // Accuracy across the whole public site.
   const text = allText.join('\n');

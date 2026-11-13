@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Current version | v7 — foundations: fonts, stylesheet, grouped navigation (2026-11-13) |
-| Routes | `/`, `/platform/research`, `/platform/workspace`, `/platform/change-intelligence`, `/platform/jurisdictions`, `/solutions`, `/plans`, `/security`, `/about`, `/documentation`, `/early-access`, `/robots.txt`, `/sitemap.xml` |
+| Current version | v8 — trust and legal pages (2026-11-13) |
+| Routes | `/`, `/platform/research`, `/platform/workspace`, `/platform/change-intelligence`, `/platform/jurisdictions`, `/solutions`, `/plans`, `/security`, `/about`, `/documentation`, `/trust`, `/responsible-ai`, `/early-access-programme`, `/contact`, `/privacy`, `/terms`, `/legal`, `/early-access`, `/robots.txt`, `/sitemap.xml` |
 | Code | `apps/web/src/app/(marketing)/`: `layout.tsx`, `page.tsx`, `research-view.tsx`, `authority-chart.tsx`, `case-file.tsx`, `custody.tsx`, `observatory.tsx`, `atlas.tsx`, `journeys.tsx`, `plans.tsx`, `research-demo.tsx`, `evidence-pipeline.tsx`, `org-explorer.tsx`, `governance-flow.tsx`, `section-nav.tsx`, `marketing.css`, `early-access/` |
 | Assets | `apps/web/public/home/jurisdiction-atlas.svg` (Equal Earth projection, with sphere and graticule), generated from Natural Earth (public domain) through `world-atlas` 2.0.2, `topojson-client` 3.1.0 and `d3-geo` 3.1.1. These packages were used only at design time; the app has no new dependency |
 | Database | Migration `20261114600000_early_access_requests` (unchanged in v3) |
@@ -172,7 +172,23 @@ Every navigation item now opens its own page, with its own URL, title, descripti
   - the environment selector lives on Who it serves;
   - the access check lives on Security.
 
-## 10. Checks (v7)
+## 10. v8 — trust and legal pages
+
+| Page | Route | Contents |
+|---|---|---|
+| Trust centre | `/trust` | Status of 12 controls (built, awaiting activation, in development, planned); data location and processors: Supabase in the EU (Stockholm, `eu-north-1`), Vercel with its server region still to be fixed in the EU, no AI provider connected; certifications (none yet, planned); vulnerability reporting; documents; no tracking |
+| Responsible AI | `/responsible-ai` | Where AI is used today, with status; six commitments (law quoted never generated, AI labelled, no authority no answer, people decide, no training on customer data or licensed legal material, evaluated before claimed); conditions for connecting a provider |
+| Early-access programme | `/early-access-programme` | Who it is for; what participants receive and what is asked; three phases paced by evidence; how participants are chosen. Proposed, not a contract |
+| Contact | `/contact` | Early access, demonstration, privacy requests, security reports, general enquiries, registered office |
+| Privacy notice | `/privacy` | Draft. Controller; scope (controller for accounts and requests, processor for workspace content); data collected; GDPR legal bases; retention (early-access requests 12 months, as built); processors and location; cookies (essential only); rights and Datatilsynet |
+| Terms of service | `/terms` | Draft. Parties; early-access service; not legal advice; accounts; acceptable use; your content (no AI training); source licences; plans; availability; liability (to be completed by counsel); ending; governing law |
+| Legal notice | `/legal` | Operator, organisation number, address, contact; hosting; NLOD 2.0 attribution in English and Norwegian; not legal advice |
+
+**Owner details live in one file**, `apps/web/src/app/(marketing)/site-details.ts`. It holds the legal name, organisation number, address, contact, privacy and security emails, governing law and the date the legal documents were approved. Anything left empty shows as "To be published before launch"; nothing is invented. While `legalApprovedOn` is empty, the privacy notice, terms and legal notice say "Draft for legal review", are marked `noindex` and are left out of the sitemap.
+
+**Navigation:** Platform · Who it serves · Trust (Security, Trust centre, Responsible AI) · Plans (Plans, Early-access programme) · Company (About, Contact, Documentation). The footer adds a legal row: Privacy, Terms, Legal notice, Documentation.
+
+## 11. Checks (v8)
 
 | Check | Result |
 |---|---|
@@ -184,7 +200,10 @@ Every navigation item now opens its own page, with its own URL, title, descripti
 | Accessibility (axe-core 4.10.3; WCAG 2 A/AA, 2.1 AA, best practice) | 0 violations at 1440, 1280, 768 and 390 px (iPhone 13), both on load and after interaction (earlier date, final change stage, organisations plans, another jurisdiction) |
 | Responsive | 1920, 1440, 1280, 1024, 768, 390 and 360 px: no horizontal scroll and no console errors; reviewed viewport by viewport: no horizontal scroll and no console errors |
 
-## 11. Open items
+## 12. Open items
+
+- **Fill in `site-details.ts`** (legal name, organisation number, address, contact, privacy and security emails, governing law), have counsel review the privacy notice and terms (including the liability section), then set `legalApprovedOn`.
+- **Pin the Vercel server region to the EU**, and update the trust centre and privacy notice once it is set.
 
 - **Web hosting:** Vercel builds the default branch once the deployment quota allows.
 - **Owner decisions:**
