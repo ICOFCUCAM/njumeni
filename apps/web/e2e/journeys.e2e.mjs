@@ -497,12 +497,12 @@ test('journey homepage: public homepage, every link and anchor, demonstration, e
   assert.ok(await rv.getByText('In force from 1 July 2026').isVisible());
   // The research demonstration: real text for Norway; declines where no text or version is held.
   const run = page.locator('.nj-demo2');
-  assert.ok(await run.getByText('Cited finding', { exact: true }).isVisible(), 'Norway, current date: a cited finding');
+  assert.match(await run.locator('.nj-demo2-outcome').innerText(), /Cited finding/, 'Norway, current date: a cited finding');
   await run.getByRole('button', { name: /Sweden/ }).click();
-  assert.ok(await run.getByText('Declined · no legal text held').isVisible(), 'Sweden: no text held, declined');
+  assert.match(await run.locator('.nj-demo2-outcome').innerText(), /no legal text held/, 'Sweden: no text held, declined');
   await run.getByRole('button', { name: /Norway/ }).click();
   await run.getByRole('button', { name: '15 Jan 2025' }).click();
-  assert.ok(await run.getByText('Declined · version not held').isVisible(), 'an earlier date: declined');
+  assert.match(await run.locator('.nj-demo2-outcome').innerText(), /version not held/, 'an earlier date: declined');
   // Evidence pipeline, custody records, environments, access check and AI governance.
   await page.locator('.nj-pipe').getByRole('button', { name: /Scan/ }).click();
   assert.ok(await page.locator('.nj-pipe').getByText(/not yet connected/).isVisible(), 'the scan step states what is not built');
