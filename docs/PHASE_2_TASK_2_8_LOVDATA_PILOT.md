@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | 🔵 IMPLEMENTED: verified on the local stack. **Rights approval and activation are the owner's decision (§6)** |
+| Status | 🔵 IMPLEMENTED: verified on the local stack. **Hosted: rights approved and source activated by the owner on 2026-11-14 (§6, steps 2–3). Ingestion not yet run** |
 | Date | 2026-11-12 |
 | Governing plan | [Phase 2 plan](PHASE_2_PLAN.md) Tasks 2.8 and 2.10; master plan §6.3, §6.7 (U-21), §5.7 (U-22), §18.2; U-27 |
 | Source | Lovdata public data: `gjeldende-lover.tar.bz2` (current consolidated acts) |
@@ -106,6 +106,9 @@ The gates were set **on the local stack only**, by reviewer `local-verification:
 The model files come from Hugging Face's CDN. The environment's allow-list was extended (with approval) to `us.aws.cdn.hf.co` and `us.gcp.cdn.hf.co`.
 
 ## 6. For the owner: approval and activation
+
+**Done on hosted, 2026-11-14.** The owner approved Lovdata in the session chat ("just approve it"). Steps 2 and 3 were run on the hosted project with the commands below, recorded as `Njumeni owner (approved in chat, 2026-11-14)`. Result: `rights_status = approved` (valid 12 months), `status = active`, `ingestion_enabled = true`, adapter `lovdata-public-data@1.1.0`. One rights-review and one activation audit row were written. The owner chose to activate before the Precision@5 gate passes (Task 2.8b §7 had advised waiting). That gate still governs coverage: Norway stays `planned` until ingestion and step 5, and `partial` stays refused until the evaluation passes. Steps 4 and 5 remain.
+
 
 These operations are not done. They run on the hosted project, using a service-role connection (SQL editor or `psql "$SUPABASE_DB_URL"`). Each is a separate audited step. Hosted holds all 40 migrations, including `20261112900000` and `20261113000000` (applied and verified 2026-11-12; [Phase register](PHASE_REGISTER.md)).
 

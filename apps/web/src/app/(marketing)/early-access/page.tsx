@@ -44,9 +44,7 @@ export default async function EarlyAccessPage({
   return (
     <div className="nj-wrap nj-form-wrap">
       <div>
-        <p className="nj-eyebrow" style={{ color: 'var(--nj-gold-deep)' }}>
-          Pre-launch access
-        </p>
+        <p className="nj-eyebrow">Pre-launch access</p>
         <h1
           className="nj-serif"
           style={{
@@ -68,7 +66,7 @@ export default async function EarlyAccessPage({
           <li>Early access as your jurisdiction and use case become available</li>
           <li>No payment details and no account are needed to ask</li>
         </ul>
-        <p style={{ fontSize: 14, color: 'var(--nj-ink-soft)' }}>
+        <p style={{ fontSize: 14, color: 'var(--slate)' }}>
           Already have an account?{' '}
           <Link href="/sign-in" style={{ textDecoration: 'underline' }}>
             Sign in
@@ -169,7 +167,7 @@ export default async function EarlyAccessPage({
                 us to delete it by replying to our email.
               </span>
             </label>
-            <button type="submit" className="nj-btn nj-btn-navy">
+            <button type="submit" className="nj-btn nj-btn--navy">
               {demonstration ? 'Request a demonstration' : 'Request early access'}
             </button>
           </form>

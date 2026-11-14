@@ -28,8 +28,9 @@ select set_eq(
     where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')$$,
   array['sso_discover(text)', 'api_key_research_get_run(text,uuid)', 'api_key_matter_list(text)',
     'billing_plans()', 'billing_webhook(text,text,text)', 'platform_health()',
-    'early_access_request(text,text,text,text,text,text[],text,boolean)'],
-  'only the seven intended functions can be called without a session');
+    'early_access_request(text,text,text,text,text,text[],text,boolean)',
+    'research_question_submit(text,text,date,text,text,boolean)'],
+  'only the eight intended functions can be called without a session');
 
 select is((select count(*)::int from pg_proc p join pg_namespace n on n.oid = p.pronamespace
   where n.nspname = 'private' and has_function_privilege('anon', p.oid, 'execute')), 0,

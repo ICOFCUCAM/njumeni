@@ -1,648 +1,425 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ChangeDemo } from './change-demo';
-import { Dossier } from './dossier';
-import { TimeMachine } from './time-machine';
+import { AuthorityChart } from './authority-chart';
+import { ResearchView } from './research-view';
+import { Kicker } from './site';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Njumeni — Global Legal Intelligence and Professional Legal Research' },
+  title: { absolute: 'Njumeni — Global legal intelligence' },
   description:
-    'Legal intelligence built on authoritative sources, precise citations and the law as it stood on the date that matters. Research, matters, evidence, documents and legislative change in one platform.',
+    'Global legal intelligence connecting authoritative legal research, professional legal work and continuous awareness of changing legislation.',
   robots: { index: true, follow: true },
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     siteName: 'Njumeni',
-    title: 'Njumeni — Know the law. Understand the evidence. Stay ahead of change.',
+    title: 'Njumeni — Know the law. Understand its authority. Stay ahead of change.',
     description:
-      'Legal intelligence built on authoritative sources, precise citations and the law as it stood on the date that matters.',
+      'Global legal intelligence connecting authoritative legal research, professional legal work and continuous awareness of changing legislation.',
   },
 };
-
-function Chapter({ n, title }: { n: string; title: string }) {
-  return (
-    <p className="nj-chapter">
-      <span>{n}</span>
-      {title}
-    </p>
-  );
-}
-
-const TRAIL = [
-  { k: 'Question', v: 'Can an employer dismiss an employee without a reason?' },
-  { k: 'Jurisdiction', v: 'Norway' },
-  { k: 'Law as at', v: '12 November 2026' },
-  { k: 'Authority', v: 'Working Environment Act (arbeidsmiljøloven) § 15-7 (1)' },
-  { k: 'Version', v: 'In force on the research date · content hash recorded' },
-];
-
-const LEDGER = [
-  { event: 'Uploaded', detail: 'employment-contract.pdf', hash: '9f2c41ab', prev: '00000000' },
-  { event: 'Legal hold', detail: 'Deletion blocked', hash: 'b81e07c3', prev: '9f2c41ab' },
-  { event: 'Version 2', detail: 'v1 kept unchanged', hash: '3d5a9e10', prev: 'b81e07c3' },
-  { event: 'Bundled', detail: 'Case bundle manifest', hash: 'e47f2c65', prev: '3d5a9e10' },
-];
-
-const BOARD = [
-  {
-    code: 'NO',
-    name: 'Norway',
-    source: 'Lovdata · Lovtidend · Stortinget',
-    lang: 'nb · nn',
-    state: 'Reference jurisdiction',
-  },
-  {
-    code: 'EU',
-    name: 'European Union',
-    source: 'EUR-Lex · Official Journal',
-    lang: '24 languages',
-    state: 'EEA law for Norway',
-  },
-  {
-    code: 'GB',
-    name: 'United Kingdom',
-    source: 'legislation.gov.uk',
-    lang: 'en',
-    state: 'Atom feed',
-  },
-  {
-    code: 'US',
-    name: 'United States',
-    source: 'Federal Register · Congress',
-    lang: 'en',
-    state: 'Federal API',
-  },
-  {
-    code: 'DK',
-    name: 'Denmark',
-    source: 'Retsinformation',
-    lang: 'da',
-    state: 'Daily change list',
-  },
-  {
-    code: 'SE',
-    name: 'Sweden',
-    source: 'Riksdagen · Svensk författningssamling',
-    lang: 'sv',
-    state: 'Official gazette',
-  },
-  {
-    code: 'CM',
-    name: 'Cameroon',
-    source: 'Journal officiel · OHADA',
-    lang: 'fr · en',
-    state: 'Bijural system',
-  },
-  { code: 'UG', name: 'Uganda', source: 'ULII · Uganda Gazette', lang: 'en', state: 'Common law' },
-];
-
-// Customer categories and workspaces: Master Plan v2.0 §2.4 and Product Specification §3.
-const CATEGORIES = [
-  {
-    n: '01',
-    who: 'Individuals',
-    workspace: 'Personal workspace',
-    users: 'People with a legal problem, including those representing themselves',
-    q: '“Can my landlord keep my deposit?”',
-    uses: [
-      'Understand their rights in plain language, with the exact section of law',
-      'Organise their facts, documents and correspondence',
-      'Prepare the right questions — and know when to see a lawyer',
-    ],
-  },
-  {
-    n: '02',
-    who: 'Legal professionals',
-    workspace: 'Professional workspace',
-    users: 'Lawyers, advocates, solicitors, barristers, advisers, paralegals and researchers',
-    q: '“What was the notice period on the day the contract ended?”',
-    uses: [
-      'Research the law in force on the relevant date, quoted and cited',
-      'Verify every citation before it is relied on',
-      'Analyse evidence, build arguments and draft documents',
-    ],
-  },
-  {
-    n: '03',
-    who: 'Law firms and enterprises',
-    workspace: 'Enterprise and Law Firm workspace',
-    users: 'Partners, in-house legal teams, compliance teams and matter managers',
-    q: '“Can we act for this client — and which policies does the new regulation touch?”',
-    uses: [
-      'Shared matters with conflict checks, barriers and team permissions',
-      'Firm knowledge and repeatable workflows',
-      'Oversight, compliance registers and reporting',
-    ],
-  },
-  {
-    n: '04',
-    who: 'Institutions',
-    workspace: 'Institutional workspace',
-    users: 'Public bodies, institutional legal departments and regulators',
-    q: '“Is our guidance still correct after the amendment?”',
-    uses: [
-      'Controlled institutional legal knowledge',
-      'Policy, administrative and regulatory work',
-      'Accountability with audit records that can be verified',
-    ],
-  },
-];
-
-// Plans: Master Plan v2.0 §17.1. Prices are hypotheses still to be decided, so none are shown.
-const PLANS = [
-  {
-    name: 'Free',
-    forWhom: 'The general public',
-    includes: 'Public-law research with a low monthly allowance',
-    price: 'Free',
-  },
-  {
-    name: 'Personal',
-    forWhom: 'Individuals, and individuals with ongoing legal matters (Personal Plus)',
-    includes: 'Research, saved answers and a personal document workspace',
-    price: 'Announced at early access',
-  },
-  {
-    name: 'Professional',
-    forWhom: 'Lawyers and advisers; high-volume practitioners (Professional Plus)',
-    includes: 'The full research and verification toolset, matters, evidence and drafting',
-    price: 'Announced at early access',
-  },
-  {
-    name: 'Law Firm',
-    forWhom: 'Legal practices',
-    includes: 'Per-seat workspaces, shared matters, conflict checks, barriers and firm knowledge',
-    price: 'Announced at early access',
-  },
-  {
-    name: 'Enterprise',
-    forWhom: 'Large organisations and in-house legal teams',
-    includes: 'Compliance registers, governance, API access, retention controls and SSO',
-    price: 'By contract',
-  },
-  {
-    name: 'Institutional',
-    forWhom: 'Public institutions',
-    includes: 'Institutional workspaces, controlled knowledge, audit and licensed deployments',
-    price: 'By contract',
-  },
-];
 
 export default function HomePage() {
   return (
     <>
-      {/* Hero: the law as it stood */}
+      {/* 01 — Hero */}
       <section className="nj-hero" aria-labelledby="hero-title">
         <div className="nj-wrap">
-          <div className="nj-hero-grid">
-            <div>
-              <p className="nj-eyebrow">Global legal intelligence · Professional legal research</p>
-              <h1 id="hero-title">
-                Know the law. <em>Understand the evidence.</em> Stay ahead of change.
-              </h1>
-              <p className="nj-hero-lead">
-                Legal intelligence built on authoritative sources, precise citations and the law as
-                it stood on the date that matters.
-              </p>
-              <p className="nj-hero-sub">
-                Research legal questions, manage matters, examine evidence, prepare documents and
-                follow legislative change — in one connected legal intelligence platform.
-              </p>
-              <div className="nj-cta-row">
-                <Link href="/early-access" className="nj-btn nj-btn-gold">
-                  Request early access
-                </Link>
-                <Link href="#story" className="nj-btn nj-btn-ghost">
-                  Follow a question through Njumeni ↓
-                </Link>
-              </div>
-            </div>
-            <TimeMachine />
-          </div>
-          <div className="nj-hero-strip">
-            <span>Official sources</span>
-            <span>Exact citations</span>
-            <span>Temporal accuracy</span>
-            <span>Human oversight</span>
-          </div>
-        </div>
-      </section>
-
-      {/* Prologue */}
-      <section id="story" className="nj-prologue" aria-label="The Njumeni story">
-        <div className="nj-wrap">
-          <p className="nj-prologue-text">
-            Every legal question has three coordinates: <b>where</b>, <b>when</b> and{' '}
-            <b>on what authority</b>. Most tools answer only the first. Njumeni follows a question
-            through all three — and keeps following it after the law changes.
-          </p>
-          <ol className="nj-toc">
-            <li>
-              <a href="#research">I · The question</a>
-            </li>
-            <li>
-              <a href="#workspace">II · The matter</a>
-            </li>
-            <li>
-              <a href="#evidence">III · The evidence</a>
-            </li>
-            <li>
-              <a href="#change-intelligence">IV · The change</a>
-            </li>
-            <li>
-              <a href="#enterprise">V · The institution</a>
-            </li>
-            <li>
-              <a href="#international">VI · The world</a>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      {/* I. The question */}
-      <section id="research" className="nj-section" aria-labelledby="research-title">
-        <div className="nj-wrap nj-two">
-          <div>
-            <Chapter n="I" title="The question" />
-            <h2 id="research-title">
-              Answers grounded in law, <em>not guesses.</em>
-            </h2>
-            <p className="nj-lead">
-              A question becomes a chain of evidence: the jurisdiction, the date, the authority, the
-              version in force and the exact words of the law. Each link is checked before an answer
-              is given — and each link stays visible to you.
+          <ResearchView>
+            <Kicker>Global legal intelligence</Kicker>
+            <h1 id="hero-title">
+              <span>Know the law.</span>
+              <span>Understand its authority.</span>
+              <span>Stay ahead of change.</span>
+            </h1>
+            <p className="nj-hero-lead">
+              Global legal intelligence connecting authoritative legal research, professional legal
+              work and continuous awareness of changing legislation.
             </p>
-            <div className="nj-silence">
-              <p className="nj-silence-k">When the law is silent</p>
-              <p>
-                If no verified authority answers the question on that date, Njumeni says so. No
-                invented answer. No citation that does not exist.
+            <form action="/ask" method="get" className="nj-askbox" aria-label="Ask Njumeni">
+              <label htmlFor="hero-q" className="nj-askbox-label">
+                Ask Njumeni a legal question
+              </label>
+              <div className="nj-askbox-row">
+                <input
+                  id="hero-q"
+                  name="q"
+                  type="text"
+                  maxLength={1000}
+                  required
+                  minLength={5}
+                  placeholder="Can my employer dismiss me without a reason?"
+                  autoComplete="off"
+                />
+                <button type="submit" className="nj-btn nj-btn--gold">
+                  Ask Njumeni
+                </button>
+              </div>
+              <p className="nj-askbox-note">
+                Live research opens in Norway first. Until then we keep your question — we do not
+                guess at an answer.
               </p>
-            </div>
-          </div>
-          <ol className="nj-trail" aria-label="Evidence trail of a research answer">
-            {TRAIL.map((step, i) => (
-              <li key={step.k}>
-                <span className="nj-trail-n">{String(i + 1).padStart(2, '0')}</span>
-                <span className="nj-trail-k">{step.k}</span>
-                <span className="nj-trail-v">{step.v}</span>
-              </li>
-            ))}
-            <li className="nj-trail-answer">
-              <span className="nj-trail-n">✓</span>
-              <span className="nj-trail-k">Verified answer</span>
-              <blockquote>
-                “Arbeidstaker kan ikke sies opp uten at det er saklig begrunnet i virksomhetens,
-                arbeidsgiverens eller arbeidstakerens forhold.”
-              </blockquote>
-              <span className="nj-trail-src">Lovdata · NLOD 2.0 · exact quotation</span>
+            </form>
+            <p className="nj-hero-links">
+              <Link href="/platform/research#research">See an answer in the demonstration</Link>
+              <Link href="/early-access">Request early access for your organisation</Link>
+              <Link href="/sign-in">Sign in</Link>
+            </p>
+          </ResearchView>
+          <ol className="nj-promises" aria-label="What Njumeni promises">
+            <li>
+              <small>Know the law</small>
+              <b>Research grounded in authoritative sources</b>
+              <span>Answers quote official, rights-reviewed text and name it — or decline.</span>
+            </li>
+            <li>
+              <small>Understand its authority</small>
+              <b>Answers tied to the law on a date</b>
+              <span>Every finding carries the version in force on the date that matters.</span>
+            </li>
+            <li>
+              <small>Stay ahead of change</small>
+              <b>Continuous awareness of legislative change</b>
+              <span>
+                Once a source is activated, its changes are dated and traced to the work that relied
+                on the old law.
+              </span>
             </li>
           </ol>
         </div>
       </section>
 
-      {/* II. The matter */}
-      <section
-        id="workspace"
-        className="nj-section nj-section-alt"
-        aria-labelledby="workspace-title"
-      >
+      {/* 02 — Proposition */}
+      <section className="nj-s nj-s--ivory" aria-labelledby="prop-title">
         <div className="nj-wrap">
-          <div className="nj-split-head">
+          <div className="nj-prop">
             <div>
-              <Chapter n="II" title="The matter" />
-              <h2 id="workspace-title">
-                Everything your legal team needs, <em>connected.</em>
+              <Kicker>Why legal intelligence</Kicker>
+              <h2 id="prop-title" className="nj-prop-statement">
+                Law is not just a question and an answer.{' '}
+                <em>It is authority, time, evidence and responsibility.</em>
+              </h2>
+              <p className="nj-lead">
+                The same question has different answers in different countries and on different
+                dates. An answer is only as good as the authority it rests on, the facts it is
+                applied to, and the person who takes responsibility for it. Njumeni is built around
+                all four.
+              </p>
+            </div>
+            <AuthorityChart />
+          </div>
+          <div className="nj-contrast">
+            <div>
+              <h3>A search engine</h3>
+              <p>
+                Finds documents that mention your words. It does not know which version applied, or
+                whether the text is authoritative.
+              </p>
+            </div>
+            <div>
+              <h3>A chatbot</h3>
+              <p>
+                Writes a fluent answer. It may paraphrase, blend jurisdictions or cite authority
+                that does not exist.
+              </p>
+            </div>
+            <div>
+              <h3>Njumeni</h3>
+              <p>
+                Answers from the official text in force on your date, quotes it, cites it — and says
+                so when the law is silent.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 04 — The platform: four doorways */}
+      <section className="nj-s nj-s--paper" aria-labelledby="platform-title">
+        <div className="nj-wrap">
+          <div className="nj-head">
+            <div>
+              <Kicker>The platform</Kicker>
+              <h2 id="platform-title">
+                Four capabilities, <em>one standard of evidence.</em>
               </h2>
             </div>
             <p className="nj-lead">
-              The research does not end in a chat window. It lands in a case file — with the client,
-              the deadlines, the evidence, the arguments, the draft and the sign-off — so every
-              citation in the final document can be traced back to the law.
+              Research grounded in the law, legal work that keeps its citations, change intelligence
+              that keeps knowledge current, and a framework built for many legal systems.
             </p>
           </div>
-          <Dossier />
-          <ul className="nj-inline-list" aria-label="Workspace capabilities">
-            <li>Matters &amp; deadlines</li>
-            <li>Conflict checks &amp; barriers</li>
-            <li>Evidence</li>
-            <li>Chronologies</li>
-            <li>Arguments</li>
-            <li>Documents</li>
-            <li>Reviews &amp; sign-off</li>
-            <li>Firm knowledge</li>
-            <li>Compliance</li>
-            <li>Billing</li>
+          <ul className="nj-doors">
+            <li>
+              <Link href="/platform/research">
+                <small>01 · Legal research</small>
+                <b>Ask a question. Receive the authority.</b>
+                <span>
+                  The official text in force on your date, quoted exactly and cited — or a refusal
+                  that says why.
+                </span>
+                <i>Run the research</i>
+              </Link>
+            </li>
+            <li>
+              <Link href="/platform/workspace">
+                <small>02 · Professional workspace</small>
+                <b>From research to legal work.</b>
+                <span>
+                  Matters, evidence, chronologies, arguments and documents — with every citation
+                  still traceable to the law.
+                </span>
+                <i>Open the case file</i>
+              </Link>
+            </li>
+            <li className="is-signature">
+              <Link href="/platform/change-intelligence">
+                <small>03 · Global Legal Change Intelligence</small>
+                <b>The law changes. Legal knowledge keeps up.</b>
+                <span>
+                  One amendment, followed from the official source to the answers, documents and
+                  deadlines that relied on it.
+                </span>
+                <i>Follow a change</i>
+              </Link>
+            </li>
+            <li>
+              <Link href="/platform/jurisdictions">
+                <small>04 · Jurisdictions</small>
+                <b>One framework. Many legal systems.</b>
+                <span>
+                  Seventeen legal systems, each with its own sources, languages, hierarchy and
+                  status — stated as it is.
+                </span>
+                <i>Explore the atlas</i>
+              </Link>
+            </li>
           </ul>
         </div>
       </section>
 
-      {/* III. The evidence */}
-      <section id="evidence" className="nj-section" aria-labelledby="evidence-title">
-        <div className="nj-wrap nj-two">
+      {/* 05 — Evidence */}
+      <section className="nj-s nj-s--ivory" aria-labelledby="evidence-title">
+        <div className="nj-wrap nj-evidence">
           <div>
-            <Chapter n="III" title="The evidence" />
+            <Kicker>Evidence and document integrity</Kicker>
             <h2 id="evidence-title">
-              Every document. Every action. <em>Accounted for.</em>
+              Every record, <em>accounted for.</em>
             </h2>
             <p className="nj-lead">
-              Each piece of evidence carries a fingerprint, and each action on it is written into a
-              chain where every record seals the one before. Versions are never overwritten. Legal
-              holds stop deletion. Bundles list every file and hash — so the record can be checked
-              by anyone, independently.
+              Evidence carries its fingerprint from the moment it arrives. Each action writes a
+              record that seals the one before it — so the record can be checked by anyone,
+              independently.
             </p>
-            <ul className="nj-checks">
-              <li>Custody records for every upload, view, change and export</li>
-              <li>Versions, legal holds and retention that respects them</li>
-              <li>Text recognition and malware scanning on intake</li>
-              <li>Chronologies and case bundles built from the record</li>
-            </ul>
+            <p className="nj-more">
+              <Link href="/platform/workspace#evidence">Verify a custody chain</Link>
+            </p>
           </div>
-          <ol className="nj-ledger" aria-label="Hash-chained custody record">
-            {LEDGER.map((block) => (
-              <li key={block.hash}>
-                <span className="nj-ledger-event">{block.event}</span>
-                <span className="nj-ledger-detail">{block.detail}</span>
-                <span className="nj-ledger-hash">
-                  <span className="nj-mono">prev {block.prev}</span>
-                  <span className="nj-mono nj-ledger-own">hash {block.hash}</span>
-                </span>
-              </li>
-            ))}
+          <ol className="nj-facts">
+            <li>
+              <b>Fingerprinted on arrival</b>
+              <span>A SHA-256 fingerprint of the exact file, before anyone can open it.</span>
+            </li>
+            <li>
+              <b>Sealed, record by record</b>
+              <span>Each custody record includes the one before it, so any change shows.</span>
+            </li>
+            <li>
+              <b>Never overwritten, never lost to a hold</b>
+              <span>Versions sit beside each other; a legal hold stops deletion.</span>
+            </li>
           </ol>
         </div>
       </section>
 
-      {/* IV. The change */}
-      <section id="change-intelligence" className="nj-section nj-glci" aria-labelledby="glci-title">
+      {/* 06 — Global Legal Change Intelligence */}
+      <section className="nj-s nj-glci" aria-labelledby="glci-title">
         <div className="nj-wrap">
-          <div className="nj-two">
-            <div>
-              <Chapter n="IV" title="The change" />
-              <h2 id="glci-title">
-                The law never stands still. <em>Neither should your legal knowledge.</em>
-              </h2>
-              <p className="nj-lead">
-                Global Legal Change Intelligence watches official legal publications, compares every
-                new version with the last, and traces the change to the research, documents and
-                matters that relied on the old law. Nothing is updated without an authorised human
-                decision.
-              </p>
-              <dl className="nj-glci-facts">
-                <div>
-                  <dt>Detect</dt>
-                  <dd>New laws, amendments, repeals and commencement dates</dd>
-                </div>
-                <div>
-                  <dt>Compare</dt>
-                  <dd>Provision-level differences between versions</dd>
-                </div>
-                <div>
-                  <dt>Trace</dt>
-                  <dd>Every answer, document and matter that relied on it</dd>
-                </div>
-                <div>
-                  <dt>Decide</dt>
-                  <dd>Proposed updates approved by people, fully audited</dd>
-                </div>
-              </dl>
-              <p className="nj-glci-rule">
-                A source that could not be checked reads <b>unverified</b> — never <b>current</b>.
-              </p>
-            </div>
-            <ChangeDemo />
-          </div>
-        </div>
-      </section>
-
-      {/* V. The institution */}
-      <section id="enterprise" className="nj-section" aria-labelledby="enterprise-title">
-        <div className="nj-wrap">
-          <div className="nj-split-head">
-            <div>
-              <Chapter n="V" title="The institution" />
-              <h2 id="enterprise-title">
-                Built for organisations <em>from the foundation up.</em>
-              </h2>
-            </div>
-            <p className="nj-lead">
-              Isolation is enforced by the database itself, not by the interface. Every
-              organisation, workspace, role and decision has its place — and every consequential
-              action leaves a record your governance team can verify.
-            </p>
-          </div>
-          <div className="nj-arch" aria-label="How an organisation is structured in Njumeni">
-            <div className="nj-arch-org">
-              <span className="nj-arch-k">Organisation</span>
-              <b>Example Advokatfirma AS</b>
-              <span className="nj-arch-sub">SSO · API keys · billing · retention policy</span>
-            </div>
-            <div className="nj-arch-row">
-              {[
-                ['Workspace', 'Employment', 'Partners · associates · paralegals'],
-                ['Workspace', 'Corporate', 'Information barrier with Employment'],
-                ['Workspace', 'Compliance', 'Registers · obligations · owners'],
-              ].map(([k, name, sub]) => (
-                <div key={name} className="nj-arch-ws">
-                  <span className="nj-arch-k">{k}</span>
-                  <b>{name}</b>
-                  <span className="nj-arch-sub">{sub}</span>
-                </div>
-              ))}
-            </div>
-            <div className="nj-arch-base">
-              <span>Row-level isolation</span>
-              <span>Role-based access</span>
-              <span>Hash-chained audit</span>
-              <span>Retention &amp; legal holds</span>
-              <span>Organisation API</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* VI. The world */}
-      <section
-        id="international"
-        className="nj-section nj-section-navy"
-        aria-labelledby="intl-title"
-      >
-        <div className="nj-wrap">
-          <div className="nj-split-head">
-            <div>
-              <Chapter n="VI" title="The world" />
-              <h2 id="intl-title">
-                One method. <em>Many legal systems.</em>
-              </h2>
-            </div>
-            <p className="nj-lead">
-              Every jurisdiction is described on its own terms: its hierarchy of authority, its
-              languages, its official publications and its rules on when law takes effect. Norway
-              leads; the framework spans 17 legal systems across Europe, Africa, the Americas and
-              international law.
-            </p>
-          </div>
-          <div className="nj-board" role="table" aria-label="Jurisdiction framework">
-            <div className="nj-board-row nj-board-head" role="row">
-              <span role="columnheader">Code</span>
-              <span role="columnheader">Jurisdiction</span>
-              <span role="columnheader">Official sources</span>
-              <span role="columnheader">Languages</span>
-              <span role="columnheader">Note</span>
-            </div>
-            {BOARD.map((row) => (
-              <div key={row.code} className="nj-board-row" role="row">
-                <span role="cell" className="nj-board-code">
-                  {row.code}
-                </span>
-                <span role="cell">{row.name}</span>
-                <span role="cell">{row.source}</span>
-                <span role="cell">{row.lang}</span>
-                <span role="cell" className="nj-board-state">
-                  {row.state}
-                </span>
-              </div>
-            ))}
-          </div>
-          <p className="nj-board-more">
-            Also in the framework: Finland, Ghana, Kenya, Nigeria, Senegal, South Africa, the EEA,
-            OHADA and international law.
-          </p>
-        </div>
-      </section>
-
-      {/* VII. The principle */}
-      <section id="trust" className="nj-section nj-manifesto" aria-labelledby="trust-title">
-        <div className="nj-wrap">
-          <Chapter n="VII" title="The principle" />
-          <h2 id="trust-title" className="nj-manifesto-title">
-            AI assists. The law provides the authority.{' '}
-            <em>Qualified professionals retain responsibility for legal judgement.</em>
+          <Kicker>Global Legal Change Intelligence</Kicker>
+          <h2 id="glci-title" className="nj-glci-statement">
+            The law changes. <em>Legal knowledge must keep up.</em>
           </h2>
-          <ol className="nj-commitments">
+          <p className="nj-lead">
+            Njumeni compares every new version of the law with the last, separates publication from
+            commencement, and traces each change to the research, documents and matters that relied
+            on the old text — then routes the response through accountable people.
+          </p>
+          <ol className="nj-glance" aria-label="The change lifecycle">
+            <li>Official source</li>
+            <li>Change detected</li>
+            <li>Versions compared</li>
+            <li>Commencement assessed</li>
+            <li>Impact traced</li>
+            <li>Remediation proposed</li>
+            <li>Human approval</li>
+            <li>Customers notified</li>
+            <li>Verified current</li>
+          </ol>
+          <div className="nj-glance-foot">
+            <p>
+              <b>Today:</b> official sources await activation, so every jurisdiction reads “not
+              monitored”.
+            </p>
+            <Link href="/platform/change-intelligence" className="nj-btn nj-btn--gold">
+              Follow one change through the system
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Interlude — the position Njumeni holds */}
+      <section className="nj-interlude" aria-label="What Njumeni is for">
+        <div className="nj-wrap">
+          <p className="nj-interlude-s">
+            Not only answers to legal questions. <em>Legal knowledge that stays current.</em>
+          </p>
+          <div className="nj-interlude-cols">
+            <p>
+              <b>For a lawyer,</b> one place to research the law, manage legal work, preserve
+              evidence — and know when the law changes.
+            </p>
+            <p>
+              <b>For an institution,</b> one way to maintain legal intelligence across its
+              organisation and the jurisdictions it works in.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 07 — Organisations */}
+      <section className="nj-s nj-s--paper" aria-labelledby="org-title">
+        <div className="nj-wrap">
+          <div className="nj-head">
+            <div>
+              <Kicker>Secure, governed workspaces</Kicker>
+              <h2 id="org-title">
+                Built for organisations, <em>from the foundation up.</em>
+              </h2>
+            </div>
+            <p className="nj-lead">
+              Five environments, one architecture. Isolation is enforced by the database itself, not
+              by the interface.
+            </p>
+          </div>
+          <ol className="nj-envlist">
             <li>
-              <b>Source.</b> Every finding names its official source, licence and version.
+              <b>Personal</b>
+              <span>One person and their own legal questions</span>
             </li>
             <li>
-              <b>Time.</b> The law is applied as it stood on your date. Publication is not
-              commencement.
+              <b>Professional</b>
+              <span>A lawyer or adviser working on their own</span>
             </li>
             <li>
-              <b>Silence.</b> Where the evidence is insufficient, we say so.
+              <b>Law firm</b>
+              <span>Partners, associates and staff, with barriers</span>
             </li>
             <li>
-              <b>Isolation.</b> Your organisation’s data is separated at the database level.
+              <b>Enterprise</b>
+              <span>In-house legal, compliance and governance</span>
             </li>
             <li>
-              <b>Record.</b> Decisions are audited in a chain that can be verified independently.
-            </li>
-            <li>
-              <b>People.</b> Review and sign-off keep responsibility with qualified professionals.
+              <b>Institutional</b>
+              <span>Public bodies with formal accountability</span>
             </li>
           </ol>
+          <p className="nj-more">
+            <Link href="/security">Security and governance</Link>
+            <Link href="/solutions">Who Njumeni serves</Link>
+          </p>
         </div>
       </section>
 
-      {/* VIII. Who uses Njumeni */}
-      <section
-        id="audiences"
-        className="nj-section nj-section-alt"
-        aria-labelledby="audiences-title"
-      >
+      {/* 08 — AI and responsibility */}
+      <section className="nj-s nj-s--navy" aria-labelledby="ai-title">
         <div className="nj-wrap">
-          <div className="nj-split-head">
+          <Kicker>AI and human responsibility</Kicker>
+          <h2 id="ai-title" className="nj-roles-title">
+            <span>AI assists.</span> <span>The law provides the authority.</span>{' '}
+            <span>Professionals retain responsibility.</span>
+          </h2>
+          <div className="nj-roles" aria-hidden="false">
+            <p>
+              It finds, ranks and compares. Drafting and legal reasoning arrive only when a provider
+              is connected — and are labelled when they do.
+            </p>
+            <p>
+              Answers quote the official text in force on your date. Nothing is generated and
+              presented as law.
+            </p>
+            <p>Reviews, sign-off and approvals come before any work is relied on.</p>
+          </div>
+          <p className="nj-more nj-more--dark">
+            <Link href="/security#ai">How AI is governed</Link>
+          </p>
+        </div>
+      </section>
+
+      {/* 09 — Who it serves */}
+      <section className="nj-s nj-s--ivory" aria-labelledby="audiences-title">
+        <div className="nj-wrap">
+          <div className="nj-head">
             <div>
-              <Chapter n="VIII" title="Who uses Njumeni" />
+              <Kicker>Who Njumeni serves</Kicker>
               <h2 id="audiences-title">
-                Four kinds of user. <em>Four workspaces. One standard of evidence.</em>
+                Four kinds of user. <em>One standard of evidence.</em>
               </h2>
             </div>
             <p className="nj-lead">
-              Every user works on the same legal intelligence engine, in the workspace made for how
-              they work. One person can belong to more than one; what they can see is decided by
-              their organisation, role and permissions.
+              Each works on the same legal intelligence, in the workspace made for how they work.
             </p>
           </div>
-          <div className="nj-categories">
-            {CATEGORIES.map((c) => (
-              <article key={c.who} className="nj-category">
-                <header>
-                  <span className="nj-category-n">{c.n}</span>
-                  <div>
-                    <h3>{c.who}</h3>
-                    <p className="nj-category-ws">{c.workspace}</p>
-                  </div>
-                </header>
-                <p className="nj-category-users">{c.users}</p>
-                <blockquote>{c.q}</blockquote>
-                <ul className="nj-checks">
-                  {c.uses.map((u) => (
-                    <li key={u}>{u}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-          <p className="nj-fineprint">
-            Njumeni provides legal information and research tools. It is not a law firm and does not
-            replace advice from a qualified lawyer.
+          <ul className="nj-audcards">
+            <li>
+              <small>Personal workspace</small>
+              <b>Individuals</b>
+              <span>A clear answer from the law, and a signal when a lawyer is needed.</span>
+            </li>
+            <li>
+              <small>Professional workspace</small>
+              <b>Legal professionals</b>
+              <span>Reliable authority, matters and drafts in one place.</span>
+            </li>
+            <li>
+              <small>Law Firm and Enterprise workspaces</small>
+              <b>Law firms and enterprises</b>
+              <span>Shared work with conflicts, barriers, review and governance.</span>
+            </li>
+            <li>
+              <small>Institutional workspace</small>
+              <b>Public institutions</b>
+              <span>Legal knowledge kept current, with formal accountability.</span>
+            </li>
+          </ul>
+          <p className="nj-more">
+            <Link href="/solutions">Explore each journey</Link>
+            <Link href="/plans">See plans and allowances</Link>
           </p>
         </div>
       </section>
 
-      {/* IX. Plans */}
-      <section id="plans" className="nj-section" aria-labelledby="plans-title">
+      {/* 13 — Final invitation */}
+      <section className="nj-s nj-final" aria-labelledby="final-title">
         <div className="nj-wrap">
-          <div className="nj-split-head">
-            <div>
-              <Chapter n="IX" title="Plans" />
-              <h2 id="plans-title">
-                From one question <em>to a whole institution.</em>
-              </h2>
-            </div>
-            <p className="nj-lead">
-              Every plan has clear allowances for research, documents and AI, with no unlimited
-              high-cost AI on low-priced plans. Organisations add seats, AI credits, API access and
-              storage as they grow; monthly and annual terms are available.
-            </p>
-          </div>
-          <div className="nj-plans">
-            {PLANS.map((plan) => (
-              <article key={plan.name} className="nj-plan">
-                <h3>{plan.name}</h3>
-                <p className="nj-plan-for">{plan.forWhom}</p>
-                <p className="nj-plan-includes">{plan.includes}</p>
-                <p className="nj-plan-price">{plan.price}</p>
-              </article>
-            ))}
-          </div>
-          <div className="nj-cta-row" style={{ marginTop: 28 }}>
-            <Link href="/early-access" className="nj-btn nj-btn-navy">
-              Request early access
-            </Link>
-            <Link href="/early-access?interest=demonstration" className="nj-btn nj-btn-outline">
-              Talk to us about Enterprise or Institutional
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Final */}
-      <section className="nj-section nj-final" aria-labelledby="final-title">
-        <div className="nj-wrap">
-          <p className="nj-eyebrow">Njumeni · early access</p>
-          <h2 id="final-title">Legal intelligence that keeps pace with the law.</h2>
+          <Kicker>Njumeni</Kicker>
+          <h2 id="final-title" className="nj-final-statement">
+            Legal intelligence for a world where <em>the law never stands still.</em>
+          </h2>
           <p className="nj-lead">
-            Njumeni is opening to organisations jurisdiction by jurisdiction. Request access or a
-            personal demonstration.
+            Njumeni is opening to early-access organisations, jurisdiction by jurisdiction, starting
+            with Norway.
           </p>
-          <div className="nj-cta-row">
-            <Link href="/early-access" className="nj-btn nj-btn-gold">
+          <div className="nj-ctas">
+            <Link href="/early-access" className="nj-btn nj-btn--gold">
               Request early access
             </Link>
-            <Link href="/early-access?interest=demonstration" className="nj-btn nj-btn-ghost">
-              Book a demonstration
+            <Link href="/early-access?interest=demonstration" className="nj-btn nj-btn--ghost">
+              Request a demonstration
             </Link>
+          </div>
+          <div className="nj-final-links">
+            <Link href="/platform/research">Explore the platform</Link>
+            <Link href="/sign-in">Sign in</Link>
           </div>
         </div>
       </section>
