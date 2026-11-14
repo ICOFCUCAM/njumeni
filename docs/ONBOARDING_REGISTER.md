@@ -71,7 +71,7 @@ A source is still not activated before its rights are reviewed.
 
 | Item | Status | Unlocks |
 |---|---|---|
-| Lovdata rights review and activation (adapter 1.1.0, policy v2 attribution) | Open | Norwegian monitoring, ingestion and research on hosted |
+| Lovdata rights review and activation (adapter 1.1.0, policy v2 attribution) | Done on hosted 2026-11-14; ingestion open | Norwegian monitoring, ingestion and research on hosted |
 | `ANTHROPIC_API_KEY` on the web server | Open | Command centre API engine |
 | Claude Code routine with API trigger (`GLCI_CLAUDE_CODE_ROUTINE_URL`, `_TOKEN`) | Open | Claude Code answers and engineering tasks |
 | `GLCI_GITHUB_TOKEN` (Actions read/write) and the `ANTHROPIC_API_KEY` repository secret | Open | Engineering-task fallback (GitHub workflow) |
